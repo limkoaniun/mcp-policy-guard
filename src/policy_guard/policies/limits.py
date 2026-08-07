@@ -1,1 +1,1 @@
-"""Policy module: limits (stub, see docs/threat-model.md for the design)."""
+"""Policy module: limits (stub, see context/threat-model.md for the design)."""

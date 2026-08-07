@@ -1,1 +1,1 @@
-"""Policy module: taint (stub, see docs/threat-model.md for the design)."""
+"""Policy module: taint (stub, see context/threat-model.md for the design)."""

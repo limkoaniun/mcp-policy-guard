@@ -41,7 +41,7 @@ src/policy_guard/     the proxy and policy engine
 attacks/scenarios/    attack scenario definitions (YAML)
 experiments/          evaluation harness and metrics
 tests/                unit tests
-docs/                 threat model, literature notes, design decisions
+context/              threat model, literature notes, design decisions
 ```
 
 ## Quickstart (target state)
@@ -54,4 +54,4 @@ pytest
 
 ## Status
 
-Week 2–3: project setup, literature review, threat model. See docs/ for progress.
+Week 2–3: project setup, literature review, threat model. See context/ for progress.

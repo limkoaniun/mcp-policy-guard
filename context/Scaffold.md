@@ -5,7 +5,7 @@
 This is a solo 13-week university research project (UTS 32933, Type I prototype).
 The repo scaffold already exists: an MCP proxy that sits between an LLM agent and
 its MCP tool servers and enforces deterministic policies to defend against
-prompt-injection attacks. Read README.md and docs/threat-model.md first — they
+prompt-injection attacks. Read README.md and context/threat-model.md first — they
 define the architecture and threat model. Do not restate them back to me.
 
 Existing layout:

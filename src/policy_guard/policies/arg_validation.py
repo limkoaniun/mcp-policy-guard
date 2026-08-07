@@ -1,1 +1,1 @@
-"""Policy module: arg_validation (stub, see docs/threat-model.md for the design)."""
+"""Policy module: arg_validation (stub, see context/threat-model.md for the design)."""
