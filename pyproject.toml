@@ -1,0 +1,28 @@
+[project]
+name = "mcp-policy-guard"
+version = "0.0.1"
+description = "Policy enforcement layer for MCP tool calls: defending LLM agents against prompt injection"
+authors = [{ name = "Guanyu Lin" }]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[tool.ruff]
+line-length = 100
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
