@@ -3,7 +3,7 @@
 A policy enforcement layer for MCP (Model Context Protocol) tool calls that defends
 LLM agents against prompt-injection attacks.
 
-**32933 Research Project (Type I), UTS, Spring 2026 — Guanyu Lin, ChovYU**
+**32933 Research Project (Type I), UTS, Spring 2026 — Guanyu Lin, Qiuyu Chen**
 Supervisor: David Milne
 
 ## The problem
