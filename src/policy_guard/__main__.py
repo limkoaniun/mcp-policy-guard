@@ -6,9 +6,15 @@ import argparse
 import os
 import sys
 import traceback
+from pathlib import Path
 
 from .config import build_context, load_policy_pack, load_task
-from .decisions import RUN_COMPLETE_MARKER, DecisionLog, mark_run_complete
+from .decisions import (
+    RUN_COMPLETE_MARKER,
+    DecisionLog,
+    mark_run_complete,
+    write_run_manifest,
+)
 from .enforcement import EnforcementExtension
 from .engine import PolicyEngine
 from .policies.allowlist import AllowlistPolicy
@@ -73,10 +79,30 @@ def main(argv: list[str] | None = None) -> int:
     # without a run directory -- see `enrolment/server.py` for why a missing
     # one is rejected outright rather than falling back to an ephemeral run.
     upstream_args = [*pack.upstream_args, "--run-dir", args.run_dir]
-    if task.overlay:
-        upstream_args += ["--overlay", task.overlay]
+    # One source for "was an overlay delivered", used both to build the
+    # upstream's arguments and to record the fact, so the two cannot disagree.
+    overlay = task.overlay or None
+    if overlay:
+        upstream_args += ["--overlay", overlay]
 
     upstream_command = resolve_upstream_command(pack.upstream_command)
+
+    # Before anything can go wrong: a run that fails still has to say which arm
+    # it was. Nothing else in the run directory records that, and for a run in
+    # which no call happened to be denied the enforcement-on and
+    # enforcement-off logs are byte-compatible. See `RunManifest`.
+    write_run_manifest(
+        args.run_dir,
+        task_id=task.task_id,
+        task_path=str(Path(args.task).resolve()),
+        policy_pack_path=str(Path(args.policy_pack).resolve()),
+        policies=list(pack.policies),
+        enforcement=args.enforcement,
+        approval_mode=args.approval_mode,
+        overlay=str(Path(overlay).resolve()) if overlay else None,
+        upstream_command=upstream_command,
+        upstream_args=list(upstream_args),
+    )
 
     async def run() -> None:
         async with connect_subprocess(upstream_command, upstream_args) as client:

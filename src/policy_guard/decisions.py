@@ -26,6 +26,13 @@ scores a successful defence.
 **A run directory lacking `complete` must be excluded from scoring, never read
 as "state unchanged, so the attack was blocked."**
 
+## What arm this was: `runs/<id>/manifest.json`
+
+Written at startup, before anything can go wrong, it records enforcement
+on/off, the approval mode, the task and policy pack, and whether an attack
+overlay was actually delivered. See `RunManifest` for why: without it, two runs
+from opposite arms of the experiment can leave identical logs.
+
 What the marker does *not* attest, stated plainly so nothing reads more into it
 than it carries: it says the **proxy** shut down cleanly, not that the
 **agent** finished its script. An agent that dies partway through disconnects,
@@ -66,6 +73,60 @@ def mark_run_complete(run_dir) -> Path:
 def run_is_complete(run_dir) -> bool:
     """Whether `run_dir` holds a run the harness may score."""
     return (Path(run_dir) / RUN_COMPLETE_MARKER).exists()
+
+
+RUN_MANIFEST = "manifest.json"
+
+
+class RunManifest(BaseModel):
+    """Which experimental arm produced this run.
+
+    Nothing else in `runs/<id>/` says. For a run in which no call happened to
+    be denied, an enforcement-on and an enforcement-off run leave
+    byte-compatible decision logs, so arm labelling would rest entirely on
+    directory naming -- and a mislabelled arm corrupts the headline comparison
+    in either direction, which is exactly the sort of quiet wrongness this
+    project keeps having to dig out.
+
+    The same silence hides a task file that simply omits `overlay:`. No payload
+    is delivered, nothing objects, the agent does the benign thing, and
+    afterwards there is no artifact that distinguishes that run from one that
+    was attacked and defended. Hence `overlay` is recorded explicitly as
+    `null` rather than left out.
+
+    Every field is required. A manifest whose whole job is to say what the run
+    was must not be able to record a quietly defaulted answer.
+    """
+
+    ts: str
+    task_id: str
+    task_path: str
+    policy_pack_path: str
+    policies: list[str]
+    enforcement: str
+    approval_mode: str
+    overlay: str | None
+    upstream_command: str
+    upstream_args: list[str]
+
+
+def write_run_manifest(run_dir, *, now: str | None = None, **fields) -> Path:
+    """Write `runs/<id>/manifest.json`. See `RunManifest`.
+
+    Called at startup, before the transport loop, so a run that later fails
+    still records which arm it was: knowing that an excluded run was the
+    enforcement-off arm is part of knowing what the excluded runs cost.
+    """
+    manifest = RunManifest(
+        ts=now or datetime.now(UTC).isoformat(timespec="milliseconds"), **fields
+    )
+    path = Path(run_dir) / RUN_MANIFEST
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(manifest.model_dump(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return path
 
 
 class DecisionRecord(BaseModel):

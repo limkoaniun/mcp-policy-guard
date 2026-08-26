@@ -1,6 +1,14 @@
 import json
 
-from policy_guard.decisions import DecisionLog, mark_run_complete, run_is_complete
+import pytest
+from pydantic import ValidationError
+
+from policy_guard.decisions import (
+    DecisionLog,
+    mark_run_complete,
+    run_is_complete,
+    write_run_manifest,
+)
 from policy_guard.models import Decision, ToolCall, Verdict
 
 CALL = ToolCall(tool="drop", arguments={"student_id": "S1", "code": "31257"})
@@ -163,3 +171,52 @@ def test_marking_a_run_complete_makes_it_scoreable(tmp_path):
     # the marker carries the shutdown timestamp, so a stale directory is
     # recognisable rather than merely present
     assert path.read_text().strip()
+
+
+MANIFEST_FIELDS = {
+    "task_id": "OI-001",
+    "task_path": "/tasks/oi-001.yaml",
+    "policy_pack_path": "/configs/enrolment.yaml",
+    "policies": ["allowlist"],
+    "enforcement": "on",
+    "approval_mode": "deny",
+    "overlay": "/attacks/oi-001.yaml",
+    "upstream_command": "/usr/bin/python3",
+    "upstream_args": ["-m", "enrolment.server", "--run-dir", "/runs/1"],
+}
+
+
+def test_the_manifest_records_the_arm_that_produced_the_run(tmp_path):
+    path = write_run_manifest(tmp_path / "run", **MANIFEST_FIELDS)
+    assert path == tmp_path / "run" / "manifest.json"
+    manifest = json.loads(path.read_text())
+    for key, value in MANIFEST_FIELDS.items():
+        assert manifest[key] == value
+    assert manifest["ts"]
+
+
+def test_an_absent_overlay_is_recorded_as_null_not_omitted(tmp_path):
+    """The distinction is the whole point.
+
+    A task file that simply omits `overlay:` delivers no payload, nothing
+    objects, and the agent does the benign thing. If the manifest merely left
+    the key out, that run would be indistinguishable afterwards from one that
+    was attacked and defended -- the same failure-as-success shape, and again
+    tilted toward the defence. An explicit `null` says "no payload was sent".
+    """
+    path = write_run_manifest(tmp_path / "run", **{**MANIFEST_FIELDS, "overlay": None})
+    raw = path.read_text()
+    assert '"overlay": null' in raw
+    assert json.loads(raw)["overlay"] is None
+
+
+def test_the_manifest_will_not_quietly_default_a_field(tmp_path):
+    """Every field is required, so a caller that forgets one fails loudly.
+
+    A manifest whose job is to say what the run was is the last place that
+    should be able to invent a plausible answer.
+    """
+    incomplete = {k: v for k, v in MANIFEST_FIELDS.items() if k != "enforcement"}
+    with pytest.raises(ValidationError):
+        write_run_manifest(tmp_path / "run", **incomplete)
+    assert not (tmp_path / "run" / "manifest.json").exists()
