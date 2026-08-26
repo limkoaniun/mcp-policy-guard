@@ -10,7 +10,8 @@ Every final decision is appended to an in-memory audit log, which the
 evaluation harness reads to compute attack success / rule violation metrics.
 """
 
-from typing import Protocol, Sequence
+from collections.abc import Sequence
+from typing import Protocol
 
 from .models import Decision, TaskContext, ToolCall, Verdict
 
