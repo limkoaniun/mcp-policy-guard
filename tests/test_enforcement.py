@@ -1,7 +1,3 @@
-import asyncio
-
-from mcp.types import CallToolResult
-
 from policy_guard.decisions import DecisionLog
 from policy_guard.enforcement import EnforcementExtension
 from policy_guard.engine import PolicyEngine
@@ -127,37 +123,6 @@ def test_a_refusal_survives_the_tools_call_result_validation():
     # ordinary result. Assert on the wire alias, because that is the spelling
     # that crosses the connection.
     assert serialised["isError"] is True
-
-
-def test_intercept_tool_call_short_circuits_on_deny_and_forwards_on_allow():
-    """The upstream must never see a denied call, and an allowed call must reach it."""
-
-    class Params:
-        def __init__(self, name):
-            self.name = name
-            self.arguments = {}
-
-    recorded_ctx = []
-
-    async def call_next(ctx):
-        recorded_ctx.append(ctx)
-        return "forwarded-result"
-
-    extension = build()
-    sentinel_ctx = object()
-
-    deny_result = asyncio.run(
-        extension.intercept_tool_call(Params("drop"), sentinel_ctx, call_next)
-    )
-    assert recorded_ctx == []
-    assert isinstance(deny_result, CallToolResult)
-    assert deny_result.is_error is True
-
-    allow_result = asyncio.run(
-        extension.intercept_tool_call(Params("search_subjects"), sentinel_ctx, call_next)
-    )
-    assert recorded_ctx == [sentinel_ctx]
-    assert allow_result == "forwarded-result"
 
 
 def test_the_logged_tainted_flag_is_read_from_the_context():

@@ -1,9 +1,10 @@
 """End-to-end test of the shipped code path: `python -m policy_guard`.
 
-Every other proxy test drives `PolicyProxy` directly, and the one MCP adapter
-that *was* covered -- `EnforcementExtension.intercept_tool_call` -- has no
-caller in the shipped path at all. So the suite verified an adapter the product
-does not use, while `build_proxy_server` and `main()` went untested.
+Every other proxy test drives `PolicyProxy` directly. The suite also used to
+cover an `EnforcementExtension.intercept_tool_call` adapter that no shipped
+code ever called -- it has since been deleted -- so what it verified was a
+path the product does not take, while `build_proxy_server` and `main()` went
+untested.
 
 This runs the real CLI as a subprocess, over stdio, in front of the real
 enrolment server it spawns for itself, and asserts the three properties the

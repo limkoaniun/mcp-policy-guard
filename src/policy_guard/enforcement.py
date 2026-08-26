@@ -1,8 +1,16 @@
 """Policy enforcement at the tool-call boundary.
 
 `decide()` holds all the logic and touches no MCP types, so the enforcement
-rules are testable without a protocol in sight. `intercept_tool_call` is the
-thin MCP adapter over it.
+rules are testable without a protocol in sight. `refusal()` is the one MCP type
+it produces, and only for a call it blocks.
+
+There is no adapter class here. What ships is `PolicyProxy.call` in `proxy.py`:
+it calls `decide()`, returns `refusal()` when the verdict says not to forward,
+and otherwise forwards to the upstream. `build_proxy_server`'s low-level
+`on_call_tool` handler delegates to that and nothing else. Anyone adding an
+alternative entry point must carry over `PolicyProxy.call`'s re-raise of
+transport failures as `UpstreamError` -- an entry point that swallows them
+restores the bug where a dead upstream reads as an attack that was blocked.
 
 Three behaviours are load-bearing:
 
@@ -82,14 +90,6 @@ class EnforcementExtension:
             approval_mode=approval_mode,
         )
         return decision, forward
-
-    async def intercept_tool_call(self, params, ctx, call_next):
-        """MCP adapter over `decide`. Short-circuits without calling `call_next`."""
-        call = ToolCall(tool=params.name, arguments=dict(params.arguments or {}))
-        decision, forward = self.decide(call)
-        if forward:
-            return await call_next(ctx)
-        return self.refusal(decision)
 
     @staticmethod
     def refusal(decision: Decision) -> CallToolResult:

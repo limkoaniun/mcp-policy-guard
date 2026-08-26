@@ -6,8 +6,16 @@ Each policy module exposes `check(call, context) -> Decision | None`:
 - REQUIRE_APPROVAL is sticky: once any policy requires approval, the call
   requires approval unless a later policy denies it outright.
 
-Every final decision is appended to an in-memory audit log, which the
-evaluation harness reads to compute attack success / rule violation metrics.
+The evaluation harness computes attack success / rule violation metrics from
+the JSONL decision log (`runs/<id>/decisions.jsonl`, written by
+`decisions.py`), never from here.
+
+`audit_log` below is an in-process convenience for tests and for inspecting an
+engine in a REPL. It is deliberately *not* the harness's source, and it is not
+the same set of records: when a policy raises, `enforcement.py` synthesises the
+DENY outside the engine, so `evaluate` is never reached and that call leaves no
+trace here at all. Scoring from `audit_log` would silently miss exactly the
+calls a broken policy denied.
 """
 
 from collections.abc import Sequence
