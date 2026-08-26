@@ -223,8 +223,15 @@ def test_the_manifest_will_not_quietly_default_a_field(tmp_path):
 
 
 def test_the_manifest_rejects_a_misspelled_field(tmp_path):
-    """A silently dropped field is the same defect one layer down."""
-    typo = {k: v for k, v in MANIFEST_FIELDS.items() if k != "overlay"}
-    typo["overlay_path"] = "/attacks/oi-001.yaml"
-    with pytest.raises(ValidationError):
+    """A silently dropped field is the same defect one layer down.
+
+    Every required field is present -- dropping one, as an earlier version of
+    this test did, lets `write_run_manifest` raise on the *missing* field
+    instead, which passes even with `extra="ignore"` and so proves nothing
+    about extras rejection. The only field here that is not part of the
+    contract is the misspelled one, so the only possible error is `overlay`'s
+    unwanted neighbour.
+    """
+    typo = {**MANIFEST_FIELDS, "overlay_path": "/attacks/oi-001.yaml"}
+    with pytest.raises(ValidationError, match="overlay_path"):
         write_run_manifest(tmp_path / "run", **typo)
