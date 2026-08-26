@@ -85,3 +85,20 @@ def test_unrecognised_payload_is_kept_as_unparsed():
     item = classify_item("1", "other", "some wording we have never seen")
     assert item.kind == "unparsed"
     assert item.text == "some wording we have never seen"
+
+
+def test_item_with_blank_details_is_kept_as_unparsed():
+    """An &nbsp;-only details cell must not make a requisite disappear."""
+    html = (
+        "<p>32999 Test Subject</p>"
+        "<p>Requisite rule: (1 OR 2)</p>"
+        "<table>"
+        "<tr><td>Item</td><td>Type</td><td>Details</td></tr>"
+        "<tr><td>1</td><td>Academic requisite</td><td>48024 Programming 2</td></tr>"
+        "<tr><td>2</td><td>Academic requisite</td><td>&nbsp;</td></tr>"
+        "</table>"
+        "<p>Note: See also the information on understanding subjects.</p>"
+    )
+    req = parse_evop(html, "32999", "https://example.test", "2026-08-26T00:00:00")
+    assert set(req.requisite_items) == {"1", "2"}
+    assert req.requisite_items["2"].kind == "unparsed"

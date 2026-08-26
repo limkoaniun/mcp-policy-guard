@@ -106,7 +106,6 @@ def _parse_table(lines: list[str]) -> dict[str, RequisiteItem]:
     return {
         label: classify_item(label, record["type"], " ".join(record["text"]).strip())
         for label, record in collected.items()
-        if record["text"]
     }
 
 
@@ -116,13 +115,11 @@ def parse_evop(html: str, code: str, source_url: str, fetched_at: str) -> Subjec
     anti_rule_idx = next(
         (i for i, line in enumerate(lines) if line.startswith(ANTI_RULE_PREFIX)), None
     )
+    # No need to exclude ANTI_RULE_PREFIX matches here: the two prefixes differ at
+    # the first character ("A" vs "R"), so a line starting with RULE_PREFIX can
+    # never also start with ANTI_RULE_PREFIX.
     rule_idx = next(
-        (
-            i
-            for i, line in enumerate(lines)
-            if line.startswith(RULE_PREFIX) and not line.startswith(ANTI_RULE_PREFIX)
-        ),
-        None,
+        (i for i, line in enumerate(lines) if line.startswith(RULE_PREFIX)), None
     )
     end = next((i for i, line in enumerate(lines) if line.startswith(END_MARKER)), len(lines))
     heading_idx = next((i for i, line in enumerate(lines) if line == REQUISITE_HEADING), None)
