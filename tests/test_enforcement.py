@@ -122,6 +122,11 @@ def test_a_refusal_survives_the_tools_call_result_validation():
     )
     serialised = methods.serialize_server_result("tools/call", "2025-06-18", dumped)
     assert "'drop' is not allowed" in str(serialised)
+    # The reason surviving is not enough on its own: `isError` is what makes an
+    # agent treat the block as a refusal to relay rather than as the tool's
+    # ordinary result. Assert on the wire alias, because that is the spelling
+    # that crosses the connection.
+    assert serialised["isError"] is True
 
 
 def test_intercept_tool_call_short_circuits_on_deny_and_forwards_on_allow():

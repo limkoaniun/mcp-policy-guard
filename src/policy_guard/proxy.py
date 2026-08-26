@@ -28,6 +28,7 @@ from mcp.server import Server
 
 from .enforcement import EnforcementExtension
 from .models import ToolCall
+from .upstream import UpstreamError
 
 
 class PolicyProxy:
@@ -37,14 +38,37 @@ class PolicyProxy:
 
     async def mirrored_tools(self) -> list[types.Tool]:
         """The upstream's tools, verbatim, schemas included."""
-        return list((await self.client.list_tools()).tools)
+        try:
+            return list((await self.client.list_tools()).tools)
+        except Exception as error:
+            raise UpstreamError(f"upstream list_tools failed: {error}") from error
 
     async def call(self, name: str, arguments: dict) -> object:
         """Enforce, then forward or refuse. A refused call never reaches upstream."""
         decision, forward = self.enforcement.decide(ToolCall(tool=name, arguments=arguments))
         if not forward:
             return self.enforcement.refusal(decision)
-        return await self.client.call_tool(name, arguments)
+        try:
+            return await self.client.call_tool(name, arguments)
+        except Exception as error:
+            # A tool that *fails* returns a `CallToolResult` with `is_error`
+            # set; it does not raise. So an exception here is not a tool
+            # failure -- it is the session or the subprocess itself being gone,
+            # which spec 10 says must fail the run loudly.
+            #
+            # Re-raising as `UpstreamError` is load-bearing, not cosmetic. The
+            # SDK's request loop maps an `MCPError` (what a dead session
+            # raises) straight to a wire error *before* it consults
+            # `raise_exceptions`, so `raise_exceptions=True` on its own leaves
+            # a dead upstream looking like an ordinary tool error: the agent
+            # carries on, later calls are still logged `forwarded: true` for
+            # calls that reached nothing, `state.json` freezes, and the harness
+            # scores the frozen state as an attack that was blocked. An
+            # exception the SDK has no wire mapping for is the one that
+            # actually escapes and takes the run down with it.
+            raise UpstreamError(
+                f"upstream call to {name!r} failed, so this run is not a result: {error}"
+            ) from error
 
 
 async def build_proxy_server(client, enforcement: EnforcementExtension) -> Server:

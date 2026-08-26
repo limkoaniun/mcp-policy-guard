@@ -1,4 +1,5 @@
 import pytest
+from mcp import Client
 from mcp.server import MCPServer
 
 from policy_guard.decisions import DecisionLog
@@ -6,8 +7,8 @@ from policy_guard.enforcement import EnforcementExtension
 from policy_guard.engine import PolicyEngine
 from policy_guard.models import TaskContext
 from policy_guard.policies.allowlist import AllowlistPolicy
-from policy_guard.proxy import PolicyProxy
-from policy_guard.upstream import connect_in_process
+from policy_guard.proxy import PolicyProxy, build_proxy_server
+from policy_guard.upstream import UpstreamError, connect_in_process
 
 
 class RecordingUpstream:
@@ -121,4 +122,59 @@ async def test_an_upstream_error_is_forwarded_and_logged_as_forwarded():
 
     assert log.records[0].verdict == "allow"
     assert log.records[0].forwarded is True
-    assert "broken" in str(result).lower() or getattr(result, "isError", False)
+    # `isError` is the wire alias and is not a readable attribute on this SDK's
+    # model; `getattr(result, "isError", False)` was therefore always False,
+    # leaving the whole assertion resting on its first disjunct. Assert on the
+    # real attribute, and on both halves rather than either.
+    assert result.is_error is True
+    assert "broken" in str(result.content).lower()
+
+
+@pytest.mark.anyio
+async def test_a_failing_upstream_call_surfaces_rather_than_being_swallowed():
+    """Spec 10: an upstream that dies mid-task must fail the run loudly.
+
+    `PolicyProxy.call` awaits `client.call_tool`; if that raises -- a dead
+    subprocess rather than a tool returning an error -- the exception must
+    propagate to the caller. The shipped path then relies on
+    `Server.run(..., raise_exceptions=True)` (see `__main__.py`) to carry it
+    out of the process, instead of turning it into an ordinary tool error the
+    agent shrugs off while `state.json` quietly freezes.
+    """
+
+    class DeadUpstream:
+        async def list_tools(self):  # pragma: no cover - not exercised here
+            raise UpstreamError("upstream subprocess is gone")
+
+        async def call_tool(self, name, arguments):
+            raise UpstreamError("upstream subprocess is gone")
+
+    log = DecisionLog(None)
+    proxy = PolicyProxy(DeadUpstream(), enforcement_for({"read_thing"}, log))
+    with pytest.raises(UpstreamError, match="gone"):
+        await proxy.call("read_thing", {"code": "X"})
+
+
+@pytest.mark.anyio
+async def test_the_proxy_server_does_not_swallow_a_failing_handler():
+    """The same property one layer up, through the shipped `build_proxy_server`.
+
+    A low-level `Server` run with the default `raise_exceptions=False` converts
+    a handler exception into an error result. That is how a dead upstream came
+    to look like an ordinary tool failure while every later call was still
+    logged `forwarded: true`. `Client(..., raise_exceptions=True)` here is the
+    client-side mirror of the `raise_exceptions=True` the CLI passes to
+    `Server.run`, so a failure crosses the boundary instead of being absorbed.
+    """
+
+    class DeadUpstream:
+        async def list_tools(self):  # pragma: no cover - not exercised here
+            raise UpstreamError("upstream subprocess is gone")
+
+        async def call_tool(self, name, arguments):
+            raise UpstreamError("upstream subprocess is gone")
+
+    server = await build_proxy_server(DeadUpstream(), enforcement_for({"read_thing"}))
+    async with Client(server, raise_exceptions=True) as client:
+        with pytest.raises(Exception, match="gone"):
+            await client.call_tool("read_thing", {"code": "X"})

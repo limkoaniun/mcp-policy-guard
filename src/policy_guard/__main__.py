@@ -3,15 +3,21 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
+import traceback
 
 from .config import build_context, load_policy_pack, load_task
-from .decisions import DecisionLog
+from .decisions import RUN_COMPLETE_MARKER, DecisionLog, mark_run_complete
 from .enforcement import EnforcementExtension
 from .engine import PolicyEngine
 from .policies.allowlist import AllowlistPolicy
 
 POLICIES = {"allowlist": AllowlistPolicy}
+
+# Distinct from 1 so a run that failed *inside* the proxy is tellable from a
+# bad invocation (argparse exits 2) or an ordinary uncaught error.
+EXIT_RUN_FAILED = 70
 
 
 def resolve_upstream_command(command: str) -> str:
@@ -80,9 +86,46 @@ def main(argv: list[str] | None = None) -> int:
             # `stdio_server` stream pair rather than the higher-level
             # `MCPServer.run_stdio_async`.
             async with stdio_server() as (read_stream, write_stream):
-                await server.run(read_stream, write_stream, server.create_initialization_options())
+                # `raise_exceptions=True` (spec 10): a handler that fails --
+                # most importantly one whose `client.call_tool` fails because
+                # the upstream subprocess died mid-task -- must fail the run
+                # loudly. The default swallows it into an error result, so the
+                # agent sees ordinary tool errors, every later call is logged
+                # `forwarded: true` for a call that reached nothing, state.json
+                # freezes at whatever it held, and the harness reads the frozen
+                # state as an attack that was blocked.
+                try:
+                    await server.run(
+                        read_stream,
+                        write_stream,
+                        server.create_initialization_options(),
+                        raise_exceptions=True,
+                    )
+                except Exception:  # noqa: BLE001 - any failure fails the run
+                    # Exit from inside the transport, not by unwinding through
+                    # it. anyio's stdio reader is a non-cancellable worker
+                    # thread parked on `read()`, so unwinding waits for a peer
+                    # that may never disconnect and the run hangs instead of
+                    # failing. `os._exit` skips the pending teardown, which is
+                    # safe here: decision records are flushed line by line as
+                    # they are written, and `state.json` belongs to the
+                    # upstream process, not this one.
+                    traceback.print_exc()
+                    print(
+                        f"policy_guard: run failed; {args.run_dir} has no "
+                        f"'{RUN_COMPLETE_MARKER}' marker and must be excluded "
+                        "from scoring, not read as an attack that was blocked.",
+                        file=sys.stderr,
+                        flush=True,
+                    )
+                    os._exit(EXIT_RUN_FAILED)
 
     anyio.run(run)
+    # Only reached on a clean shutdown; anything that stops `run()` early
+    # propagates out of `anyio.run` and leaves the marker absent. See
+    # `decisions.py`: a run directory without it must be excluded from
+    # scoring, not read as "state unchanged, so the attack was blocked".
+    mark_run_complete(args.run_dir)
     return 0
 
 

@@ -29,6 +29,17 @@ class AlreadyEnrolledError(ValueError):
     """The student already holds the subject being enrolled in."""
 
 
+class RunDirectoryInUseError(FileExistsError):
+    """The run directory already holds a `state.json`.
+
+    A run directory is single-use. Loading into one that already has state
+    would overwrite it with the baseline, while `DecisionLog` *appends* across
+    restarts -- so the pair of artifacts the harness scores would show a
+    forwarded mutation in the log and an unmutated state file, which reads as
+    "enforcement worked" when in fact the evidence was destroyed.
+    """
+
+
 class RunState:
     def __init__(self, students: dict[str, Student], path: Path | None = None):
         self._students = students
@@ -41,6 +52,18 @@ class RunState:
         path = None
         if run_dir is not None:
             path = Path(run_dir) / "state.json"
+            if path.exists():
+                # Spec 5: a fresh server process per scenario run, and so a
+                # fresh run directory. Resetting an existing state.json to the
+                # baseline here would silently discard the mutations an earlier
+                # load recorded.
+                raise RunDirectoryInUseError(
+                    f"{path} already exists: a run directory is single-use. "
+                    "Loading into it would reset state.json to the baseline "
+                    "while decisions.jsonl kept appending, leaving a log that "
+                    "shows a forwarded mutation beside a state file that shows "
+                    "none -- which scores as a successful defence."
+                )
             path.parent.mkdir(parents=True, exist_ok=True)
         state = cls(students, path)
         if state.persistent:

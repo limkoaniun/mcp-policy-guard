@@ -1,6 +1,6 @@
 import json
 
-from policy_guard.decisions import DecisionLog
+from policy_guard.decisions import DecisionLog, mark_run_complete, run_is_complete
 from policy_guard.models import Decision, ToolCall, Verdict
 
 CALL = ToolCall(tool="drop", arguments={"student_id": "S1", "code": "31257"})
@@ -133,3 +133,33 @@ def test_multiple_instances_to_same_path_are_not_clobbered(tmp_path):
     record2 = json.loads(lines[1])
     assert record1["task_id"] == "OI-001"
     assert record2["task_id"] == "OI-002"
+
+
+def test_a_run_without_the_marker_is_not_complete(tmp_path):
+    """The absence of the marker is the whole signal.
+
+    A run that dies after three of eight scripted calls leaves a well-formed
+    decision log and a parseable `state.json`. If the attack was call five, a
+    harness reading only those two artifacts sees no violation and scores a
+    successful defence. `runs/<id>/complete` is what tells a finished run from
+    a truncated one, and an unmarked run must be excluded from scoring.
+    """
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    log = DecisionLog(run_dir / "decisions.jsonl")
+    log.record(CALL, DENY, task_id="OI-001", forwarded=False, latency_ms=0.4)
+
+    # every artifact the harness scores from is present and well-formed...
+    assert (run_dir / "decisions.jsonl").exists()
+    # ...and the run is still not scoreable
+    assert run_is_complete(run_dir) is False
+
+
+def test_marking_a_run_complete_makes_it_scoreable(tmp_path):
+    run_dir = tmp_path / "run"
+    path = mark_run_complete(run_dir)
+    assert path == run_dir / "complete"
+    assert run_is_complete(run_dir) is True
+    # the marker carries the shutdown timestamp, so a stale directory is
+    # recognisable rather than merely present
+    assert path.read_text().strip()

@@ -6,6 +6,7 @@ from enrolment.models import CompletedSubject, Student
 from enrolment.state import (
     AlreadyEnrolledError,
     NotEnrolledError,
+    RunDirectoryInUseError,
     RunState,
     UnknownStudentError,
 )
@@ -125,3 +126,45 @@ def test_an_ephemeral_load_writes_nothing(tmp_path):
     """The baseline write is conditional on `persistent`, not unconditional."""
     RunState.load(write_students(tmp_path))
     assert not (tmp_path / "state.json").exists()
+
+
+def test_a_run_directory_is_single_use(tmp_path):
+    """A second load into the same run directory is refused, not silently reset.
+
+    `RunState.load` writes the baseline over whatever is there, while
+    `DecisionLog` *appends* across restarts. Reusing a run directory therefore
+    produced a decision log showing a forwarded `drop` beside a state file
+    showing the student still enrolled -- which the harness reads as
+    "enforcement worked", when in fact the evidence of the mutation was
+    overwritten. Spec 5 calls for a fresh server process per scenario run;
+    this makes reusing one fail loudly instead.
+    """
+    source = write_students(tmp_path)
+    run_dir = tmp_path / "run"
+    state = RunState.load(source, run_dir=run_dir)
+    state.enrol("S1000001", "32144")
+
+    with pytest.raises(RunDirectoryInUseError, match="single-use"):
+        RunState.load(source, run_dir=run_dir)
+
+    # and the first run's evidence is still on disk, unreset
+    written = json.loads((run_dir / "state.json").read_text())
+    assert "32144" in written["S1000001"]["enrolled"]
+
+
+def test_save_writes_the_current_state_to_its_path(tmp_path):
+    """`save()` called directly does what it says.
+
+    Every other persistence test goes through `enrol`/`drop`, which call
+    `save()` themselves; this pins the method's own behaviour.
+    """
+    source = write_students(tmp_path)
+    raw = json.loads(source.read_text())
+    students = {code: Student.model_validate(value) for code, value in raw.items()}
+    path = tmp_path / "run" / "state.json"
+    path.parent.mkdir(parents=True)
+
+    state = RunState(students, path)
+    assert not path.exists()
+    state.save()
+    assert json.loads(path.read_text()) == raw

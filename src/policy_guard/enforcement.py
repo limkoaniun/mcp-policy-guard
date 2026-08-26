@@ -63,6 +63,15 @@ class EnforcementExtension:
             permitted = decision.verdict is Verdict.ALLOW
 
         forward = True if not self.enforcement else permitted
+        # `forwarded` records the *decision* to forward, not the fact of it:
+        # this write happens before `PolicyProxy.call` attempts
+        # `client.call_tool`, so a call the upstream never received is still
+        # logged `forwarded: true`. Reading it as "the upstream saw this" is
+        # wrong. Splitting it into a decision field and an outcome field needs
+        # the post-call hook and belongs to a later slice; until then the loud
+        # failure on a dead upstream (`raise_exceptions=True` at the
+        # `Server.run` call site) and the end-of-run marker are what stop a
+        # truncated run from being scored.
         self.log.record(
             call,
             decision,
