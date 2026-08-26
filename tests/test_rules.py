@@ -78,7 +78,9 @@ def _reference_eval(expr: str, truth: dict[str, bool]) -> bool:
 
     py = re.sub(r"\d+[a-z]*", lambda m: str(truth[m.group(0)]), expr)
     py = py.replace("AND", " and ").replace("OR", " or ")
-    return bool(eval(py))  # noqa: S307 - test-only oracle over a closed grammar
+    # eval() is safe here: the input is a boolean expression over a closed
+    # grammar that this module's own parser has already validated.
+    return bool(eval(py))
 
 
 @pytest.mark.parametrize("expr", REAL_RULES.values())
