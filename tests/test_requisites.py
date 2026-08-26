@@ -499,3 +499,35 @@ def test_aos_item_with_blank_code_string_is_unresolved_not_satisfied():
     result = evaluate_requisites("32531", student(), reqs)
     assert result.satisfied is False
     assert "1" in result.unresolved
+
+
+def coreq_item(label: str, code: str) -> RequisiteItem:
+    return RequisiteItem(
+        label=label, kind="subject", type="academic", text=f"{code} Something",
+        subject=code, corequisite=True,
+    )
+
+
+def test_corequisite_is_satisfied_by_concurrent_enrolment():
+    """A corequisite may be taken alongside; being enrolled in it counts."""
+    reqs = requisites("32548", "(1)", {"1": coreq_item("1", "32524")})
+    result = evaluate_requisites("32548", student(enrolled=["32524"]), reqs)
+    assert result.satisfied is True
+
+
+def test_corequisite_is_satisfied_by_prior_completion():
+    reqs = requisites("32548", "(1)", {"1": coreq_item("1", "32524")})
+    result = evaluate_requisites("32548", student(completed=completed("32524")), reqs)
+    assert result.satisfied is True
+
+
+def test_corequisite_is_unsatisfied_when_neither_enrolled_nor_completed():
+    reqs = requisites("32548", "(1)", {"1": coreq_item("1", "32524")})
+    assert evaluate_requisites("32548", student(), reqs).satisfied is False
+
+
+def test_ordinary_requisite_is_not_satisfied_by_concurrent_enrolment():
+    """The distinction that makes the corequisite flag worth carrying."""
+    reqs = requisites("31251", "(1)", {"1": subject_item("1", "48024")})
+    result = evaluate_requisites("31251", student(enrolled=["48024"]), reqs)
+    assert result.satisfied is False

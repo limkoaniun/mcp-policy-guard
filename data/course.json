@@ -1,0 +1,217 @@
+{
+ "code": "C04296",
+ "title": "Master of Information Technology (Extension)",
+ "credit_points": 96,
+ "blocks": [
+  {
+   "title": "IT Project and Electives",
+   "description": "(CBK91047) Select 18 credit points from the following options:",
+   "credit_points": 18,
+   "items": [],
+   "children": [
+    {
+     "title": "IT Project",
+     "description": "Select 6 credit points from the following subjects:",
+     "credit_points": 6,
+     "items": [
+      {
+       "code": "32933",
+       "name": "Research Project",
+       "credit_points": 6,
+       "item_type": "subject",
+       "url": "/subject/2026/32933",
+       "connector": "AND"
+      },
+      {
+       "code": "32040",
+       "name": "Industry Project",
+       "credit_points": 6,
+       "item_type": "subject",
+       "url": "/subject/2026/32040",
+       "connector": "AND"
+      }
+     ],
+     "children": []
+    },
+    {
+     "title": "Electives",
+     "description": "Select 12 credit points from the following stream:",
+     "credit_points": 12,
+     "items": [
+      {
+       "code": "CBK91045",
+       "name": "Electives (Information Technology)",
+       "credit_points": 12,
+       "item_type": "stream",
+       "url": "/aos/2026/CBK91045",
+       "connector": "AND"
+      }
+     ],
+     "children": []
+    }
+   ]
+  },
+  {
+   "title": "Majors",
+   "description": "(CBK91046) Select one of the following:",
+   "credit_points": 36,
+   "items": [
+    {
+     "code": "MAJ02084",
+     "name": "Data Analytics",
+     "credit_points": 36,
+     "item_type": "major",
+     "url": "/aos/2026/MAJ02084",
+     "connector": "AND"
+    },
+    {
+     "code": "MAJ02093",
+     "name": "Cybersecurity",
+     "credit_points": 36,
+     "item_type": "major",
+     "url": "/aos/2026/MAJ02093",
+     "connector": "AND"
+    },
+    {
+     "code": "MAJ02086",
+     "name": "Enterprise Software Development",
+     "credit_points": 36,
+     "item_type": "major",
+     "url": "/aos/2026/MAJ02086",
+     "connector": "AND"
+    },
+    {
+     "code": "MAJ02085",
+     "name": "Interactive Media",
+     "credit_points": 36,
+     "item_type": "major",
+     "url": "/aos/2026/MAJ02085",
+     "connector": "AND"
+    },
+    {
+     "code": "CBK91043",
+     "name": "No specified major",
+     "credit_points": 36,
+     "item_type": "stream",
+     "url": "/aos/2026/CBK91043",
+     "connector": "AND"
+    },
+    {
+     "code": "MAJ02082",
+     "name": "Business Information Systems",
+     "credit_points": 36,
+     "item_type": "major",
+     "url": "/aos/2026/MAJ02082",
+     "connector": "AND"
+    },
+    {
+     "code": "MAJ02083",
+     "name": "Internetworking",
+     "credit_points": 36,
+     "item_type": "major",
+     "url": "/aos/2026/MAJ02083",
+     "connector": "AND"
+    }
+   ],
+   "children": []
+  },
+  {
+   "title": "Core",
+   "description": "(STM90968) Complete all of the following subjects:",
+   "credit_points": 18,
+   "items": [
+    {
+     "code": "32541",
+     "name": "Project Management",
+     "credit_points": 6,
+     "item_type": "subject",
+     "url": "/subject/2026/32541",
+     "connector": "AND"
+    },
+    {
+     "code": "43030",
+     "name": "Professional Practice in Computing",
+     "credit_points": 6,
+     "item_type": "subject",
+     "url": "/subject/2026/43030",
+     "connector": "AND"
+    },
+    {
+     "code": "32144",
+     "name": "Technology Research Preparation",
+     "credit_points": 6,
+     "item_type": "subject",
+     "url": "/subject/2026/32144",
+     "connector": "AND"
+    }
+   ],
+   "children": []
+  },
+  {
+   "title": "Sub-Majors",
+   "description": "(CBK91053) Select one of the following:",
+   "credit_points": 24,
+   "items": [
+    {
+     "code": "SMJ10069",
+     "name": "Business Information Systems",
+     "credit_points": 24,
+     "item_type": "sub_major",
+     "url": "/aos/2026/SMJ10069",
+     "connector": "AND"
+    },
+    {
+     "code": "SMJ10070",
+     "name": "Internetworking",
+     "credit_points": 24,
+     "item_type": "sub_major",
+     "url": "/aos/2026/SMJ10070",
+     "connector": "AND"
+    },
+    {
+     "code": "SMJ10093",
+     "name": "Cybersecurity",
+     "credit_points": 24,
+     "item_type": "sub_major",
+     "url": "/aos/2026/SMJ10093",
+     "connector": "AND"
+    },
+    {
+     "code": "SMJ10073",
+     "name": "Enterprise Software Development",
+     "credit_points": 24,
+     "item_type": "sub_major",
+     "url": "/aos/2026/SMJ10073",
+     "connector": "AND"
+    },
+    {
+     "code": "SMJ10071",
+     "name": "Data Analytics",
+     "credit_points": 24,
+     "item_type": "sub_major",
+     "url": "/aos/2026/SMJ10071",
+     "connector": "AND"
+    },
+    {
+     "code": "SMJ10072",
+     "name": "Interactive Media",
+     "credit_points": 24,
+     "item_type": "sub_major",
+     "url": "/aos/2026/SMJ10072",
+     "connector": "AND"
+    },
+    {
+     "code": "CBK91054",
+     "name": "Choice (No specified sub-major)",
+     "credit_points": 24,
+     "item_type": "stream",
+     "url": "/aos/2026/CBK91054",
+     "connector": "AND"
+    }
+   ],
+   "children": []
+  }
+ ],
+ "source_url": "https://coursehandbook.uts.edu.au/course/2026/c04296",
+ "fetched_at": "2026-08-26T11:09:16+00:00"
+}

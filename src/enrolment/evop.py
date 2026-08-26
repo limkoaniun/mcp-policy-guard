@@ -52,11 +52,11 @@ MAX_ITEM_TEXT = 400
 NO_RESTRICTIONS_MARKER = "There are no access restrictions enforced for this subject"
 HEADER_RE = re.compile(r"^(\d{5,6})\s+\S")
 
-TYPE_WORDS = {
-    "Academic requisite": "academic",
-    "Admission requisite": "admission",
-    "Other requisite": "other",
-}
+# UTS publishes the Type column as "<Category> requisite" or, for subjects that
+# may be taken concurrently, "<Category> corequisite". The corequisite form was
+# only discovered on the first real build (32548), which is why this is a
+# pattern rather than an enumeration of the strings seen so far.
+TYPE_RE = re.compile(r"^(Academic|Admission|Other)\s+(requisite|corequisite)$")
 HEADER_WORDS = {"Item", "Type", "Details"}
 
 
@@ -73,7 +73,9 @@ def flatten(html: str) -> list[str]:
     return [line.strip() for line in text.split("\n") if line.strip()]
 
 
-def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
+def classify_item(
+    label: str, item_type: str, text: str, corequisite: bool = False
+) -> RequisiteItem:
     """Turn one table row's payload into a typed item, never discarding `text`.
 
     Order matters twice over:
@@ -92,7 +94,9 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
     if len(text) > MAX_ITEM_TEXT:
         # Almost certainly the requisite table's end boundary was missed and
         # page furniture has been folded into this row. Never trust it.
-        return RequisiteItem(label=label, kind="unparsed", type=item_type, text=text)
+        return RequisiteItem(
+            label=label, corequisite=corequisite, kind="unparsed", type=item_type, text=text
+        )
 
     admission = ADMISSION_RE.match(text)
     if admission:
@@ -101,6 +105,7 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
         if aos:
             return RequisiteItem(
                 label=label,
+                corequisite=corequisite,
                 kind="aos",
                 type=item_type,
                 text=text,
@@ -110,6 +115,7 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
         course = COURSE_CODE_RE.search(descriptor)
         return RequisiteItem(
             label=label,
+            corequisite=corequisite,
             kind="admission",
             type=item_type,
             text=text,
@@ -120,13 +126,19 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
     subject = SUBJECT_RE.match(text)
     if subject:
         return RequisiteItem(
-            label=label, kind="subject", type=item_type, text=text, subject=subject.group(1)
+            label=label,
+            corequisite=corequisite,
+            kind="subject",
+            type=item_type,
+            text=text,
+            subject=subject.group(1),
         )
 
     credit_points = CREDIT_POINTS_RE.search(text)
     if credit_points:
         return RequisiteItem(
             label=label,
+            corequisite=corequisite,
             kind="credit_points",
             type=item_type,
             text=text,
@@ -136,10 +148,17 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
     aos = AOS_RE.match(text)
     if aos:
         return RequisiteItem(
-            label=label, kind="aos", type=item_type, text=text, aos_code=aos.group(1)
+            label=label,
+            corequisite=corequisite,
+            kind="aos",
+            type=item_type,
+            text=text,
+            aos_code=aos.group(1),
         )
 
-    return RequisiteItem(label=label, kind="unparsed", type=item_type, text=text)
+    return RequisiteItem(
+        label=label, corequisite=corequisite, kind="unparsed", type=item_type, text=text
+    )
 
 
 def _parse_table(lines: list[str]) -> dict[str, RequisiteItem]:
@@ -150,17 +169,23 @@ def _parse_table(lines: list[str]) -> dict[str, RequisiteItem]:
             continue
         if LABEL_RE.match(line):
             current = line
-            collected[current] = {"type": "unknown", "text": []}
+            collected[current] = {"type": "unknown", "text": [], "corequisite": False}
             continue
         if current is None:
             continue
         record = collected[current]
-        if not record["text"] and line in TYPE_WORDS:
-            record["type"] = TYPE_WORDS[line]
+        if not record["text"] and (match := TYPE_RE.match(line)):
+            record["type"] = match.group(1).lower()
+            record["corequisite"] = match.group(2) == "corequisite"
             continue
         record["text"].append(line)
     return {
-        label: classify_item(label, record["type"], " ".join(record["text"]).strip())
+        label: classify_item(
+            label,
+            record["type"],
+            " ".join(record["text"]).strip(),
+            corequisite=record["corequisite"],
+        )
         for label, record in collected.items()
     }
 
@@ -176,11 +201,7 @@ def _check_is_access_conditions_page(lines: list[str], code: str, table_start: i
     """
     # Restrict the header scan to what precedes the tables: a requisite row
     # such as "32144 Technology Research Preparation" is shaped like a header.
-    headers = [
-        match.group(1)
-        for line in lines[:table_start]
-        if (match := HEADER_RE.match(line))
-    ]
+    headers = [match.group(1) for line in lines[:table_start] if (match := HEADER_RE.match(line))]
     # The header is checked before the no-restrictions notice, so a page that
     # names a different subject is rejected either way round.
     if headers and code not in headers:
@@ -208,12 +229,8 @@ def parse_evop(html: str, code: str, source_url: str, fetched_at: str) -> Subjec
     # No need to exclude ANTI_RULE_PREFIX matches here: the two prefixes differ at
     # the first character ("A" vs "R"), so a line starting with RULE_PREFIX can
     # never also start with ANTI_RULE_PREFIX.
-    rule_idx = next(
-        (i for i, line in enumerate(lines) if line.startswith(RULE_PREFIX)), None
-    )
-    end = next(
-        (i for i, line in enumerate(lines) if line.startswith(END_MARKERS)), len(lines)
-    )
+    rule_idx = next((i for i, line in enumerate(lines) if line.startswith(RULE_PREFIX)), None)
+    end = next((i for i, line in enumerate(lines) if line.startswith(END_MARKERS)), len(lines))
     heading_idx = next((i for i, line in enumerate(lines) if line == REQUISITE_HEADING), None)
 
     table_start = min(
@@ -225,9 +242,7 @@ def parse_evop(html: str, code: str, source_url: str, fetched_at: str) -> Subjec
 
     if anti_rule_idx is not None:
         result.antirequisite_rule = lines[anti_rule_idx][len(ANTI_RULE_PREFIX) :].strip()
-        anti_end = (
-            heading_idx if heading_idx is not None and heading_idx > anti_rule_idx else end
-        )
+        anti_end = heading_idx if heading_idx is not None and heading_idx > anti_rule_idx else end
         result.antirequisite_items = _parse_table(lines[anti_rule_idx + 1 : anti_end])
 
     if rule_idx is not None:

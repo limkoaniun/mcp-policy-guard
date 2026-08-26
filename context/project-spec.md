@@ -120,6 +120,11 @@ factor := "(" expr ")" | label
 label  := digit+ letter*
 ```
 
+Items carry a published *type*: `Academic requisite`, `Admission requisite`,
+`Other requisite`, and — discovered only on the first real build, in 32548 —
+`Academic corequisite`, a subject that may be taken concurrently rather than
+completed beforehand.
+
 Measured over 30 subjects from the C04296 Cybersecurity major and IT electives
 stream: 24 carry rule expressions, 6 have none; 172 admission requisite items
 against 37 academic ones. Real examples in ascending difficulty:
@@ -280,28 +285,54 @@ rule expressions. Unresolvable requisites are never scored: an item that could n
 be interpreted is recorded in `unresolved` so the harness excludes it rather than
 counting it as a violation.
 
-### Not yet run
+### Built (thin slice, 2026-08-26)
 
-The dataset build itself. `python -m enrolment.build --scope thin` is roughly 60
-requests against a host publishing `Disallow: /`, and is held pending confirmation.
-Nothing downstream has therefore executed against real data end to end.
+`python -m enrolment.build --scope thin` has run: 14 subjects (C04296 core plus
+the Cybersecurity major), 30 cached pages, 79 seconds, all committed. All 14
+carry requisite rules; zero unparsed items and zero unreadable rule expressions
+after the corequisite fix. Rule depths span 1 to 4, giving the difficulty
+gradient the evaluation needs.
+
+From it: 50 synthetic students and **700 compliance scenarios** —
+47.0% `unmet_academic`, 28.6% `unmet_admission` (see the limitation below),
+24.4% compliant, and **zero unresolved**.
+
+The full-course build (`--scope full`) has not been run.
+
+The first real build immediately earned the coverage gate: it surfaced two
+`Academic corequisite` rows in 32548, a requisite type absent from all 30
+subjects sampled during reconnaissance. They were reported as unparsed rather
+than silently dropped, which is precisely what that invariant exists for.
 
 ### Known limitations, to state before reporting any number
 
-**Admission descriptor variance.** UTS publishes at least four spellings of the
-same admission concept:
+**Admission descriptor variance — now measured, and larger than estimated.**
+The thin-slice build's 14 subjects publish **34 distinct admission descriptors**
+for what is often the same underlying concept:
 
 ```
-"Master's Coursework courses owned by FEIT"
+"Master's Coursework courses owned by FEIT"           <- the one our students carry
 "Master's Coursework owned by FEIT"
+"Master's Combined Coursework co-owned by FEIT"
 "Masters Coursework courses owned by Faculty of Engineering and Information Technology"
-"Master's Combined Coursework courses owned by FEIT"
+"Grad Dip New Area of Study owned by FEIT"
+"Master's Coursework owned by TD School."             <- note the trailing full stop
+... 28 more
 ```
 
-Synthetic students carry one. Since admission items were 172 of 209 sampled, the
-compliance suite's `unmet_admission` bucket will be inflated by wording mismatch
-rather than genuine non-compliance. Fixing this needs the real fetched data and a
-normalisation decision; it belongs in the policy-pack specification.
+Descriptors that carry a course code (`C04296 Master of Information Technology
+(Extension)`) resolve correctly, because students carry the code. The free-text
+FEIT variants do not. Synthetic students match exactly **1 of 34**.
+
+Measured consequence on the built suite: `unmet_admission` is 200 of 700
+scenarios (28.6%), and a substantial share of that is wording mismatch rather
+than genuine non-compliance. **No `unmet_admission` figure should be reported
+until this is resolved.**
+
+The fix is a normalisation decision — which descriptors a C04296 student
+legitimately satisfies — and it needs institutional knowledge rather than
+inference. It belongs in the policy-pack specification and in the supervisor
+questions below.
 
 **The credit-point cap has no ground truth.** `exceeds_credit_cap` exists but has
 no production caller, nothing derives a session load from a student's enrolments,
@@ -327,7 +358,14 @@ values; populating them needs the area-of-study codes the build produces.
    Confirm whether the threshold applies within that course or overall.
 4. **Census dates and session offerings** appear in neither source and will be
    configured synthetically. Confirm that is acceptable.
-5. **Data access.** Confirm the bounded public fetch is acceptable, or supply the
+5. **Corequisite semantics.** 32548 publishes `Academic corequisite` items.
+   The evaluator implements the faithful reading — a corequisite is satisfied by
+   concurrent enrolment as well as by prior completion — and flags the
+   assumption, exactly as with the anti-requisite question above. Confirm.
+6. **Admission descriptor normalisation.** Which of the 34 published descriptors
+   does a C04296 student legitimately satisfy? This is the blocker on reporting
+   any admission-related number.
+7. **Data access.** Confirm the bounded public fetch is acceptable, or supply the
    database extract instead.
 
 ## 11. Deliverables

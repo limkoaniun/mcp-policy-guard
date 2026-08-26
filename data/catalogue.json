@@ -1,0 +1,163 @@
+{
+ "32541": {
+  "code": "32541",
+  "name": "Project Management",
+  "credit_points": 6,
+  "description": "Project Management Skills are integral to the delivery of successful IT solutions. In this subject, you will use specific tools and techniques to simulate these management principles in a project of your choosing. Using a weekly workshop coupled with a two-hour interactive tutorial, you will engage in real-life discussions, case studies and group activities to solidify your knowledge. To prepare for these sessions, there are online resources, sessions with industry experts and assessments based on real-world problems, all used to assist you developing practices in preparation to perform in your career of choice.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32541",
+  "fetched_at": "2026-08-26T11:09:21+00:00"
+ },
+ "43030": {
+  "code": "43030",
+  "name": "Professional Practice in Computing",
+  "credit_points": 6,
+  "description": "This subject focuses on tools and techniques used in the professional practice of design, implementation, cybersecurity, and maintenance of computing systems and related software systems. You will gain an understanding of professional standards, codes of conduct, and methodologies for ensuring high quality outcomes in the various domains within which computing systems are employed and how to convey professional progression in these areas.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/43030",
+  "fetched_at": "2026-08-26T11:09:27+00:00"
+ },
+ "32144": {
+  "code": "32144",
+  "name": "Technology Research Preparation",
+  "credit_points": 6,
+  "description": "This subject equips you with vital communication skills for your engineering and IT career. It focusses on you understanding key research principles, activities and outcomes, which include but are not restricted to crafting literature reviews, completing ethics applications and more. You will be guided and assessed on how to propose a research project as part of the foundational research activities for your degree. By enhancing your academic and professional language proficiency which is crucial for both university and workplace success you will engage with a series of interactive lectures and tutorials, where you will apply concepts in practical exercises and weekly written assignments as provided via the Canvas site.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32144",
+  "fetched_at": "2026-08-26T11:09:32+00:00"
+ },
+ "32309": {
+  "code": "32309",
+  "name": "Digital Forensics",
+  "credit_points": 6,
+  "description": "In this practice-based subject, you will engage in laboratory-based learning to determine if a crime has been committed through the acquisition, analysis, and reporting of digital evidence. Your studies will focus on forensic analysis of network data, including the recovery of website visitation evidence relevant for court cases, alongside scrutinising digital storage devices to identify and retrieve critical data. You will also delve into the examination of operating systems to unearth hidden data, perform detailed analysis of metadata to gain deeper insights, and apply rigorous forensic principles to produce sound and defensible reports. Through these hands-on activities, you will develop a comprehensive understanding of digital forensics and its applications in real-world scenarios.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32309",
+  "fetched_at": "2026-08-26T11:09:37+00:00"
+ },
+ "42904": {
+  "code": "42904",
+  "name": "Cloud Computing and Software as a Service",
+  "credit_points": 6,
+  "description": "This subject provides an introduction to cloud computing, covering architecture, Infrastructure-as-a-Service (IaaS), Platform-as-a-Service (PaaS), Software-as-a-Service (SaaS), virtualisation, and multi-tenancy. You'll first critically analyse a cloud computing aspect through a group research report. Then, you'll develop practical cloud-based software engineering skills on an existing platform, culminating in the creation of a cloud-based software application with your group.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42904",
+  "fetched_at": "2026-08-26T11:09:42+00:00"
+ },
+ "42036": {
+  "code": "42036",
+  "name": "Cybersecurity for Mobile Platforms",
+  "credit_points": 6,
+  "description": "This subject delves into the security risks and emerging threats associated with modern mobile devices and their operating systems. You'll explore platform security models, beginning with an introduction to the Android Studio simulation environment. The subject covers mobile platform security, encryption and decryption of messages, and mobile hardware security. You'll examine enterprise security extensions and conduct SQL mobile data injection, enhancing your understanding of data vulnerabilities. The subject also includes a comprehensive study of iOS security, covering hardware, system, application, service, and network security. Through practice-based learning, including secure data handling using AES and digital signatures, you will gain hands-on experience. The subject concludes with a review and recap of cybersecurity for mobile platforms, ensuring a well-rounded understanding of the field.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42036",
+  "fetched_at": "2026-08-26T11:09:50+00:00"
+ },
+ "42037": {
+  "code": "42037",
+  "name": "IoT Security",
+  "credit_points": 6,
+  "description": "This subject introduces you to the Internet of Things (IoT), focusing on the security challenges and solutions associated with IoT devices and networks. You'll start with an introduction to IoT security and the Contiki software environment. The subject covers a range of critical topics, including implementing IPv6 on IoT devices, authentication methods, and ReST CoAP communications, all through hands-on labs using Contiki. You will explore IoT forensic techniques, hardware security, and data security and privacy concerns, learning practical skills like security port scanning, packet crafting, and Bluetooth sniffing. The subject delves into IoT malware, smart home security, and web application vulnerabilities, providing a comprehensive view of the threats and defenses in the IoT ecosystem. Through industry-relevant projects, you will build secure IoT systems, addressing real-world security challenges and enhancing your ability to protect IoT devices and networks. The subject concludes with a review and recap of IoT security principles, ensuring you have a solid foundation to create a secure and reliable digital ecosystem.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42037",
+  "fetched_at": "2026-08-26T11:09:55+00:00"
+ },
+ "42035": {
+  "code": "42035",
+  "name": "Cloud Security",
+  "credit_points": 6,
+  "description": "This subject explores the fundamentals of security, privacy, and trust in cloud computing, a paradigm that underpins most digital applications/services. Through the subject, you'll learn and apply these principles, designing secure, trustworthy cloud-based solutions on real-life platforms like AWS or Azure. Through project-based learning and industry-standard security risk analysis, you'll acquire the skills to assess, design, and implement security solutions for trustworthy cloud-based applications, gaining a deep understanding of the critical aspects of cloud system security.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42035",
+  "fetched_at": "2026-08-26T11:10:00+00:00"
+ },
+ "42000": {
+  "code": "42000",
+  "name": "Cryptography",
+  "credit_points": 6,
+  "description": "In this subject, you will delve into the critical role of cryptographic techniques in maintaining data confidentiality and ensuring data integrity. These techniques are foundational in cybersecurity, securing a variety of systems such as wireless networks, online payment systems, and cryptocurrencies. You will explore key principles of cryptography, including both symmetric and asymmetric ciphers, cryptographic hash functions, message authentication codes, and digital signatures. Additionally, this subject introduces you to the popular applications of cryptography, such as the cryptographic designs in blockchain. Through hands-on exercises, you will analyse various cryptographic techniques, use popular cryptographic tools, and practise simulated attacks on cryptographic systems.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42000",
+  "fetched_at": "2026-08-26T11:10:05+00:00"
+ },
+ "42891": {
+  "code": "42891",
+  "name": "Infrastructure for Cloud Computing",
+  "credit_points": 6,
+  "description": "This subject expands on cloud computing, focusing on the setup and operation of cloud infrastructure. You'll explore cloud architecture, virtualisation, storage technologies, data centre basics, and cloud security and compliance. With strong industry relevance, the subject includes practical labs where you'll gain hands-on experience with tools prevalent in the cloud infrastructure sector, complementing your broader cloud computing education.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42891",
+  "fetched_at": "2026-08-26T11:10:10+00:00"
+ },
+ "32524": {
+  "code": "32524",
+  "name": "LANS and Routing",
+  "credit_points": 6,
+  "description": "This subject will provide you with a foundational understanding of how computer networks operate, particularly in the creation, operation, and maintenance of local area networks (LANs). You will develop a working knowledge of IP addressing schemes and essential routing and switching techniques within autonomous systems, using specialised networking devices to build small-to-medium networks. Utilising Cisco Networking Academy's online resources, you will engage in regular hands-on practice and gain real-world problem-solving skills by performing basic configuration and troubleshooting tasks with Cisco routers and switches.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32524",
+  "fetched_at": "2026-08-26T11:10:15+00:00"
+ },
+ "32310": {
+  "code": "32310",
+  "name": "Network Security Appliances",
+  "credit_points": 6,
+  "description": "This practical subject draws from the Network Security course provided by the Cisco Academy, with a focus on hands-on laboratory work centred around network security appliances. You'll delve into security technologies, products, and solutions, learning to design, install, configure, and maintain firewalls and secure routers. Key skills include implementing AAA (Authentication, Authorization, and Accounting) and VPNs (Virtual Private Networks) using routers and firewalls. You'll also understand how encryption, hashes, and digital signatures collaborate to ensure confidentiality, integrity, and authentication.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32310",
+  "fetched_at": "2026-08-26T11:10:20+00:00"
+ },
+ "32548": {
+  "code": "32548",
+  "name": "Cybersecurity",
+  "credit_points": 6,
+  "description": "This subject deepens your understanding of cybersecurity from both technical and management viewpoints. You'll explore and discuss cyber-attack methods and defense strategies using industry-standard tools. Key topics include cyber-attacks and defenses, web security, firewalls, intrusion detection systems, and security services like confidentiality, integrity, and authentication (CIA). You'll also learn about technologies including IPSec, SSL, PGP, and S/MIME. You will perform research on recent cyber-attacks and their mitigation methods to master the skills applied in industry context.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32548",
+  "fetched_at": "2026-08-26T11:10:26+00:00"
+ },
+ "32547": {
+  "code": "32547",
+  "name": "UNIX Systems Programming",
+  "credit_points": 6,
+  "description": "This subject equips you with the professional skills for working in a UNIX environment, a widely popular operating system across mobile devices, PCs and servers. With a practice-based approach, you'll first learn the fundamentals of UNIX, and then system programming in the UNIX shell and Python. These skills are vital for a range of IT roles, including system administrators, developers, data engineers, software engineers, network administrators, and IT managers.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32547",
+  "fetched_at": "2026-08-26T11:10:31+00:00"
+ }
+}

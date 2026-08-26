@@ -76,9 +76,7 @@ def _is_unresolvable(item: RequisiteItem) -> bool:
 
 def _unresolved_labels(node: Node, items: dict[str, RequisiteItem]) -> list[str]:
     return sorted(
-        label
-        for label in labels(node)
-        if label not in items or _is_unresolvable(items[label])
+        label for label in labels(node) if label not in items or _is_unresolvable(items[label])
     )
 
 
@@ -92,6 +90,21 @@ def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
         )
 
     if item.kind == "subject":
+        if item.corequisite:
+            # A corequisite may be taken alongside the subject rather than before
+            # it, so current enrolment satisfies it just as prior completion does.
+            held = student.completed_codes() | set(student.enrolled)
+            satisfied = item.subject in held
+            state = (
+                "completed or concurrently enrolled"
+                if satisfied
+                else "neither completed nor enrolled"
+            )
+            return ItemOutcome(
+                label=item.label,
+                satisfied=satisfied,
+                reason=f"{item.subject} {state}",
+            )
         satisfied = item.subject in student.completed_codes()
         return ItemOutcome(
             label=item.label,
@@ -180,9 +193,7 @@ def _explain(
     unresolved = unresolved or []
     if not unmet:
         if unresolved:
-            return (
-                f"No unmet requisite was found for {subject_code}." + _caveat(unresolved)
-            )
+            return f"No unmet requisite was found for {subject_code}." + _caveat(unresolved)
         return f"All requisites for {subject_code} are met."
     described = [_describe(label, items) for label in unmet]
     explanation = f"{subject_code} requires: " + "; ".join(described) + "."
@@ -212,8 +223,7 @@ def evaluate_requisites(
     if record.antirequisite_rule:
         anti_node = parse(record.antirequisite_rule)
         anti_outcomes = {
-            label: resolve_item(item, student)
-            for label, item in record.antirequisite_items.items()
+            label: resolve_item(item, student) for label, item in record.antirequisite_items.items()
         }
         anti_truth = {label: outcome.satisfied for label, outcome in anti_outcomes.items()}
         anti_unresolved = [
@@ -222,9 +232,7 @@ def evaluate_requisites(
         ]
         if evaluate(anti_node, anti_truth):
             held = [
-                record.antirequisite_items[label].text
-                for label, ok in anti_truth.items()
-                if ok
+                record.antirequisite_items[label].text for label, ok in anti_truth.items() if ok
             ]
             return RequisiteResult(
                 subject_code=subject_code,

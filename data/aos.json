@@ -1,0 +1,155 @@
+{
+ "MAJ02093": {
+  "code": "MAJ02093",
+  "title": "Cybersecurity",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK92329) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32309",
+      "name": "Digital Forensics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32309",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "42036",
+      "name": "Cybersecurity for Mobile Platforms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42036",
+      "connector": "AND"
+     },
+     {
+      "code": "42037",
+      "name": "IoT Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42037",
+      "connector": "AND"
+     },
+     {
+      "code": "42035",
+      "name": "Cloud Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42035",
+      "connector": "AND"
+     },
+     {
+      "code": "42000",
+      "name": "Cryptography",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42000",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     },
+     {
+      "code": "32310",
+      "name": "Network Security Appliances",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32310",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92328) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "42035",
+      "name": "Cloud Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42035",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "42036",
+      "name": "Cybersecurity for Mobile Platforms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42036",
+      "connector": "AND"
+     },
+     {
+      "code": "42037",
+      "name": "IoT Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42037",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM91234) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "32547",
+      "name": "UNIX Systems Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32547",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02093",
+  "fetched_at": "2026-08-26T11:09:18+00:00"
+ }
+}

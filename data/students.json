@@ -1,0 +1,1635 @@
+{
+ "S1000001": {
+  "student_id": "S1000001",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42891"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000002": {
+  "student_id": "S1000002",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32524",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42904"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000003": {
+  "student_id": "S1000003",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32310",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000004": {
+  "student_id": "S1000004",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32310",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32547"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000005": {
+  "student_id": "S1000005",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "42891",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000006": {
+  "student_id": "S1000006",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42037"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000007": {
+  "student_id": "S1000007",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "42000",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42037"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000008": {
+  "student_id": "S1000008",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32310"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000009": {
+  "student_id": "S1000009",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32548"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000010": {
+  "student_id": "S1000010",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32547",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000011": {
+  "student_id": "S1000011",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32524",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32310"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000012": {
+  "student_id": "S1000012",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32310",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42036"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000013": {
+  "student_id": "S1000013",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42904"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000014": {
+  "student_id": "S1000014",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "42035",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42891"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000015": {
+  "student_id": "S1000015",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42035"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000016": {
+  "student_id": "S1000016",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32310",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32547"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000017": {
+  "student_id": "S1000017",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "42036"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000018": {
+  "student_id": "S1000018",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32524"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000019": {
+  "student_id": "S1000019",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32309",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "43030"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000020": {
+  "student_id": "S1000020",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32524",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000021": {
+  "student_id": "S1000021",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42037"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000022": {
+  "student_id": "S1000022",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "42000",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42037"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000023": {
+  "student_id": "S1000023",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32310"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000024": {
+  "student_id": "S1000024",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32310",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42000"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000025": {
+  "student_id": "S1000025",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32309",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32310",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32547"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000026": {
+  "student_id": "S1000026",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000027": {
+  "student_id": "S1000027",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42000"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000028": {
+  "student_id": "S1000028",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32547",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000029": {
+  "student_id": "S1000029",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "42036"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000030": {
+  "student_id": "S1000030",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "32524"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000031": {
+  "student_id": "S1000031",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42035"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000032": {
+  "student_id": "S1000032",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "43030"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000033": {
+  "student_id": "S1000033",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "42035"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000034": {
+  "student_id": "S1000034",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32309",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42000"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000035": {
+  "student_id": "S1000035",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32310",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42035",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32309"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000036": {
+  "student_id": "S1000036",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "42891",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32548"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000037": {
+  "student_id": "S1000037",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32541",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42036"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000038": {
+  "student_id": "S1000038",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "42037",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32524"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000039": {
+  "student_id": "S1000039",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "42904"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000040": {
+  "student_id": "S1000040",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32310",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "32548"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000041": {
+  "student_id": "S1000041",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32309",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32310",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42891"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000042": {
+  "student_id": "S1000042",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32310",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32541",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42904"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000043": {
+  "student_id": "S1000043",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32547",
+    "session": "2024-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42904"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000044": {
+  "student_id": "S1000044",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [],
+  "enrolled": [
+   "42035"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000045": {
+  "student_id": "S1000045",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32310",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42000",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "43030"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000046": {
+  "student_id": "S1000046",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32547",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42904"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000047": {
+  "student_id": "S1000047",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32541",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42000"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000048": {
+  "student_id": "S1000048",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32309",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42035"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000049": {
+  "student_id": "S1000049",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32524",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42891"
+  ],
+  "credit_point_cap_per_session": 24
+ },
+ "S1000050": {
+  "student_id": "S1000050",
+  "course": "C04296",
+  "admitted_to": [
+   "C04296",
+   "Master's Coursework courses owned by FEIT"
+  ],
+  "major": "MAJ02093",
+  "sub_major": null,
+  "completed": [
+   {
+    "code": "32144",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42036",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42037",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "43030",
+    "session": "2025-AUT",
+    "credit_points": 6
+   }
+  ],
+  "enrolled": [
+   "42035"
+  ],
+  "credit_point_cap_per_session": 24
+ }
+}

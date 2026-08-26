@@ -31,6 +31,7 @@ class RequisiteItem(BaseModel):
     course: str | None = None
     credit_points: int | None = None
     admission_descriptor: str | None = None
+    corequisite: bool = False
 
 
 class SubjectRequisites(BaseModel):

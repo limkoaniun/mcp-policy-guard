@@ -197,3 +197,23 @@ def test_item_with_blank_details_is_kept_as_unparsed():
     req = parse_evop(html, "32999", "https://example.test", "2026-08-26T00:00:00")
     assert set(req.requisite_items) == {"1", "2"}
     assert req.requisite_items["2"].kind == "unparsed"
+
+
+def test_corequisite_rows_are_parsed_as_subjects():
+    """UTS publishes a third type, 'Academic corequisite', found by the first real build."""
+    req = load("32548")
+    assert req.requisite_rule == "((1 OR 1a))"
+    assert req.requisite_items["1"].kind == "subject"
+    assert req.requisite_items["1"].subject == "32524"
+    assert req.requisite_items["1a"].subject == "49202"
+
+
+def test_corequisite_rows_are_flagged_as_corequisites():
+    req = load("32548")
+    assert req.requisite_items["1"].corequisite is True
+    assert req.requisite_items["1"].type == "academic"
+
+
+def test_ordinary_requisite_rows_are_not_flagged_as_corequisites():
+    req = load("31251")
+    assert req.requisite_items["1"].corequisite is False

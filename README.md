@@ -103,7 +103,9 @@ The proxy itself is not yet runnable — see below.
 
 ## Status
 
-**Done.** The enrolment data layer: requisite rule parser and evaluator, catalogue
+**Done.** The enrolment thin-slice dataset is built and committed — 14 subjects,
+50 synthetic students, 700 compliance scenarios, zero unparsed requisites. And the
+data layer behind it: requisite rule parser and evaluator, catalogue
 and requisite extractors, cached fetcher with provenance, build pipeline with
 coverage gate, synthetic student generator, and the compliance scenario generator.
 177 tests.
