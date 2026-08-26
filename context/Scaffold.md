@@ -1,3 +1,11 @@
+> **SUPERSEDED — 2026-08-26.** This was a one-off task brief for the first
+> implementation session. It is kept as a record of how the scaffold was built.
+> Its Step 2 is partly obsolete: the mock filesystem/email tool server it
+> describes was replaced by the enrolment domain when the supervisor's
+> enrolment-domain proposal was adopted. For current direction see
+> `context/project-spec.md` and `context/project-plan.md`. The proxy and
+> allowlist work it describes is still outstanding and is the next thing built.
+
 # Task: clean up scaffold, then implement the first working slice of MCP Policy Guard
 
 ## Context
