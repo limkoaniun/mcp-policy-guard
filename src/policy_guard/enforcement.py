@@ -20,6 +20,8 @@ from __future__ import annotations
 
 import time
 
+from mcp.types import CallToolResult, TextContent
+
 from .decisions import DecisionLog
 from .engine import PolicyEngine
 from .models import Decision, TaskContext, ToolCall, Verdict
@@ -81,14 +83,16 @@ class EnforcementExtension:
         return self.refusal(decision)
 
     @staticmethod
-    def refusal(decision: Decision) -> dict:
+    def refusal(decision: Decision) -> CallToolResult:
         """What the agent receives when a call is blocked.
 
-        The reason is included verbatim: the agent relays it to the student, so
-        a block reads as an explanation rather than an opaque failure.
+        A CallToolResult rather than a plain dict because `tools/call` results
+        are validated against that model on the way out - a bare dict is
+        rejected and the agent gets a generic internal error instead of the
+        reason. The reason is included verbatim: the agent relays it to the
+        student, so a block reads as an explanation rather than a failure.
         """
-        return {
-            "error": "blocked_by_policy",
-            "policy": decision.policy,
-            "reason": decision.reason,
-        }
+        return CallToolResult(
+            content=[TextContent(type="text", text=decision.reason)],
+            isError=True,
+        )

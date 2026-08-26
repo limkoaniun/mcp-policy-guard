@@ -1,7 +1,11 @@
+import asyncio
+
+from mcp.types import CallToolResult
+
 from policy_guard.decisions import DecisionLog
 from policy_guard.enforcement import EnforcementExtension
 from policy_guard.engine import PolicyEngine
-from policy_guard.models import TaskContext, ToolCall, Verdict
+from policy_guard.models import Decision, TaskContext, ToolCall, Verdict
 from policy_guard.policies.allowlist import AllowlistPolicy
 
 
@@ -103,3 +107,49 @@ def test_require_approval_is_forwarded_in_approve_mode():
     _, forward = extension.decide(ToolCall(tool="enrol"))
     assert forward is True
     assert extension.log.records[0].approval_mode == "approve"
+
+
+def test_a_refusal_survives_the_tools_call_result_validation():
+    """A bare dict is rejected on the way out and the reason is lost with it."""
+    from mcp_types import methods
+
+    decision = Decision(verdict=Verdict.DENY, policy="allowlist", reason="'drop' is not allowed")
+    payload = EnforcementExtension.refusal(decision)
+    dumped = (
+        payload.model_dump(by_alias=True, mode="json", exclude_none=True)
+        if hasattr(payload, "model_dump")
+        else payload
+    )
+    serialised = methods.serialize_server_result("tools/call", "2025-06-18", dumped)
+    assert "'drop' is not allowed" in str(serialised)
+
+
+def test_intercept_tool_call_short_circuits_on_deny_and_forwards_on_allow():
+    """The upstream must never see a denied call, and an allowed call must reach it."""
+
+    class Params:
+        def __init__(self, name):
+            self.name = name
+            self.arguments = {}
+
+    recorded_ctx = []
+
+    async def call_next(ctx):
+        recorded_ctx.append(ctx)
+        return "forwarded-result"
+
+    extension = build()
+    sentinel_ctx = object()
+
+    deny_result = asyncio.run(
+        extension.intercept_tool_call(Params("drop"), sentinel_ctx, call_next)
+    )
+    assert recorded_ctx == []
+    assert isinstance(deny_result, CallToolResult)
+    assert deny_result.is_error is True
+
+    allow_result = asyncio.run(
+        extension.intercept_tool_call(Params("search_subjects"), sentinel_ctx, call_next)
+    )
+    assert recorded_ctx == [sentinel_ctx]
+    assert allow_result == "forwarded-result"
