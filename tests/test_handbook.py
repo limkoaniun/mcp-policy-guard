@@ -4,12 +4,14 @@ from pathlib import Path
 import pytest
 
 from enrolment.handbook import (
+    _as_int,
     extract_page_content,
     parse_course,
     parse_subject,
     referenced_codes,
     strip_html,
 )
+from enrolment.models import BlockItem, Course, CourseBlock
 
 FIXTURES = Path(__file__).parent / "fixtures"
 WHEN = "2026-08-26T00:00:00"
@@ -81,3 +83,53 @@ def test_referenced_codes_filters_by_item_type():
     majors = referenced_codes(course, "major")
     assert "MAJ02093" in majors
     assert all(code.startswith("MAJ") for code in majors)
+
+
+def test_referenced_codes_walks_nested_children_and_deduplicates():
+    def item(code):
+        return BlockItem(code=code, name=f"Subject {code}", item_type="subject")
+
+    course = Course(
+        code="C00000",
+        title="Test",
+        blocks=[
+            CourseBlock(
+                title="Outer",
+                items=[item("11111")],
+                children=[CourseBlock(title="Inner", items=[item("22222"), item("11111")])],
+            )
+        ],
+        source_url="https://example.test",
+        fetched_at="2026-08-26T00:00:00",
+    )
+    assert referenced_codes(course, "subject") == ["11111", "22222"]
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    [
+        ("6", 6),
+        (6, 6),
+        ("6.0", 6),
+        (6.0, 6),
+        (None, None),
+        ("", None),
+        ("  6  ", 6),
+    ],
+)
+def test_as_int_coerces_or_reports_absence(value, expected):
+    assert _as_int(value) == expected
+
+
+@pytest.mark.parametrize("value", [6.5, "abc", "6.5"])
+def test_as_int_raises_on_unparseable_present_value(value):
+    with pytest.raises(ValueError):
+        _as_int(value)
+
+
+def test_parse_subject_raises_when_credit_points_absent():
+    page_content = fixture("handbook_subject_32146.json")
+    page_content = dict(page_content)
+    page_content["credit_points"] = None
+    with pytest.raises(ValueError, match="credit points"):
+        parse_subject(page_content, "https://example.test", WHEN)

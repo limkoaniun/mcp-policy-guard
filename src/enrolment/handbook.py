@@ -37,10 +37,26 @@ def strip_html(raw: str) -> str:
 
 
 def _as_int(value) -> int | None:
-    try:
-        return int(str(value).strip())
-    except (TypeError, ValueError):
+    """Coerce a handbook numeric field to an int.
+
+    Genuinely absent values (None, blank string) become None. Anything present
+    but not a whole number raises: a silently wrong credit-point value would
+    corrupt the credit-point rules this dataset exists to enforce, so it must
+    fail loudly rather than degrade to None or 0.
+    """
+    if value is None:
         return None
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"handbook numeric field is not numeric: {value!r}") from None
+    if number != int(number):
+        raise ValueError(f"handbook numeric field is not a whole number: {value!r}")
+    return int(number)
 
 
 def parse_subject(page_content: dict, source_url: str, fetched_at: str) -> Subject:
@@ -51,10 +67,15 @@ def parse_subject(page_content: dict, source_url: str, fetched_at: str) -> Subje
             if offering.get("teaching_period")
         }
     )
+    # code and title are indexed directly, not .get(): a subject page missing
+    # either is unusable, so fail fast rather than publish a blank record.
+    credit_points = _as_int(page_content.get("credit_points"))
+    if credit_points is None:
+        raise ValueError(f"subject {page_content['code']} publishes no credit points")
     return Subject(
         code=page_content["code"],
         name=page_content["title"],
-        credit_points=_as_int(page_content.get("credit_points")) or 0,
+        credit_points=credit_points,
         description=strip_html(page_content.get("description") or ""),
         sessions=[session for session in sessions if session],
         source_url=source_url,
