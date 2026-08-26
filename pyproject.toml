@@ -6,7 +6,18 @@ authors = [{ name = "Guanyu Lin" }]
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "mcp>=1.0",
+    # mcp 2.x, not 1.x: this project uses `MCPServer`, the `Client` facade and
+    # `Tool.input_schema`, none of which the 1.x API has. `>=1.0` was a
+    # reproducibility claim the project could not honour -- a resolver was free
+    # to install a version the code cannot import.
+    "mcp>=2.0,<3",
+    # `mcp_types` ships as its own distribution (`mcp-types`), pulled in as a
+    # dependency of `mcp` rather than bundled inside it. `tests/` imports it
+    # directly, so it is declared here rather than relied on transitively.
+    "mcp-types>=2.0,<3",
+    # imported directly by `policy_guard/__main__.py` and by the tests; also a
+    # dependency of `mcp`, but this project uses it in its own right.
+    "anyio>=4.0",
     "pydantic>=2.0",
     "pyyaml>=6.0",
 ]
