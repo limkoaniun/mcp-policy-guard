@@ -57,6 +57,17 @@ class RunState:
         except KeyError:
             raise UnknownStudentError(f"no such student: {student_id}") from None
 
+    @property
+    def persistent(self) -> bool:
+        """Whether mutations are being recorded.
+
+        False means this state is ephemeral: `enrol` and `drop` change memory
+        and nothing else. That is legitimate for unit tests, and wrong for a
+        run whose final state is the experiment's ground truth — a caller that
+        needs a durable record should assert on this rather than assume it.
+        """
+        return self.path is not None
+
     def enrol(self, student_id: str, code: str) -> None:
         student = self._require(student_id)
         if code in student.enrolled:
@@ -73,6 +84,9 @@ class RunState:
 
     def save(self) -> None:
         if self.path is None:
+            # Ephemeral by construction — see `persistent`. Deliberately not an
+            # error: the unit tests use this mode. Callers whose state is
+            # ground truth must check `persistent` themselves.
             return
         payload = {code: student.model_dump() for code, student in self._students.items()}
         self.path.write_text(

@@ -83,3 +83,23 @@ def test_reads_do_not_mutate(tmp_path):
     first = state.get("S1000001").model_dump()
     state.get("S1000001").enrolled.append("99999")
     assert state.get("S1000001").model_dump() == first
+
+
+def test_persistent_property_reflects_run_dir(tmp_path):
+    ephemeral = RunState.load(write_students(tmp_path))
+    assert ephemeral.persistent is False
+
+    durable = RunState.load(write_students(tmp_path), run_dir=tmp_path / "run")
+    assert durable.persistent is True
+
+
+def test_ephemeral_state_does_not_persist(tmp_path):
+    """Mutating an ephemeral state changes memory but writes nothing to disk.
+
+    Regression guard for the finding: silent no-op when run_dir is None.
+    """
+    state = RunState.load(write_students(tmp_path))
+    assert state.persistent is False
+    state.enrol("S1000001", "32144")
+    assert "32144" in state.get("S1000001").enrolled
+    assert not (tmp_path / "state.json").exists()
