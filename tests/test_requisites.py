@@ -324,3 +324,55 @@ def test_admission_course_code_matches_with_differing_case():
     )
     reqs = requisites("32531", "(1)", {"1": item})
     assert evaluate_requisites("32531", student(admitted_to=["c04296"]), reqs).satisfied is True
+
+
+def test_admission_item_with_blank_course_string_is_unresolved_not_satisfied():
+    """Empty-string course (not None) must not slip past the unresolvable gate.
+
+    A naive `is None` check on `item.course` treats `course=""` as usable
+    payload, and normalising `""` to `""` then matching it against a blank
+    or whitespace-only `admitted_to` entry reports the item satisfied -- the
+    same critical failure shape as a missing course, through a different
+    door.
+    """
+    item = RequisiteItem(
+        label="1",
+        kind="admission",
+        type="admission",
+        text="garbled",
+        course="",
+    )
+    reqs = requisites("31251", "(1)", {"1": item})
+    result = evaluate_requisites(
+        "31251", student(admitted_to=["C04296", "   "]), reqs
+    )
+    assert result.satisfied is False
+    assert "1" in result.unresolved
+
+
+def test_subject_item_with_blank_code_string_is_unresolved_not_satisfied():
+    item = RequisiteItem(
+        label="1",
+        kind="subject",
+        type="academic",
+        text="subject wording we could not parse a code from",
+        subject="",
+    )
+    reqs = requisites("32146", "(1)", {"1": item})
+    result = evaluate_requisites("32146", student(), reqs)
+    assert result.satisfied is False
+    assert "1" in result.unresolved
+
+
+def test_aos_item_with_blank_code_string_is_unresolved_not_satisfied():
+    item = RequisiteItem(
+        label="1",
+        kind="aos",
+        type="academic",
+        text="area of study wording we could not parse a code from",
+        aos_code="",
+    )
+    reqs = requisites("32531", "(1)", {"1": item})
+    result = evaluate_requisites("32531", student(), reqs)
+    assert result.satisfied is False
+    assert "1" in result.unresolved

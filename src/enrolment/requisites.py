@@ -57,13 +57,13 @@ def _is_unresolvable(item: RequisiteItem) -> bool:
     if item.kind == "unparsed":
         return True
     if item.kind == "subject":
-        return item.subject is None
+        return not (item.subject or "").strip()
     if item.kind == "credit_points":
         return item.credit_points is None
     if item.kind == "aos":
-        return item.aos_code is None
+        return not (item.aos_code or "").strip()
     if item.kind == "admission":
-        return item.course is None and not (item.admission_descriptor or "").strip()
+        return not (item.course or "").strip() and not (item.admission_descriptor or "").strip()
     return False
 
 
@@ -112,8 +112,9 @@ def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
 
     if item.kind == "admission":
         admitted = {_normalise(entry) for entry in student.admitted_to}
+        course = _normalise(item.course or "")
         descriptor = _normalise(item.admission_descriptor or "")
-        course_held = item.course is not None and _normalise(item.course) in admitted
+        course_held = bool(course) and course in admitted
         descriptor_held = bool(descriptor) and descriptor in admitted
         satisfied = course_held or descriptor_held
         return ItemOutcome(
