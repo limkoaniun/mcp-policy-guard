@@ -20,7 +20,9 @@ def subject(code: str) -> Subject:
     )
 
 
-CATALOGUE = {code: subject(code) for code in ["32146", "42890", "31251"]}
+CATALOGUE = {
+    code: subject(code) for code in ["32146", "42890", "31251", "99001", "99002", "99003"]
+}
 
 REQUISITES = {
     "32146": SubjectRequisites(
@@ -48,6 +50,47 @@ REQUISITES = {
             "1": RequisiteItem(
                 label="1", kind="subject", type="academic", text="31473 DSPP", subject="31473"
             )
+        },
+        source_url="u",
+        fetched_at=WHEN,
+    ),
+    "99001": SubjectRequisites(
+        code="99001",
+        requisite_rule="(1)",
+        requisite_items={
+            "1": RequisiteItem(
+                label="1", kind="unparsed", text="wording we cannot read"
+            ),
+        },
+        source_url="u",
+        fetched_at=WHEN,
+    ),
+    "99002": SubjectRequisites(
+        code="99002",
+        requisite_rule="(1)",
+        requisite_items={
+            "1": RequisiteItem(
+                label="1",
+                kind="admission",
+                type="admission",
+                text="admission to Graduate Diploma in Advanced IT",
+                admission_descriptor="Graduate Diploma in Advanced IT",
+            ),
+        },
+        source_url="u",
+        fetched_at=WHEN,
+    ),
+    "99003": SubjectRequisites(
+        code="99003",
+        requisite_rule="(1)",
+        requisite_items={
+            "1": RequisiteItem(
+                label="1",
+                kind="credit_points",
+                type="academic",
+                text="96 credit points",
+                credit_points=96,
+            ),
         },
         source_url="u",
         fetched_at=WHEN,
@@ -126,3 +169,22 @@ def test_write_jsonl_emits_one_object_per_line(tmp_path):
     write_jsonl(path, scenarios)
     lines = path.read_text().strip().split("\n")
     assert len(lines) == len(scenarios)
+
+
+def test_unresolvable_requisite_is_labelled_unresolved():
+    scenarios = generate_scenarios([student("S1")], CATALOGUE, REQUISITES)
+    by_code = {s.subject_code: s for s in scenarios}
+    assert by_code["99001"].failure_mode == "unresolved"
+    assert by_code["99001"].expected_satisfied is False
+
+
+def test_unmet_admission_requisite_is_labelled():
+    scenarios = generate_scenarios([student("S1")], CATALOGUE, REQUISITES)
+    by_code = {s.subject_code: s for s in scenarios}
+    assert by_code["99002"].failure_mode == "unmet_admission"
+
+
+def test_unmet_credit_points_requisite_is_labelled():
+    scenarios = generate_scenarios([student("S1")], CATALOGUE, REQUISITES)
+    by_code = {s.subject_code: s for s in scenarios}
+    assert by_code["99003"].failure_mode == "unmet_credit_points"

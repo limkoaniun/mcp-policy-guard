@@ -43,6 +43,14 @@ class ComplianceScenario(BaseModel):
 
 
 def classify_failure(result, record: SubjectRequisites | None) -> str:
+    """Categorise one evaluation outcome for the compliance dataset.
+
+    When an AND-composed rule has several simultaneously-unmet items of
+    different kinds, this returns only the single highest-priority kind
+    (admission > credit_points > academic) — it is not an exhaustive account
+    of everything unmet. `summarise()` counts should be read as "at least
+    this many failed for this reason", not precise per-category tallies.
+    """
     if result.blocked_by_antirequisite:
         return "antirequisite"
     if result.unresolved:
@@ -62,6 +70,14 @@ def classify_failure(result, record: SubjectRequisites | None) -> str:
 
 
 def _rule_depth(record: SubjectRequisites | None) -> int:
+    """Nesting depth of the published *requisite* rule specifically.
+
+    `0` means "no requisite rule is published for this subject" — that
+    includes subjects with no rules at all and subjects that publish only an
+    anti-requisite rule. Anti-requisite depth is not folded into this value;
+    `failure_mode` already separates anti-requisite cases from requisite
+    ones, so those two populations should not be merged under one number.
+    """
     if record is None or not record.requisite_rule:
         return 0
     return depth(parse(record.requisite_rule))
