@@ -33,7 +33,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.die_on_call:
             # No exception, no shutdown, no reply: the process is simply gone,
             # exactly as a killed or crashed subprocess would be.
-            os._exit(70)
+            # A distinct code from the CLI's own EXIT_RUN_FAILED, so a test
+            # asserting on the proxy's exit cannot be reading this one.
+            os._exit(3)
         return f"thing {code}"
 
     server.run("stdio")

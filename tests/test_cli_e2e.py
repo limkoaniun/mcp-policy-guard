@@ -189,7 +189,7 @@ def test_an_upstream_dying_mid_task_fails_the_run_loudly(tmp_path):
         },
     ]
 
-    process = subprocess.Popen(
+    with subprocess.Popen(
         [
             sys.executable, "-m", "policy_guard",
             "--task", str(task_path),
@@ -202,19 +202,18 @@ def test_an_upstream_dying_mid_task_fails_the_run_loudly(tmp_path):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-    )
-    try:
-        # stdin is deliberately left open. Closing it is an ordinary peer
-        # disconnect and therefore a clean shutdown; the run must fail on the
-        # dead upstream alone, with the connection still live.
-        process.stdin.write("".join(json.dumps(m) + "\n" for m in messages))
-        process.stdin.flush()
-        returncode = process.wait(timeout=60)
-        stderr = process.stderr.read()
-    finally:
-        if process.poll() is None:  # pragma: no cover - only on a hang
-            process.kill()
-            process.wait(timeout=10)
+    ) as process:
+        try:
+            # stdin is deliberately left open. Closing it is an ordinary peer
+            # disconnect and therefore a clean shutdown; the run must fail on
+            # the dead upstream alone, with the connection still live.
+            process.stdin.write("".join(json.dumps(m) + "\n" for m in messages))
+            process.stdin.flush()
+            returncode = process.wait(timeout=60)
+            stderr = process.stderr.read()
+        finally:
+            if process.poll() is None:  # pragma: no cover - only on a hang
+                process.kill()
 
     assert returncode == EXIT_RUN_FAILED, (
         f"the proxy exited {returncode}, not {EXIT_RUN_FAILED}, after its "
