@@ -1,0 +1,481 @@
+{
+ "contentTypeLabel": "Subject",
+ "volume_of_learning": "",
+ "learning_approach": "<ol> <li>Introduction to data (attributes, relationships, behaviours)</li> <li>Visual representations of data, information and knowledge</li> <li>Visual querying, interaction and exploration</li> <li>Textual data visualization</li> <li>Zoomable interfaces, &ldquo;Focus+Context&rdquo; navigation</li> <li>Hypermedia (web) visualisation</li> <li>High-dimensional visualization</li> <li>Introduction of visual data analytics</li> <li>Behavior-driven data visualization</li> <li>Evaluation, visualisation and interaction</li> </ol>",
+ "duration_ft_min": "",
+ "callista_version": "",
+ "code": "32146",
+ "sms_version": "3",
+ "uac_code": "",
+ "professional_recognition": null,
+ "duration_ft_period": {
+  "label": null,
+  "value": null
+ },
+ "asced_narrow": {
+  "value": "",
+  "cl_id": null,
+  "key": "display_value"
+ },
+ "subclass": {
+  "label": "Subject",
+  "value": "subject"
+ },
+ "type": {
+  "label": "Subject",
+  "value": "SJ"
+ },
+ "quota_rationale": "",
+ "version_name": "2026.02",
+ "special_requirements": "",
+ "duration_pt_min": "",
+ "timetable_this_unit": "true",
+ "description": "<p>This subject focuses on the vital technologies of data visualisation and visual interaction that underpin visual analytics and decision-making. You&#39;ll engage with recent data visualisation literature and practice using advanced software. The subject outlines the visual data analytics process and methodology, including the critical role of human interaction with interactive visual interfaces. Upon completion, you&#39;ll be adept at designing and evaluating sophisticated visualisation interfaces, positioning you for roles as a data visualisation designer and visual data analyst.</p>",
+ "title": "Data Visualisation and Visual Analytics",
+ "pre_requisites": "",
+ "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+ "professional_accreditation": null,
+ "other_notes": null,
+ "duration_ft_std": "",
+ "version": "2",
+ "aim": "",
+ "learning_experiences": null,
+ "content": null,
+ "other_learning_experiences": null,
+ "learning_and_teaching_resources": null,
+ "collaborating_disciplines": [],
+ "assessment": null,
+ "repeatable": "false",
+ "overview": "",
+ "end_date": "",
+ "duration_pt_period": {
+  "label": null,
+  "value": null
+ },
+ "sms_status": {
+  "label": null,
+  "value": null
+ },
+ "learning_materials": null,
+ "special_topic": "false",
+ "asced_broad": {
+  "value": "",
+  "cl_id": null,
+  "key": "display_value"
+ },
+ "publish_tuition_fees": "true",
+ "placement_proportion": {
+  "label": null,
+  "value": null
+ },
+ "notes": "",
+ "published_in_handbook": {
+  "label": "Yes",
+  "value": "1"
+ },
+ "implementation_year": "2026",
+ "duration_ft_max": "",
+ "other_information": "",
+ "asced_detailed": {
+  "value": "",
+  "cl_id": null,
+  "key": "display_value"
+ },
+ "study_level": [],
+ "quota_enrolment_requirements": "",
+ "study_level_ref": "Postgraduate",
+ "status": {
+  "label": "Approved",
+  "value": "Active"
+ },
+ "duration_pt_max": "",
+ "duration_pt_std": "",
+ "credit_points": "6",
+ "areas_of_employment_handbook": "",
+ "additional_information": [],
+ "parent_id": {
+  "value": "Master Record: 32146",
+  "cl_id": "7a5102e71be2e590bca998ec2d4bcb96",
+  "key": "code",
+  "type": "x_f5sl_cl_master_record"
+ },
+ "start_date": "2013-01-01",
+ "exclusions": "",
+ "learning_resource": [],
+ "learning_activity": [],
+ "requisites": [],
+ "educational_area_display": [
+  {
+   "display_name": "010095 Graduate School of Health",
+   "name": "Graduate School of Health",
+   "cl_id": "02142b2fc3ddc2107fe22c4bb001312a",
+   "code": "010095",
+   "subject_area_url": "/browse/Subject Areas/010095"
+  },
+  {
+   "display_name": "010060 Engineering",
+   "name": "Engineering",
+   "cl_id": "06142b2fc3ddc2107fe22c4bb0013129",
+   "code": "010060",
+   "subject_area_url": "/browse/Subject Areas/010060"
+  },
+  {
+   "display_name": "010900 General",
+   "name": "General",
+   "cl_id": "0e142b2fc3ddc2107fe22c4bb001312a",
+   "code": "010900",
+   "subject_area_url": "/browse/Subject Areas/010900"
+  },
+  {
+   "display_name": "010100 Science",
+   "name": "Science",
+   "cl_id": "c2142b2fc3ddc2107fe22c4bb001312a",
+   "code": "010100",
+   "subject_area_url": "/browse/Subject Areas/010100"
+  },
+  {
+   "display_name": "010010 Business",
+   "name": "Business",
+   "cl_id": "c6142b2fc3ddc2107fe22c4bb0013127",
+   "code": "010010",
+   "subject_area_url": "/browse/Subject Areas/010010"
+  },
+  {
+   "display_name": "010070 Information Technology",
+   "name": "Information Technology",
+   "cl_id": "c6142b2fc3ddc2107fe22c4bb0013129",
+   "code": "010070",
+   "subject_area_url": "/browse/Subject Areas/010070"
+  },
+  {
+   "display_name": "010035 Creative Intelligence and Innovation",
+   "name": "Creative Intelligence and Innovation",
+   "cl_id": "ca142b2fc3ddc2107fe22c4bb0013128",
+   "code": "010035",
+   "subject_area_url": "/browse/Subject Areas/010035"
+  },
+  {
+   "display_name": "010110 Analytics and Data Science",
+   "name": "Analytics and Data Science",
+   "cl_id": "86142b2fc3ddc2107fe22c4bb001312a",
+   "code": "010110",
+   "subject_area_url": "/browse/Subject Areas/010110"
+  },
+  {
+   "display_name": "010080 Law",
+   "name": "Law",
+   "cl_id": "8a142b2fc3ddc2107fe22c4bb0013129",
+   "code": "010080",
+   "subject_area_url": "/browse/Subject Areas/010080"
+  },
+  {
+   "display_name": "010040 Education",
+   "name": "Education",
+   "cl_id": "8e142b2fc3ddc2107fe22c4bb0013128",
+   "code": "010040",
+   "subject_area_url": "/browse/Subject Areas/010040"
+  },
+  {
+   "display_name": "010020 Design, Architecture and Building",
+   "name": "Design, Architecture and Building",
+   "cl_id": "46142b2fc3ddc2107fe22c4bb0013128",
+   "code": "010020",
+   "subject_area_url": "/browse/Subject Areas/010020"
+  },
+  {
+   "display_name": "010120 Transdisciplinary Innovation",
+   "name": "Transdisciplinary Innovation",
+   "cl_id": "4a142b2fc3ddc2107fe22c4bb001312a",
+   "code": "010120",
+   "subject_area_url": "/browse/Subject Areas/010120"
+  },
+  {
+   "display_name": "010090 Health",
+   "name": "Health",
+   "cl_id": "4e142b2fc3ddc2107fe22c4bb0013129",
+   "code": "010090",
+   "subject_area_url": "/browse/Subject Areas/010090"
+  },
+  {
+   "display_name": "010022 Architecture",
+   "name": "Architecture",
+   "cl_id": "2ea4943dc37903107fe22c4bb0013136",
+   "code": "010022",
+   "subject_area_url": "/browse/Subject Areas/010022"
+  },
+  {
+   "display_name": "010025 Built Environment",
+   "name": "Built Environment",
+   "cl_id": "a9b4dc3dc37903107fe22c4bb0013105",
+   "code": "010025",
+   "subject_area_url": "/browse/Subject Areas/010025"
+  },
+  {
+   "display_name": "010028 Design ",
+   "name": "Design ",
+   "cl_id": "54c4943dc37903107fe22c4bb00131b0",
+   "code": "010028",
+   "subject_area_url": "/browse/Subject Areas/010028"
+  },
+  {
+   "display_name": "010050 International Studies and Social Sciences",
+   "name": "International Studies and Social Sciences",
+   "cl_id": "42142b2fc3ddc2107fe22c4bb0013129",
+   "code": "010050",
+   "subject_area_url": "/browse/Subject Areas/010050"
+  },
+  {
+   "display_name": "010030A Communication and Social Sciences",
+   "name": "Communication and Social Sciences",
+   "cl_id": "9ee9ed12c3064b107fe22c4bb0013105",
+   "code": "010030A",
+   "subject_area_url": "/browse/Subject Areas/010030A"
+  },
+  {
+   "display_name": "010030 Communication",
+   "name": "Communication",
+   "cl_id": "0a142b2fc3ddc2107fe22c4bb0013128",
+   "code": "010030",
+   "subject_area_url": "/browse/Subject Areas/010030"
+  }
+ ],
+ "unit_description": [],
+ "unit_learning_outcomes": [
+  {
+   "lo_domain_description": "",
+   "offerings": [],
+   "linking_id": "627fdf92c3025e10020e061ad001315b",
+   "lo_cl_id": "9b7d7d1dc36ac790020e061ad00131d2",
+   "academic_item": {
+    "value": "32146",
+    "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+    "key": "code"
+   },
+   "description": "<p>Apply interactive data visualisation techniques. (D.1)</p>",
+   "lo_domain": [],
+   "order": "200",
+   "number": "2",
+   "code": "SLO2",
+   "cl_id": "9b7d7d1dc36ac790020e061ad00131d2",
+   "ga_map": []
+  },
+  {
+   "lo_domain_description": "",
+   "offerings": [],
+   "linking_id": "6e7fdf92c3025e10020e061ad001315b",
+   "lo_cl_id": "137d7d1dc36ac790020e061ad00131d3",
+   "academic_item": {
+    "value": "32146",
+    "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+    "key": "code"
+   },
+   "description": "<p>Design and create data visualisations that facilitate the discovery and presentation of data-driven stories. (C.1)</p>",
+   "lo_domain": [],
+   "order": "400",
+   "number": "4",
+   "code": "SLO4",
+   "cl_id": "137d7d1dc36ac790020e061ad00131d3",
+   "ga_map": []
+  },
+  {
+   "lo_domain_description": "",
+   "offerings": [],
+   "linking_id": "aa7fdf92c3025e10020e061ad001315a",
+   "lo_cl_id": "177d7d1dc36ac790020e061ad00131d3",
+   "academic_item": {
+    "value": "32146",
+    "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+    "key": "code"
+   },
+   "description": "<p>Recognise, compare and apply a range of static data visualisation techniques. (D.1)</p>",
+   "lo_domain": [],
+   "order": "100",
+   "number": "1",
+   "code": "SLO1",
+   "cl_id": "177d7d1dc36ac790020e061ad00131d3",
+   "ga_map": []
+  },
+  {
+   "lo_domain_description": "",
+   "offerings": [],
+   "linking_id": "e67fdf92c3025e10020e061ad001315b",
+   "lo_cl_id": "1b7d7d1dc36ac790020e061ad00131d3",
+   "academic_item": {
+    "value": "32146",
+    "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+    "key": "code"
+   },
+   "description": "<p>Design and create data visualisations for particular social contexts that are appropriate for specific users. (C.1)</p>",
+   "lo_domain": [],
+   "order": "300",
+   "number": "3",
+   "code": "SLO3",
+   "cl_id": "1b7d7d1dc36ac790020e061ad00131d3",
+   "ga_map": []
+  }
+ ],
+ "additional_format": [],
+ "work_integrated_learning_description": "",
+ "requisite_detail": "<p>Before you enrol in this subject, you must ensure you have met its requisites. The requisites for this subject can be viewed on its <a href=\"https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32146\"> access conditions </a>page. </p><p>To learn more about requisites, please visit the<a href=\"https://www.uts.edu.au/current-students/managing-your-course/using-uts-systems/student-forms-apps-and-systems/uts-handbook\"> How to use the Handbook </a>guide.</p>",
+ "wil_list": null,
+ "primary_format": [],
+ "academic_org": "Computer Science",
+ "level": null,
+ "educational_area": "",
+ "special_unit_type": "No",
+ "associations": [],
+ "work_integrated_learning": "",
+ "credit_points_display": "6 Credit points",
+ "parent_academic_org": "Engineering and Information Technology",
+ "eftsl_short_desc": "0",
+ "enrolment_rule": [],
+ "search_title": "32146 - Data Visualisation and Visual Analytics",
+ "credit_points_header": " CPs",
+ "teaching_strategies": "<p>This subject is comprised of an introductory lecture (week 1) and workshops (weeks 2 to 12). Each week of workshops is self-paced through the learning management system. You are expected to complete a range of different learning activities throughout the week. Activities provide opportunities to learn, apply and discuss the knowledge gained in a practical manner. Feedback is provided from both peers and teaching staff throughout the activities. You are encouraged to actively provide feedback and interact with staff and students. The workshops will allow you to interact with staff and students, ask questions and receive clarification and feedback.</p>",
+ "inherent_requirement": [],
+ "offering": [
+  {
+   "linking_id": "e7f06b4f47dd5610d42c8833036d43d8",
+   "cl_id": "1f7d7d1dc36ac790020e061ad00131d1",
+   "comments": "",
+   "language_of_instruction": {
+    "label": "English",
+    "value": "en"
+   },
+   "name": "",
+   "ext_id": "",
+   "publish": "true",
+   "order": "",
+   "offered": "true",
+   "off_id": "1f7d7d1dc36ac790020e061ad00131d1",
+   "academic_item": {
+    "value": "32146",
+    "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+    "key": "code"
+   },
+   "year": "",
+   "clarification_to_appear_in_handbook": "",
+   "start_date": "",
+   "end_date": "",
+   "display_name": "City campus-Autumn Session-On campus - Weekly",
+   "location": "City campus",
+   "attendance_type": "NA",
+   "student_types": "Domestic, International",
+   "mode": "On campus - Weekly",
+   "admission_calendar": "",
+   "teaching_period": "Autumn Session",
+   "links": []
+  },
+  {
+   "linking_id": "2bf06b4f47dd5610d42c8833036d43d9",
+   "cl_id": "1b7d7d1dc36ac790020e061ad00131d1",
+   "comments": "",
+   "language_of_instruction": {
+    "label": "English",
+    "value": "en"
+   },
+   "name": "",
+   "ext_id": "",
+   "publish": "true",
+   "order": "",
+   "offered": "true",
+   "off_id": "1b7d7d1dc36ac790020e061ad00131d1",
+   "academic_item": {
+    "value": "32146",
+    "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+    "key": "code"
+   },
+   "year": "",
+   "clarification_to_appear_in_handbook": "",
+   "start_date": "",
+   "end_date": "",
+   "display_name": "City campus-Spring Session-On campus - Weekly",
+   "location": "City campus",
+   "attendance_type": "NA",
+   "student_types": "Domestic, International",
+   "mode": "On campus - Weekly",
+   "admission_calendar": "",
+   "teaching_period": "Spring Session",
+   "links": []
+  }
+ ],
+ "learning_activity_workload": "150",
+ "offering_description": "Click on Select availability in the top right of screen and choose from the location, attendance mode and session options.",
+ "student_types": "",
+ "aqf_level": null,
+ "additional_details_req": [
+  {
+   "domain": "Attendance requirement",
+   "additional_details_req": [
+    {
+     "statement": "",
+     "order": "",
+     "type": {
+      "label": "Additional subject details",
+      "value": "additional_subject_details"
+     },
+     "description": "<p>1hr one-off orientation lecture, 2hpw (weekly workshop)</p>",
+     "academic_item": {
+      "value": "32146",
+      "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+      "key": "code"
+     },
+     "cl_id": "537dbd1dc36ac790020e061ad001311d",
+     "presentation_description": "<p><p>1hr one-off orientation lecture, 2hpw (weekly workshop)</p></p> <p><strong>Offerings: </strong>All</p>",
+     "offerings": "Applies to all offerings",
+     "domain": "Attendance requirement",
+     "links": []
+    }
+   ]
+  },
+  {
+   "domain": "Professional standards",
+   "additional_details_req": [
+    {
+     "statement": "",
+     "order": "",
+     "type": {
+      "label": "Additional subject details",
+      "value": "additional_subject_details"
+     },
+     "description": "<p><strong>Engineers Australia Stage 1 Competencies</strong></p> <p>This subject contributes to the development of the following Engineers Australia Stage 1 Competencies:</p> <ul> <li>1.3. In-depth understanding of specialist bodies of knowledge within the engineering discipline.</li> <li>2.3. Application of systematic engineering synthesis and design processes.</li> <li>3.3. Creative, innovative and pro-active demeanour.</li> </ul>",
+     "academic_item": {
+      "value": "32146",
+      "cl_id": "5f7d7d1dc36ac790020e061ad00131cf",
+      "key": "code"
+     },
+     "cl_id": "5f7dbd1dc36ac790020e061ad001311d",
+     "presentation_description": "<p><p><strong>Engineers Australia Stage 1 Competencies</strong></p> <p>This subject contributes to the development of the following Engineers Australia Stage 1 Competencies:</p> <ul> <li>1.3. In-depth understanding of specialist bodies of knowledge within the engineering discipline.</li> <li>2.3. Application of systematic engineering synthesis and design processes.</li> <li>3.3. Creative, innovative and pro-active demeanour.</li> </ul></p> <p><strong>Offerings: </strong>All</p>",
+     "offerings": "Applies to all offerings",
+     "domain": "Professional standards",
+     "links": []
+    }
+   ]
+  }
+ ],
+ "type_ref": "",
+ "key_search_term": "",
+ "additional_costs": null,
+ "grading_schema": "Grade and marks",
+ "academic_item_type": "Subject",
+ "unit_category": null,
+ "secondary_format": [],
+ "sub_academic_org": "",
+ "other_requirement": [],
+ "assessment_description": "Click on Select availability in the top right of screen and choose from the location, attendance mode and session options.",
+ "language_of_instruction": "",
+ "links": [],
+ "yearSwitcher": [
+  {
+   "label": "2025",
+   "value": "2025",
+   "href": "/subject/2025/32146?year=2025"
+  },
+  {
+   "label": "2026",
+   "value": "2026",
+   "href": "/subject/2026/32146?year=2026"
+  }
+ ],
+ "university": "UTS"
+}

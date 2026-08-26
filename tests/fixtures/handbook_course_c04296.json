@@ -1,0 +1,2377 @@
+{
+ "contentTypeLabel": "Course",
+ "implementation_year": "2026",
+ "other_information": "",
+ "type_ref": "Master's",
+ "academic_org": "",
+ "status": {
+  "label": "Approved",
+  "value": "Active"
+ },
+ "notes": "<p>Students who do not meet the admission requirements may be eligible for admission to the Master of Information Technology (C04295), the Graduate Certificate in Information Technology (C11142) or the Graduate Certificate in Information Technology Studies (C11247).</p>\n<p>The MAJ02083 Internetworking major within this course is not available for intake in Spring 2026.</p>",
+ "credit_points": "96",
+ "study_level_ref": "Postgraduate",
+ "volume_of_learning": "",
+ "type": {
+  "label": "Master's Coursework",
+  "value": "MC"
+ },
+ "description": "<p>This course is tailored for IT professionals seeking to deepen their expertise in technical or management areas. Choose this course to stay abreast of IT advancements and to enhance your career prospects by customising your learning to your professional goals.</p>\n<p>Stand out with our course&#39;s unique blend of contemporary ICT knowledge and business acumen, preparing you to tackle industry challenges and diversify your skills.</p>\n<p>Gain advanced insights into IT within a commercial setting, empowering you to drive IT solutions in your organisation. Through this course, you&#39;ll learn to navigate the evolving landscape of IT roles, from business intelligence and e-business development to IT security and software quality, equipping you for a range of positions in the IT sector.</p>\n<p>Teaching methods include lectures, seminars, and project work, ensuring a dynamic and interactive learning environment. This approach fosters critical thinking and problem-solving skills, providing you with the tools to excel in the ever-changing IT industry.</p>",
+ "cl_id": "1a32b67283b7f690fed7d4326daad343",
+ "title": "Master of Information Technology (Extension)",
+ "version": "6",
+ "subclass": {
+  "label": "Course",
+  "value": "course"
+ },
+ "code": "C04296",
+ "sub_academic_org": "",
+ "professional_recognition": "<p>Graduates are eligible to apply for professional-level membership with the <a href=\"https://www.acs.org.au\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">Australian Computer Society</a>.</p>",
+ "professional_accreditation": null,
+ "areas_of_employment_handbook": "",
+ "version_name": "2026.06",
+ "aim": "",
+ "educational_area": "Information Technology",
+ "ext_id": "",
+ "source": {
+  "value": "aa8584c483b7f250fed7d4326daad3c5",
+  "cl_id": "aa8584c483b7f250fed7d4326daad3c5",
+  "key": ""
+ },
+ "active": "false",
+ "class_name": "Course",
+ "effective_date": "2026-01-01",
+ "aqf_level": {
+  "label": null,
+  "value": null
+ },
+ "exit": null,
+ "part_time": "false",
+ "additional_information": "<p>Students are required to complete 96 credit points, comprising:</p>\n<ul><li>Core (18 credit points)</li><li>Major (36 credit points)</li><li>Sub-major (24 credit points)</li><li>Project and elective choice (18 credit points)</li></ul>\n<p>The sub-major must be taken in a different field to that of the major.</p>",
+ "no_enrolment": "false",
+ "publication_information": "",
+ "internship_placement": null,
+ "cricos_code": "084254E",
+ "specialisations": null,
+ "govt_special_course_type": {
+  "label": null,
+  "value": null
+ },
+ "entry_list": [],
+ "entry_guarantee": "false",
+ "police_check": "false",
+ "year_12_prerequisites": "",
+ "last_review_date": "",
+ "career_opportunities": "<p>Depending on the major selected, career options include a wide variety of positions in the IT industry, including business intelligence expert, e-business developer, games developer, information systems manager, IT security analyst, IT security manager, ICT security analyst, IT security consultant, pen testing, IT project manager, movie animator, software architect, software quality/testing specialist and systems analyst.</p>",
+ "fees_description": null,
+ "location": "",
+ "overview": null,
+ "course_version": {
+  "value": "C04296",
+  "cl_id": "1a32b67283b7f690fed7d4326daad343",
+  "key": "code"
+ },
+ "alternative_exits": null,
+ "progression": null,
+ "english_language": "",
+ "ib_maths": "",
+ "requirements": null,
+ "qualification_requirement": "",
+ "articulation_arrangement": null,
+ "working_with_children_check": "false",
+ "partner_faculty": {
+  "label": null,
+  "value": null
+ },
+ "full_time": "false",
+ "qualifications": "",
+ "double_degrees": null,
+ "international_students": "false",
+ "special_admission": null,
+ "entry": null,
+ "atar": "",
+ "course_data_updated": "2026-03-27T04:58:33",
+ "prior_learning_recognition": "<p>Subject exemption through <a href=\"https://www.uts.edu.au/study/information-technology/essential-information/recognition-prior-learning\" rel=\"nofollow\">recognition of prior learning</a> (RPL) is not available for this course.</p>\n<p>Other/additional RPL may be granted via subject substitution to an alternative/advanced postgraduate subject in a similar field of study.</p>",
+ "vce_other": "",
+ "on_campus": "false",
+ "research_areas": null,
+ "accreditation_start_date": "",
+ "participation_enrolment": null,
+ "vce_english": "",
+ "ib_other": "",
+ "online": "false",
+ "progress_to_masters": "",
+ "additional_info": null,
+ "cricos_disclaimer_applicable": "false",
+ "other_description": "",
+ "other": "false",
+ "health_records_and_privacy": "false",
+ "information_declaration": "false",
+ "ahegs": null,
+ "part_time_duration": "",
+ "cricos_status": {
+  "label": null,
+  "value": null
+ },
+ "full_time_duration": "",
+ "prohibited_employment_declaration": "false",
+ "minimum_entry_requirements": "",
+ "accreditation_end_date": "",
+ "accreditation_end": "",
+ "post_nominals": "",
+ "ib_english": "",
+ "credit_arrangements": null,
+ "outcomes": null,
+ "maximum_duration": "",
+ "majors_minors": null,
+ "vce_maths": "",
+ "degrees_awarded": null,
+ "non_year_12_entry": "",
+ "study_plans": [
+  {
+   "title": "Business Information Systems major, Internetworking sub-major, Autumn commencing, full time",
+   "description": "<p>The sample program below shows a suggested sequence of subjects for the Business Information Systems major and Internetworking sub-major for a full-time student commencing the course in Autumn session. Students in other majors/sub-majors follow a similar sequence. The program is intended as a guide only and does not take into account such factors as recognition of prior learning, changes in attendance mode and subject availability, or satisfactory academic progress.</p>\n<p>Students should consult the&nbsp;<a href=\"https://www.uts.edu.au/current-students/timetable/uts-timetable-planner\">Timetable Planner</a>&nbsp;to confirm the availability of subjects in the current academic year.</p>",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "cl_id": "df32b2f6473bbad0413994ed036d43f8",
+   "published_in_handbook": "true",
+   "container": [
+    {
+     "name": "Year 2",
+     "order": "2",
+     "parent_record": {
+      "value": "Progression Map Container: Business Information Systems major, Internetworking sub-major, Autumn commencing, full time",
+      "cl_id": "9332b2f6473bbad0413994ed036d43fc",
+      "key": "",
+      "type": "x_f5sl_cl_progression_map_container"
+     },
+     "parent_table": "x_f5sl_cl_progression_map_container",
+     "cl_id": "d332b2f6473bbad0413994ed036d43fd",
+     "relationship": [],
+     "container": [
+      {
+       "name": "Spring session",
+       "order": "2",
+       "parent_record": {
+        "value": "Progression Map Container: Year 2",
+        "cl_id": "d332b2f6473bbad0413994ed036d43fd",
+        "key": "",
+        "type": "x_f5sl_cl_progression_map_container"
+       },
+       "parent_table": "x_f5sl_cl_progression_map_container",
+       "cl_id": "1732f2f6473bbad0413994ed036d4300",
+       "relationship": [
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: Elective",
+          "cl_id": "d332b2f6473bbad0413994ed036d43fb",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "3",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "1732f2f6473bbad0413994ed036d4300",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1732f2f6473bbad0413994ed036d4301",
+         "ai_details": {
+          "title": "Elective",
+          "credit_points": "6",
+          "cl_id": "d332b2f6473bbad0413994ed036d43fb",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: BIS Advanced Option",
+          "cl_id": "9f32b2f6473bbad0413994ed036d43f9",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "1",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "1732f2f6473bbad0413994ed036d4300",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1732f2f6473bbad0413994ed036d4302",
+         "ai_details": {
+          "title": "BIS Advanced Option",
+          "credit_points": "6",
+          "cl_id": "9f32b2f6473bbad0413994ed036d43f9",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 32040",
+          "cl_id": "26b49bab47fae250a31de422036d437a",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "0",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "1732f2f6473bbad0413994ed036d4300",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1f32f2f6473bbad0413994ed036d4300",
+         "ai_details": {
+          "code": "32040",
+          "title": "Industry Project",
+          "credit_points": "6",
+          "cl_id": "26b49bab47fae250a31de422036d437a",
+          "state": "show",
+          "academic_item_url": "/subject/2026/32040",
+          "custom_ai": false,
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: Elective",
+          "cl_id": "1f32b2f6473bbad0413994ed036d43fb",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "2",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "1732f2f6473bbad0413994ed036d4300",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1f32f2f6473bbad0413994ed036d4301",
+         "ai_details": {
+          "title": "Elective",
+          "credit_points": "6",
+          "cl_id": "1f32b2f6473bbad0413994ed036d43fb",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        }
+       ],
+       "container": []
+      },
+      {
+       "name": "Autumn session",
+       "order": "1",
+       "parent_record": {
+        "value": "Progression Map Container: Year 2",
+        "cl_id": "d332b2f6473bbad0413994ed036d43fd",
+        "key": "",
+        "type": "x_f5sl_cl_progression_map_container"
+       },
+       "parent_table": "x_f5sl_cl_progression_map_container",
+       "cl_id": "db32b2f6473bbad0413994ed036d43fd",
+       "relationship": [
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 32144",
+          "cl_id": "25c45fab47fae250a31de422036d43e7",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "0",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32b2f6473bbad0413994ed036d43fd",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "d332b2f6473bbad0413994ed036d43fe",
+         "ai_details": {
+          "code": "32144",
+          "title": "Technology Research Preparation",
+          "credit_points": "6",
+          "cl_id": "25c45fab47fae250a31de422036d43e7",
+          "state": "show",
+          "academic_item_url": "/subject/2026/32144",
+          "custom_ai": false,
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: BIS Advanced Option",
+          "cl_id": "1332b2f6473bbad0413994ed036d43fb",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "3",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32b2f6473bbad0413994ed036d43fd",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1732b2f6473bbad0413994ed036d43ff",
+         "ai_details": {
+          "title": "BIS Advanced Option",
+          "credit_points": "6",
+          "cl_id": "1332b2f6473bbad0413994ed036d43fb",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 32011",
+          "cl_id": "40b41bab47fae250a31de422036d430b",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "1",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32b2f6473bbad0413994ed036d43fd",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "df32b2f6473bbad0413994ed036d43ff",
+         "ai_details": {
+          "code": "32011",
+          "title": "Multilayer Switched Networks",
+          "credit_points": "6",
+          "cl_id": "40b41bab47fae250a31de422036d430b",
+          "state": "show",
+          "academic_item_url": "/subject/2026/32011",
+          "custom_ai": false,
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: Internetworking Option",
+          "cl_id": "5b32b2f6473bbad0413994ed036d43fb",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "2",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32b2f6473bbad0413994ed036d43fd",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1f32b2f6473bbad0413994ed036d43ff",
+         "ai_details": {
+          "title": "Internetworking Option",
+          "credit_points": "6",
+          "cl_id": "5b32b2f6473bbad0413994ed036d43fb",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        }
+       ],
+       "container": []
+      }
+     ]
+    },
+    {
+     "name": "Year 1",
+     "order": "1",
+     "parent_record": {
+      "value": "Progression Map Container: Business Information Systems major, Internetworking sub-major, Autumn commencing, full time",
+      "cl_id": "9332b2f6473bbad0413994ed036d43fc",
+      "key": "",
+      "type": "x_f5sl_cl_progression_map_container"
+     },
+     "parent_table": "x_f5sl_cl_progression_map_container",
+     "cl_id": "5b32f2f6473bbad0413994ed036d4302",
+     "relationship": [],
+     "container": [
+      {
+       "name": "Spring session",
+       "order": "2",
+       "parent_record": {
+        "value": "Progression Map Container: Year 1",
+        "cl_id": "5b32f2f6473bbad0413994ed036d4302",
+        "key": "",
+        "type": "x_f5sl_cl_progression_map_container"
+       },
+       "parent_table": "x_f5sl_cl_progression_map_container",
+       "cl_id": "5332f2f6473bbad0413994ed036d4303",
+       "relationship": [
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "",
+          "cl_id": "ab35846cc31ae250020e061ad001312d",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "3",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "5332f2f6473bbad0413994ed036d4303",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "1332f2f6473bbad0413994ed036d4342"
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 32547",
+          "cl_id": "cde497eb47fae250a31de422036d435b",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "1",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "5332f2f6473bbad0413994ed036d4303",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "d332f2f6473bbad0413994ed036d4342",
+         "ai_details": {
+          "code": "32547",
+          "title": "UNIX Systems Programming",
+          "credit_points": "6",
+          "cl_id": "cde497eb47fae250a31de422036d435b",
+          "state": "show",
+          "academic_item_url": "/subject/2026/32547",
+          "custom_ai": false,
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: Internetworking Option",
+          "cl_id": "5f32b2f6473bbad0413994ed036d43fa",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "2",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "5332f2f6473bbad0413994ed036d4303",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "9732f2f6473bbad0413994ed036d4343",
+         "ai_details": {
+          "title": "Internetworking Option",
+          "credit_points": "6",
+          "cl_id": "5f32b2f6473bbad0413994ed036d43fa",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: BIS Option",
+          "cl_id": "9b32b2f6473bbad0413994ed036d43fa",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "3",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "5332f2f6473bbad0413994ed036d4303",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "db32f2f6473bbad0413994ed036d4342",
+         "ai_details": {
+          "title": "BIS Option",
+          "credit_points": "6",
+          "cl_id": "9b32b2f6473bbad0413994ed036d43fa",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 49016",
+          "cl_id": "e547dba7473ee250a31de422036d43ba",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "0",
+         "parent_record": {
+          "value": "Progression Map Container: Spring session",
+          "cl_id": "5332f2f6473bbad0413994ed036d4303",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "9f32f2f6473bbad0413994ed036d4342",
+         "ai_details": {
+          "code": "49016",
+          "title": "Technology and Innovation Management",
+          "credit_points": "6",
+          "cl_id": "e547dba7473ee250a31de422036d43ba",
+          "state": "show",
+          "academic_item_url": "/subject/2026/49016",
+          "custom_ai": false,
+          "links": []
+         }
+        }
+       ],
+       "container": []
+      },
+      {
+       "name": "Autumn session",
+       "order": "1",
+       "parent_record": {
+        "value": "Progression Map Container: Year 1",
+        "cl_id": "5b32f2f6473bbad0413994ed036d4302",
+        "key": "",
+        "type": "x_f5sl_cl_progression_map_container"
+       },
+       "parent_table": "x_f5sl_cl_progression_map_container",
+       "cl_id": "db32f2f6473bbad0413994ed036d4343",
+       "relationship": [
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 43030",
+          "cl_id": "08c69727473ee250a31de422036d43bd",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "0",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32f2f6473bbad0413994ed036d4343",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "5332f2f6473bbad0413994ed036d4345",
+         "ai_details": {
+          "code": "43030",
+          "title": "Professional Practice in Computing",
+          "credit_points": "6",
+          "cl_id": "08c69727473ee250a31de422036d43bd",
+          "state": "show",
+          "academic_item_url": "/subject/2026/43030",
+          "custom_ai": false,
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 32541",
+          "cl_id": "d8e457eb47fae250a31de422036d4300",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "1",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32f2f6473bbad0413994ed036d4343",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "d332f2f6473bbad0413994ed036d4344",
+         "ai_details": {
+          "code": "32541",
+          "title": "Project Management",
+          "credit_points": "6",
+          "cl_id": "d8e457eb47fae250a31de422036d4300",
+          "state": "show",
+          "academic_item_url": "/subject/2026/32541",
+          "custom_ai": false,
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_custom_academic_item",
+         "child_record": {
+          "value": "Custom Academic Item: BIS Option",
+          "cl_id": "9732b2f6473bbad0413994ed036d43fb",
+          "key": "",
+          "type": "x_f5sl_cl_custom_academic_item"
+         },
+         "number_of_periods": "1",
+         "order": "3",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32f2f6473bbad0413994ed036d4343",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "db32f2f6473bbad0413994ed036d4344",
+         "ai_details": {
+          "title": "BIS Option",
+          "credit_points": "6",
+          "cl_id": "9732b2f6473bbad0413994ed036d43fb",
+          "custom_ai": true,
+          "academic_item_url": "",
+          "code": "",
+          "links": []
+         }
+        },
+        {
+         "parent_table": "x_f5sl_cl_progression_map_container",
+         "child_table": "x_f5sl_cl_subjects",
+         "child_record": {
+          "value": "Subject: 32531",
+          "cl_id": "bfd417eb47fae250a31de422036d435f",
+          "key": "code",
+          "type": "x_f5sl_cl_subjects"
+         },
+         "number_of_periods": "1",
+         "order": "2",
+         "parent_record": {
+          "value": "Progression Map Container: Autumn session",
+          "cl_id": "db32f2f6473bbad0413994ed036d4343",
+          "key": "",
+          "type": "x_f5sl_cl_progression_map_container"
+         },
+         "cl_id": "9f32f2f6473bbad0413994ed036d4344",
+         "ai_details": {
+          "code": "32531",
+          "title": "Global Information Systems",
+          "credit_points": "6",
+          "cl_id": "bfd417eb47fae250a31de422036d435f",
+          "state": "show",
+          "academic_item_url": "/subject/2026/32531",
+          "custom_ai": false,
+          "links": []
+         }
+        }
+       ],
+       "container": []
+      }
+     ]
+    }
+   ],
+   "url": "/studyplan/df32b2f6473bbad0413994ed036d43f8",
+   "academic_item_association": {
+    "credit_points": "96",
+    "assoc_title": "Master of Information Technology (Extension)",
+    "assoc_cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "assoc_code": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "short_title": "C04296 - Master of Information Technology (Extension)",
+    "assoc_url": "/course/2026/C04296",
+    "links": []
+   },
+   "offerings": ""
+  }
+ ],
+ "external_accreditations": [
+  {
+   "accreditation_date": "2022-01-01",
+   "name": "Australian Computer Society (ACS)",
+   "accreditation_email": "",
+   "accreditation_status": {
+    "label": "Active",
+    "value": "active"
+   },
+   "accrediting_body": {
+    "label": null,
+    "value": null
+   },
+   "cl_id": "1232f67283b7f690fed7d4326daad36e",
+   "description": "<p>Graduates are eligible to apply for professional-level membership with the Australian Computer Society.(MAJ02084 v1 Data Analytics Major).</p>"
+  },
+  {
+   "accreditation_date": "2022-01-01",
+   "name": "Australian Computer Society (ACS)",
+   "accreditation_email": "",
+   "accreditation_status": {
+    "label": "Active",
+    "value": "active"
+   },
+   "accrediting_body": {
+    "label": null,
+    "value": null
+   },
+   "cl_id": "1632f67283b7f690fed7d4326daad36d",
+   "description": "<p>Graduates are eligible to apply for professional-level membership with the Australian Computer Society.(MAJ02086 v1 Software Development Major).</p>"
+  },
+  {
+   "accreditation_date": "2022-01-01",
+   "name": "Australian Computer Society (ACS)",
+   "accreditation_email": "",
+   "accreditation_status": {
+    "label": "Active",
+    "value": "active"
+   },
+   "accrediting_body": {
+    "label": null,
+    "value": null
+   },
+   "cl_id": "1e32f67283b7f690fed7d4326daad36e",
+   "description": "<p>Graduates are eligible to apply for professional-level membership with the Australian Computer Society.(MAJ02082 v1 Business Information Systems Major).</p>"
+  },
+  {
+   "accreditation_date": "2022-01-01",
+   "name": "Australian Computer Society (ACS)",
+   "accreditation_email": "",
+   "accreditation_status": {
+    "label": "Active",
+    "value": "active"
+   },
+   "accrediting_body": {
+    "label": null,
+    "value": null
+   },
+   "cl_id": "9632f67283b7f690fed7d4326daad36e",
+   "description": "<p>Graduates are eligible to apply for professional-level membership with the Australian Computer Society.(MAJ02083 v1 Internetworking Major).</p>"
+  },
+  {
+   "accreditation_date": "2022-01-01",
+   "name": "Australian Computer Society (ACS)",
+   "accreditation_email": "",
+   "accreditation_status": {
+    "label": "Active",
+    "value": "active"
+   },
+   "accrediting_body": {
+    "label": null,
+    "value": null
+   },
+   "cl_id": "5a32f67283b7f690fed7d4326daad36e",
+   "description": "<p>Graduates are eligible to apply for professional-level membership with the Australian Computer Society.(MAJ02085 v1 Interactive Media Major).</p>"
+  },
+  {
+   "accreditation_date": "2022-01-01",
+   "name": "Australian Computer Society (ACS)",
+   "accreditation_email": "",
+   "accreditation_status": {
+    "label": "Active",
+    "value": "active"
+   },
+   "accrediting_body": {
+    "label": null,
+    "value": null
+   },
+   "cl_id": "d232f67283b7f690fed7d4326daad36e",
+   "description": "<p>Graduates are eligible to apply for professional-level membership with the Australian Computer Society.(MAJ02093 v1 36cp Cyber Security major).</p>"
+  }
+ ],
+ "availabilities": [
+  {
+   "clarification_to_appear_in_handbook": "",
+   "start_date": "",
+   "end_date": "",
+   "comments": "",
+   "language_of_instruction": {
+    "label": "English",
+    "value": "en"
+   },
+   "ext_id": "",
+   "publish": "true",
+   "offered": "true",
+   "linking_id": "5014f2fe47d11610d42c8833036d43c6",
+   "cl_id": "d632f67283b7f690fed7d4326daad365",
+   "name": "",
+   "order": "",
+   "off_id": "d632f67283b7f690fed7d4326daad365",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "year": "",
+   "student_types": "Domestic, International",
+   "mode": "On campus - Weekly",
+   "admission_calendar": "Autumn Session",
+   "teaching_period": "",
+   "display_name": "City campus-Autumn Session",
+   "location": "City campus",
+   "attendance_type": "Full Time, Part Time"
+  },
+  {
+   "clarification_to_appear_in_handbook": "",
+   "start_date": "",
+   "end_date": "",
+   "comments": "",
+   "language_of_instruction": {
+    "label": "English",
+    "value": "en"
+   },
+   "ext_id": "",
+   "publish": "true",
+   "offered": "true",
+   "linking_id": "5814f2fe47d11610d42c8833036d43c7",
+   "cl_id": "5632f67283b7f690fed7d4326daad366",
+   "name": "",
+   "order": "",
+   "off_id": "5632f67283b7f690fed7d4326daad366",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "year": "",
+   "student_types": "Domestic, International",
+   "mode": "On campus - Weekly",
+   "admission_calendar": "Spring Session",
+   "teaching_period": "",
+   "display_name": "City campus-Spring Session",
+   "location": "City campus",
+   "attendance_type": "Full Time, Part Time"
+  }
+ ],
+ "learning_outcomes": [
+  {
+   "number": "3",
+   "order": "300",
+   "linking_id": "55908efd47dd1a10d42c8833036d437b",
+   "offerings": [],
+   "lo_cl_id": "9232f67283b7f690fed7d4326daad36a",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "lo_domain": [],
+   "code": "CILO3",
+   "description": "<p>Apply design thinking, decision-making methodologies within complex environments, exercising creative research and judgement to evaluate and propose innovative IT solutions. (C.1)</p>",
+   "cl_id": "9232f67283b7f690fed7d4326daad36a"
+  },
+  {
+   "number": "2",
+   "order": "200",
+   "linking_id": "dd908efd47dd1a10d42c8833036d437a",
+   "offerings": [],
+   "lo_cl_id": "9632f67283b7f690fed7d4326daad36a",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "lo_domain": [],
+   "code": "CILO2",
+   "description": "<p>Engage and influence a broad range of diverse stakeholders using disciplinary practices to evaluate a range of suitable solutions to sustainably solve complex technological problems and account for their impact on society. (B.1)</p>",
+   "cl_id": "9632f67283b7f690fed7d4326daad36a"
+  },
+  {
+   "number": "4",
+   "order": "400",
+   "linking_id": "d9908efd47dd1a10d42c8833036d437b",
+   "offerings": [],
+   "lo_cl_id": "1a32f67283b7f690fed7d4326daad368",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "lo_domain": [],
+   "code": "CILO4",
+   "description": "<p>Research and evaluate disciplinary concepts and theories in Information Technology to research, synthesise, evaluate and predict impacts of IT/IS solutions within complex operating environments. (D.1)</p>",
+   "cl_id": "1a32f67283b7f690fed7d4326daad368"
+  },
+  {
+   "number": "6",
+   "order": "600",
+   "linking_id": "d5908efd47dd1a10d42c8833036d437c",
+   "offerings": [],
+   "lo_cl_id": "9a32f67283b7f690fed7d4326daad369",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "lo_domain": [],
+   "code": "CILO6",
+   "description": "<p>Evaluate self and other\u2019s practice to reflexively ensure sustainable improvements meet contemporary technological skillsets. (F.1)</p>",
+   "cl_id": "9a32f67283b7f690fed7d4326daad369"
+  },
+  {
+   "number": "5",
+   "order": "500",
+   "linking_id": "51908efd47dd1a10d42c8833036d437c",
+   "offerings": [],
+   "lo_cl_id": "9a32f67283b7f690fed7d4326daad36a",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "lo_domain": [],
+   "code": "CILO5",
+   "description": "<p>Communicate using emerging disciplinary conventions to technical and non-technical stakeholders, lead a range of complex projects and manage diverse teams to deliver innovative project outcomes. (E.1)</p>",
+   "cl_id": "9a32f67283b7f690fed7d4326daad36a"
+  },
+  {
+   "number": "1",
+   "order": "100",
+   "linking_id": "19908efd47dd1a10d42c8833036d437a",
+   "offerings": [],
+   "lo_cl_id": "9e32f67283b7f690fed7d4326daad369",
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "lo_domain": [],
+   "code": "CILO1",
+   "description": "<p>Critically reflect on ethical principles of stakeholder engagement and research practices to work effectively with and for Indigenous Australians across the IT profession. (A.1)</p>",
+   "cl_id": "9e32f67283b7f690fed7d4326daad369"
+  }
+ ],
+ "award_details": [
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology in Cybersecurity",
+   "award_abbreviation": "MIT",
+   "cl_id": "5232f67283b7f690fed7d4326daad381"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology in Enterprise Software Development",
+   "award_abbreviation": "MIT",
+   "cl_id": "9232f67283b7f690fed7d4326daad382"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology",
+   "award_abbreviation": "MIT",
+   "cl_id": "9232f67283b7f690fed7d4326daad383"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology in Interactive Media",
+   "award_abbreviation": "MIT",
+   "cl_id": "9632f67283b7f690fed7d4326daad382"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology in Data Analytics",
+   "award_abbreviation": "MIT",
+   "cl_id": "9632f67283b7f690fed7d4326daad383"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology in Business Information Systems",
+   "award_abbreviation": "MIT",
+   "cl_id": "9a32f67283b7f690fed7d4326daad382"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Masters",
+    "value": "MASTERS"
+   },
+   "award_information": "",
+   "award_title": "Master of Information Technology in Internetworking",
+   "award_abbreviation": "MIT",
+   "cl_id": "9e32f67283b7f690fed7d4326daad381"
+  },
+  {
+   "award_aqf": {
+    "label": null,
+    "value": null
+   },
+   "academic_item": {
+    "value": "C04296",
+    "cl_id": "1a32b67283b7f690fed7d4326daad343",
+    "key": "code"
+   },
+   "award_type": {
+    "label": "Published Award Title",
+    "value": "PAT"
+   },
+   "award_information": "Master of Information Technology in (name of IT major) (MIT)",
+   "award_title": "",
+   "award_abbreviation": "",
+   "cl_id": "9e32f67283b7f690fed7d4326daad382"
+  }
+ ],
+ "associated_pathway": [],
+ "key_search_term": "Master, Information Technology, Business Information Systems, Computer Science, Cybersecurity, Internetworking, Data Analytics, Software Development, IT Research",
+ "student_types": "",
+ "locations": "City campus",
+ "award_medal": null,
+ "search_title": "C04296 - Master of Information Technology (Extension)",
+ "requirements_additional_completion": [],
+ "inherent_requirements_desc": "<p>Inherent requirements are academic and non-academic requirements that are essential for successfully completing a course at UTS. You can find the inherent requirements for your course via the <a href=\"https://www.uts.edu.au/current-students/managing-your-course/your-enrolment/inherent-requirements\">inherent requirements directory</a>.</p>",
+ "academic_item_type": "Course",
+ "admission_criteria_text": "<p>To be eligible for admission to this course, applicants must meet the following criteria.</p><p>Applicants must have one of the following qualifications in Information Technology:</p><ul><li>Completed Australian master's or doctoral degree, or overseas equivalent.</li></ul><p><strong>OR</strong></p><ul><li>Completed Australian bachelor's degree, graduate certificate or graduate diploma, or overseas equivalent, with at least 75% of all subjects completed at pass level (conceded pass not included).</li></ul><p>Applicants are required to have satisfactorily completed subjects in programming, data modelling, and networking equivalent to the Professional stream (IT) component of&nbsp;<a href=\"https://www.uts.edu.au/study/find-a-course/master-information-technology\"><strong>C04295 Master of Information Technology</strong></a>.</p><p>Applicants with an IT background who do not meet the criteria above should consider applying for&nbsp;<a href=\"https://www.uts.edu.au/study/find-a-course/graduate-certificate-information-technology\"><strong>C11142 Graduate Certificate in Information Technology</strong></a>. Applicants with a background in any other discipline should consider the&nbsp;<a href=\"https://www.uts.edu.au/study/find-a-course/master-information-technology\"><strong>C04295 Master of Information Technology</strong></a>&nbsp;or&nbsp;<a href=\"https://www.uts.edu.au/study/find-a-course/graduate-certificate-information-technology-studies\"><strong>C11247 Graduate Certificate in Information Technology Studies</strong></a>.</p><p>Eligibility for admission does not guarantee offer of a place.</p>",
+ "duration_pt_std": "4 Year(s)",
+ "associated_exit": [],
+ "award_level": null,
+ "associations": [
+  {
+   "association_type": "Articulated course",
+   "associated_items": [
+    {
+     "associated_ai_title": "Master of Information Technology (Extension)",
+     "ai_cl_id": {
+      "value": "C04296",
+      "cl_id": "1a32b67283b7f690fed7d4326daad343",
+      "key": "code"
+     },
+     "associated_ai_display_name": "C04296 Master of Information Technology (Extension) 2026.01",
+     "association_desc": "<p>This course is part of an articulated program comprising the Graduate Certificate in Information Technology (<a href=\"https://coursehandbook.uts.edu.au/course/current/c11142\">C11142</a>), the Graduate Diploma in Information Technology (<a href=\"https://handbook.uts.edu.au/course/current/c06113\">C06113</a>), the Master of Information Technology (<a href=\"https://handbook.uts.edu.au/course/current/c04295\">C04295</a>), and the Master of Information Technology (Extension).</p>",
+     "associated_ai_cl_id": {
+      "value": "C04296",
+      "cl_id": "30392f6347b22650a31de422036d4358",
+      "key": "code"
+     },
+     "cl_id": "1a32f67283b7f690fed7d4326daad36b",
+     "credit_points": "96",
+     "assoc_title": "Master of Information Technology (Extension)",
+     "assoc_cl_id": "30392f6347b22650a31de422036d4358",
+     "assoc_code": "C04296",
+     "short_title": "C04296 - Master of Information Technology (Extension)",
+     "assoc_url": "/course/2026/C04296",
+     "association_type": "Articulated course",
+     "links": []
+    }
+   ]
+  }
+ ],
+ "exit_only_course": null,
+ "sessions": "Autumn Session, Spring Session",
+ "admission_centre_code": "",
+ "award_titles": "Master of Information Technology in (name of IT major) (MIT)",
+ "not_offered": "",
+ "associated_equivalent": [],
+ "requirements_inherent": [],
+ "duration_ft_std": "2 Year(s)",
+ "requirements_assumed": [],
+ "international_exchange": "No",
+ "credit_points_display": "96 Credit points",
+ "award_type": "Masters, Masters, Masters, Masters, Masters, Masters, Masters, Published Award Title",
+ "parent_academic_org": "Engineering and Information Technology",
+ "associated_related": [],
+ "language_of_instruction": "English",
+ "links": [],
+ "curriculumStructure": {
+  "curriculum_structure": {
+   "value": "2026.05.002",
+   "cl_id": "f3433d8ec3718750020e061ad0013102",
+   "key": "version_code"
+  },
+  "relationship_type": {
+   "label": "Working",
+   "value": "working"
+  },
+  "ai_to_cs_cl_id": "3b433d8ec3718750020e061ad001310c",
+  "cl_id": {
+   "value": "C04296",
+   "cl_id": "1a32b67283b7f690fed7d4326daad343",
+   "key": "code"
+  },
+  "name": "Structure",
+  "credit_points": "96",
+  "parent_id": {
+   "value": "Curriculum Structure Master Record: Created 14-Aug-2024 08:55:33 AM",
+   "cl_id": "dc25877047489610d42c8833036d439a",
+   "key": "",
+   "type": "x_f5sl_cl_cs_master"
+  },
+  "effective_date": "",
+  "structure_cl_id": "f3433d8ec3718750020e061ad0013102",
+  "source": {
+   "value": "65a50cc483b7f250fed7d4326daad30d",
+   "cl_id": "65a50cc483b7f250fed7d4326daad30d",
+   "key": ""
+  },
+  "parent_table": "x_f5sl_cl_cs_master",
+  "container": [
+   {
+    "set_based": "false",
+    "title": "IT Project and Electives",
+    "horizontal_grouping": {
+     "label": null,
+     "value": null
+    },
+    "preface": "",
+    "dynamic_query": "",
+    "child_table": "",
+    "vertical_grouping": {
+     "label": "Group",
+     "value": "group"
+    },
+    "child_record": {
+     "value": "",
+     "cl_id": null,
+     "key": "",
+     "type": null
+    },
+    "footnote": "",
+    "description": "(CBK91047) Select 18 credit points from the following options:",
+    "credit_points_max": "",
+    "cl_id": "bb433d8ec3718750020e061ad0013103",
+    "map_type": "",
+    "credit_points": "18",
+    "parent_record": {
+     "value": "Curriculum Structure: 2026.05.002",
+     "cl_id": "f3433d8ec3718750020e061ad0013102",
+     "key": "version_code",
+     "type": "x_f5sl_cl_curriculum_structure"
+    },
+    "parent_table": "x_f5sl_cl_curriculum_structure",
+    "parent_connector": {
+     "label": "AND",
+     "value": "AND"
+    },
+    "dynamic_relationship": [],
+    "relationship": [],
+    "container": [
+     {
+      "set_based": "false",
+      "title": "IT Project",
+      "horizontal_grouping": {
+       "label": null,
+       "value": null
+      },
+      "preface": "",
+      "dynamic_query": "",
+      "child_table": "",
+      "vertical_grouping": {
+       "label": "Group",
+       "value": "group"
+      },
+      "child_record": {
+       "value": "",
+       "cl_id": null,
+       "key": "",
+       "type": null
+      },
+      "footnote": "",
+      "description": "Select 6 credit points from the following subjects:",
+      "credit_points_max": "",
+      "cl_id": "f7433d8ec3718750020e061ad0013103",
+      "map_type": "",
+      "credit_points": "6",
+      "parent_record": {
+       "value": "Curriculum Structure Container: IT Project and Electives",
+       "cl_id": "bb433d8ec3718750020e061ad0013103",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "parent_table": "x_f5sl_cl_cs_container",
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "dynamic_relationship": [],
+      "relationship": [
+       {
+        "cl_id": "37433d8ec3718750020e061ad0013104",
+        "vertical_grouping": {
+         "label": null,
+         "value": null
+        },
+        "parent_connector": {
+         "label": "AND",
+         "value": "AND"
+        },
+        "parent_record": {
+         "value": "Curriculum Structure Container: IT Project",
+         "cl_id": "f7433d8ec3718750020e061ad0013103",
+         "key": "title",
+         "type": "x_f5sl_cl_cs_container"
+        },
+        "owning_structure": {
+         "value": "2026.05.002",
+         "cl_id": "f3433d8ec3718750020e061ad0013102",
+         "key": "version_code"
+        },
+        "child_record": {
+         "value": "Subject: 32933",
+         "cl_id": "fa05532f47fae250a31de422036d4397",
+         "key": "code",
+         "type": "x_f5sl_cl_subjects"
+        },
+        "credit_points": "",
+        "child_table": "x_f5sl_cl_subjects",
+        "description": "",
+        "parent_table": "x_f5sl_cl_cs_container",
+        "academic_item_type": {
+         "label": "Subject",
+         "value": "subject"
+        },
+        "abbr_name": "Research Project",
+        "academic_item_version_name": "2026.01",
+        "academic_item_credit_points": "6",
+        "abbreviated_name_and_major": null,
+        "academic_item_name": "Research Project",
+        "academic_item_code": "32933",
+        "academic_item_url": "/subject/2026/32933",
+        "order": "100"
+       },
+       {
+        "cl_id": "f7433d8ec3718750020e061ad0013104",
+        "vertical_grouping": {
+         "label": null,
+         "value": null
+        },
+        "parent_connector": {
+         "label": "AND",
+         "value": "AND"
+        },
+        "parent_record": {
+         "value": "Curriculum Structure Container: IT Project",
+         "cl_id": "f7433d8ec3718750020e061ad0013103",
+         "key": "title",
+         "type": "x_f5sl_cl_cs_container"
+        },
+        "owning_structure": {
+         "value": "2026.05.002",
+         "cl_id": "f3433d8ec3718750020e061ad0013102",
+         "key": "version_code"
+        },
+        "child_record": {
+         "value": "Subject: 32040",
+         "cl_id": "26b49bab47fae250a31de422036d437a",
+         "key": "code",
+         "type": "x_f5sl_cl_subjects"
+        },
+        "credit_points": "",
+        "child_table": "x_f5sl_cl_subjects",
+        "description": "",
+        "parent_table": "x_f5sl_cl_cs_container",
+        "academic_item_type": {
+         "label": "Subject",
+         "value": "subject"
+        },
+        "abbr_name": "Industry Project",
+        "academic_item_version_name": "2026.01",
+        "academic_item_credit_points": "6",
+        "abbreviated_name_and_major": null,
+        "academic_item_name": "Industry Project",
+        "academic_item_code": "32040",
+        "academic_item_url": "/subject/2026/32040",
+        "order": "0"
+       }
+      ],
+      "container": [],
+      "order": "0"
+     },
+     {
+      "set_based": "false",
+      "title": "Electives",
+      "horizontal_grouping": {
+       "label": null,
+       "value": null
+      },
+      "preface": "",
+      "dynamic_query": "",
+      "child_table": "",
+      "vertical_grouping": {
+       "label": "Group",
+       "value": "group"
+      },
+      "child_record": {
+       "value": "",
+       "cl_id": null,
+       "key": "",
+       "type": null
+      },
+      "footnote": "",
+      "description": "Select 12 credit points from the following stream:",
+      "credit_points_max": "",
+      "cl_id": "33433d8ec3718750020e061ad0013104",
+      "map_type": "",
+      "credit_points": "12",
+      "parent_record": {
+       "value": "Curriculum Structure Container: IT Project and Electives",
+       "cl_id": "bb433d8ec3718750020e061ad0013103",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "parent_table": "x_f5sl_cl_cs_container",
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "dynamic_relationship": [],
+      "relationship": [
+       {
+        "cl_id": "fb433d8ec3718750020e061ad0013104",
+        "vertical_grouping": {
+         "label": null,
+         "value": null
+        },
+        "parent_connector": {
+         "label": "AND",
+         "value": "AND"
+        },
+        "parent_record": {
+         "value": "Curriculum Structure Container: Electives",
+         "cl_id": "33433d8ec3718750020e061ad0013104",
+         "key": "title",
+         "type": "x_f5sl_cl_cs_container"
+        },
+        "owning_structure": {
+         "value": "2026.05.002",
+         "cl_id": "f3433d8ec3718750020e061ad0013102",
+         "key": "version_code"
+        },
+        "child_record": {
+         "value": "Substructures: CBK91045",
+         "cl_id": "c363653947933610413994ed036d43a6",
+         "key": "code",
+         "type": "x_f5sl_cl_areas_of_study"
+        },
+        "credit_points": "",
+        "child_table": "x_f5sl_cl_areas_of_study",
+        "description": "",
+        "parent_table": "x_f5sl_cl_cs_container",
+        "academic_item_type": {
+         "label": "Stream",
+         "value": "stream"
+        },
+        "abbr_name": "",
+        "academic_item_version_name": "2026.02",
+        "academic_item_credit_points": "12",
+        "abbreviated_name_and_major": null,
+        "academic_item_name": "Electives (Information Technology)",
+        "academic_item_code": "CBK91045",
+        "academic_item_url": "/aos/2026/CBK91045",
+        "order": "0"
+       }
+      ],
+      "container": [],
+      "order": "100"
+     }
+    ],
+    "order": "300"
+   },
+   {
+    "set_based": "false",
+    "title": "Majors",
+    "horizontal_grouping": {
+     "label": null,
+     "value": null
+    },
+    "preface": "",
+    "dynamic_query": "",
+    "child_table": "",
+    "vertical_grouping": {
+     "label": "Group",
+     "value": "group"
+    },
+    "child_record": {
+     "value": "",
+     "cl_id": null,
+     "key": "",
+     "type": null
+    },
+    "footnote": "",
+    "description": "(CBK91046) Select one of the following:",
+    "credit_points_max": "",
+    "cl_id": "b3433d8ec3718750020e061ad0013104",
+    "map_type": "",
+    "credit_points": "36",
+    "parent_record": {
+     "value": "Curriculum Structure: 2026.05.002",
+     "cl_id": "f3433d8ec3718750020e061ad0013102",
+     "key": "version_code",
+     "type": "x_f5sl_cl_curriculum_structure"
+    },
+    "parent_table": "x_f5sl_cl_curriculum_structure",
+    "parent_connector": {
+     "label": "AND",
+     "value": "AND"
+    },
+    "dynamic_relationship": [],
+    "relationship": [
+     {
+      "cl_id": "3b433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: MAJ02084",
+       "cl_id": "6962e3a747fee250a31de422036d43d0",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Major",
+       "value": "major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Data Analytics",
+      "academic_item_code": "MAJ02084",
+      "academic_item_url": "/aos/2026/MAJ02084",
+      "order": "200"
+     },
+     {
+      "cl_id": "7b433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: MAJ02093",
+       "cl_id": "876267a747fee250a31de422036d43ec",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Major",
+       "value": "major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Cybersecurity",
+      "academic_item_code": "MAJ02093",
+      "academic_item_url": "/aos/2026/MAJ02093",
+      "order": "100"
+     },
+     {
+      "cl_id": "7f433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: MAJ02086",
+       "cl_id": "da6227a747fee250a31de422036d43dd",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Major",
+       "value": "major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Enterprise Software Development",
+      "academic_item_code": "MAJ02086",
+      "academic_item_url": "/aos/2026/MAJ02086",
+      "order": "300"
+     },
+     {
+      "cl_id": "3b433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: MAJ02085",
+       "cl_id": "7d6227a747fee250a31de422036d438e",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Major",
+       "value": "major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Interactive Media",
+      "academic_item_code": "MAJ02085",
+      "academic_item_url": "/aos/2026/MAJ02085",
+      "order": "400"
+     },
+     {
+      "cl_id": "3f433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: CBK91043",
+       "cl_id": "f31361f547933610413994ed036d4389",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Stream",
+       "value": "stream"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.02",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "No specified major",
+      "academic_item_code": "CBK91043",
+      "academic_item_url": "/aos/2026/CBK91043",
+      "order": "600"
+     },
+     {
+      "cl_id": "ff433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: MAJ02082",
+       "cl_id": "7ee1e1f147933610413994ed036d437a",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Major",
+       "value": "major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.02",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Business Information Systems",
+      "academic_item_code": "MAJ02082",
+      "academic_item_url": "/aos/2026/MAJ02082",
+      "order": "0"
+     },
+     {
+      "cl_id": "bf433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Majors",
+       "cl_id": "b3433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: MAJ02083",
+       "cl_id": "b32c60674757f250413994ed036d436c",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Major",
+       "value": "major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.03",
+      "academic_item_credit_points": "36",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Internetworking",
+      "academic_item_code": "MAJ02083",
+      "academic_item_url": "/aos/2026/MAJ02083",
+      "order": "500"
+     }
+    ],
+    "container": [],
+    "order": "100"
+   },
+   {
+    "set_based": "false",
+    "title": "Core",
+    "horizontal_grouping": {
+     "label": null,
+     "value": null
+    },
+    "preface": "",
+    "dynamic_query": "",
+    "child_table": "",
+    "vertical_grouping": {
+     "label": "Group",
+     "value": "group"
+    },
+    "child_record": {
+     "value": "",
+     "cl_id": null,
+     "key": "",
+     "type": null
+    },
+    "footnote": "",
+    "description": "(STM90968) Complete all of the following subjects:",
+    "credit_points_max": "",
+    "cl_id": "77433d8ec3718750020e061ad0013104",
+    "map_type": "",
+    "credit_points": "18",
+    "parent_record": {
+     "value": "Curriculum Structure: 2026.05.002",
+     "cl_id": "f3433d8ec3718750020e061ad0013102",
+     "key": "version_code",
+     "type": "x_f5sl_cl_curriculum_structure"
+    },
+    "parent_table": "x_f5sl_cl_curriculum_structure",
+    "parent_connector": {
+     "label": "AND",
+     "value": "AND"
+    },
+    "dynamic_relationship": [],
+    "relationship": [
+     {
+      "cl_id": "3f433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Core",
+       "cl_id": "77433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Subject: 32541",
+       "cl_id": "d8e457eb47fae250a31de422036d4300",
+       "key": "code",
+       "type": "x_f5sl_cl_subjects"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_subjects",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Subject",
+       "value": "subject"
+      },
+      "abbr_name": "Project Management",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "6",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Project Management",
+      "academic_item_code": "32541",
+      "academic_item_url": "/subject/2026/32541",
+      "order": "100"
+     },
+     {
+      "cl_id": "bf433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Core",
+       "cl_id": "77433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Subject: 43030",
+       "cl_id": "08c69727473ee250a31de422036d43bd",
+       "key": "code",
+       "type": "x_f5sl_cl_subjects"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_subjects",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Subject",
+       "value": "subject"
+      },
+      "abbr_name": "Professional Practice in Compu",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "6",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Professional Practice in Computing",
+      "academic_item_code": "43030",
+      "academic_item_url": "/subject/2026/43030",
+      "order": "0"
+     },
+     {
+      "cl_id": "73433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Core",
+       "cl_id": "77433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Subject: 32144",
+       "cl_id": "aaff154e47bdfe90a31de422036d430c",
+       "key": "code",
+       "type": "x_f5sl_cl_subjects"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_subjects",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Subject",
+       "value": "subject"
+      },
+      "abbr_name": "Technology Research Preparatio",
+      "academic_item_version_name": "2026.03",
+      "academic_item_credit_points": "6",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Technology Research Preparation",
+      "academic_item_code": "32144",
+      "academic_item_url": "/subject/2026/32144",
+      "order": "200"
+     }
+    ],
+    "container": [],
+    "order": "0"
+   },
+   {
+    "set_based": "false",
+    "title": "Sub-Majors",
+    "horizontal_grouping": {
+     "label": null,
+     "value": null
+    },
+    "preface": "",
+    "dynamic_query": "",
+    "child_table": "",
+    "vertical_grouping": {
+     "label": "Group",
+     "value": "group"
+    },
+    "child_record": {
+     "value": "",
+     "cl_id": null,
+     "key": "",
+     "type": null
+    },
+    "footnote": "",
+    "description": "(CBK91053) Select one of the following:",
+    "credit_points_max": "",
+    "cl_id": "7b433d8ec3718750020e061ad0013104",
+    "map_type": "",
+    "credit_points": "24",
+    "parent_record": {
+     "value": "Curriculum Structure: 2026.05.002",
+     "cl_id": "f3433d8ec3718750020e061ad0013102",
+     "key": "version_code",
+     "type": "x_f5sl_cl_curriculum_structure"
+    },
+    "parent_table": "x_f5sl_cl_curriculum_structure",
+    "parent_connector": {
+     "label": "AND",
+     "value": "AND"
+    },
+    "dynamic_relationship": [],
+    "relationship": [
+     {
+      "cl_id": "b7433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: SMJ10069",
+       "cl_id": "65a2a97547933610413994ed036d43e9",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Sub-major",
+       "value": "sub_major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.02",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Business Information Systems",
+      "academic_item_code": "SMJ10069",
+      "academic_item_url": "/aos/2026/SMJ10069",
+      "order": "0"
+     },
+     {
+      "cl_id": "fb433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: SMJ10070",
+       "cl_id": "58e01c10473bf290413994ed036d4328",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Sub-major",
+       "value": "sub_major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.02",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Internetworking",
+      "academic_item_code": "SMJ10070",
+      "academic_item_url": "/aos/2026/SMJ10070",
+      "order": "500"
+     },
+     {
+      "cl_id": "ff433d8ec3718750020e061ad0013103",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: SMJ10093",
+       "cl_id": "7e146b2347322650a31de422036d433a",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Sub-major",
+       "value": "sub_major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Cybersecurity",
+      "academic_item_code": "SMJ10093",
+      "academic_item_url": "/aos/2026/SMJ10093",
+      "order": "100"
+     },
+     {
+      "cl_id": "f3433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: SMJ10073",
+       "cl_id": "6814a72347322650a31de422036d4323",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Sub-major",
+       "value": "sub_major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Enterprise Software Development",
+      "academic_item_code": "SMJ10073",
+      "academic_item_url": "/aos/2026/SMJ10073",
+      "order": "300"
+     },
+     {
+      "cl_id": "b7433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: SMJ10071",
+       "cl_id": "dc14672347322650a31de422036d4377",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Sub-major",
+       "value": "sub_major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Data Analytics",
+      "academic_item_code": "SMJ10071",
+      "academic_item_url": "/aos/2026/SMJ10071",
+      "order": "200"
+     },
+     {
+      "cl_id": "bb433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: SMJ10072",
+       "cl_id": "5814672347322650a31de422036d43e1",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Sub-major",
+       "value": "sub_major"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.01",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Interactive Media",
+      "academic_item_code": "SMJ10072",
+      "academic_item_url": "/aos/2026/SMJ10072",
+      "order": "400"
+     },
+     {
+      "cl_id": "7f433d8ec3718750020e061ad0013104",
+      "vertical_grouping": {
+       "label": null,
+       "value": null
+      },
+      "parent_connector": {
+       "label": "AND",
+       "value": "AND"
+      },
+      "parent_record": {
+       "value": "Curriculum Structure Container: Sub-Majors",
+       "cl_id": "7b433d8ec3718750020e061ad0013104",
+       "key": "title",
+       "type": "x_f5sl_cl_cs_container"
+      },
+      "owning_structure": {
+       "value": "2026.05.002",
+       "cl_id": "f3433d8ec3718750020e061ad0013102",
+       "key": "version_code"
+      },
+      "child_record": {
+       "value": "Substructures: CBK91054",
+       "cl_id": "58f3ad7947933610413994ed036d436e",
+       "key": "code",
+       "type": "x_f5sl_cl_areas_of_study"
+      },
+      "credit_points": "",
+      "child_table": "x_f5sl_cl_areas_of_study",
+      "description": "",
+      "parent_table": "x_f5sl_cl_cs_container",
+      "academic_item_type": {
+       "label": "Stream",
+       "value": "stream"
+      },
+      "abbr_name": "",
+      "academic_item_version_name": "2026.02",
+      "academic_item_credit_points": "24",
+      "abbreviated_name_and_major": null,
+      "academic_item_name": "Choice (No specified sub-major)",
+      "academic_item_code": "CBK91054",
+      "academic_item_url": "/aos/2026/CBK91054",
+      "order": "600"
+     }
+    ],
+    "container": [],
+    "order": "200"
+   }
+  ],
+  "links": []
+ },
+ "yearSwitcher": [
+  {
+   "label": "2025",
+   "value": "2025",
+   "href": "/course/2025/c04296?year=2025"
+  },
+  {
+   "label": "2026",
+   "value": "2026",
+   "href": "/course/2026/c04296?year=2026"
+  }
+ ],
+ "university": "UTS"
+}
