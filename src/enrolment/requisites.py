@@ -53,6 +53,13 @@ def _is_unresolvable(item: RequisiteItem) -> bool:
     gap. This is the single place that decides interpretability; `resolve_item`
     defers to it before running any kind-specific logic, so the two can never
     disagree.
+
+    An unrecognised kind is unresolvable by the same argument. `resolve_item`
+    already answers "could not be interpreted" for one, and if this function
+    disagreed, a future `ItemKind` would be scored as a genuine violation and
+    never appear in `RequisiteResult.unresolved` -- an unreliable result
+    presenting as a confident one, which is exactly what this gate exists to
+    prevent.
     """
     if item.kind == "unparsed":
         return True
@@ -64,7 +71,7 @@ def _is_unresolvable(item: RequisiteItem) -> bool:
         return not (item.aos_code or "").strip()
     if item.kind == "admission":
         return not (item.course or "").strip() and not (item.admission_descriptor or "").strip()
-    return False
+    return True
 
 
 def _unresolved_labels(node: Node, items: dict[str, RequisiteItem]) -> list[str]:
@@ -131,11 +138,55 @@ def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
     )
 
 
-def _explain(subject_code: str, unmet: list[str], items: dict[str, RequisiteItem]) -> str:
+MAX_DESCRIPTION = 200
+
+
+def _describe(label: str, items: dict[str, RequisiteItem]) -> str:
+    """Render one requisite for the agent-facing message, bounded in length.
+
+    `text` is published wording and is normally a single short line, but a
+    parser that mis-locates the table's end boundary can produce a very long
+    one. Truncating keeps a deny message readable instead of dumping page
+    furniture at the agent.
+    """
+    if label not in items:
+        return f"requisite {label}"
+    text = items[label].text
+    if len(text) <= MAX_DESCRIPTION:
+        return text
+    return text[:MAX_DESCRIPTION].rstrip() + " [truncated]"
+
+
+def _caveat(unresolved: list[str]) -> str:
+    """The sentence appended whenever some requisite could not be interpreted.
+
+    An `explanation` is the agent-facing message. When the determination rests
+    on items the parser could not read, it must not be worded as though it
+    were fully verified -- in either direction.
+    """
+    return (
+        f" This determination could not be fully verified: "
+        f"{len(unresolved)} requisite(s) could not be interpreted "
+        f"({', '.join(unresolved)})."
+    )
+
+
+def _explain(
+    subject_code: str,
+    unmet: list[str],
+    items: dict[str, RequisiteItem],
+    unresolved: list[str] | None = None,
+) -> str:
+    unresolved = unresolved or []
     if not unmet:
+        if unresolved:
+            return (
+                f"No unmet requisite was found for {subject_code}." + _caveat(unresolved)
+            )
         return f"All requisites for {subject_code} are met."
-    described = [items[label].text if label in items else f"requisite {label}" for label in unmet]
-    return f"{subject_code} requires: " + "; ".join(described) + "."
+    described = [_describe(label, items) for label in unmet]
+    explanation = f"{subject_code} requires: " + "; ".join(described) + "."
+    return explanation + _caveat(unresolved) if unresolved else explanation
 
 
 def evaluate_requisites(
@@ -145,10 +196,16 @@ def evaluate_requisites(
 ) -> RequisiteResult:
     record = requisites.get(subject_code)
     if record is None:
+        # No record at all is not the same as a record that publishes no
+        # rules: the subject was never fetched, so say so rather than assert
+        # something about requisites that was never checked.
         return RequisiteResult(
             subject_code=subject_code,
             satisfied=True,
-            explanation=f"No requisites are published for {subject_code}.",
+            explanation=(
+                f"No requisite data was collected for {subject_code}, "
+                f"so no requisites could be checked."
+            ),
         )
 
     anti_unresolved: list[str] = []
@@ -179,7 +236,8 @@ def evaluate_requisites(
                 explanation=(
                     f"{subject_code} is blocked by an anti-requisite: the student has "
                     f"already completed {', '.join(held)}."
-                ),
+                )
+                + (_caveat(anti_unresolved) if anti_unresolved else ""),
             )
 
     if not record.requisite_rule:
@@ -187,7 +245,8 @@ def evaluate_requisites(
             subject_code=subject_code,
             satisfied=True,
             unresolved=anti_unresolved,
-            explanation=f"No requisites are published for {subject_code}.",
+            explanation=f"No requisites are published for {subject_code}."
+            + (_caveat(anti_unresolved) if anti_unresolved else ""),
         )
 
     node = parse(record.requisite_rule)
@@ -208,7 +267,7 @@ def evaluate_requisites(
         items=outcomes,
         unmet=unmet,
         unresolved=unresolved,
-        explanation=_explain(subject_code, unmet, record.requisite_items),
+        explanation=_explain(subject_code, unmet, record.requisite_items, unresolved),
     )
 
 

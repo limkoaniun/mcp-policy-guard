@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pytest
 
+from enrolment.evop import parse_evop
 from enrolment.models import (
     CompletedSubject,
     RequisiteItem,
@@ -7,9 +10,15 @@ from enrolment.models import (
     Subject,
     SubjectRequisites,
 )
-from enrolment.requisites import evaluate_requisites, exceeds_credit_cap, resolve_item
+from enrolment.requisites import (
+    _is_unresolvable,
+    evaluate_requisites,
+    exceeds_credit_cap,
+    resolve_item,
+)
 
 WHEN = "2026-08-26T00:00:00"
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def subject_item(label: str, code: str) -> RequisiteItem:
@@ -362,6 +371,120 @@ def test_subject_item_with_blank_code_string_is_unresolved_not_satisfied():
     result = evaluate_requisites("32146", student(), reqs)
     assert result.satisfied is False
     assert "1" in result.unresolved
+
+
+def test_real_area_of_study_requisite_is_satisfied_by_the_students_major():
+    """End-to-end over the committed fixture, not a hand-stripped string.
+
+    The `aos` branch of `resolve_item` was previously dead against real data:
+    the parser never emitted an `aos` item, because every published one wears
+    an "Admission into ..." prefix.
+    """
+    req = parse_evop(
+        (FIXTURES / "evop_32933.html").read_text(encoding="utf-8"),
+        "32933",
+        "https://example.test",
+        WHEN,
+    )
+    outcome = resolve_item(req.requisite_items["2e"], student(major="MAJ02902"))
+    assert outcome.satisfied is True
+    assert "MAJ02902" in outcome.reason
+
+    result = evaluate_requisites(
+        "32933",
+        student(major="MAJ02902", completed=completed("32144")),
+        {"32933": req},
+    )
+    assert result.satisfied is True
+    assert result.unresolved == []
+
+
+def test_unrecognised_item_kind_is_unresolvable_not_a_violation():
+    """A future `ItemKind` must be flagged, not scored as a genuine failure.
+
+    `resolve_item` already answers "could not be interpreted" for an unknown
+    kind; if `_is_unresolvable` disagreed, the item would count as an unmet
+    requisite and never appear in `unresolved`.
+    """
+    item = RequisiteItem.model_construct(
+        label="1", kind="brand_new_kind", type="other", text="something new"
+    )
+    assert _is_unresolvable(item) is True
+
+    reqs = requisites("99999", "(1)", {})
+    reqs["99999"].requisite_items["1"] = item
+    result = evaluate_requisites("99999", student(), reqs)
+    assert result.satisfied is False
+    assert result.unresolved == ["1"]
+
+
+def test_explanation_is_qualified_when_something_could_not_be_interpreted():
+    """A "satisfied" answer resting on an unreadable item must say so."""
+    reqs = requisites(
+        "31251",
+        "(1)",
+        {"1": subject_item("1", "48024")},
+        antirequisite_rule="(1 AND 2)",
+        antirequisite_items={
+            "1": subject_item("1", "31473"),
+            "2": RequisiteItem(label="2", kind="unparsed", type="other", text="unreadable"),
+        },
+    )
+    result = evaluate_requisites("31251", student(completed=completed("48024")), reqs)
+    assert result.satisfied is True
+    assert result.unresolved == ["antirequisite:2"]
+    assert "All requisites" not in result.explanation
+    assert "could not be fully verified" in result.explanation
+    assert "antirequisite:2" in result.explanation
+
+
+def test_explanation_is_qualified_when_no_requisite_rule_is_published():
+    reqs = {
+        "31251": SubjectRequisites(
+            code="31251",
+            antirequisite_rule="(1)",
+            antirequisite_items={
+                "1": RequisiteItem(label="1", kind="unparsed", type="other", text="unreadable")
+            },
+            source_url="https://example.test",
+            fetched_at=WHEN,
+        )
+    }
+    result = evaluate_requisites("31251", student(), reqs)
+    assert result.satisfied is True
+    assert "could not be fully verified" in result.explanation
+
+
+def test_unmet_explanation_is_also_qualified_when_an_item_is_unreadable():
+    reqs = requisites(
+        "99999",
+        "(1 AND 2)",
+        {
+            "1": subject_item("1", "31250"),
+            "2": RequisiteItem(label="2", kind="unparsed", type="other", text="unreadable"),
+        },
+    )
+    result = evaluate_requisites("99999", student(), reqs)
+    assert result.satisfied is False
+    assert "31250" in result.explanation
+    assert "could not be fully verified" in result.explanation
+
+
+def test_overlong_requisite_text_is_truncated_in_the_deny_message():
+    """The deny message is read by the agent; it must not carry page furniture."""
+    item = RequisiteItem(
+        label="1", kind="subject", type="academic", text="31250 " + ("x " * 500), subject="31250"
+    )
+    reqs = requisites("99999", "(1)", {"1": item})
+    result = evaluate_requisites("99999", student(), reqs)
+    assert len(result.explanation) < 400
+    assert "[truncated]" in result.explanation
+
+
+def test_missing_requisite_record_does_not_claim_no_requisites_are_published():
+    result = evaluate_requisites("42890", student(), {})
+    assert result.satisfied is True
+    assert "No requisite data was collected" in result.explanation
 
 
 def test_aos_item_with_blank_code_string_is_unresolved_not_satisfied():
