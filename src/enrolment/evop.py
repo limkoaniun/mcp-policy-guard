@@ -27,7 +27,30 @@ CREDIT_POINTS_RE = re.compile(r"at least\s+(\d+)\s+credit points", re.IGNORECASE
 ANTI_RULE_PREFIX = "Anti-requisite rule:"
 RULE_PREFIX = "Requisite rule:"
 REQUISITE_HEADING = "Requisite(s)"
-END_MARKER = "Note: See also"
+
+# The requisite table is terminated by whichever of these appears first. A
+# single literal terminator is not safe: `evop_42890.html` already lacks
+# "Note: See also", so a page that drops it would fold the entire page footer
+# into the last item's `text` and still report it as a resolvable item with a
+# corrupt descriptor.
+END_MARKERS = (
+    "Note: See also",
+    "The requisites for this subject",
+    "© Copyright UTS",
+)
+
+# No published requisite row comes close to this length. Anything longer means
+# the table's end boundary was missed, so the row is flagged `unparsed` rather
+# than trusted: `_is_unresolvable` then keeps it out of every satisfied answer.
+MAX_ITEM_TEXT = 400
+
+# A genuine access-conditions page proves itself one of two ways: it names the
+# subject in a "<code> <title>" header, or it says outright that the subject
+# has no restrictions. Without either signal the page is something else — a
+# login redirect, a ColdFusion error, an empty body — and inferring "no
+# requisites" from it would publish a confidently empty dataset.
+NO_RESTRICTIONS_MARKER = "There are no access restrictions enforced for this subject"
+HEADER_RE = re.compile(r"^(\d{5,6})\s+\S")
 
 TYPE_WORDS = {
     "Academic requisite": "academic",
@@ -35,6 +58,10 @@ TYPE_WORDS = {
     "Other requisite": "other",
 }
 HEADER_WORDS = {"Item", "Type", "Details"}
+
+
+class EvopPageError(ValueError):
+    """Raised when a page is not a recognisable eVOP access-conditions page."""
 
 
 def flatten(html: str) -> list[str]:
@@ -47,10 +74,39 @@ def flatten(html: str) -> list[str]:
 
 
 def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
-    """Turn one table row's payload into a typed item, never discarding `text`."""
+    """Turn one table row's payload into a typed item, never discarding `text`.
+
+    Order matters twice over:
+
+    - UTS publishes area-of-study requisites with the same "Admission into …"
+      prefix as true admission requisites ("Admission into MAJ02902 36cp
+      Information Technology Major MBA"). The descriptor is therefore tested
+      for an area-of-study code *before* the row is accepted as an admission
+      requisite; otherwise a student who genuinely holds the major is scored
+      as failing a requisite they were never asked for. The admission
+      descriptor is kept on the item either way, for provenance.
+    - The subject-code match runs before the credit-point search, so a subject
+      whose title happened to contain "at least N credit points" is still read
+      as the subject it is.
+    """
+    if len(text) > MAX_ITEM_TEXT:
+        # Almost certainly the requisite table's end boundary was missed and
+        # page furniture has been folded into this row. Never trust it.
+        return RequisiteItem(label=label, kind="unparsed", type=item_type, text=text)
+
     admission = ADMISSION_RE.match(text)
     if admission:
         descriptor = admission.group(1).strip()
+        aos = AOS_RE.match(descriptor)
+        if aos:
+            return RequisiteItem(
+                label=label,
+                kind="aos",
+                type=item_type,
+                text=text,
+                aos_code=aos.group(1),
+                admission_descriptor=descriptor,
+            )
         course = COURSE_CODE_RE.search(descriptor)
         return RequisiteItem(
             label=label,
@@ -61,6 +117,12 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
             admission_descriptor=descriptor,
         )
 
+    subject = SUBJECT_RE.match(text)
+    if subject:
+        return RequisiteItem(
+            label=label, kind="subject", type=item_type, text=text, subject=subject.group(1)
+        )
+
     credit_points = CREDIT_POINTS_RE.search(text)
     if credit_points:
         return RequisiteItem(
@@ -69,12 +131,6 @@ def classify_item(label: str, item_type: str, text: str) -> RequisiteItem:
             type=item_type,
             text=text,
             credit_points=int(credit_points.group(1)),
-        )
-
-    subject = SUBJECT_RE.match(text)
-    if subject:
-        return RequisiteItem(
-            label=label, kind="subject", type=item_type, text=text, subject=subject.group(1)
         )
 
     aos = AOS_RE.match(text)
@@ -109,6 +165,38 @@ def _parse_table(lines: list[str]) -> dict[str, RequisiteItem]:
     }
 
 
+def _check_is_access_conditions_page(lines: list[str], code: str, table_start: int) -> None:
+    """Fail unless the page positively identifies itself as this subject's page.
+
+    Absence of rule lines is not evidence that a subject has no requisites: a
+    login page, an application error page and an empty body all look exactly
+    the same to a parser that only looks for the rule prefixes. The captured
+    pages carry a `Logout` link, so `search.cfm` may well be session-scoped —
+    an unauthenticated run must abort, not emit an empty dataset and exit 0.
+    """
+    if any(line.startswith(NO_RESTRICTIONS_MARKER) for line in lines):
+        return
+
+    # Restrict the header scan to what precedes the tables: a requisite row
+    # such as "32144 Technology Research Preparation" is shaped like a header.
+    headers = [
+        match.group(1)
+        for line in lines[:table_start]
+        if (match := HEADER_RE.match(line))
+    ]
+    if not headers:
+        raise EvopPageError(
+            f"eVOP page for subject {code} is not an access-conditions page: it carries "
+            f"neither a '<code> <title>' header nor the no-restrictions notice. "
+            f"Refusing to read this as 'no requisites published'."
+        )
+    if code not in headers:
+        raise EvopPageError(
+            f"eVOP page fetched for subject {code} identifies itself as subject "
+            f"{headers[0]}; refusing to attribute its requisites to {code}."
+        )
+
+
 def parse_evop(html: str, code: str, source_url: str, fetched_at: str) -> SubjectRequisites:
     lines = flatten(html)
 
@@ -121,8 +209,15 @@ def parse_evop(html: str, code: str, source_url: str, fetched_at: str) -> Subjec
     rule_idx = next(
         (i for i, line in enumerate(lines) if line.startswith(RULE_PREFIX)), None
     )
-    end = next((i for i, line in enumerate(lines) if line.startswith(END_MARKER)), len(lines))
+    end = next(
+        (i for i, line in enumerate(lines) if line.startswith(END_MARKERS)), len(lines)
+    )
     heading_idx = next((i for i, line in enumerate(lines) if line == REQUISITE_HEADING), None)
+
+    table_start = min(
+        (i for i in (anti_rule_idx, rule_idx, heading_idx) if i is not None), default=len(lines)
+    )
+    _check_is_access_conditions_page(lines, code, table_start)
 
     result = SubjectRequisites(code=code, source_url=source_url, fetched_at=fetched_at)
 
