@@ -1,0 +1,22 @@
+# The enrolment policy pack.
+#
+# src/policy_guard/ reads this and never imports `enrolment`. Everything the
+# proxy knows about this domain — the upstream command, which tools return
+# attacker-influenceable content, which policies to load — arrives here.
+name: enrolment
+
+upstream_command: python
+upstream_args: [-m, enrolment.server]
+
+policies: [allowlist]
+
+# Trust is per tool, not per server: this one server returns both
+# attacker-influenceable catalogue text and trustworthy computed results.
+trust:
+  search_subjects: untrusted
+  get_subject_details: untrusted
+  get_student_record: trusted
+  check_prerequisites: trusted
+  enrol: trusted
+  drop: trusted
+  submit_erequest: trusted
