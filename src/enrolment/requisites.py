@@ -45,16 +45,26 @@ def _is_unresolvable(item: RequisiteItem) -> bool:
 
     Kind "unparsed" is the obvious case, but a row can also claim a kind
     while missing the one field that kind depends on (e.g. a credit-point
-    item with no threshold) if upstream parsing degraded partially. Treating
-    those as resolvable would let `resolve_item` fall back to a value that
-    happens to look satisfied (0 required credit points, `None == None`)
-    instead of surfacing the gap.
+    item with no threshold, or an admission item with neither a course code
+    nor a descriptor) if upstream parsing degraded partially. Treating those
+    as resolvable would let `resolve_item` fall back to a value that happens
+    to look satisfied (0 required credit points, `None == None`, an empty
+    descriptor matching a blank `admitted_to` entry) instead of surfacing the
+    gap. This is the single place that decides interpretability; `resolve_item`
+    defers to it before running any kind-specific logic, so the two can never
+    disagree.
     """
     if item.kind == "unparsed":
         return True
-    if item.kind == "credit_points" and item.credit_points is None:
-        return True
-    return bool(item.kind == "aos" and item.aos_code is None)
+    if item.kind == "subject":
+        return item.subject is None
+    if item.kind == "credit_points":
+        return item.credit_points is None
+    if item.kind == "aos":
+        return item.aos_code is None
+    if item.kind == "admission":
+        return item.course is None and not (item.admission_descriptor or "").strip()
+    return False
 
 
 def _unresolved_labels(node: Node, items: dict[str, RequisiteItem]) -> list[str]:
@@ -67,6 +77,13 @@ def _unresolved_labels(node: Node, items: dict[str, RequisiteItem]) -> list[str]
 
 def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
     """Decide whether one requisite item is satisfied by this student."""
+    if _is_unresolvable(item):
+        return ItemOutcome(
+            label=item.label,
+            satisfied=False,
+            reason=f"requisite could not be interpreted: {item.text}",
+        )
+
     if item.kind == "subject":
         satisfied = item.subject in student.completed_codes()
         return ItemOutcome(
@@ -76,13 +93,6 @@ def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
         )
 
     if item.kind == "credit_points":
-        if item.credit_points is None:
-            return ItemOutcome(
-                label=item.label,
-                satisfied=False,
-                reason="credit-point requisite has no parsed threshold and "
-                "could not be interpreted",
-            )
         earned = student.completed_credit_points()
         required = item.credit_points
         return ItemOutcome(
@@ -92,13 +102,6 @@ def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
         )
 
     if item.kind == "aos":
-        if item.aos_code is None:
-            return ItemOutcome(
-                label=item.label,
-                satisfied=False,
-                reason="area-of-study requisite has no parsed code and "
-                "could not be interpreted",
-            )
         held = {code for code in (student.major, student.sub_major) if code is not None}
         satisfied = item.aos_code in held
         return ItemOutcome(
@@ -109,9 +112,10 @@ def resolve_item(item: RequisiteItem, student: Student) -> ItemOutcome:
 
     if item.kind == "admission":
         admitted = {_normalise(entry) for entry in student.admitted_to}
-        satisfied = (item.course is not None and item.course in student.admitted_to) or (
-            _normalise(item.admission_descriptor or "") in admitted
-        )
+        descriptor = _normalise(item.admission_descriptor or "")
+        course_held = item.course is not None and _normalise(item.course) in admitted
+        descriptor_held = bool(descriptor) and descriptor in admitted
+        satisfied = course_held or descriptor_held
         return ItemOutcome(
             label=item.label,
             satisfied=satisfied,

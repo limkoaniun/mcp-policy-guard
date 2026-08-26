@@ -261,3 +261,66 @@ def test_aos_item_with_no_code_is_unresolved_not_satisfied_by_absent_major():
     result = evaluate_requisites("32531", student(major=None, sub_major=None), reqs)
     assert result.satisfied is False
     assert "1" in result.unresolved
+
+
+def test_admission_item_with_no_payload_is_unresolved_not_satisfied_by_blank_entry():
+    """A garbled admission item (no course, no descriptor) must not read satisfied.
+
+    A naive implementation normalises the missing descriptor to "" and checks
+    whether "" is among the student's normalised `admitted_to` entries. A
+    blank or whitespace-only entry in `admitted_to` then makes that check
+    true, so an item whose payload could not be read at all comes back
+    satisfied -- the single most damaging outcome this module can produce.
+    """
+    item = RequisiteItem(
+        label="1",
+        kind="admission",
+        type="admission",
+        text="garbled",
+    )
+    reqs = requisites("31251", "(1)", {"1": item})
+    result = evaluate_requisites(
+        "31251", student(admitted_to=["C04296", "  "]), reqs
+    )
+    assert result.satisfied is False
+    assert "1" in result.unresolved
+
+
+def test_subject_item_with_no_code_is_unresolved_not_satisfied():
+    item = RequisiteItem(
+        label="1",
+        kind="subject",
+        type="academic",
+        text="subject wording we could not parse a code from",
+        subject=None,
+    )
+    reqs = requisites("32146", "(1)", {"1": item})
+    result = evaluate_requisites("32146", student(), reqs)
+    assert result.satisfied is False
+    assert "1" in result.unresolved
+
+
+def test_admission_descriptor_matches_with_differing_case_and_padding():
+    item = RequisiteItem(
+        label="1",
+        kind="admission",
+        type="admission",
+        text="Admission into Master's Coursework courses owned by FEIT",
+        admission_descriptor="Master's Coursework courses owned by FEIT",
+    )
+    reqs = requisites("32933", "(1)", {"1": item})
+    enrolled = student(admitted_to=["  MASTER'S coursework   COURSES owned by feit  "])
+    assert evaluate_requisites("32933", enrolled, reqs).satisfied is True
+
+
+def test_admission_course_code_matches_with_differing_case():
+    item = RequisiteItem(
+        label="1",
+        kind="admission",
+        type="admission",
+        text="Admission into C04296 Master of Information Technology (Extension)",
+        course="C04296",
+        admission_descriptor="C04296 Master of Information Technology (Extension)",
+    )
+    reqs = requisites("32531", "(1)", {"1": item})
+    assert evaluate_requisites("32531", student(admitted_to=["c04296"]), reqs).satisfied is True
