@@ -103,9 +103,10 @@ The proxy itself is not yet runnable — see below.
 
 ## Status
 
-**Done.** The enrolment thin-slice dataset is built and committed — 14 subjects,
-50 synthetic students, 700 compliance scenarios, zero unparsed requisites. And the
-data layer behind it: requisite rule parser and evaluator, catalogue
+**Done.** The full C04296 dataset is built and committed — 93 subjects, 201
+cached pages, 50 synthetic students and 4,650 compliance scenarios, with zero
+unparsed requisites and zero unreadable rules. Rebuilds from cache in 0.24s. And
+the data layer behind it: requisite rule parser and evaluator, catalogue
 and requisite extractors, cached fetcher with provenance, build pipeline with
 coverage gate, synthetic student generator, and the compliance scenario generator.
 177 tests.

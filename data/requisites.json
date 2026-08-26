@@ -1,4 +1,157 @@
 {
+ "32933": {
+  "code": "32933",
+  "requisite_rule": "(1 AND (2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32144 Technology Research Preparation",
+    "subject": "32144",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Diploma Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Diploma Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Diploma New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Diploma New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "2e": {
+    "label": "2e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "2f": {
+    "label": "2f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32932 Management Research Project",
+    "subject": "32932",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32934 Research Project",
+    "subject": "32934",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32933",
+  "fetched_at": "2026-08-26T11:21:23+00:00"
+ },
+ "32040": {
+  "code": "32040",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32144 Technology Research Preparation",
+    "subject": "32144",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32040",
+  "fetched_at": "2026-08-26T11:21:28+00:00"
+ },
  "32541": {
   "code": "32541",
   "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g))",
@@ -559,16 +712,229 @@
   "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32144",
   "fetched_at": "2026-08-26T11:09:34+00:00"
  },
- "32309": {
-  "code": "32309",
-  "requisite_rule": "(1 AND (2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f))",
+ "42028": {
+  "code": "42028",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c))",
   "requisite_items": {
    "1": {
     "label": "1",
     "kind": "subject",
     "type": "academic",
-    "text": "32548 Cybersecurity",
-    "subject": "32548",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "subject",
+    "type": "academic",
+    "text": "36106 Machine Learning Algorithms and Applications",
+    "subject": "36106",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 48 credit points in  spk(s): C04379 - Master of Business Analytics (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 48,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42028",
+  "fetched_at": "2026-08-26T11:21:33+00:00"
+ },
+ "42913": {
+  "code": "42913",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42913",
+  "fetched_at": "2026-08-26T11:21:38+00:00"
+ },
+ "42850": {
+  "code": "42850",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42850",
+  "fetched_at": "2026-08-26T11:21:44+00:00"
+ },
+ "42050": {
+  "code": "42050",
+  "requisite_rule": "((1 OR 1a OR 1b))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 48 credit points in  spk(s): C04379 - Master of Business Analytics (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 48,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42050",
+  "fetched_at": "2026-08-26T11:21:49+00:00"
+ },
+ "32567": {
+  "code": "32567",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32567",
+  "fetched_at": "2026-08-26T11:21:54+00:00"
+ },
+ "32130": {
+  "code": "32130",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1 AND 2 AND 3)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "321130 Fundamentals of Data Analytics",
+    "subject": "321130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "329130 Fundamentals of Data Analytics",
+    "subject": "329130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32130",
+  "fetched_at": "2026-08-26T11:22:00+00:00"
+ },
+ "32113": {
+  "code": "32113",
+  "requisite_rule": "(((1 OR 1a OR 1b OR 1c) AND (2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f OR 2g OR 2h OR 2i OR 2j OR 2k)) OR ((3 OR 3a)))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31271 Database Fundamentals",
+    "subject": "31271",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31061 Database Principles",
+    "subject": "31061",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32606 Database",
+    "subject": "32606",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "subject",
+    "type": "academic",
+    "text": "94692 Data Science Practice",
+    "subject": "94692",
     "aos_code": null,
     "course": null,
     "credit_points": null,
@@ -603,6 +969,18 @@
     "label": "2b",
     "kind": "admission",
     "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses co-owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses co-owned by FEIT",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
     "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
     "subject": null,
     "aos_code": null,
@@ -611,8 +989,8 @@
     "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
     "corequisite": false
    },
-   "2c": {
-    "label": "2c",
+   "2d": {
+    "label": "2d",
     "kind": "admission",
     "type": "admission",
     "text": "Admission into Grad Dip New Area of Study owned by FEIT",
@@ -623,8 +1001,8 @@
     "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
     "corequisite": false
    },
-   "2d": {
-    "label": "2d",
+   "2e": {
+    "label": "2e",
     "kind": "admission",
     "type": "admission",
     "text": "Admission into Graduate Certificate courses owned by FEIT",
@@ -635,8 +1013,68 @@
     "admission_descriptor": "Graduate Certificate courses owned by FEIT",
     "corequisite": false
    },
-   "2e": {
-    "label": "2e",
+   "2f": {
+    "label": "2f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by TD School.",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by TD School.",
+    "corequisite": false
+   },
+   "2g": {
+    "label": "2g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by TD School.",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by TD School.",
+    "corequisite": false
+   },
+   "2h": {
+    "label": "2h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by TD School.",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by TD School.",
+    "corequisite": false
+   },
+   "2i": {
+    "label": "2i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by TD School.",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by TD School.",
+    "corequisite": false
+   },
+   "2j": {
+    "label": "2j",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "2k": {
+    "label": "2k",
     "kind": "aos",
     "type": "admission",
     "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
@@ -647,36 +1085,35 @@
     "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
     "corequisite": false
    },
-   "2f": {
-    "label": "2f",
-    "kind": "aos",
+   "3": {
+    "label": "3",
+    "kind": "admission",
     "type": "admission",
-    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "text": "Admission into C04296 Master of Information Technology (Extension)",
     "subject": null,
-    "aos_code": "MAJ02902",
-    "course": null,
-    "credit_points": null,
-    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
-    "corequisite": false
-   }
-  },
-  "antirequisite_rule": "(1)",
-  "antirequisite_items": {
-   "1": {
-    "label": "1",
-    "kind": "subject",
-    "type": "unknown",
-    "text": "48436 Digital Forensics",
-    "subject": "48436",
     "aos_code": null,
-    "course": null,
+    "course": "C04296",
     "credit_points": null,
-    "admission_descriptor": null,
+    "admission_descriptor": "C04296 Master of Information Technology (Extension)",
+    "corequisite": false
+   },
+   "3a": {
+    "label": "3a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04370 Executive Master of Data Science and Innovation",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04370",
+    "credit_points": null,
+    "admission_descriptor": "C04370 Executive Master of Data Science and Innovation",
     "corequisite": false
    }
   },
-  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32309",
-  "fetched_at": "2026-08-26T11:09:39+00:00"
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32113",
+  "fetched_at": "2026-08-26T11:22:05+00:00"
  },
  "42904": {
   "code": "42904",
@@ -832,6 +1269,695 @@
   },
   "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42904",
   "fetched_at": "2026-08-26T11:09:47+00:00"
+ },
+ "57304": {
+  "code": "57304",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i OR 1j OR 1k))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ10053 Artificial Intelligence and Data Analytics major",
+    "subject": null,
+    "aos_code": "MAJ10053",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ10053 Artificial Intelligence and Data Analytics major",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C06147 Graduate Diploma in Artificial Intelligence",
+    "subject": null,
+    "aos_code": null,
+    "course": "C06147",
+    "credit_points": null,
+    "admission_descriptor": "C06147 Graduate Diploma in Artificial Intelligence",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04443 Master of Artificial Intelligence",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04443",
+    "credit_points": null,
+    "admission_descriptor": "C04443 Master of Artificial Intelligence",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02084 Data Analytics Major",
+    "subject": null,
+    "aos_code": "MAJ02084",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02084 Data Analytics Major",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C10471 Bachelor of Cybersecurity",
+    "subject": null,
+    "aos_code": null,
+    "course": "C10471",
+    "credit_points": null,
+    "admission_descriptor": "C10471 Bachelor of Cybersecurity",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C10472 Bachelor of Criminology Bachelor of Cybersecurity",
+    "subject": null,
+    "aos_code": null,
+    "course": "C10472",
+    "credit_points": null,
+    "admission_descriptor": "C10472 Bachelor of Criminology Bachelor of Cybersecurity",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C10473 Bachelor of Cybersecurity Bachelor of International Studies",
+    "subject": null,
+    "aos_code": null,
+    "course": "C10473",
+    "credit_points": null,
+    "admission_descriptor": "C10473 Bachelor of Cybersecurity Bachelor of International Studies",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04431 Master of Cybersecurity (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04431",
+    "credit_points": null,
+    "admission_descriptor": "C04431 Master of Cybersecurity (Extension)",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04430 Master of Cybersecurity",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04430",
+    "credit_points": null,
+    "admission_descriptor": "C04430 Master of Cybersecurity",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C10474 Bachelor of Artificial Intelligence",
+    "subject": null,
+    "aos_code": null,
+    "course": "C10474",
+    "credit_points": null,
+    "admission_descriptor": "C10474 Bachelor of Artificial Intelligence",
+    "corequisite": false
+   },
+   "1j": {
+    "label": "1j",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C10475 Bachelor of Artificial Intelligence Bachelor of International Studies",
+    "subject": null,
+    "aos_code": null,
+    "course": "C10475",
+    "credit_points": null,
+    "admission_descriptor": "C10475 Bachelor of Artificial Intelligence Bachelor of International Studies",
+    "corequisite": false
+   },
+   "1k": {
+    "label": "1k",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04462 Master of Strategic Communication (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04462",
+    "credit_points": null,
+    "admission_descriptor": "C04462 Master of Strategic Communication (Extension)",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "570100 Data Ethics and Regulation",
+    "subject": "570100",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=57304",
+  "fetched_at": "2026-08-26T11:22:11+00:00"
+ },
+ "42177": {
+  "code": "42177",
+  "requisite_rule": "((1 OR 1a OR 1b))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32555 Fundamentals of Software Development",
+    "subject": "32555",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04296 Master of Information Technology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04296",
+    "credit_points": null,
+    "admission_descriptor": "C04296 Master of Information Technology (Extension)",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04297 Master of Information Technology (Advanced)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04297",
+    "credit_points": null,
+    "admission_descriptor": "C04297 Master of Information Technology (Advanced)",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31256 Image Processing and Pattern Recognition",
+    "subject": "31256",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42177",
+  "fetched_at": "2026-08-26T11:22:16+00:00"
+ },
+ "43031": {
+  "code": "43031",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1 AND 2 AND 3 AND 4)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "37373 Programming for Data Analysis",
+    "subject": "37373",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41039 Programming 1",
+    "subject": "41039",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "42047 Data Processing Using Python",
+    "subject": "42047",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "4": {
+    "label": "4",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "430031 Python Programming for Data Processing",
+    "subject": "430031",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=43031",
+  "fetched_at": "2026-08-26T11:22:21+00:00"
+ },
+ "32513": {
+  "code": "32513",
+  "requisite_rule": "(((1 OR 1a)) OR ((2 OR 2a) AND (3 OR 3a)) OR (4 AND (5 OR 5a)) OR (6))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "26776 Foundations of Business Analytics",
+    "subject": "26776",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "22804 Business Analytics Foundations",
+    "subject": "22804",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42047 Data Processing Using Python",
+    "subject": "42047",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3a": {
+    "label": "3a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "43031 Python Programming for Data Processing",
+    "subject": "43031",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "4": {
+    "label": "4",
+    "kind": "subject",
+    "type": "academic",
+    "text": "36106 Machine Learning Algorithms and Applications",
+    "subject": "36106",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "5": {
+    "label": "5",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04372 Master of Data Science and Innovation",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04372",
+    "credit_points": null,
+    "admission_descriptor": "C04372 Master of Data Science and Innovation",
+    "corequisite": false
+   },
+   "5a": {
+    "label": "5a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04293 Master of Data Science and Innovation",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04293",
+    "credit_points": null,
+    "admission_descriptor": "C04293 Master of Data Science and Innovation",
+    "corequisite": false
+   },
+   "6": {
+    "label": "6",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04370 Executive Master of Data Science and Innovation",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04370",
+    "credit_points": null,
+    "admission_descriptor": "C04370 Executive Master of Data Science and Innovation",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31005 Machine Learning",
+    "subject": "31005",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32513",
+  "fetched_at": "2026-08-26T11:22:27+00:00"
+ },
+ "32146": {
+  "code": "32146",
+  "requisite_rule": "((1 AND (2 OR 2a OR 2b)) OR (3) OR (4) OR (5) OR (6))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "48024 Programming 2",
+    "subject": "48024",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "43031 Python Programming for Data Processing",
+    "subject": "43031",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "subject",
+    "type": "academic",
+    "text": "41040 Introduction to Artificial Intelligence",
+    "subject": "41040",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "4": {
+    "label": "4",
+    "kind": "subject",
+    "type": "academic",
+    "text": "26776 Foundations of Business Analytics",
+    "subject": "26776",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "5": {
+    "label": "5",
+    "kind": "subject",
+    "type": "academic",
+    "text": "22804 Business Analytics Foundations",
+    "subject": "22804",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "6": {
+    "label": "6",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31266 Introduction to Information Systems",
+    "subject": "31266",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2 AND 3)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "320146 Data Visualisation and Visual Analytics",
+    "subject": "320146",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "321146 Data Visualisation and Visual Analytics",
+    "subject": "321146",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "329146 Data Visualisation and Visual Analytics",
+    "subject": "329146",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32146",
+  "fetched_at": "2026-08-26T11:22:33+00:00"
+ },
+ "32309": {
+  "code": "32309",
+  "requisite_rule": "(1 AND (2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32548 Cybersecurity",
+    "subject": "32548",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "2e": {
+    "label": "2e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   },
+   "2f": {
+    "label": "2f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "48436 Digital Forensics",
+    "subject": "48436",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32309",
+  "fetched_at": "2026-08-26T11:09:39+00:00"
  },
  "42036": {
   "code": "42036",
@@ -1562,5 +2688,4302 @@
   "antirequisite_items": {},
   "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32547",
   "fetched_at": "2026-08-26T11:10:33+00:00"
+ },
+ "32549": {
+  "code": "32549",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32549",
+  "fetched_at": "2026-08-26T11:22:38+00:00"
+ },
+ "42017": {
+  "code": "42017",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31260 Fundamentals of Interaction Design",
+    "subject": "31260",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42017",
+  "fetched_at": "2026-08-26T11:22:44+00:00"
+ },
+ "32998": {
+  "code": "32998",
+  "requisite_rule": "((1) OR ((2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f OR 2g OR 2h OR 2i)))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32555 Fundamentals of Software Development",
+    "subject": "32555",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11145 Graduate Certificate in Internetworking",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11145",
+    "credit_points": null,
+    "admission_descriptor": "C11145 Graduate Certificate in Internetworking",
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C07080 Graduate Diploma in Internetworking",
+    "subject": null,
+    "aos_code": null,
+    "course": "C07080",
+    "credit_points": null,
+    "admission_descriptor": "C07080 Graduate Diploma in Internetworking",
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04160 Master of Science in Internetworking",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04160",
+    "credit_points": null,
+    "admission_descriptor": "C04160 Master of Science in Internetworking",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04224 Master of Science in Internetworking (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04224",
+    "credit_points": null,
+    "admission_descriptor": "C04224 Master of Science in Internetworking (Extension)",
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04296 Master of Information Technology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04296",
+    "credit_points": null,
+    "admission_descriptor": "C04296 Master of Information Technology (Extension)",
+    "corequisite": false
+   },
+   "2e": {
+    "label": "2e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ03486 Software Systems Engineering Major",
+    "subject": null,
+    "aos_code": "MAJ03486",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ03486 Software Systems Engineering Major",
+    "corequisite": false
+   },
+   "2f": {
+    "label": "2f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into STM90894 Software Systems Engineering Stream GDE",
+    "subject": null,
+    "aos_code": "STM90894",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "STM90894 Software Systems Engineering Stream GDE",
+    "corequisite": false
+   },
+   "2g": {
+    "label": "2g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into STM90908 Software Systems Engineering Stream GCE",
+    "subject": null,
+    "aos_code": "STM90908",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "STM90908 Software Systems Engineering Stream GCE",
+    "corequisite": false
+   },
+   "2h": {
+    "label": "2h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "2i": {
+    "label": "2i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31927 Application Development with .NET",
+    "subject": "31927",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32998",
+  "fetched_at": "2026-08-26T11:22:49+00:00"
+ },
+ "32516": {
+  "code": "32516",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31748 Programming on the Internet",
+    "subject": "31748",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32516",
+  "fetched_at": "2026-08-26T11:22:54+00:00"
+ },
+ "32571": {
+  "code": "32571",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32571",
+  "fetched_at": "2026-08-26T11:22:59+00:00"
+ },
+ "32509": {
+  "code": "32509",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f) AND 2)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42017 Fundamentals of Interaction Design",
+    "subject": "42017",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31777 Advanced Interaction Design",
+    "subject": "31777",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32509",
+  "fetched_at": "2026-08-26T11:23:04+00:00"
+ },
+ "42889": {
+  "code": "42889",
+  "requisite_rule": "(((1 OR 1a)) OR ((2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f OR 2g OR 2h)))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "48023 Programming Fundamentals",
+    "subject": "48023",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32555 Fundamentals of Software Development",
+    "subject": "32555",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11145 Graduate Certificate in Internetworking",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11145",
+    "credit_points": null,
+    "admission_descriptor": "C11145 Graduate Certificate in Internetworking",
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C07080 Graduate Diploma in Internetworking",
+    "subject": null,
+    "aos_code": null,
+    "course": "C07080",
+    "credit_points": null,
+    "admission_descriptor": "C07080 Graduate Diploma in Internetworking",
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04160 Master of Science in Internetworking",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04160",
+    "credit_points": null,
+    "admission_descriptor": "C04160 Master of Science in Internetworking",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04224 Master of Science in Internetworking (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04224",
+    "credit_points": null,
+    "admission_descriptor": "C04224 Master of Science in Internetworking (Extension)",
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ03486 Software Systems Engineering Major",
+    "subject": null,
+    "aos_code": "MAJ03486",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ03486 Software Systems Engineering Major",
+    "corequisite": false
+   },
+   "2e": {
+    "label": "2e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into STM90894 Software Systems Engineering Stream GDE",
+    "subject": null,
+    "aos_code": "STM90894",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "STM90894 Software Systems Engineering Stream GDE",
+    "corequisite": false
+   },
+   "2f": {
+    "label": "2f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into STM90908 Software Systems Engineering Stream GCE",
+    "subject": null,
+    "aos_code": "STM90908",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "STM90908 Software Systems Engineering Stream GCE",
+    "corequisite": false
+   },
+   "2g": {
+    "label": "2g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04296 Master of Information Technology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04296",
+    "credit_points": null,
+    "admission_descriptor": "C04296 Master of Information Technology (Extension)",
+    "corequisite": false
+   },
+   "2h": {
+    "label": "2h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04297 Master of Information Technology (Advanced)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04297",
+    "credit_points": null,
+    "admission_descriptor": "C04297 Master of Information Technology (Advanced)",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41889 Application Development in the iOS Environment",
+    "subject": "41889",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42889",
+  "fetched_at": "2026-08-26T11:23:10+00:00"
+ },
+ "32569": {
+  "code": "32569",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32569",
+  "fetched_at": "2026-08-26T11:23:15+00:00"
+ },
+ "32603": {
+  "code": "32603",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32603",
+  "fetched_at": "2026-08-26T11:23:20+00:00"
+ },
+ "32570": {
+  "code": "32570",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2 AND 3)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41003 Enterprise Architecture Practice",
+    "subject": "41003",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "49239 Software Systems Middleware",
+    "subject": "49239",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "49266 Software Architecture and Middleware",
+    "subject": "49266",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32570",
+  "fetched_at": "2026-08-26T11:23:27+00:00"
+ },
+ "40005": {
+  "code": "40005",
+  "requisite_rule": "((1 OR 1a))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42889 iOS Application Development",
+    "subject": "42889",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "41889 Application Development in the iOS Environment",
+    "subject": "41889",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=40005",
+  "fetched_at": "2026-08-26T11:23:32+00:00"
+ },
+ "32004": {
+  "code": "32004",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Research owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Research owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31263 Introduction to Computer Game Development",
+    "subject": "31263",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32004",
+  "fetched_at": "2026-08-26T11:23:37+00:00"
+ },
+ "32027": {
+  "code": "32027",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Research owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Research owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31080 Interactive Media",
+    "subject": "31080",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32027",
+  "fetched_at": "2026-08-26T11:23:45+00:00"
+ },
+ "95569": {
+  "code": "95569",
+  "requisite_rule": "((1 OR 1a) AND (2 OR 2a))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32509 Advanced Interaction Design",
+    "subject": "32509",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": true
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42056 Serious Games Research",
+    "subject": "42056",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": true
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "95566 Digital Experience Design Studio",
+    "subject": "95566",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "95563 Data Driven Storytelling Studio",
+    "subject": "95563",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=95569",
+  "fetched_at": "2026-08-26T11:23:50+00:00"
+ },
+ "32405": {
+  "code": "32405",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i OR 1j))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04311 Master of Design",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04311",
+    "credit_points": null,
+    "admission_descriptor": "C04311 Master of Design",
+    "corequisite": false
+   },
+   "1j": {
+    "label": "1j",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04312 Master of Design (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04312",
+    "credit_points": null,
+    "admission_descriptor": "C04312 Master of Design (Extension)",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41020 Human-centred Design Methods",
+    "subject": "41020",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32405",
+  "fetched_at": "2026-08-26T11:23:55+00:00"
+ },
+ "95563": {
+  "code": "95563",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=95563",
+  "fetched_at": "2026-08-26T11:24:00+00:00"
+ },
+ "95566": {
+  "code": "95566",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=95566",
+  "fetched_at": "2026-08-26T11:24:05+00:00"
+ },
+ "49016": {
+  "code": "49016",
+  "requisite_rule": "(((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g)) OR ((2 OR 2a OR 2b OR 2c OR 2d)) OR ((3 OR 3a OR 3b OR 3c OR 3d)))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework co-owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework co-owned by FEIT",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in 120.0000000000 Credit Points spk(s): C10061 - Bachelor of Engineering Diploma Engineering Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in 120.0000000000 Credit Points spk(s): C10066 - Bachelor of Engineering Science",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in 120.0000000000 Credit Points spk(s): C10067 - Bachelor of Engineering",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in 120.0000000000 Credit Points spk(s): C09067 - Bachelor of Engineering (Honours) Diploma Professional Engineering Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in 120.0000000000 Credit Points spk(s): C09066 - Bachelor of Engineering (Honours)",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04392 Master of Forensic Science (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04392",
+    "credit_points": null,
+    "admission_descriptor": "C04392 Master of Forensic Science (Extension)",
+    "corequisite": false
+   },
+   "3a": {
+    "label": "3a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04390 Master of Medical Biotechnology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04390",
+    "credit_points": null,
+    "admission_descriptor": "C04390 Master of Medical Biotechnology",
+    "corequisite": false
+   },
+   "3b": {
+    "label": "3b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04388 Master of Medical Biotechnology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04388",
+    "credit_points": null,
+    "admission_descriptor": "C04388 Master of Medical Biotechnology (Extension)",
+    "corequisite": false
+   },
+   "3c": {
+    "label": "3c",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ08075 Engineering Management Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ08075",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ08075 Engineering Management Sub-major MBA",
+    "corequisite": false
+   },
+   "3d": {
+    "label": "3d",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ08991 36cp Technology Management Major MBA",
+    "subject": null,
+    "aos_code": "MAJ08991",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ08991 36cp Technology Management Major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "48080 Introduction to Innovation",
+    "subject": "48080",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "48081 Innovation Processes",
+    "subject": "48081",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=49016",
+  "fetched_at": "2026-08-26T11:24:10+00:00"
+ },
+ "32531": {
+  "code": "32531",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i OR 1j OR 1k OR 1l OR 1m OR 1n OR 1o OR 1p))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32557 Enabling Enterprise Information Systems",
+    "subject": "32557",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04296 Master of Information Technology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04296",
+    "credit_points": null,
+    "admission_descriptor": "C04296 Master of Information Technology (Extension)",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04297 Master of Information Technology (Advanced)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04297",
+    "credit_points": null,
+    "admission_descriptor": "C04297 Master of Information Technology (Advanced)",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11142 Graduate Certificate in Information Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11142",
+    "credit_points": null,
+    "admission_descriptor": "C11142 Graduate Certificate in Information Technology",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04405 Master of Information Systems",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04405",
+    "credit_points": null,
+    "admission_descriptor": "C04405 Master of Information Systems",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04402 Master of Information Systems (Advanced)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04402",
+    "credit_points": null,
+    "admission_descriptor": "C04402 Master of Information Systems (Advanced)",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04401 Master of Information Systems (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04401",
+    "credit_points": null,
+    "admission_descriptor": "C04401 Master of Information Systems (Extension)",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11298 Graduate Certificate in Professional Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11298",
+    "credit_points": null,
+    "admission_descriptor": "C11298 Graduate Certificate in Professional Practice",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C06136 Graduate Diploma in Professional Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": "C06136",
+    "credit_points": null,
+    "admission_descriptor": "C06136 Graduate Diploma in Professional Practice",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04404 Master of Professional Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04404",
+    "credit_points": null,
+    "admission_descriptor": "C04404 Master of Professional Practice",
+    "corequisite": false
+   },
+   "1j": {
+    "label": "1j",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04406 Master of Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04406",
+    "credit_points": null,
+    "admission_descriptor": "C04406 Master of Technology",
+    "corequisite": false
+   },
+   "1k": {
+    "label": "1k",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C06137 Graduate Diploma in Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C06137",
+    "credit_points": null,
+    "admission_descriptor": "C06137 Graduate Diploma in Technology",
+    "corequisite": false
+   },
+   "1l": {
+    "label": "1l",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11301 Graduate Certificate in Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11301",
+    "credit_points": null,
+    "admission_descriptor": "C11301 Graduate Certificate in Technology",
+    "corequisite": false
+   },
+   "1m": {
+    "label": "1m",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1n": {
+    "label": "1n",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1o": {
+    "label": "1o",
+    "kind": "aos",
+    "type": "academic",
+    "text": "MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1p": {
+    "label": "1p",
+    "kind": "aos",
+    "type": "academic",
+    "text": "SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32531",
+  "fetched_at": "2026-08-26T11:24:16+00:00"
+ },
+ "32560": {
+  "code": "32560",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32560",
+  "fetched_at": "2026-08-26T11:24:21+00:00"
+ },
+ "42900": {
+  "code": "42900",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42900",
+  "fetched_at": "2026-08-26T11:24:26+00:00"
+ },
+ "32559": {
+  "code": "32559",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32559",
+  "fetched_at": "2026-08-26T11:24:31+00:00"
+ },
+ "32558": {
+  "code": "32558",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i OR 1j OR 1k OR 1l OR 1m OR 1n OR 1o OR 1p OR 1q OR 1r OR 1s OR 1t))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32557 Enabling Enterprise Information Systems",
+    "subject": "32557",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04296 Master of Information Technology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04296",
+    "credit_points": null,
+    "admission_descriptor": "C04296 Master of Information Technology (Extension)",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04297 Master of Information Technology (Advanced)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04297",
+    "credit_points": null,
+    "admission_descriptor": "C04297 Master of Information Technology (Advanced)",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11142 Graduate Certificate in Information Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11142",
+    "credit_points": null,
+    "admission_descriptor": "C11142 Graduate Certificate in Information Technology",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11296 Graduate Certificate in Information Systems",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11296",
+    "credit_points": null,
+    "admission_descriptor": "C11296 Graduate Certificate in Information Systems",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C06134 Graduate Diploma in Information Systems",
+    "subject": null,
+    "aos_code": null,
+    "course": "C06134",
+    "credit_points": null,
+    "admission_descriptor": "C06134 Graduate Diploma in Information Systems",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04405 Master of Information Systems",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04405",
+    "credit_points": null,
+    "admission_descriptor": "C04405 Master of Information Systems",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04402 Master of Information Systems (Advanced)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04402",
+    "credit_points": null,
+    "admission_descriptor": "C04402 Master of Information Systems (Advanced)",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04401 Master of Information Systems (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04401",
+    "credit_points": null,
+    "admission_descriptor": "C04401 Master of Information Systems (Extension)",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11298 Graduate Certificate in Professional Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11298",
+    "credit_points": null,
+    "admission_descriptor": "C11298 Graduate Certificate in Professional Practice",
+    "corequisite": false
+   },
+   "1j": {
+    "label": "1j",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C06136 Graduate Diploma in Professional Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": "C06136",
+    "credit_points": null,
+    "admission_descriptor": "C06136 Graduate Diploma in Professional Practice",
+    "corequisite": false
+   },
+   "1k": {
+    "label": "1k",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04404 Master of Professional Practice",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04404",
+    "credit_points": null,
+    "admission_descriptor": "C04404 Master of Professional Practice",
+    "corequisite": false
+   },
+   "1l": {
+    "label": "1l",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04406 Master of Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04406",
+    "credit_points": null,
+    "admission_descriptor": "C04406 Master of Technology",
+    "corequisite": false
+   },
+   "1m": {
+    "label": "1m",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C06137 Graduate Diploma in Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C06137",
+    "credit_points": null,
+    "admission_descriptor": "C06137 Graduate Diploma in Technology",
+    "corequisite": false
+   },
+   "1n": {
+    "label": "1n",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11301 Graduate Certificate in Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11301",
+    "credit_points": null,
+    "admission_descriptor": "C11301 Graduate Certificate in Technology",
+    "corequisite": false
+   },
+   "1o": {
+    "label": "1o",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1p": {
+    "label": "1p",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1q": {
+    "label": "1q",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 48 credit points in 48.0000000000 Credit Points spk(s): C04379 - Master of Business Analytics (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 48,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1r": {
+    "label": "1r",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 48 credit points in 48.0000000000 Credit Points spk(s): C04018 - Master of Business Administration",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 48,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1s": {
+    "label": "1s",
+    "kind": "aos",
+    "type": "academic",
+    "text": "MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1t": {
+    "label": "1t",
+    "kind": "aos",
+    "type": "academic",
+    "text": "SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41191 Business Intelligence",
+    "subject": "41191",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32558",
+  "fetched_at": "2026-08-26T11:24:36+00:00"
+ },
+ "32601": {
+  "code": "32601",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C11138 Graduate Certificate in Business and Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C11138",
+    "credit_points": null,
+    "admission_descriptor": "C11138 Graduate Certificate in Business and Technology",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04161 Master of Business and Technology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04161",
+    "credit_points": null,
+    "admission_descriptor": "C04161 Master of Business and Technology",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32541 Project Management",
+    "subject": "32541",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "subject",
+    "type": "academic",
+    "text": "49002 Managing Projects",
+    "subject": "49002",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "subject",
+    "type": "academic",
+    "text": "48260 Engineering Project Management",
+    "subject": "48260",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32601",
+  "fetched_at": "2026-08-26T11:24:41+00:00"
+ },
+ "49680": {
+  "code": "49680",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=49680",
+  "fetched_at": "2026-08-26T11:24:46+00:00"
+ },
+ "49003": {
+  "code": "49003",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04392 Master of Forensic Science (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04392",
+    "credit_points": null,
+    "admission_descriptor": "C04392 Master of Forensic Science (Extension)",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04390 Master of Medical Biotechnology",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04390",
+    "credit_points": null,
+    "admission_descriptor": "C04390 Master of Medical Biotechnology",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C04388 Master of Medical Biotechnology (Extension)",
+    "subject": null,
+    "aos_code": null,
+    "course": "C04388",
+    "credit_points": null,
+    "admission_descriptor": "C04388 Master of Medical Biotechnology (Extension)",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=49003",
+  "fetched_at": "2026-08-26T11:24:51+00:00"
+ },
+ "32009": {
+  "code": "32009",
+  "requisite_rule": "((1) OR (2 AND 3))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32524 LANS and Routing",
+    "subject": "32524",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 30 credit points in  spk(s): MAJ03445 - Networking and Cybersecurity major BSc",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 30,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31277 Routing and Switching Essentials",
+    "subject": "31277",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32009",
+  "fetched_at": "2026-08-26T11:24:57+00:00"
+ },
+ "32011": {
+  "code": "32011",
+  "requisite_rule": "((1) OR (2 AND 3))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32524 LANS and Routing",
+    "subject": "32524",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "31277 Routing and Switching Essentials",
+    "subject": "31277",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "3": {
+    "label": "3",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 30 credit points in  spk(s): MAJ03445 - Networking and Cybersecurity major BSc",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 30,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32011",
+  "fetched_at": "2026-08-26T11:25:02+00:00"
+ },
+ "32520": {
+  "code": "32520",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32520",
+  "fetched_at": "2026-08-26T11:25:08+00:00"
+ },
+ "42027": {
+  "code": "42027",
+  "requisite_rule": "((1 OR 1a) AND 2)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32524 LANS and Routing",
+    "subject": "32524",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "49202 Communication Protocols",
+    "subject": "49202",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32547 UNIX Systems Programming",
+    "subject": "32547",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41905 Software Defined Networks",
+    "subject": "41905",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42027",
+  "fetched_at": "2026-08-26T11:25:13+00:00"
+ },
+ "32118": {
+  "code": "32118",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32118",
+  "fetched_at": "2026-08-26T11:25:20+00:00"
+ },
+ "37014": {
+  "code": "37014",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=37014",
+  "fetched_at": "2026-08-26T11:25:25+00:00"
+ },
+ "32501": {
+  "code": "32501",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31264 Computer Graphics",
+    "subject": "31264",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32501",
+  "fetched_at": "2026-08-26T11:25:30+00:00"
+ },
+ "42824": {
+  "code": "42824",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42824",
+  "fetched_at": "2026-08-26T11:25:35+00:00"
+ },
+ "42820": {
+  "code": "42820",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42820",
+  "fetched_at": "2026-08-26T11:25:41+00:00"
+ },
+ "42899": {
+  "code": "42899",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41180 Data Analytics in Cyber Security",
+    "subject": "41180",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42899",
+  "fetched_at": "2026-08-26T11:25:46+00:00"
+ },
+ "42893": {
+  "code": "42893",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42893",
+  "fetched_at": "2026-08-26T11:25:51+00:00"
+ },
+ "42894": {
+  "code": "42894",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42820 Machine Learning Foundations",
+    "subject": "42820",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42894",
+  "fetched_at": "2026-08-26T11:25:58+00:00"
+ },
+ "42146": {
+  "code": "42146",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42146",
+  "fetched_at": "2026-08-26T11:26:03+00:00"
+ },
+ "42826": {
+  "code": "42826",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "42082 Introduction to Complex Systems",
+    "subject": "42082",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "42085 Modelling for Complex Systems",
+    "subject": "42085",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42826",
+  "fetched_at": "2026-08-26T11:26:09+00:00"
+ },
+ "42144": {
+  "code": "42144",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42144",
+  "fetched_at": "2026-08-26T11:26:14+00:00"
+ },
+ "49227": {
+  "code": "49227",
+  "requisite_rule": "(((1 OR 1a OR 1b OR 1c OR 1d OR 1e)) OR ((2 OR 2a OR 2b OR 2c OR 2d OR 2e OR 2f OR 2g OR 2h OR 2i)))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in  Bachelor's Degree owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in  Bachelor's Honours Embedded Degree owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in  Bachelor's Combined Degree owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in  Bachelor's Combined Degree co-owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in  Bachelor's Combined Honours Degree owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "credit_points",
+    "type": "academic",
+    "text": "Must have completed at least 120 credit points in  Bachelor's Combined Honours Degree co-owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": 120,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework Degree owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework Degree owned by FEIT",
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework Degree owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework Degree owned by FEIT",
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework Degree co-owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework Degree co-owned by FEIT",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Diploma Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Diploma Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Diploma New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Diploma New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "2e": {
+    "label": "2e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "2f": {
+    "label": "2f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "2g": {
+    "label": "2g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "2h": {
+    "label": "2h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "2i": {
+    "label": "2i",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=49227",
+  "fetched_at": "2026-08-26T11:26:22+00:00"
+ },
+ "42896": {
+  "code": "42896",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41180 Data Analytics in Cyber Security",
+    "subject": "41180",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42896",
+  "fetched_at": "2026-08-26T11:26:28+00:00"
+ },
+ "42827": {
+  "code": "42827",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "42085 Modelling for Complex Systems",
+    "subject": "42085",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42827",
+  "fetched_at": "2026-08-26T11:26:34+00:00"
+ },
+ "32543": {
+  "code": "32543",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31241 Interactive 3D Animation",
+    "subject": "31241",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31603 3D Computer Animation",
+    "subject": "31603",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32543",
+  "fetched_at": "2026-08-26T11:26:39+00:00"
+ },
+ "42098": {
+  "code": "42098",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32146 Data Visualisation and Visual Analytics",
+    "subject": "32146",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42098",
+  "fetched_at": "2026-08-26T11:26:44+00:00"
+ },
+ "42895": {
+  "code": "42895",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42895",
+  "fetched_at": "2026-08-26T11:26:49+00:00"
+ },
+ "42097": {
+  "code": "42097",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32146 Data Visualisation and Visual Analytics",
+    "subject": "32146",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42097",
+  "fetched_at": "2026-08-26T11:26:54+00:00"
+ },
+ "42825": {
+  "code": "42825",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42825",
+  "fetched_at": "2026-08-26T11:27:00+00:00"
+ },
+ "37013": {
+  "code": "37013",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=37013",
+  "fetched_at": "2026-08-26T11:27:05+00:00"
+ },
+ "49202": {
+  "code": "49202",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework courses owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission Graduate Certificate courses owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate courses owned by FEIT",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41092 Network Fundamentals",
+    "subject": "41092",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=49202",
+  "fetched_at": "2026-08-26T11:27:10+00:00"
+ },
+ "37012": {
+  "code": "37012",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=37012",
+  "fetched_at": "2026-08-26T11:27:15+00:00"
+ },
+ "42890": {
+  "code": "42890",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42890",
+  "fetched_at": "2026-08-26T11:27:19+00:00"
+ },
+ "42218": {
+  "code": "42218",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42218",
+  "fetched_at": "2026-08-26T11:27:25+00:00"
+ },
+ "42145": {
+  "code": "42145",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42145",
+  "fetched_at": "2026-08-26T11:27:31+00:00"
+ },
+ "42892": {
+  "code": "42892",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42894 Advanced Machine Learning",
+    "subject": "42894",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42892",
+  "fetched_at": "2026-08-26T11:27:36+00:00"
+ },
+ "42096": {
+  "code": "42096",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32146 Data Visualisation and Visual Analytics",
+    "subject": "32146",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42096",
+  "fetched_at": "2026-08-26T11:27:41+00:00"
+ },
+ "42821": {
+  "code": "42821",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42821",
+  "fetched_at": "2026-08-26T11:27:46+00:00"
+ },
+ "42822": {
+  "code": "42822",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42821 Data Analytics Foundations",
+    "subject": "42821",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42822",
+  "fetched_at": "2026-08-26T11:27:52+00:00"
+ },
+ "42828": {
+  "code": "42828",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "42085 Modelling for Complex Systems",
+    "subject": "42085",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42828",
+  "fetched_at": "2026-08-26T11:27:57+00:00"
+ },
+ "32931": {
+  "code": "32931",
+  "requisite_rule": "(((1 OR 1a OR 1b)) OR (2))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32144 Technology Research Preparation",
+    "subject": "32144",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42670 Research Foundations",
+    "subject": "42670",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": true
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "subject",
+    "type": "academic",
+    "text": "41079 Computing Science Studio 2",
+    "subject": "41079",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C09019 Bachelor of Information Technology (Honours) Other requisite Faculty Approval FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": "C09019",
+    "credit_points": null,
+    "admission_descriptor": "C09019 Bachelor of Information Technology (Honours) Other requisite Faculty Approval FEIT",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32572 Reflective Practice in Information Technology",
+    "subject": "32572",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32931",
+  "fetched_at": "2026-08-26T11:28:03+00:00"
+ },
+ "42823": {
+  "code": "42823",
+  "requisite_rule": "(1)",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42822 Advanced Data Analytics",
+    "subject": "42822",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1 AND 2)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31250 Introduction to Data Analytics",
+    "subject": "31250",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "32130 Fundamentals of Data Analytics",
+    "subject": "32130",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42823",
+  "fetched_at": "2026-08-26T11:28:08+00:00"
+ },
+ "42897": {
+  "code": "42897",
+  "requisite_rule": null,
+  "requisite_items": {},
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "41180 Data Analytics in Cyber Security",
+    "subject": "41180",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=42897",
+  "fetched_at": "2026-08-26T11:28:13+00:00"
+ },
+ "43011": {
+  "code": "43011",
+  "requisite_rule": "((1 OR 1a) AND (2 OR 2a OR 2b OR 2c OR 2d OR 2e))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "academic",
+    "text": "42037 IoT Security",
+    "subject": "42037",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "subject",
+    "type": "academic",
+    "text": "32548 Cybersecurity",
+    "subject": "32548",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2": {
+    "label": "2",
+    "kind": "subject",
+    "type": "academic",
+    "text": "48730 Cybersecurity",
+    "subject": "48730",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   },
+   "2a": {
+    "label": "2a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework course owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework course owned by FEIT",
+    "corequisite": false
+   },
+   "2b": {
+    "label": "2b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework course owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework course owned by FEIT",
+    "corequisite": false
+   },
+   "2c": {
+    "label": "2c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Diploma Extending Previous Area of Study course owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Diploma Extending Previous Area of Study course owned by FEIT",
+    "corequisite": false
+   },
+   "2d": {
+    "label": "2d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Diploma New Area of Study course owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Diploma New Area of Study course owned by FEIT",
+    "corequisite": false
+   },
+   "2e": {
+    "label": "2e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate course owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate course owned by FEIT",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": null,
+  "antirequisite_items": {},
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=43011",
+  "fetched_at": "2026-08-26T11:28:18+00:00"
+ },
+ "32003": {
+  "code": "32003",
+  "requisite_rule": "((1 OR 1a OR 1b OR 1c OR 1d OR 1e OR 1f OR 1g OR 1h OR 1i))",
+  "requisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1a": {
+    "label": "1a",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Combined Coursework owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Combined Coursework owned by FEIT",
+    "corequisite": false
+   },
+   "1b": {
+    "label": "1b",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Master's Research owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Master's Research owned by FEIT",
+    "corequisite": false
+   },
+   "1c": {
+    "label": "1c",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip Extending Previous Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip Extending Previous Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1d": {
+    "label": "1d",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Grad Dip New Area of Study owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Grad Dip New Area of Study owned by FEIT",
+    "corequisite": false
+   },
+   "1e": {
+    "label": "1e",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into Graduate Certificate owned by FEIT",
+    "subject": null,
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "Graduate Certificate owned by FEIT",
+    "corequisite": false
+   },
+   "1f": {
+    "label": "1f",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C22029 Exchange Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C22029",
+    "credit_points": null,
+    "admission_descriptor": "C22029 Exchange Postgraduate",
+    "corequisite": false
+   },
+   "1g": {
+    "label": "1g",
+    "kind": "admission",
+    "type": "admission",
+    "text": "Admission into C50007 Study Abroad Postgraduate",
+    "subject": null,
+    "aos_code": null,
+    "course": "C50007",
+    "credit_points": null,
+    "admission_descriptor": "C50007 Study Abroad Postgraduate",
+    "corequisite": false
+   },
+   "1h": {
+    "label": "1h",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into MAJ02902 36cp Information Technology Major MBA",
+    "subject": null,
+    "aos_code": "MAJ02902",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "MAJ02902 36cp Information Technology Major MBA",
+    "corequisite": false
+   },
+   "1i": {
+    "label": "1i",
+    "kind": "aos",
+    "type": "admission",
+    "text": "Admission into SMJ02038 Information Technology Sub-major MBA",
+    "subject": null,
+    "aos_code": "SMJ02038",
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": "SMJ02038 Information Technology Sub-major MBA",
+    "corequisite": false
+   }
+  },
+  "antirequisite_rule": "(1)",
+  "antirequisite_items": {
+   "1": {
+    "label": "1",
+    "kind": "subject",
+    "type": "unknown",
+    "text": "31262 Game Design Methodologies",
+    "subject": "31262",
+    "aos_code": null,
+    "course": null,
+    "credit_points": null,
+    "admission_descriptor": null,
+    "corequisite": false
+   }
+  },
+  "source_url": "https://studentforms.uts.edu.au/evop/access/search.cfm?subjectcode=32003",
+  "fetched_at": "2026-08-26T11:28:24+00:00"
  }
 }

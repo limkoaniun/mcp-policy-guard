@@ -285,30 +285,62 @@ rule expressions. Unresolvable requisites are never scored: an item that could n
 be interpreted is recorded in `unresolved` so the harness excludes it rather than
 counting it as a violation.
 
-### Built (thin slice, 2026-08-26)
+### Built (full C04296 tree, 2026-08-26)
 
-`python -m enrolment.build --scope thin` has run: 14 subjects (C04296 core plus
-the Cybersecurity major), 30 cached pages, 79 seconds, all committed. All 14
-carry requisite rules; zero unparsed items and zero unreadable rule expressions
-after the corequisite fix. Rule depths span 1 to 4, giving the difficulty
-gradient the evaluation needs.
+`python -m enrolment.build --scope full` has run to completion:
 
-From it: 50 synthetic students and **700 compliance scenarios** —
-47.0% `unmet_academic`, 28.6% `unmet_admission` (see the limitation below),
-24.4% compliant, and **zero unresolved**.
+| | |
+|---|---|
+| Subjects | **93** |
+| With requisite rules | 60 |
+| Anti-requisite only | 11 |
+| No rules at all | 22 |
+| Unparsed requisite items | **0** |
+| Unreadable rule expressions | **0** |
+| Requisite references outside C04296 | 70 |
 
-The full-course build (`--scope full`) has not been run.
+201 pages cached and committed (93 subject, 93 eVOP, 15 area-of-study), ~19 MB.
+The whole build reproduces from cache in **0.24 seconds** against roughly ten
+minutes live, so no experiment ever needs to touch UTS again.
 
-The first real build immediately earned the coverage gate: it surfaced two
-`Academic corequisite` rows in 32548, a requisite type absent from all 30
-subjects sampled during reconnaissance. They were reported as unparsed rather
-than silently dropped, which is precisely what that invariant exists for.
+**The difficulty gradient is real.** Rule depths: 10 subjects at depth 1, 30 at
+depth 2, 13 at depth 3, 7 at depth 4. The deepest is 43030 — a core subject of
+this very course — whose rule is a nineteen-way disjunction conjoined with a
+second clause and then disjoined with a third. Credit points vary across 1, 2,
+3, 6 and 12, so the cap logic has real arithmetic to do.
+
+**Compliance suite: 4,650 scenarios** from 50 synthetic students × 93 subjects,
+against the 10–15 hand-written cases the original plan envisaged:
+
+| Failure mode | Count | Share |
+|---|---|---|
+| compliant | 2,575 | 55.4% |
+| `unmet_academic` | 1,378 | 29.6% |
+| `unmet_admission` | 597 | 12.8% |
+| `unmet_aos` | 50 | 1.1% |
+| `unmet_credit_points` | 50 | 1.1% |
+| **unresolved** | **0** | — |
+
+Zero unresolved means every requisite item across 93 subjects was interpretable.
+Note that `unmet_aos` appears at all only because the whole-branch review caught
+area-of-study requisites being misclassified as admission requisites; without
+that fix these 50 cases would have been silently mislabelled.
+
+### What the builds caught
+
+The thin slice surfaced two `Academic corequisite` rows in 32548 — a requisite
+type absent from all 30 subjects sampled during reconnaissance. They were
+reported as unparsed rather than silently dropped, which is exactly what that
+invariant exists for. The type column is now matched by pattern rather than by
+enumerating known strings, and the full build over 93 subjects found nothing
+further.
 
 ### Known limitations, to state before reporting any number
 
 **Admission descriptor variance — now measured, and larger than estimated.**
-The thin-slice build's 14 subjects publish **34 distinct admission descriptors**
-for what is often the same underlying concept:
+The full build's 93 subjects publish **82 distinct admission descriptors** for
+what is often the same underlying concept (it was 34 across the thin slice's 14
+subjects, so this grows with coverage rather than saturating):
 
 ```
 "Master's Coursework courses owned by FEIT"           <- the one our students carry
@@ -324,8 +356,8 @@ Descriptors that carry a course code (`C04296 Master of Information Technology
 (Extension)`) resolve correctly, because students carry the code. The free-text
 FEIT variants do not. Synthetic students match exactly **1 of 34**.
 
-Measured consequence on the built suite: `unmet_admission` is 200 of 700
-scenarios (28.6%), and a substantial share of that is wording mismatch rather
+Measured consequence on the built suite: `unmet_admission` is 597 of 4,650
+scenarios (12.8%), and a substantial share of that is wording mismatch rather
 than genuine non-compliance. **No `unmet_admission` figure should be reported
 until this is resolved.**
 
@@ -362,7 +394,7 @@ values; populating them needs the area-of-study codes the build produces.
    The evaluator implements the faithful reading — a corequisite is satisfied by
    concurrent enrolment as well as by prior completion — and flags the
    assumption, exactly as with the anti-requisite question above. Confirm.
-6. **Admission descriptor normalisation.** Which of the 34 published descriptors
+6. **Admission descriptor normalisation.** Which of the 82 published descriptors
    does a C04296 student legitimately satisfy? This is the blocker on reporting
    any admission-related number.
 7. **Data access.** Confirm the bounded public fetch is acceptable, or supply the

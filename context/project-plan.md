@@ -82,7 +82,7 @@ The revised plan's 13-week structure, annotated with actual status.
 | Rule parser and evaluator | ✅ Complete |
 | Catalogue and requisite extractors | ✅ Complete |
 | Cached fetcher with provenance | ✅ Complete |
-| Dataset build pipeline and coverage gate | ✅ Complete; thin slice **run 2026-08-26**, clean |
+| Dataset build pipeline and coverage gate | ✅ Complete; **full C04296 tree built 2026-08-26**, 93 subjects, clean |
 | Synthetic student generator | ✅ Complete |
 | Compliance scenario generator | ✅ Complete |
 | **MCP proxy and policy engine** | **Next.** `proxy.py` is still a stub |
@@ -104,9 +104,10 @@ demonstration frontend; final report.
 
 ## Immediate next steps, in order
 
-1. ~~Run the thin-slice build.~~ ✅ Done 2026-08-26. It found a requisite type
-   reconnaissance had missed (`Academic corequisite`); handled, and the coverage
-   report is now clean. `--scope full` still pending the access confirmation.
+1. ~~Run the dataset build.~~ ✅ Done 2026-08-26, thin slice then full tree.
+   The thin slice found a requisite type reconnaissance had missed
+   (`Academic corequisite`); after handling it, the full 93-subject build
+   completed with zero unparsed items. 4,650 compliance scenarios generated.
 2. **Email the supervisor.** One message covers the five open questions in §10 of
    the spec, and the data-access confirmation. Any answer unblocks work.
 3. **Start the literature review.** It is the one Weeks 1–3 deliverable still

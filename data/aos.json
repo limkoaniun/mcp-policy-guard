@@ -1,4 +1,165 @@
 {
+ "MAJ02084": {
+  "code": "MAJ02084",
+  "title": "Data Analytics",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92330) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "42028",
+      "name": "Deep Learning and Convolutional Neural Network",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42028",
+      "connector": "AND"
+     },
+     {
+      "code": "42913",
+      "name": "Social and Information Network Analysis",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42913",
+      "connector": "AND"
+     },
+     {
+      "code": "42850",
+      "name": "Natural Language Processing Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42850",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Options",
+    "description": "(CBK92331) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "42050",
+      "name": "SAS Predictive Business Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42050",
+      "connector": "AND"
+     },
+     {
+      "code": "32567",
+      "name": "Business Intelligence for Decision Support",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32567",
+      "connector": "AND"
+     },
+     {
+      "code": "32130",
+      "name": "Fundamentals of Data Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32130",
+      "connector": "AND"
+     },
+     {
+      "code": "42028",
+      "name": "Deep Learning and Convolutional Neural Network",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42028",
+      "connector": "AND"
+     },
+     {
+      "code": "32113",
+      "name": "Advanced Database",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32113",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "57304",
+      "name": "The Ethics of Data and AI",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/57304",
+      "connector": "AND"
+     },
+     {
+      "code": "42177",
+      "name": "Image Processing and Pattern Recognition",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42177",
+      "connector": "AND"
+     },
+     {
+      "code": "43031",
+      "name": "Python Programming for Data Processing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/43031",
+      "connector": "AND"
+     },
+     {
+      "code": "42913",
+      "name": "Social and Information Network Analysis",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42913",
+      "connector": "AND"
+     },
+     {
+      "code": "42850",
+      "name": "Natural Language Processing Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42850",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90976) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32513",
+      "name": "Advanced Data Analytics Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32513",
+      "connector": "AND"
+     },
+     {
+      "code": "32146",
+      "name": "Data Visualisation and Visual Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32146",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02084",
+  "fetched_at": "2026-08-26T11:20:40+00:00"
+ },
  "MAJ02093": {
   "code": "MAJ02093",
   "title": "Cybersecurity",
@@ -151,5 +312,3002 @@
   ],
   "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02093",
   "fetched_at": "2026-08-26T11:09:18+00:00"
+ },
+ "MAJ02086": {
+  "code": "MAJ02086",
+  "title": "Enterprise Software Development",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK92333) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32549",
+      "name": "Advanced Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32549",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "32998",
+      "name": ".NET Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32998",
+      "connector": "AND"
+     },
+     {
+      "code": "32516",
+      "name": "Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32516",
+      "connector": "AND"
+     },
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "42889",
+      "name": "iOS Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42889",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "32603",
+      "name": "Systems Quality Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32603",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90978) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32570",
+      "name": "Enterprise Architecture Practice",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32570",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92332) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32549",
+      "name": "Advanced Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32549",
+      "connector": "AND"
+     },
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "40005",
+      "name": "Advanced iOS Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/40005",
+      "connector": "AND"
+     },
+     {
+      "code": "32603",
+      "name": "Systems Quality Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32603",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02086",
+  "fetched_at": "2026-08-26T11:20:43+00:00"
+ },
+ "MAJ02085": {
+  "code": "MAJ02085",
+  "title": "Interactive Media",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK92335) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32004",
+      "name": "Game Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32004",
+      "connector": "AND"
+     },
+     {
+      "code": "32027",
+      "name": "Interactive Media",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32027",
+      "connector": "AND"
+     },
+     {
+      "code": "95569",
+      "name": "Interaction Design Studio",
+      "credit_points": 12,
+      "item_type": "subject",
+      "url": "/subject/2026/95569",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92334) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "95569",
+      "name": "Interaction Design Studio",
+      "credit_points": 12,
+      "item_type": "subject",
+      "url": "/subject/2026/95569",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90977) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "95563",
+      "name": "Data Driven Storytelling Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95563",
+      "connector": "AND"
+     },
+     {
+      "code": "95566",
+      "name": "Digital Experience Design Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95566",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02085",
+  "fetched_at": "2026-08-26T11:20:46+00:00"
+ },
+ "MAJ02082": {
+  "code": "MAJ02082",
+  "title": "Business Information Systems",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Core",
+    "description": "(STM90974) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "49016",
+      "name": "Technology and Innovation Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49016",
+      "connector": "AND"
+     },
+     {
+      "code": "32531",
+      "name": "Global Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32531",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92326) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Options",
+    "description": "(CBK92327) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     },
+     {
+      "code": "32601",
+      "name": "Advanced Project Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32601",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "49680",
+      "name": "Value Chain Engineering Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49680",
+      "connector": "AND"
+     },
+     {
+      "code": "49003",
+      "name": "Economic Evaluation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49003",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02082",
+  "fetched_at": "2026-08-26T11:20:49+00:00"
+ },
+ "MAJ02083": {
+  "code": "MAJ02083",
+  "title": "Internetworking",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Core",
+    "description": "(STM90975) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [],
+    "children": [
+     {
+      "title": "Options",
+      "description": "Select 6 credit points from the following subjects:",
+      "credit_points": 6,
+      "items": [
+       {
+        "code": "32009",
+        "name": "Advanced Routing Principles",
+        "credit_points": 6,
+        "item_type": "subject",
+        "url": "/subject/2026/32009",
+        "connector": "AND"
+       },
+       {
+        "code": "32011",
+        "name": "Multilayer Switched Networks",
+        "credit_points": 6,
+        "item_type": "subject",
+        "url": "/subject/2026/32011",
+        "connector": "AND"
+       }
+      ],
+      "children": []
+     },
+     {
+      "title": "Compulsory",
+      "description": "Complete the following subject:",
+      "credit_points": 6,
+      "items": [
+       {
+        "code": "32547",
+        "name": "UNIX Systems Programming",
+        "credit_points": 6,
+        "item_type": "subject",
+        "url": "/subject/2026/32547",
+        "connector": "AND"
+       }
+      ],
+      "children": []
+     }
+    ]
+   },
+   {
+    "title": "Option",
+    "description": "(CBK92337) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32009",
+      "name": "Advanced Routing Principles",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32009",
+      "connector": "AND"
+     },
+     {
+      "code": "32011",
+      "name": "Multilayer Switched Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32011",
+      "connector": "AND"
+     },
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "32118",
+      "name": "Wireless Communications",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32118",
+      "connector": "AND"
+     },
+     {
+      "code": "32516",
+      "name": "Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32516",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92336) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/MAJ02083",
+  "fetched_at": "2026-08-26T11:20:52+00:00"
+ },
+ "SMJ10069": {
+  "code": "SMJ10069",
+  "title": "Business Information Systems",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK91055) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "49003",
+      "name": "Economic Evaluation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49003",
+      "connector": "AND"
+     },
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     },
+     {
+      "code": "32601",
+      "name": "Advanced Project Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32601",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "49680",
+      "name": "Value Chain Engineering Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49680",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90974) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32531",
+      "name": "Global Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32531",
+      "connector": "AND"
+     },
+     {
+      "code": "49016",
+      "name": "Technology and Innovation Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49016",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/SMJ10069",
+  "fetched_at": "2026-08-26T11:20:54+00:00"
+ },
+ "SMJ10070": {
+  "code": "SMJ10070",
+  "title": "Internetworking",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK91056) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32118",
+      "name": "Wireless Communications",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32118",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "32011",
+      "name": "Multilayer Switched Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32011",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     },
+     {
+      "code": "32009",
+      "name": "Advanced Routing Principles",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32009",
+      "connector": "AND"
+     },
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     },
+     {
+      "code": "32516",
+      "name": "Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32516",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90975)",
+    "credit_points": 12,
+    "items": [],
+    "children": [
+     {
+      "title": "Options",
+      "description": "Select 6 credit points from the following subjects:",
+      "credit_points": 6,
+      "items": [
+       {
+        "code": "32011",
+        "name": "Multilayer Switched Networks",
+        "credit_points": 6,
+        "item_type": "subject",
+        "url": "/subject/2026/32011",
+        "connector": "AND"
+       },
+       {
+        "code": "32009",
+        "name": "Advanced Routing Principles",
+        "credit_points": 6,
+        "item_type": "subject",
+        "url": "/subject/2026/32009",
+        "connector": "AND"
+       }
+      ],
+      "children": []
+     },
+     {
+      "title": "Compulsory",
+      "description": "Complete the following subject:",
+      "credit_points": 6,
+      "items": [
+       {
+        "code": "32547",
+        "name": "UNIX Systems Programming",
+        "credit_points": 6,
+        "item_type": "subject",
+        "url": "/subject/2026/32547",
+        "connector": "AND"
+       }
+      ],
+      "children": []
+     }
+    ]
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/SMJ10070",
+  "fetched_at": "2026-08-26T11:20:57+00:00"
+ },
+ "SMJ10093": {
+  "code": "SMJ10093",
+  "title": "Cybersecurity",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Core",
+    "description": "(STM91234) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "32547",
+      "name": "UNIX Systems Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32547",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Options",
+    "description": "(CBK91744) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     },
+     {
+      "code": "42000",
+      "name": "Cryptography",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42000",
+      "connector": "AND"
+     },
+     {
+      "code": "42036",
+      "name": "Cybersecurity for Mobile Platforms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42036",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "32309",
+      "name": "Digital Forensics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32309",
+      "connector": "AND"
+     },
+     {
+      "code": "32547",
+      "name": "UNIX Systems Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32547",
+      "connector": "AND"
+     },
+     {
+      "code": "49016",
+      "name": "Technology and Innovation Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49016",
+      "connector": "AND"
+     },
+     {
+      "code": "42035",
+      "name": "Cloud Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42035",
+      "connector": "AND"
+     },
+     {
+      "code": "32310",
+      "name": "Network Security Appliances",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32310",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "42037",
+      "name": "IoT Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42037",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/SMJ10093",
+  "fetched_at": "2026-08-26T11:21:00+00:00"
+ },
+ "SMJ10073": {
+  "code": "SMJ10073",
+  "title": "Enterprise Software Development",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Core",
+    "description": "(STM90978) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32570",
+      "name": "Enterprise Architecture Practice",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32570",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Options",
+    "description": "(CBK91059) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "32603",
+      "name": "Systems Quality Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32603",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/SMJ10073",
+  "fetched_at": "2026-08-26T11:21:04+00:00"
+ },
+ "SMJ10071": {
+  "code": "SMJ10071",
+  "title": "Data Analytics",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK91057) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "42850",
+      "name": "Natural Language Processing Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42850",
+      "connector": "AND"
+     },
+     {
+      "code": "32113",
+      "name": "Advanced Database",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32113",
+      "connector": "AND"
+     },
+     {
+      "code": "32130",
+      "name": "Fundamentals of Data Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32130",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "32567",
+      "name": "Business Intelligence for Decision Support",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32567",
+      "connector": "AND"
+     },
+     {
+      "code": "42028",
+      "name": "Deep Learning and Convolutional Neural Network",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42028",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90976) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32513",
+      "name": "Advanced Data Analytics Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32513",
+      "connector": "AND"
+     },
+     {
+      "code": "32146",
+      "name": "Data Visualisation and Visual Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32146",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/SMJ10071",
+  "fetched_at": "2026-08-26T11:21:07+00:00"
+ },
+ "SMJ10072": {
+  "code": "SMJ10072",
+  "title": "Interactive Media",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "(CBK91058) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "95569",
+      "name": "Interaction Design Studio",
+      "credit_points": 12,
+      "item_type": "subject",
+      "url": "/subject/2026/95569",
+      "connector": "AND"
+     },
+     {
+      "code": "32027",
+      "name": "Interactive Media",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32027",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Core",
+    "description": "(STM90977) Complete all of the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "95563",
+      "name": "Data Driven Storytelling Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95563",
+      "connector": "AND"
+     },
+     {
+      "code": "95566",
+      "name": "Digital Experience Design Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95566",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/SMJ10072",
+  "fetched_at": "2026-08-26T11:21:09+00:00"
+ },
+ "CBK91045": {
+  "code": "CBK91045",
+  "title": "Electives (Information Technology)",
+  "credit_points": 12,
+  "blocks": [
+   {
+    "title": "Electives",
+    "description": "Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32547",
+      "name": "UNIX Systems Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32547",
+      "connector": "AND"
+     },
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     },
+     {
+      "code": "37014",
+      "name": "Understanding Data: Statistical Models for Binary Outcomes",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/37014",
+      "connector": "AND"
+     },
+     {
+      "code": "32998",
+      "name": ".NET Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32998",
+      "connector": "AND"
+     },
+     {
+      "code": "32549",
+      "name": "Advanced Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32549",
+      "connector": "AND"
+     },
+     {
+      "code": "32501",
+      "name": "Computer Graphics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32501",
+      "connector": "AND"
+     },
+     {
+      "code": "42824",
+      "name": "Environmental Noise and Planning",
+      "credit_points": 3,
+      "item_type": "subject",
+      "url": "/subject/2026/42824",
+      "connector": "AND"
+     },
+     {
+      "code": "42820",
+      "name": "Machine Learning Foundations",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42820",
+      "connector": "AND"
+     },
+     {
+      "code": "49680",
+      "name": "Value Chain Engineering Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49680",
+      "connector": "AND"
+     },
+     {
+      "code": "42899",
+      "name": "Applied Data Analytics for Cybersecurity",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42899",
+      "connector": "AND"
+     },
+     {
+      "code": "42893",
+      "name": "Data Engineering Foundations",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42893",
+      "connector": "AND"
+     },
+     {
+      "code": "42177",
+      "name": "Image Processing and Pattern Recognition",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42177",
+      "connector": "AND"
+     },
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     },
+     {
+      "code": "42894",
+      "name": "Advanced Machine Learning",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42894",
+      "connector": "AND"
+     },
+     {
+      "code": "42000",
+      "name": "Cryptography",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42000",
+      "connector": "AND"
+     },
+     {
+      "code": "32130",
+      "name": "Fundamentals of Data Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32130",
+      "connector": "AND"
+     },
+     {
+      "code": "42146",
+      "name": "Manual Methods for Reverse Engineering",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42146",
+      "connector": "AND"
+     },
+     {
+      "code": "32118",
+      "name": "Wireless Communications",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32118",
+      "connector": "AND"
+     },
+     {
+      "code": "32513",
+      "name": "Advanced Data Analytics Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32513",
+      "connector": "AND"
+     },
+     {
+      "code": "32567",
+      "name": "Business Intelligence for Decision Support",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32567",
+      "connector": "AND"
+     },
+     {
+      "code": "32309",
+      "name": "Digital Forensics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32309",
+      "connector": "AND"
+     },
+     {
+      "code": "42826",
+      "name": "Introduction to Complex Systems Modelling",
+      "credit_points": 3,
+      "item_type": "subject",
+      "url": "/subject/2026/42826",
+      "connector": "AND"
+     },
+     {
+      "code": "49016",
+      "name": "Technology and Innovation Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49016",
+      "connector": "AND"
+     },
+     {
+      "code": "42144",
+      "name": "Advanced Programming and Use of Collaborative Robots",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42144",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "32011",
+      "name": "Multilayer Switched Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32011",
+      "connector": "AND"
+     },
+     {
+      "code": "49227",
+      "name": "Wireless Sensor Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49227",
+      "connector": "AND"
+     },
+     {
+      "code": "42896",
+      "name": "Advanced Data Analytics for Cybersecurity",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42896",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "49003",
+      "name": "Economic Evaluation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49003",
+      "connector": "AND"
+     },
+     {
+      "code": "42827",
+      "name": "Introduction to Participatory Modelling",
+      "credit_points": 3,
+      "item_type": "subject",
+      "url": "/subject/2026/42827",
+      "connector": "AND"
+     },
+     {
+      "code": "32543",
+      "name": "3D Animation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32543",
+      "connector": "AND"
+     },
+     {
+      "code": "32004",
+      "name": "Game Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32004",
+      "connector": "AND"
+     },
+     {
+      "code": "42098",
+      "name": "Applied Data Visualisation",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42098",
+      "connector": "AND"
+     },
+     {
+      "code": "42895",
+      "name": "Data Literacy",
+      "credit_points": 1,
+      "item_type": "subject",
+      "url": "/subject/2026/42895",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "42097",
+      "name": "Advanced Data Visualisation",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42097",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "32570",
+      "name": "Enterprise Architecture Practice",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32570",
+      "connector": "AND"
+     },
+     {
+      "code": "42825",
+      "name": "Inventive Problem-Solving with TRIZ",
+      "credit_points": 3,
+      "item_type": "subject",
+      "url": "/subject/2026/42825",
+      "connector": "AND"
+     },
+     {
+      "code": "37013",
+      "name": "Understanding Data: Linear Regression Models for Interpretation and Prediction",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/37013",
+      "connector": "AND"
+     },
+     {
+      "code": "32113",
+      "name": "Advanced Database",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32113",
+      "connector": "AND"
+     },
+     {
+      "code": "49202",
+      "name": "Communication Protocols",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49202",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "42889",
+      "name": "iOS Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42889",
+      "connector": "AND"
+     },
+     {
+      "code": "37012",
+      "name": "Understanding Data: Making Population Statements with Samples",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/37012",
+      "connector": "AND"
+     },
+     {
+      "code": "42890",
+      "name": "4G/5G Mobile Technologies",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42890",
+      "connector": "AND"
+     },
+     {
+      "code": "42218",
+      "name": "Basic Programming and Use of Collaborative Robots",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42218",
+      "connector": "AND"
+     },
+     {
+      "code": "32516",
+      "name": "Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32516",
+      "connector": "AND"
+     },
+     {
+      "code": "32603",
+      "name": "Systems Quality Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32603",
+      "connector": "AND"
+     },
+     {
+      "code": "42145",
+      "name": "3D Scanning Methods for Reverse Engineering",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42145",
+      "connector": "AND"
+     },
+     {
+      "code": "42892",
+      "name": "Applied Machine Learning",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42892",
+      "connector": "AND"
+     },
+     {
+      "code": "42096",
+      "name": "Data Visualisation Foundations",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42096",
+      "connector": "AND"
+     },
+     {
+      "code": "32027",
+      "name": "Interactive Media",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32027",
+      "connector": "AND"
+     },
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "32601",
+      "name": "Advanced Project Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32601",
+      "connector": "AND"
+     },
+     {
+      "code": "42821",
+      "name": "Data Analytics Foundations",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42821",
+      "connector": "AND"
+     },
+     {
+      "code": "32310",
+      "name": "Network Security Appliances",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32310",
+      "connector": "AND"
+     },
+     {
+      "code": "42822",
+      "name": "Advanced Data Analytics",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42822",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     },
+     {
+      "code": "95566",
+      "name": "Digital Experience Design Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95566",
+      "connector": "AND"
+     },
+     {
+      "code": "42828",
+      "name": "Introduction to Agent Based Modelling",
+      "credit_points": 3,
+      "item_type": "subject",
+      "url": "/subject/2026/42828",
+      "connector": "AND"
+     },
+     {
+      "code": "32931",
+      "name": "Technology Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32931",
+      "connector": "AND"
+     },
+     {
+      "code": "42823",
+      "name": "Applied Data Analytics",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42823",
+      "connector": "AND"
+     },
+     {
+      "code": "95563",
+      "name": "Data Driven Storytelling Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95563",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     },
+     {
+      "code": "32040",
+      "name": "Industry Project",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32040",
+      "connector": "AND"
+     },
+     {
+      "code": "42913",
+      "name": "Social and Information Network Analysis",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42913",
+      "connector": "AND"
+     },
+     {
+      "code": "32009",
+      "name": "Advanced Routing Principles",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32009",
+      "connector": "AND"
+     },
+     {
+      "code": "42897",
+      "name": "Data Analytics for Cybersecurity Foundations",
+      "credit_points": 2,
+      "item_type": "subject",
+      "url": "/subject/2026/42897",
+      "connector": "AND"
+     },
+     {
+      "code": "32531",
+      "name": "Global Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32531",
+      "connector": "AND"
+     },
+     {
+      "code": "43011",
+      "name": "Industrial Control System Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/43011",
+      "connector": "AND"
+     },
+     {
+      "code": "43031",
+      "name": "Python Programming for Data Processing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/43031",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "32003",
+      "name": "Computer Game Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32003",
+      "connector": "AND"
+     },
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32146",
+      "name": "Data Visualisation and Visual Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32146",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/CBK91045",
+  "fetched_at": "2026-08-26T11:21:11+00:00"
+ },
+ "CBK91043": {
+  "code": "CBK91043",
+  "title": "No specified major",
+  "credit_points": 36,
+  "blocks": [
+   {
+    "title": "Advanced Options",
+    "description": "(CBK92338) Select 12 credit points from the following subjects:",
+    "credit_points": 12,
+    "items": [
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "42913",
+      "name": "Social and Information Network Analysis",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42913",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "42036",
+      "name": "Cybersecurity for Mobile Platforms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42036",
+      "connector": "AND"
+     },
+     {
+      "code": "95569",
+      "name": "Interaction Design Studio",
+      "credit_points": 12,
+      "item_type": "subject",
+      "url": "/subject/2026/95569",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "42028",
+      "name": "Deep Learning and Convolutional Neural Network",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42028",
+      "connector": "AND"
+     },
+     {
+      "code": "32549",
+      "name": "Advanced Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32549",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     },
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "42037",
+      "name": "IoT Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42037",
+      "connector": "AND"
+     },
+     {
+      "code": "42035",
+      "name": "Cloud Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42035",
+      "connector": "AND"
+     },
+     {
+      "code": "32310",
+      "name": "Network Security Appliances",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32310",
+      "connector": "AND"
+     },
+     {
+      "code": "42850",
+      "name": "Natural Language Processing Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42850",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Options 2",
+    "description": "(CBK92340) Select 18 credit points from the following subjects:",
+    "credit_points": 18,
+    "items": [
+     {
+      "code": "42036",
+      "name": "Cybersecurity for Mobile Platforms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42036",
+      "connector": "AND"
+     },
+     {
+      "code": "42889",
+      "name": "iOS Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42889",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "32567",
+      "name": "Business Intelligence for Decision Support",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32567",
+      "connector": "AND"
+     },
+     {
+      "code": "42177",
+      "name": "Image Processing and Pattern Recognition",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42177",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "32549",
+      "name": "Advanced Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32549",
+      "connector": "AND"
+     },
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32310",
+      "name": "Network Security Appliances",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32310",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "32603",
+      "name": "Systems Quality Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32603",
+      "connector": "AND"
+     },
+     {
+      "code": "32601",
+      "name": "Advanced Project Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32601",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "42050",
+      "name": "SAS Predictive Business Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42050",
+      "connector": "AND"
+     },
+     {
+      "code": "40005",
+      "name": "Advanced iOS Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/40005",
+      "connector": "AND"
+     },
+     {
+      "code": "32130",
+      "name": "Fundamentals of Data Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32130",
+      "connector": "AND"
+     },
+     {
+      "code": "43031",
+      "name": "Python Programming for Data Processing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/43031",
+      "connector": "AND"
+     },
+     {
+      "code": "42028",
+      "name": "Deep Learning and Convolutional Neural Network",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42028",
+      "connector": "AND"
+     },
+     {
+      "code": "42037",
+      "name": "IoT Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42037",
+      "connector": "AND"
+     },
+     {
+      "code": "32009",
+      "name": "Advanced Routing Principles",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32009",
+      "connector": "AND"
+     },
+     {
+      "code": "32004",
+      "name": "Game Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32004",
+      "connector": "AND"
+     },
+     {
+      "code": "42913",
+      "name": "Social and Information Network Analysis",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42913",
+      "connector": "AND"
+     },
+     {
+      "code": "32113",
+      "name": "Advanced Database",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32113",
+      "connector": "AND"
+     },
+     {
+      "code": "49003",
+      "name": "Economic Evaluation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49003",
+      "connector": "AND"
+     },
+     {
+      "code": "32011",
+      "name": "Multilayer Switched Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32011",
+      "connector": "AND"
+     },
+     {
+      "code": "32998",
+      "name": ".NET Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32998",
+      "connector": "AND"
+     },
+     {
+      "code": "32309",
+      "name": "Digital Forensics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32309",
+      "connector": "AND"
+     },
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     },
+     {
+      "code": "42035",
+      "name": "Cloud Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42035",
+      "connector": "AND"
+     },
+     {
+      "code": "95569",
+      "name": "Interaction Design Studio",
+      "credit_points": 12,
+      "item_type": "subject",
+      "url": "/subject/2026/95569",
+      "connector": "AND"
+     },
+     {
+      "code": "57304",
+      "name": "The Ethics of Data and AI",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/57304",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "42850",
+      "name": "Natural Language Processing Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42850",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "32516",
+      "name": "Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32516",
+      "connector": "AND"
+     },
+     {
+      "code": "32118",
+      "name": "Wireless Communications",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32118",
+      "connector": "AND"
+     },
+     {
+      "code": "42000",
+      "name": "Cryptography",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42000",
+      "connector": "AND"
+     },
+     {
+      "code": "32027",
+      "name": "Interactive Media",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32027",
+      "connector": "AND"
+     },
+     {
+      "code": "49680",
+      "name": "Value Chain Engineering Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49680",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   },
+   {
+    "title": "Options 1 Core Subjects",
+    "description": "(CBK92339) Select 6 credit points from the following subjects:",
+    "credit_points": 6,
+    "items": [
+     {
+      "code": "32011",
+      "name": "Multilayer Switched Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32011",
+      "connector": "AND"
+     },
+     {
+      "code": "32513",
+      "name": "Advanced Data Analytics Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32513",
+      "connector": "AND"
+     },
+     {
+      "code": "32547",
+      "name": "UNIX Systems Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32547",
+      "connector": "AND"
+     },
+     {
+      "code": "95563",
+      "name": "Data Driven Storytelling Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95563",
+      "connector": "AND"
+     },
+     {
+      "code": "49016",
+      "name": "Technology and Innovation Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49016",
+      "connector": "AND"
+     },
+     {
+      "code": "32570",
+      "name": "Enterprise Architecture Practice",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32570",
+      "connector": "AND"
+     },
+     {
+      "code": "95566",
+      "name": "Digital Experience Design Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95566",
+      "connector": "AND"
+     },
+     {
+      "code": "32009",
+      "name": "Advanced Routing Principles",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32009",
+      "connector": "AND"
+     },
+     {
+      "code": "32531",
+      "name": "Global Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32531",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "32146",
+      "name": "Data Visualisation and Visual Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32146",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/CBK91043",
+  "fetched_at": "2026-08-26T11:21:14+00:00"
+ },
+ "CBK91054": {
+  "code": "CBK91054",
+  "title": "Choice (No specified sub-major)",
+  "credit_points": 24,
+  "blocks": [
+   {
+    "title": "Options",
+    "description": "Select 24 credit points from the following subjects:",
+    "credit_points": 24,
+    "items": [
+     {
+      "code": "42036",
+      "name": "Cybersecurity for Mobile Platforms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42036",
+      "connector": "AND"
+     },
+     {
+      "code": "32040",
+      "name": "Industry Project",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32040",
+      "connector": "AND"
+     },
+     {
+      "code": "32547",
+      "name": "UNIX Systems Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32547",
+      "connector": "AND"
+     },
+     {
+      "code": "42904",
+      "name": "Cloud Computing and Software as a Service",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42904",
+      "connector": "AND"
+     },
+     {
+      "code": "32130",
+      "name": "Fundamentals of Data Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32130",
+      "connector": "AND"
+     },
+     {
+      "code": "42027",
+      "name": "Software Defined Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42027",
+      "connector": "AND"
+     },
+     {
+      "code": "32601",
+      "name": "Advanced Project Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32601",
+      "connector": "AND"
+     },
+     {
+      "code": "32309",
+      "name": "Digital Forensics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32309",
+      "connector": "AND"
+     },
+     {
+      "code": "42889",
+      "name": "iOS Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42889",
+      "connector": "AND"
+     },
+     {
+      "code": "32558",
+      "name": "Business Intelligence",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32558",
+      "connector": "AND"
+     },
+     {
+      "code": "32570",
+      "name": "Enterprise Architecture Practice",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32570",
+      "connector": "AND"
+     },
+     {
+      "code": "32524",
+      "name": "LANS and Routing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32524",
+      "connector": "AND"
+     },
+     {
+      "code": "49202",
+      "name": "Communication Protocols",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49202",
+      "connector": "AND"
+     },
+     {
+      "code": "32004",
+      "name": "Game Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32004",
+      "connector": "AND"
+     },
+     {
+      "code": "32520",
+      "name": "Systems Administration",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32520",
+      "connector": "AND"
+     },
+     {
+      "code": "32009",
+      "name": "Advanced Routing Principles",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32009",
+      "connector": "AND"
+     },
+     {
+      "code": "49003",
+      "name": "Economic Evaluation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49003",
+      "connector": "AND"
+     },
+     {
+      "code": "42037",
+      "name": "IoT Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42037",
+      "connector": "AND"
+     },
+     {
+      "code": "32513",
+      "name": "Advanced Data Analytics Algorithms",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32513",
+      "connector": "AND"
+     },
+     {
+      "code": "32548",
+      "name": "Cybersecurity",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32548",
+      "connector": "AND"
+     },
+     {
+      "code": "32560",
+      "name": "Information Systems Architecture Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32560",
+      "connector": "AND"
+     },
+     {
+      "code": "49680",
+      "name": "Value Chain Engineering Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49680",
+      "connector": "AND"
+     },
+     {
+      "code": "32567",
+      "name": "Business Intelligence for Decision Support",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32567",
+      "connector": "AND"
+     },
+     {
+      "code": "32569",
+      "name": "Enterprise Business Requirements",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32569",
+      "connector": "AND"
+     },
+     {
+      "code": "32011",
+      "name": "Multilayer Switched Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32011",
+      "connector": "AND"
+     },
+     {
+      "code": "32509",
+      "name": "Advanced Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32509",
+      "connector": "AND"
+     },
+     {
+      "code": "32027",
+      "name": "Interactive Media",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32027",
+      "connector": "AND"
+     },
+     {
+      "code": "49227",
+      "name": "Wireless Sensor Networks",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49227",
+      "connector": "AND"
+     },
+     {
+      "code": "32113",
+      "name": "Advanced Database",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32113",
+      "connector": "AND"
+     },
+     {
+      "code": "95563",
+      "name": "Data Driven Storytelling Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95563",
+      "connector": "AND"
+     },
+     {
+      "code": "42891",
+      "name": "Infrastructure for Cloud Computing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42891",
+      "connector": "AND"
+     },
+     {
+      "code": "32118",
+      "name": "Wireless Communications",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32118",
+      "connector": "AND"
+     },
+     {
+      "code": "32003",
+      "name": "Computer Game Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32003",
+      "connector": "AND"
+     },
+     {
+      "code": "32531",
+      "name": "Global Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32531",
+      "connector": "AND"
+     },
+     {
+      "code": "32603",
+      "name": "Systems Quality Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32603",
+      "connector": "AND"
+     },
+     {
+      "code": "32549",
+      "name": "Advanced Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32549",
+      "connector": "AND"
+     },
+     {
+      "code": "95566",
+      "name": "Digital Experience Design Studio",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/95566",
+      "connector": "AND"
+     },
+     {
+      "code": "32516",
+      "name": "Internet Programming",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32516",
+      "connector": "AND"
+     },
+     {
+      "code": "32543",
+      "name": "3D Animation",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32543",
+      "connector": "AND"
+     },
+     {
+      "code": "42000",
+      "name": "Cryptography",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42000",
+      "connector": "AND"
+     },
+     {
+      "code": "43011",
+      "name": "Industrial Control System Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/43011",
+      "connector": "AND"
+     },
+     {
+      "code": "49016",
+      "name": "Technology and Innovation Management",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/49016",
+      "connector": "AND"
+     },
+     {
+      "code": "32998",
+      "name": ".NET Application Development",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32998",
+      "connector": "AND"
+     },
+     {
+      "code": "32501",
+      "name": "Computer Graphics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32501",
+      "connector": "AND"
+     },
+     {
+      "code": "32405",
+      "name": "Human-Centred Design Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32405",
+      "connector": "AND"
+     },
+     {
+      "code": "32931",
+      "name": "Technology Research Methods",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32931",
+      "connector": "AND"
+     },
+     {
+      "code": "32559",
+      "name": "Business Systems Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32559",
+      "connector": "AND"
+     },
+     {
+      "code": "32571",
+      "name": "Enterprise Software Testing",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32571",
+      "connector": "AND"
+     },
+     {
+      "code": "32310",
+      "name": "Network Security Appliances",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32310",
+      "connector": "AND"
+     },
+     {
+      "code": "42035",
+      "name": "Cloud Security",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42035",
+      "connector": "AND"
+     },
+     {
+      "code": "42017",
+      "name": "Fundamentals of Interaction Design",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42017",
+      "connector": "AND"
+     },
+     {
+      "code": "42900",
+      "name": "Sustainability and Information Systems",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42900",
+      "connector": "AND"
+     },
+     {
+      "code": "42890",
+      "name": "4G/5G Mobile Technologies",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/42890",
+      "connector": "AND"
+     },
+     {
+      "code": "32146",
+      "name": "Data Visualisation and Visual Analytics",
+      "credit_points": 6,
+      "item_type": "subject",
+      "url": "/subject/2026/32146",
+      "connector": "AND"
+     }
+    ],
+    "children": []
+   }
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/aos/2026/CBK91054",
+  "fetched_at": "2026-08-26T11:21:17+00:00"
  }
 }

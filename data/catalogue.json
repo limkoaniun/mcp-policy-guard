@@ -1,4 +1,28 @@
 {
+ "32933": {
+  "code": "32933",
+  "name": "Research Project",
+  "credit_points": 6,
+  "description": "This subject equips you with practical research skills, enabling you to tackle novel problems using ICT technologies through individual or small team projects, guided by academic staff and senior researchers. You'll develop critical thinking, problem-solving, and effective communication abilities, assessed via research quality, written reports, and oral presentations. Your learning journey is self-directed, with support from a dedicated supervisor and subject coordinator, and while there are no formal classes, you're expected to proactively schedule regular supervisory meetings. An introductory guide will be available on Canvas.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32933",
+  "fetched_at": "2026-08-26T11:21:21+00:00"
+ },
+ "32040": {
+  "code": "32040",
+  "name": "Industry Project",
+  "credit_points": 6,
+  "description": "This subject equips you to manage with strategic analysis and design issues for corporate information systems environment, utilising a major case study to apply and reinforce prior knowledge. You'll learn to evaluate different system strategies and enhance your senior management and communication abilities. Learning is interactive, emphasising practical judgement and teamwork while working in an industry-like environment.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32040",
+  "fetched_at": "2026-08-26T11:21:26+00:00"
+ },
  "32541": {
   "code": "32541",
   "name": "Project Management",
@@ -35,16 +59,81 @@
   "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32144",
   "fetched_at": "2026-08-26T11:09:32+00:00"
  },
- "32309": {
-  "code": "32309",
-  "name": "Digital Forensics",
+ "42028": {
+  "code": "42028",
+  "name": "Deep Learning and Convolutional Neural Network",
   "credit_points": 6,
-  "description": "In this practice-based subject, you will engage in laboratory-based learning to determine if a crime has been committed through the acquisition, analysis, and reporting of digital evidence. Your studies will focus on forensic analysis of network data, including the recovery of website visitation evidence relevant for court cases, alongside scrutinising digital storage devices to identify and retrieve critical data. You will also delve into the examination of operating systems to unearth hidden data, perform detailed analysis of metadata to gain deeper insights, and apply rigorous forensic principles to produce sound and defensible reports. Through these hands-on activities, you will develop a comprehensive understanding of digital forensics and its applications in real-world scenarios.",
+  "description": "This subject delves into deep learning and convolutional neural networks (CNNs), highlighting their practical applications in data analytics, image recognition, and object detection. You'll study deep learning architectures, focusing on end-to-end model training for tasks like image classification. Practical sessions include setting up deep learning libraries, fine-tuning networks, and training your own CNNs on GPUs. You'll also learn model deployment to build an AI system. The coursework involves individual comprehension of cutting-edge research and collaborative projects to implement image classification and object detection systems.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42028",
+  "fetched_at": "2026-08-26T11:21:31+00:00"
+ },
+ "42913": {
+  "code": "42913",
+  "name": "Social and Information Network Analysis",
+  "credit_points": 6,
+  "description": "This subject introduces you to the fundamentals of social and information networks, including core concepts, network characterisation metrics, generative models, and analysis methods. You'll learn to use software tools to visualise and analyse real-world network data. The subject also covers practical applications such as user recommendations and web search, equipping you to interpret the increasingly interconnected data of our social and economic activities.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42913",
+  "fetched_at": "2026-08-26T11:21:36+00:00"
+ },
+ "42850": {
+  "code": "42850",
+  "name": "Natural Language Processing Algorithms",
+  "credit_points": 6,
+  "description": "Natural Language Processing (NLP) develops AI algorithms and methods to enable machines to understand and interpret human languages. This subject provides a foundation in NLP technologies, explores advanced algorithms, and applies them to real-world problems. You'll gain both the knowledge to engage with NLP theories and the practical skills to craft NLP projects, bridging the gap between theoretical insights and hands-on application.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42850",
+  "fetched_at": "2026-08-26T11:21:41+00:00"
+ },
+ "42050": {
+  "code": "42050",
+  "name": "SAS Predictive Business Analytics",
+  "credit_points": 6,
+  "description": "Predictive business analytics is used to predict unknown future events by analysing historical business data and plays a critical function in data-driven business. This subject will equip you with the theoretical and practical foundations of predictive business analytics. You will comprehend analytical methods for business problem solving encompassing the entire predictive analytics lifecycle, from understanding business problems to deploying predictive models in the real-time business environment via case studies. This understanding will be further enhanced via demonstrations and hands-on exercises. You will use Model Studio in SAS Viya to develop and compare advanced analytics models, learning to create supervised machine learning models for informed decision-making with big data. The subject uses no code technology while setting you up to potentially achieve SAS Certified Specialist: Machine Learning Using SAS Viya certification.",
   "sessions": [
    "Spring"
   ],
-  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32309",
-  "fetched_at": "2026-08-26T11:09:37+00:00"
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42050",
+  "fetched_at": "2026-08-26T11:21:47+00:00"
+ },
+ "32567": {
+  "code": "32567",
+  "name": "Business Intelligence for Decision Support",
+  "credit_points": 6,
+  "description": "This subject delves into business intelligence (BI), a comprehensive term encompassing architectures, tools, databases, analytics, applications, and methodologies aimed at facilitating interactive data access and empowering managers to make informed decisions. It introduces decision support systems (DSS), which are computer-based systems combining models, methods, and data to tackle semi-structured or unstructured decisions, demanding user involvement and a user-friendly interface. As high-level business decisions often fall into these categories and are data-intensive, DSS are increasingly integrated with BI techniques for enhanced problem-solving. You'll learn about various aspects of BI and DSS, including group and intelligent support systems, web-based systems, decision optimisation, and personalised recommender systems. Additionally, the subject teaches the design, implementation, and integration of BI techniques to bolster business decision-making processes.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32567",
+  "fetched_at": "2026-08-26T11:21:52+00:00"
+ },
+ "32130": {
+  "code": "32130",
+  "name": "Fundamentals of Data Analytics",
+  "credit_points": 6,
+  "description": "This subject equips you with both theoretical and hands-on experience of data analytics, the process of extracting meaningful insights from large data sets. You'll learn statistical methods and data visualisation techniques to explore and process vast volumes of data, and unsupervised as well as supervised techniques to discover patterns and insights for knowledge discovery. The subject synthesises cutting-edge research and practice, preparing you to lead data analytics projects that transform data into commercially valuable information.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32130",
+  "fetched_at": "2026-08-26T11:21:57+00:00"
+ },
+ "32113": {
+  "code": "32113",
+  "name": "Advanced Database",
+  "credit_points": 6,
+  "description": "Software systems require trustworthy data management systems. This subject covers advanced database concepts, requirements, architecture, design and systems. Current trends and challenges in the practice of data management are explored to develop the robust data solutions. In small teams, students apply these contemporary data management practices to their advanced database project work. Students learn to integrate and manage data from different sources to support the data-intensive software systems.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32113",
+  "fetched_at": "2026-08-26T11:22:03+00:00"
  },
  "42904": {
   "code": "42904",
@@ -56,6 +145,75 @@
   ],
   "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42904",
   "fetched_at": "2026-08-26T11:09:42+00:00"
+ },
+ "57304": {
+  "code": "57304",
+  "name": "The Ethics of Data and AI",
+  "credit_points": 6,
+  "description": "This subject addresses the ethical dilemmas surrounding data-driven AI systems in decision-making across various sectors. You will engage in debates on AI's function and development, informed by humanities and social science perspectives. The course emphasises moral and ethical considerations like transparency, fairness, and algorithmic bias, and applies these to real and hypothetical case studies concerning data ethics, regulation, and accountability.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/57304",
+  "fetched_at": "2026-08-26T11:22:08+00:00"
+ },
+ "42177": {
+  "code": "42177",
+  "name": "Image Processing and Pattern Recognition",
+  "credit_points": 6,
+  "description": "This subject imparts the ability to extract information from images and videos using image processing and pattern recognition techniques, underpinning innovative applications like video surveillance and medical diagnostics. You will learn the principles of image processing and pattern recognition, create software for automatic image and video analysis, and explore recent advancements in the field. The goal is to cultivate skills necessary to develop image processing and computer vision applications. You will apply your knowledge in a team-based project, tackling real-world problems such as detecting individuals and objects in surveillance footage, automating medical image diagnosis, and recognising faces in images, while also delving into current research to enhance your understanding of this fast-paced domain.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42177",
+  "fetched_at": "2026-08-26T11:22:13+00:00"
+ },
+ "43031": {
+  "code": "43031",
+  "name": "Python Programming for Data Processing",
+  "credit_points": 6,
+  "description": "This subject equips you with Python programming fundamentals, targeting data processing and visualisation. You'll learn Python programming concepts, data structures, visualisation methods, and how to develop programs in Jupyter notebooks. You will engage in practical case studies demonstrating the use of popular Python packages and libraries for data manipulation and visualisation.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/43031",
+  "fetched_at": "2026-08-26T11:22:18+00:00"
+ },
+ "32513": {
+  "code": "32513",
+  "name": "Advanced Data Analytics Algorithms",
+  "credit_points": 6,
+  "description": "This subject advances your understanding of data analytics through a machine learning lens, exploring how intelligent agents learn and adapt. Applied across various sectors, machine learning is central to discovering new knowledge. You'll delve into knowledge discovery algorithms, building on prior data analytics knowledge to comprehend both elementary and complex algorithms. The subject blends hands-on practice with foundational theories, enabling you to master key techniques through implementation and analysis. Additionally, you'll explore machine learning's practical applications, particularly in artificial intelligence, equipping you with the skills to apply this knowledge in real-world scenarios.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32513",
+  "fetched_at": "2026-08-26T11:22:24+00:00"
+ },
+ "32146": {
+  "code": "32146",
+  "name": "Data Visualisation and Visual Analytics",
+  "credit_points": 6,
+  "description": "This subject focuses on the vital technologies of data visualisation and visual interaction that underpin visual analytics and decision-making. You'll engage with recent data visualisation literature and practice using advanced software. The subject outlines the visual data analytics process and methodology, including the critical role of human interaction with interactive visual interfaces. Upon completion, you'll be adept at designing and evaluating sophisticated visualisation interfaces, positioning you for roles as a data visualisation designer and visual data analyst.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32146",
+  "fetched_at": "2026-08-26T11:22:30+00:00"
+ },
+ "32309": {
+  "code": "32309",
+  "name": "Digital Forensics",
+  "credit_points": 6,
+  "description": "In this practice-based subject, you will engage in laboratory-based learning to determine if a crime has been committed through the acquisition, analysis, and reporting of digital evidence. Your studies will focus on forensic analysis of network data, including the recovery of website visitation evidence relevant for court cases, alongside scrutinising digital storage devices to identify and retrieve critical data. You will also delve into the examination of operating systems to unearth hidden data, perform detailed analysis of metadata to gain deeper insights, and apply rigorous forensic principles to produce sound and defensible reports. Through these hands-on activities, you will develop a comprehensive understanding of digital forensics and its applications in real-world scenarios.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32309",
+  "fetched_at": "2026-08-26T11:09:37+00:00"
  },
  "42036": {
   "code": "42036",
@@ -159,5 +317,661 @@
   ],
   "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32547",
   "fetched_at": "2026-08-26T11:10:31+00:00"
+ },
+ "32549": {
+  "code": "32549",
+  "name": "Advanced Internet Programming",
+  "credit_points": 6,
+  "description": "This subject enables you to create advanced web applications ready for production, focusing on server-side programming and business-to-business systems. You'll gain proficiency in internet technologies, encompassing web development stacks, n-tier architectures, transactions, security, and web-service integration. The subject simulates a tech startup or internal software project environment, where you'll develop and refine a prototype, ensuring it meets real-world standards of security, reliability, and maintainability. Through hands-on labs and group work, you'll enhance your internet programming, problem-solving, collaboration, and communication skills. Additionally, self-directed learning and professional community engagement are expected outside of class hours.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32549",
+  "fetched_at": "2026-08-26T11:22:36+00:00"
+ },
+ "42017": {
+  "code": "42017",
+  "name": "Fundamentals of Interaction Design",
+  "credit_points": 6,
+  "description": "This subject develops your ability to design, evaluate, and implement interactive systems with a human-centered approach. You'll understand human-computer interaction (HCI) and interaction design principles, learning key concepts, tools, and techniques. You'll also consider how designers' metaphors for human activity affect system usability and how human-centered design and evaluation can enhance interactive systems.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42017",
+  "fetched_at": "2026-08-26T11:22:41+00:00"
+ },
+ "32998": {
+  "code": "32998",
+  "name": ".NET Application Development",
+  "credit_points": 6,
+  "description": "This subject introduces you to C# programming using Visual Studio and the .NET development framework. You will explore the .NET framework and its core concepts, applying this knowledge to develop applications in C#.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32998",
+  "fetched_at": "2026-08-26T11:22:47+00:00"
+ },
+ "32516": {
+  "code": "32516",
+  "name": "Internet Programming",
+  "credit_points": 6,
+  "description": "This subject equips you with an in-depth understanding of internet-based programming and the World Wide Web's intricacies, from its evolution to its technical core. You'll learn essential data presentation techniques and delve into the client/server model, focusing on website creation with HTML, CSS, JavaScript, JSON, MySQL/MongoDB, and modern JavaScript libraries for building user interfaces (e.g., React). The subject offers a solid foundation for grasping the WWW's workings, constructing websites, and mastering web software development through scripting.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32516",
+  "fetched_at": "2026-08-26T11:22:52+00:00"
+ },
+ "32571": {
+  "code": "32571",
+  "name": "Enterprise Software Testing",
+  "credit_points": 6,
+  "description": "This subject equips you with practical knowledge and skills to measure and control software quality. You'll learn about software quality assurance, management principles, and testing approaches for systems and applications.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32571",
+  "fetched_at": "2026-08-26T11:22:57+00:00"
+ },
+ "32509": {
+  "code": "32509",
+  "name": "Advanced Interaction Design",
+  "credit_points": 6,
+  "description": "This subject delves into user experience (UX) in interaction design, crucial for technology adoption and competitive differentiation. UX reflects a user's interaction with digital products and varies widely in definition across academia and industry. You'll acquire conceptual tools to discuss UX effectively, identifying and critiquing digital technology experiences. Practical skills are developed by examining human-computer interactions, including mobile and pervasive computing, IoT, and more, focusing on user experiences in specific contexts and goals. You'll learn design methods like user research, sketching, and prototyping, applying these to create technology solutions that are not only functional but also enhance user engagement. By building on fundamental design principles, you'll be equipped to craft technologies that optimize user experience.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32509",
+  "fetched_at": "2026-08-26T11:23:02+00:00"
+ },
+ "42889": {
+  "code": "42889",
+  "name": "iOS Application Development",
+  "credit_points": 6,
+  "description": "This microcredential introduces you to iOS application development, covering the Swift programming language, the iOS development environment, and key app frameworks. It emphasises practical experience, ensuring you gain hands-on skills in software development within the iOS context.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42889",
+  "fetched_at": "2026-08-26T11:23:07+00:00"
+ },
+ "32569": {
+  "code": "32569",
+  "name": "Enterprise Business Requirements",
+  "credit_points": 6,
+  "description": "This subject introduces the processes, methods, and tools underpinning requirements engineering (RE)—the human-centred and communicative aspect of software and system development, also known as business analysis. You'll explore current trends and challenges in RE by examining professional practices and scrutinising research literature. Working in small teams, you'll apply modern techniques of requirements elicitation, analysis, modelling, specification, and validation to practical case studies.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32569",
+  "fetched_at": "2026-08-26T11:23:13+00:00"
+ },
+ "32603": {
+  "code": "32603",
+  "name": "Systems Quality Management",
+  "credit_points": 6,
+  "description": "This subject teaches you to plan, implement, and enhance quality management processes, crucial for ensuring product integrity in complex production landscapes. You'll learn how quality management systems (QMS) are integral to organisational management, permeating various layers and functioning within firms. With an emphasis on the intricacies of software and systems products, the subject uses real-world examples and culminates in an industry project where you'll address and propose solutions to a QMS problem.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32603",
+  "fetched_at": "2026-08-26T11:23:18+00:00"
+ },
+ "32570": {
+  "code": "32570",
+  "name": "Enterprise Architecture Practice",
+  "credit_points": 6,
+  "description": "This subject provides a foundation in enterprise architecture, focusing on architecting software-intensive systems at a large scale. You'll examine current trends and challenges, applying contemporary practices to team-based architecture projects. The subject emphasises the integration and alignment of various enterprise architecture layers to support business objectives effectively.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32570",
+  "fetched_at": "2026-08-26T11:23:24+00:00"
+ },
+ "40005": {
+  "code": "40005",
+  "name": "Advanced iOS Development",
+  "credit_points": 6,
+  "description": "This subject offers an advanced insight into iOS application development with Swift and SwiftUI, where you'll master complex concepts, frameworks, and tools to create robust, innovative iOS apps. It emphasises hands-on experience with industry-standard practices, pushing you to devise solutions that address real-world software needs.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/40005",
+  "fetched_at": "2026-08-26T11:23:30+00:00"
+ },
+ "32004": {
+  "code": "32004",
+  "name": "Game Development",
+  "credit_points": 6,
+  "description": "This subject introduces you to game development using a commercial-grade game engine, focusing on building a strong foundation in generalisable virtual interaction simulation theory and intermediate programming problem solving skills in the Unity Game Engine. You'll become familiar with industry terminology, engine interface tools, vector and matrix maths for object transformation, and programming involving the engine API. You will be assessed on your practical skills development through weekly lab content to ensure consistent skill development over the session. You will create a classic video game over the semester, beginning with the asset creation and import into the engine, and then programming the game logic akin to the original game experience. You will also craft a level with a unique twist to allow for you to develop your creative problem-solving skills, a crucial skill for any aspiring game developer. The skills developed in this subject will prepare you to contribute effectively to group projects in future game-related subjects and subject outcomes can be utilised in an employment portfolio.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32004",
+  "fetched_at": "2026-08-26T11:23:35+00:00"
+ },
+ "32027": {
+  "code": "32027",
+  "name": "Interactive Media",
+  "credit_points": 6,
+  "description": "This subject introduces you to the core principles and tools of interactive media, widely used across games, the arts, data visualisation, and business. You'll learn to use creative coding to design and develop systems that integrate digital audio, images, animations, and video, aiming to craft rich, engaging user experiences for real-world applications.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32027",
+  "fetched_at": "2026-08-26T11:23:41+00:00"
+ },
+ "95569": {
+  "code": "95569",
+  "name": "Interaction Design Studio",
+  "credit_points": 12,
+  "description": "In this capstone project, you will integrate your accumulated knowledge and skills by planning, developing, and producing an interactive product within a collaborative team environment. You're encouraged to critically innovate and experiment, addressing specific needs and contributing originality to the interaction design field. Additionally, the subject offers a platform to consider the future evolution of your product and career opportunities in the industry.",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/95569",
+  "fetched_at": "2026-08-26T11:23:48+00:00"
+ },
+ "32405": {
+  "code": "32405",
+  "name": "Human-Centred Design Research Methods",
+  "credit_points": 6,
+  "description": "This subject focuses on making people the core of the interaction design process through human-centred design methods, with particular attention to the interviewing and probes methods. Interviewing gathers direct information and adapts flexibly across the design process, while probes, using tailored props, require more setup but aim to inspire creative insights and prepare participants for a follow-up interview. You'll learn both methods, applying them step-by-step to real participants, guided by a brief and with readings and examples to tailor your approach. You must recruit at least three strangers (people you do not know and who are not familiar with the subject) for interviews and one stranger for the probe study.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32405",
+  "fetched_at": "2026-08-26T11:23:53+00:00"
+ },
+ "95563": {
+  "code": "95563",
+  "name": "Data Driven Storytelling Studio",
+  "credit_points": 6,
+  "description": "This studio subject focuses on crafting interactive, data-driven storytelling, an approach gaining traction across news, media, journalism, and marketing. You'll delve into the storytelling creation process, backed by data visualization and human-centered design, and collaborate on projects. Hands-on experience with a Business Intelligence platform will enhance your data storytelling and problem-solving skills. This subject is suitable if you have prior knowledge of data analytics and want to further improve your story telling skills using data.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/95563",
+  "fetched_at": "2026-08-26T11:23:58+00:00"
+ },
+ "95566": {
+  "code": "95566",
+  "name": "Digital Experience Design Studio",
+  "credit_points": 6,
+  "description": "This subject introduces Experience-Centred Design, focusing on using technology to enhance human experiences and inclusivity. You'll explore the potential of mobile computing and social media to enrich lives and empower the often voiceless. Through a practical design project involving real users, you'll learn to integrate user feedback into the design process, understand the user-designer relationship, and apply interdisciplinary approaches to information and interaction design.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/95566",
+  "fetched_at": "2026-08-26T11:24:03+00:00"
+ },
+ "49016": {
+  "code": "49016",
+  "name": "Technology and Innovation Management",
+  "credit_points": 6,
+  "description": "This subject teaches you to manage technology and innovation within organisations, from inception to transfer. You'll learn to navigate the full product and service development cycle, including needs analysis, ideation, and implementation. Through an innovation project, you'll apply quantitative and qualitative tools to grasp and manage the intricate components of the innovation process, preparing you to design and analyse effective innovation strategies.",
+  "sessions": [
+   "Autumn",
+   "Jan-Mar"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/49016",
+  "fetched_at": "2026-08-26T11:24:08+00:00"
+ },
+ "32531": {
+  "code": "32531",
+  "name": "Global Information Systems",
+  "credit_points": 6,
+  "description": "This subject explores how globalisation has redefined information systems to support international business operations, including alliances and joint ventures. You'll examine the global IT industry's trajectory and structure, the strategic value of IT in business, and the impact of e-commerce, customer relationship management, knowledge management, outsourcing, and offshoring. Legal considerations in the digital economy for formalising business relationships are also addressed. Emphasis is placed on organising business information, with particular attention to informal flows within organisations. You'll learn about varying work types, team formation, and management processes, alongside practical skills in using portals and other tools to build relationships, maintain customer loyalty, and manage outsourcing partnerships.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32531",
+  "fetched_at": "2026-08-26T11:24:14+00:00"
+ },
+ "32560": {
+  "code": "32560",
+  "name": "Information Systems Architecture Design",
+  "credit_points": 6,
+  "description": "This postgraduate subject explores the role of architecture in agile methodologies, particularly relevant for those considering the value of architecture when best practices encourage rapid iteration over detailed planning. In learning about Enterprise Architecture, you will focus on on strategic IT alignment with business needs in a world where exhaustive detail is impractical due to constant organisational evolution. You'll model crucial organisational aspects and develop a toolkit for articulating this information. You'll examine the tactical delivery of IT soultions and learn to integrate architectural considerations with agile teams, determining when to establish system aspects upfront versus through the agile cycle. The subject enhances your ability to apply architectural patterns, avoid common pitfalls, and effectively model architectures with clear, understandable diagrams.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32560",
+  "fetched_at": "2026-08-26T11:24:19+00:00"
+ },
+ "42900": {
+  "code": "42900",
+  "name": "Sustainability and Information Systems",
+  "credit_points": 6,
+  "description": "Sustainability and Information Systems encourages you to actively consider the impact of sustainability on organisational leadership within complex systems. It takes a holistic approach, covering environmental, technological, social, and economic facets. The subject highlights the importance of stakeholder engagement through information technologies and collaborative media, addressing the challenges faced by traditional operations and the opportunities for innovation. You'll engage in a learning environment that focuses on these dynamic possibilities for sustainable organisational growth.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42900",
+  "fetched_at": "2026-08-26T11:24:24+00:00"
+ },
+ "32559": {
+  "code": "32559",
+  "name": "Business Systems Design",
+  "credit_points": 6,
+  "description": "This subject equips you with the tools, processes, and practices necessary for designing information systems in dynamic business environments, where diverse stakeholder needs evolve constantly. You'll collaborate in teams to develop innovative solutions that add value, integrating critical analysis into the design process with a strong focus on human-centered design. Adopting Design Thinking, you'll engage with problems empathetically to craft solutions that satisfy stakeholders. Projects promoting social value are encouraged. The subject also covers the conceptualisation and business analysis of value propositions, along with developing basic prototypes.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32559",
+  "fetched_at": "2026-08-26T11:24:29+00:00"
+ },
+ "32558": {
+  "code": "32558",
+  "name": "Business Intelligence",
+  "credit_points": 6,
+  "description": "This postgraduate subject examines the critical role of information systems within business organisations, highlighting how these systems support strategic decision-making and enhance operational efficiencies. You will explore the complete lifecycle of corporate information and knowledge – including its creation, distribution, retention, and application, and learn how to design and develop systems that enhance business intelligence effectively. The subject will equip you with essential skills in system development approaches and knowledge management, preparing you for advanced roles in business analysis and system design. Your learning will be hands-on: through case studies, project-based assignments, and collaborative classes, you will apply theoretical concepts to real-world business problems using various analytical tools. As you work with data sets, you'll enhance your ability to analyse and implement solutions. This approach ensures that you not only understand the theory but also gain proficiency in applying these tools to analyse and solve business challenges effectively.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32558",
+  "fetched_at": "2026-08-26T11:24:34+00:00"
+ },
+ "32601": {
+  "code": "32601",
+  "name": "Advanced Project Management",
+  "credit_points": 6,
+  "description": "This subject is focused on the so-called “soft” aspects of Project management. In this subject, you'll grasp the intricacies of project management within a global business context, focusing on human and organisational dynamics, project governance, and the evolving role of project managers. You'll develop critical skills in teamwork, analysis, and research, enabling you to tackle complex business solutions effectively. Learning is interactive and collaborative, featuring in-class flipped learning sessions, discussions, and group projects that encourage critical thinking. You'll also undertake individual research, formulating and defending your own perspectives on relevant issues.",
+  "sessions": [
+   "Mar-May",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32601",
+  "fetched_at": "2026-08-26T11:24:39+00:00"
+ },
+ "49680": {
+  "code": "49680",
+  "name": "Value Chain Engineering Systems",
+  "credit_points": 6,
+  "description": "This subject equips you with the skills to optimise value chains, integrating engineering, IT, and management principles to enhance productivity, quality, and performance in various manufacturing industries. You'll learn to design value chain systems that comply with manufacturing practices and regulations, support growth, manage risks, and foster continuous learning. Through practical and theoretical approaches, you'll develop a comprehensive understanding of operations management, applying cross-disciplinary strategies to real-world challenges. This subject is ideal for production and operation engineers, supply chain enthusiasts, business analysts, consultants, and students interested in value chain systems within the manufacturing domain.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/49680",
+  "fetched_at": "2026-08-26T11:24:44+00:00"
+ },
+ "49003": {
+  "code": "49003",
+  "name": "Economic Evaluation",
+  "credit_points": 6,
+  "description": "This subject enhances your understanding of macroeconomics and microeconomics, providing the foundation for evaluating investment options in an engineering-management context. Through this subject, you will develop the ability to apply economic reasoning to assess investments and make informed recommendations. This skill set is vital for engineer-managers tasked with making strategic economic decisions. Students are not expected to have any prior knowledge of economics.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/49003",
+  "fetched_at": "2026-08-26T11:24:49+00:00"
+ },
+ "32009": {
+  "code": "32009",
+  "name": "Advanced Routing Principles",
+  "credit_points": 6,
+  "description": "This subject focuses on routing technology and provides a comprehensive explanation of routing. It extends your skills and knowledge in scalable interior and exterior routing protocols, policy-based routing, route optimisation and redistribution. Content is primarily drawn from CCNP Enterprise: Core Networking (ENCOR) with additional insights from CCNP Enterprise: Advanced Routing. The subject is run in the UTS Cisco Systems Network Academy.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32009",
+  "fetched_at": "2026-08-26T11:24:54+00:00"
+ },
+ "32011": {
+  "code": "32011",
+  "name": "Multilayer Switched Networks",
+  "credit_points": 6,
+  "description": "This subject advances your understanding and practical skills in designing and implementing switched campus networks, using VLANs to enhance performance, reliability, management, and security. You'll explore various approaches to plan, configure, and verify complex enterprise switching solutions, with hands-on experience on Cisco Systems layer 2 and layer 3 switches. The curriculum aligns with CCNP Enterprise: Core Networking (ENCOR) and is conducted at the UTS Cisco Systems Network Academy.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32011",
+  "fetched_at": "2026-08-26T11:25:00+00:00"
+ },
+ "32520": {
+  "code": "32520",
+  "name": "Systems Administration",
+  "credit_points": 6,
+  "description": "This subject equips you with the knowledge and skills for deploying network servers using Windows and Linux operating systems. You will develop system administration techniques through a well-designed combination of laboratory activities, succinct lectures, and design tasks, gaining insight into the design principles and practical challenges of implementation.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32520",
+  "fetched_at": "2026-08-26T11:25:05+00:00"
+ },
+ "42027": {
+  "code": "42027",
+  "name": "Software Defined Networks",
+  "credit_points": 6,
+  "description": "This subject introduces Software Defined Networking (SDN), a response to the need for scalable, extensible network technologies amid increasing internet traffic. You will learn the core concepts in SDN and Network Function Virtualisation (NFV), and develop SDN applications over an SDN controller through practical labs. With SDN's rising influence in data centres and enterprise networks, the industry seeks engineers skilled in this transformative technology, positioning you at the forefront of networking innovation.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42027",
+  "fetched_at": "2026-08-26T11:25:11+00:00"
+ },
+ "32118": {
+  "code": "32118",
+  "name": "Wireless Communications",
+  "credit_points": 6,
+  "description": "This subject provides a foundational understanding of wireless communication systems, focusing on the technology, infrastructure, and protocols essential for devices and mobility. It first looks at underlying technologies and then reviews major wireless systems and networks. Practical learning through Matlab-based simulations complements theoretical study. You will also work as a group to develop a solution to practical wireless communications problems, by applying technologies learned in the subject.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32118",
+  "fetched_at": "2026-08-26T11:25:17+00:00"
+ },
+ "37014": {
+  "code": "37014",
+  "name": "Understanding Data: Statistical Models for Binary Outcomes",
+  "credit_points": 2,
+  "description": "This subject introduces you to logistic regression, a statistical method for modelling binary response variables using continuous and categorical predictors, laying the groundwork for further data modelling studies. Building on linear regression concepts, you'll cover odds, odds ratios, and the application of logistic models across different scales. Prior experience with linear regression is essential.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/37014",
+  "fetched_at": "2026-08-26T11:25:23+00:00"
+ },
+ "32501": {
+  "code": "32501",
+  "name": "Computer Graphics",
+  "credit_points": 6,
+  "description": "This subject enhances your problem-solving and communication abilities within computer graphics, focusing on implementation of algorithms for applications like animated films, VR, data visualisation, and games. You'll gain a balanced understanding of theory and practical skills, learning key principles of graphic pipelines and representations. Practical work includes using WebGL and the ThreeJS framework, equipping you with insights into game engines and 3D animation software, and the ability to create interactive 3D web content.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32501",
+  "fetched_at": "2026-08-26T11:25:28+00:00"
+ },
+ "42824": {
+  "code": "42824",
+  "name": "Environmental Noise and Planning",
+  "credit_points": 3,
+  "description": "This microcredential covers the fundamentals of acoustics and noise control from a practical viewpoint. It focuses on assessing, regulating, and managing noise impacts. Key topics include developing a Noise Impact Assessment, applying relevant noise policies, and evaluating predictions and proposed mitigation measures. The subject is designed to equip the learner with the ability to interpret Noise Impact Assessment Reports and judge environmental noise and vibration impacts from projects using conceptual acoustical fundamentals.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42824",
+  "fetched_at": "2026-08-26T11:25:33+00:00"
+ },
+ "42820": {
+  "code": "42820",
+  "name": "Machine Learning Foundations",
+  "credit_points": 2,
+  "description": "This microcredential equips you with the fundamentals of machine learning, the technique that allows machines to learn from data and improve their task performance. You'll be guided to apply cutting-edge algorithms practically within your professional field. You'll master core machine learning concepts and a generic framework, with a focus on foundational models like decision trees and linear families, which are vital both in theory and in real-world applications.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42820",
+  "fetched_at": "2026-08-26T11:25:38+00:00"
+ },
+ "42899": {
+  "code": "42899",
+  "name": "Applied Data Analytics for Cybersecurity",
+  "credit_points": 2,
+  "description": "Applied Data Analytics for Cybersecurity integrates big data and threat intelligence for detecting and mitigating insider and external cyber threats. You will explore emerging challenges such as malware analysis, adversarial machine learning, and privacy-preserving data analytics. The subject introduces artificial intelligence technologies relevant to cybersecurity and common data analytic approaches, providing hands-on experience in identifying risks and securing corporate IT networks.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42899",
+  "fetched_at": "2026-08-26T11:25:44+00:00"
+ },
+ "42893": {
+  "code": "42893",
+  "name": "Data Engineering Foundations",
+  "credit_points": 2,
+  "description": "This microcredential offers you a foundational grounding in data engineering - the crucial infrastructure and processes for managing and deriving value from data. Suitable for learners of various backgrounds, it prepares you to collaborate effectively with data engineering teams and integrate data engineering into your projects and operations. You'll explore the data value chain, data infrastructure, data pipelines, and implementation technologies, alongside data quality, security, monitoring, and governance, to understand how data engineers enable organisations to harness their data assets.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42893",
+  "fetched_at": "2026-08-26T11:25:49+00:00"
+ },
+ "42894": {
+  "code": "42894",
+  "name": "Advanced Machine Learning",
+  "credit_points": 2,
+  "description": "Advanced Machine Learning deepens your understanding of sophisticated data models, algorithms, and theoretical principles, building upon existing machine learning knowledge. This subject provides a mix of theory and practical application, focusing on statistical learning theory and empirical risk minimization to refine your ML models and algorithms.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42894",
+  "fetched_at": "2026-08-26T11:25:54+00:00"
+ },
+ "42146": {
+  "code": "42146",
+  "name": "Manual Methods for Reverse Engineering",
+  "credit_points": 2,
+  "description": "This micro-credential provides an introduction to the principles and practices of manual reverse engineering. The subject is structured to equip learners with the necessary skills and knowledge for accurately measuring physical objects using advanced tools such as computer metrology, vernier calipers, and micrometers. Students engage in detailed analysis and interpretation of measurement data, a critical step in constructing precise digital representations of physical entities. The subject also encompasses the application of manual reverse engineering techniques, essential for the reproduction of components in fields like manufacturing and quality assurance. This subject is designed to foster a thorough understanding of these processes, preparing students for professional applications in various technical domains.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42146",
+  "fetched_at": "2026-08-26T11:26:01+00:00"
+ },
+ "42826": {
+  "code": "42826",
+  "name": "Introduction to Complex Systems Modelling",
+  "credit_points": 3,
+  "description": "This microcredential demystifies complexity and complex systems, guiding you through the modelling of such systems, which traditional analytics can't fully decipher. Modelling and simulation become tools to understand unpredictable system behaviours and the potential effects of our interventions. With complex systems pervasive across natural, social, and technological domains, mastering their modelling is crucial. You'll learn to identify, classify, and select the most appropriate modelling approach for a given system, enhancing your analytical proficiency in handling real-world complexity.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42826",
+  "fetched_at": "2026-08-26T11:26:06+00:00"
+ },
+ "42144": {
+  "code": "42144",
+  "name": "Advanced Programming and Use of Collaborative Robots",
+  "credit_points": 2,
+  "description": "This subject is designed to extend students' knowledge of cobots, focusing on applying cobots to industry relevant tasks. Through this subject, students gain experience programming cobots to perform industry-relevant complex tasks and troubleshoot emergent challenges related to cobots. Students are able to integrate a cobot with peripheral equipment to form part of a larger system, and utilise end-of-arm-tooling to perform physical operations such as materials handing and palletising.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42144",
+  "fetched_at": "2026-08-26T11:26:12+00:00"
+ },
+ "49227": {
+  "code": "49227",
+  "name": "Wireless Sensor Networks",
+  "credit_points": 6,
+  "description": "This subject equips you with the expertise to harness the potential of the Internet of Things (IoT) through sensor technology, a rapidly expanding sector with significant economic impact. You'll develop a robust understanding of wireless sensor networks (WSNs), including data collection and integration into business applications, with practical applications across agriculture, healthcare, and urban development. Your learning will encompass both theoretical concepts, like routing and security, and practical skills, ensuring you can effectively implement WSNs in diverse settings. Sessions are interactive, blending theory with hands-on experience to prepare you for real-world challenges.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/49227",
+  "fetched_at": "2026-08-26T11:26:18+00:00"
+ },
+ "42896": {
+  "code": "42896",
+  "name": "Advanced Data Analytics for Cybersecurity",
+  "credit_points": 2,
+  "description": "Advanced Data Analytics for Cybersecurity equips you with big data and threat intelligence tools to tackle internal and external cyber threats. The subject covers statistical pattern recognition, inferencing and intelligent technologies for cybersecurity data analysis. You'll learn machine learning applications for cybersecurity, engage with the standard processes for data analytics, and gain practical experience in identifying and mitigating risks to corporate IT systems.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42896",
+  "fetched_at": "2026-08-26T11:26:24+00:00"
+ },
+ "42827": {
+  "code": "42827",
+  "name": "Introduction to Participatory Modelling",
+  "credit_points": 3,
+  "description": "Participatory modelling (PM) is a powerful tool which takes from the collective knowledge of stakeholders and interactive simulation modelling techniques, with the objective of finding better solutions for complex problems. Learning is a crucial component of participatory modelling because as the stakeholders exchange their perspectives, they learn from each other, which leads to the development of shared, more holistic understanding of the problem and, consequently, to more feasible solutions. In this subject you will learn the techniques of Participatory Modelling (PM) including how to engage with stakeholders and how to avoid or overcome any pitfalls when using the techniques of PM.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42827",
+  "fetched_at": "2026-08-26T11:26:31+00:00"
+ },
+ "32543": {
+  "code": "32543",
+  "name": "3D Animation",
+  "credit_points": 6,
+  "description": "This subject delves into key aspects of integrating 3D computer animation technology into interactive productions like a game or animated short output. It offers you the chance to master a leading game engine software focusing on advanced extensions for 3D animation. You'll learn the principles and practices of pre-production, practical realisation, code integration and post-production in animation projects. The subject is project-oriented, allowing you to create your own animation sequence or interactive game experience from concept to completion.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32543",
+  "fetched_at": "2026-08-26T11:26:37+00:00"
+ },
+ "42098": {
+  "code": "42098",
+  "name": "Applied Data Visualisation",
+  "credit_points": 2,
+  "description": "This subject hones your skills in crafting data visualisations that enhance data-driven storytelling. You'll explore narrative development and how interactive techniques allow users to engage with data within a story arc. Additionally, you'll examine cutting-edge technologies, like real-time 3D game engines and novel audio-visual hardware, for their potential in creating collaborative and immersive visualisations.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42098",
+  "fetched_at": "2026-08-26T11:26:42+00:00"
+ },
+ "42895": {
+  "code": "42895",
+  "name": "Data Literacy",
+  "credit_points": 1,
+  "description": "Data literacy, a critical skill for modern professionals, encompasses the ability to interpret, represent, and communicate data effectively. This subject introduces you to the essentials of data proficiency, preparing you for work in data-centric organisations and serving as a foundation for advanced study in data science, analytics, or statistics.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42895",
+  "fetched_at": "2026-08-26T11:26:47+00:00"
+ },
+ "42097": {
+  "code": "42097",
+  "name": "Advanced Data Visualisation",
+  "credit_points": 2,
+  "description": "This subject advances your ability to visualise complex data sets, including time-series, textual, and spatio-temporal data, crafting clear and user-specific visualisations. You'll focus on creating interactive visualisations and understand the implications of interactivity for design through hands-on practice.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42097",
+  "fetched_at": "2026-08-26T11:26:52+00:00"
+ },
+ "42825": {
+  "code": "42825",
+  "name": "Inventive Problem-Solving with TRIZ",
+  "credit_points": 3,
+  "description": "This microcredential hones your problem-solving abilities through the application of TRIZ, the \"Theory of Inventive Problem Solving.\" You'll learn to analyse engineering challenges, identify technical contradictions and devise innovative solutions. By mastering TRIZ methodologies and tools, you will develop the cognitive skills to tackle complex issues independently and transfer this knowledge to diverse problems.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42825",
+  "fetched_at": "2026-08-26T11:26:57+00:00"
+ },
+ "37013": {
+  "code": "37013",
+  "name": "Understanding Data: Linear Regression Models for Interpretation and Prediction",
+  "credit_points": 2,
+  "description": "This subject introduces linear regression as a tool to model the relationship between a continuous response variable and predictor variables, preparing you for advanced data modelling. It involves modelling data with lines, curves, or surfaces to best fit the observed patterns, accommodating both continuous and categorical predictors. You will learn to evaluate the model's fit to the data and verify the assumptions underpinning the modelling process.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/37013",
+  "fetched_at": "2026-08-26T11:27:02+00:00"
+ },
+ "49202": {
+  "code": "49202",
+  "name": "Communication Protocols",
+  "credit_points": 6,
+  "description": "This subject equips you with a robust grasp of communication protocol theory and practice, focusing on TCP/IP and associated protocols and applications. You will develop analytical skills and gain hands-on experience with widely used open-source networking tools such as Wireshark and iperf3, which you will apply to design, analyse and troubleshoot large scale IP networks. The learning process is highly interactive, with a strong emphasis on laboratory work to reinforce theoretical concepts.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/49202",
+  "fetched_at": "2026-08-26T11:27:08+00:00"
+ },
+ "37012": {
+  "code": "37012",
+  "name": "Understanding Data: Making Population Statements with Samples",
+  "credit_points": 2,
+  "description": "This subject introduces statistical tools for inference, essential for making judgements about a population from a sample. It covers t-tests, ANOVA, and F-tests, focusing on verifying their underlying assumptions. Non-parametric methods like the Wilcoxon signed-rank test and the Kruskal-Wallis test are also explored, setting the stage for advanced data modelling studies.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/37012",
+  "fetched_at": "2026-08-26T11:27:13+00:00"
+ },
+ "42890": {
+  "code": "42890",
+  "name": "4G/5G Mobile Technologies",
+  "credit_points": 6,
+  "description": "This subject equips you with a comprehensive understanding of 4G and 5G wireless communication systems, with a strong emphasis on wireless propagation, antenna design and analysis. You'll gain foundational knowledge of the structure, functions, and behaviour of 4G/5G networks and learn to use engineering tools to design antennas and assess wireless propagation performance. You will learn about system architecture, radio systems, wave propagation, MIMO beamforming, antennas and fundamental parameters. The subject is vendor-neutral and adheres to industry standards, preparing you for a career in telecommunications engineering.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42890",
+  "fetched_at": "2026-08-26T11:27:17+00:00"
+ },
+ "42218": {
+  "code": "42218",
+  "name": "Basic Programming and Use of Collaborative Robots",
+  "credit_points": 2,
+  "description": "This subject introduces you to Collaborative Robots (cobots), a flexible and agile automation technology that operates safely alongside humans, requiring minimal safety and infrastructure adaptations. You will learn technical aspects, safety and ethical considerations, and gain hands-on experience in programming cobots, preparing you for their adoption in various industries.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42218",
+  "fetched_at": "2026-08-26T11:27:23+00:00"
+ },
+ "42145": {
+  "code": "42145",
+  "name": "3D Scanning Methods for Reverse Engineering",
+  "credit_points": 2,
+  "description": "This subject is designed to build on the knowledge and proficiency in the principles and techniques of reverse engineering learnt in the Introduction to Reverse Engineering subject, whilst using 3D scanning methods. Through this subject, students gain experience in using 3D scanning technology to capture a component’s complete geometry and using mesh clean-up tools to prepare faceted bodies for downstream modelling and/or manufacturing. They also learn how to identify logical facet shapes and group triangles for use in the creation of faces, use reverse engineering software to create native surfaces on top of imported data, and use deviation analysis to ensure accuracy between the re-engineered part and its original. This subject equips students with the skills necessary to apply reverse engineering techniques using 3D scanning methods for manufacturing, quality assurance, or other purposes.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42145",
+  "fetched_at": "2026-08-26T11:27:28+00:00"
+ },
+ "42892": {
+  "code": "42892",
+  "name": "Applied Machine Learning",
+  "credit_points": 2,
+  "description": "Applied Machine Learning empowers you to independently plan and execute a machine learning project, covering the entire project lifecycle from problem comprehension to result deployment. This practical subject hones your expertise in machine learning and enhances your ability to professionally articulate your findings.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42892",
+  "fetched_at": "2026-08-26T11:27:34+00:00"
+ },
+ "42096": {
+  "code": "42096",
+  "name": "Data Visualisation Foundations",
+  "credit_points": 2,
+  "description": "This subject provides an understanding of data visualisation and visual analytics, equipping you with the skills to select and apply various visualisation techniques in diverse contexts. You will learn to manage and prepare data for visualisation, and critically assess the effectiveness of different visualisation methods.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42096",
+  "fetched_at": "2026-08-26T11:27:39+00:00"
+ },
+ "42821": {
+  "code": "42821",
+  "name": "Data Analytics Foundations",
+  "credit_points": 2,
+  "description": "Data Analytics Foundations imparts the essentials of data analytics, crucial for transforming vast data into actionable insights for business and societal benefit. You'll grasp data analytics' language and its role, learn about the prevalent CRISP-DM methodology, and practice core skills including dataset identification, data preparation, and cluster analysis. Advanced clustering techniques will refine your ability to discern and tackle analytical problems, allowing you to interpret datasets and explore data visually.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42821",
+  "fetched_at": "2026-08-26T11:27:44+00:00"
+ },
+ "42822": {
+  "code": "42822",
+  "name": "Advanced Data Analytics",
+  "credit_points": 2,
+  "description": "Advanced Data Analytics hones your ability to classify and predict data through hands-on experience with techniques like decision tree induction, support vector machines, ensemble methods, and random forests. Building on foundational skills, this microcredential teaches you to evaluate classification accuracy, identify prediction issues, and enhances your competencies in data visualisation and result evaluation.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42822",
+  "fetched_at": "2026-08-26T11:27:49+00:00"
+ },
+ "42828": {
+  "code": "42828",
+  "name": "Introduction to Agent Based Modelling",
+  "credit_points": 3,
+  "description": "This microcredential equips you with the skills to construct and adapt simulation models for complex systems, whose emergent properties are unpredictable due to the interplay of their elements. You'll delve into Agent-Based Modelling (ABM) and Agent-Based Modelling and Simulation (ABMS), practical methodologies for exploring and understanding the intricate dynamics of complex systems.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42828",
+  "fetched_at": "2026-08-26T11:27:55+00:00"
+ },
+ "32931": {
+  "code": "32931",
+  "name": "Technology Research Methods",
+  "credit_points": 6,
+  "description": "Understanding research methods and how they are used to validate the research is the focus of this subject. Gaining the necessary skills via a review of methodological strengths and limitations, understanding when and how techniques should be applied and how they should be presented are key for your degree. This subject aims to equip you with these skills will foster your professional skills by tailoring each to your research interests. To create a customised learning experience you will work in collaboration with a supportive team comprising of your subject coordinator and your supervisor. Together this supportive team, where you are at the centre, will engage in a self-directed journey to help you investigate how to close research gaps by using critical thinking, problem solving, effective communication abilities and most importantly research methods. This will be all in preparation for demonstrating research ability at this level",
+  "sessions": [
+   "Autumn",
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32931",
+  "fetched_at": "2026-08-26T11:28:00+00:00"
+ },
+ "42823": {
+  "code": "42823",
+  "name": "Applied Data Analytics",
+  "credit_points": 2,
+  "description": "Applied Data Analytics sharpens your ability to independently plan and execute a data mining project, utilising the widely-adopted CRISP-DM methodology. From preprocessing to deploying results, you'll engage with various representation techniques and apply your analytics expertise to real industry scenarios, effectively communicating your findings. This practical, problem-based microcredential is focused on developing both your analytical autonomy and professional articulation.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42823",
+  "fetched_at": "2026-08-26T11:28:06+00:00"
+ },
+ "42897": {
+  "code": "42897",
+  "name": "Data Analytics for Cybersecurity Foundations",
+  "credit_points": 2,
+  "description": "Data Analytics for Cybersecurity Foundations melds big data with threat intelligence, enabling you to detect and counter insider and external cyber threats. This subject introduces methods for identifying security issues, packet analysis, and techniques for handling DDoS attacks, among other intelligent data-driven cybersecurity technologies. You'll become versed in the language and significance of data analytics within cybersecurity, learn standard analytic processes, and practise identifying risks and vulnerabilities in corporate IT networks.",
+  "sessions": [],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/42897",
+  "fetched_at": "2026-08-26T11:28:11+00:00"
+ },
+ "43011": {
+  "code": "43011",
+  "name": "Industrial Control System Security",
+  "credit_points": 6,
+  "description": "This professional subject equips you with skills to protect critical infrastructures, like Industrial Control Systems (ICS) and Operational Technology (OT), from cyber threats. You will learn to identify vulnerabilities, assess risks, and implement security measures, including secure architectures and access controls. Your learning will be practical, involving lab exercises and real-world case studies, enabling you to defend against cyber-attacks on essential critical infrastructure systems.",
+  "sessions": [
+   "Spring"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/43011",
+  "fetched_at": "2026-08-26T11:28:16+00:00"
+ },
+ "32003": {
+  "code": "32003",
+  "name": "Computer Game Design",
+  "credit_points": 6,
+  "description": "This games subject trains you to be an engineer of entertainment, teaching you the essential theoretical concepts and practical methodologies for game design. You will learn to structure, document, target, and scope your game designs with further refinement through weekly iteration via playtest feedback. As part of a group, you will first learn to apply these creative theories and methods to develop a physical board game prototype before moving on to crafting a digital game using a popular game engine. While this subject is not focused on game development skills such as coding or art creation, you are encouraged to self-learn what's necessary to realize your group’s vision. Regular playtesting with peers will help refine your designs. By the subject's end, you'll have created both board and digital games, showcasing your interaction design expertise for future employment portfolios and be better prepared for the iterative development cycle common in later game studio subjects and the wider game industry.",
+  "sessions": [
+   "Autumn"
+  ],
+  "source_url": "https://coursehandbook.uts.edu.au/subject/2026/32003",
+  "fetched_at": "2026-08-26T11:28:22+00:00"
  }
 }

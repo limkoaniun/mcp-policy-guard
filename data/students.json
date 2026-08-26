@@ -10,38 +10,38 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32040",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32541",
+    "code": "32601",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32548",
+    "code": "42097",
     "session": "2025-AUT",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42000",
+    "code": "42144",
     "session": "2025-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42035",
+    "code": "42824",
     "session": "2024-AUT",
-    "credit_points": 6
+    "credit_points": 3
    },
    {
-    "code": "42904",
+    "code": "42827",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 3
    }
   ],
   "enrolled": [
-   "42891"
+   "37014"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -56,28 +56,43 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32524",
+    "code": "32310",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "32516",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "32559",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42036",
+    "code": "32933",
     "session": "2025-SPR",
     "credit_points": 6
+   },
+   {
+    "code": "42028",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42826",
+    "session": "2024-SPR",
+    "credit_points": 3
+   },
+   {
+    "code": "42895",
+    "session": "2025-AUT",
+    "credit_points": 1
    }
   ],
   "enrolled": [
-   "42904"
+   "49202"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -92,18 +107,28 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32310",
+    "code": "32520",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32541",
+    "code": "42889",
     "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42899",
+    "session": "2025-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "95563",
+    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32309"
+   "37014"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -118,28 +143,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32310",
+    "code": "32144",
     "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42035",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42036",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42891",
-    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32547"
+   "49680"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -154,13 +164,33 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "42891",
+    "code": "32310",
     "session": "2024-AUT",
     "credit_points": 6
+   },
+   {
+    "code": "42028",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42146",
+    "session": "2025-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "42822",
+    "session": "2025-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42892",
+    "session": "2024-AUT",
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "32309"
+   "40005"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -175,33 +205,23 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "42177",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "42823",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "32548",
+    "code": "42891",
     "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42000",
-    "session": "2025-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42035",
-    "session": "2024-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42037"
+   "42889"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -216,23 +236,28 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "42000",
+    "code": "32004",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42035",
+    "code": "32118",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "32309",
     "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42891",
+    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42037"
+   "42145"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -245,30 +270,9 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [
-   {
-    "code": "32144",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42035",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42904",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2025-SPR",
-    "credit_points": 6
-   }
-  ],
+  "completed": [],
   "enrolled": [
-   "32310"
+   "42900"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -283,38 +287,43 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32130",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "32548",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42037",
+    "code": "32570",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42891",
+    "code": "40005",
     "session": "2025-SPR",
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "42000",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "43030",
+    "code": "42893",
     "session": "2024-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "95563",
+    "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32548"
+   "32569"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -329,17 +338,17 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32547",
+    "code": "32520",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42891",
+    "code": "42218",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "43030",
+    "code": "42890",
     "session": "2025-AUT",
     "credit_points": 6
    }
@@ -360,23 +369,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32524",
+    "code": "37014",
     "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42036",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42904",
-    "session": "2025-AUT",
-    "credit_points": 6
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "32310"
+   "42828"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -391,27 +390,27 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "32405",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32310",
+    "code": "32509",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "32998",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "37012",
     "session": "2025-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42035",
+    "code": "42000",
     "session": "2024-AUT",
     "credit_points": 6
    },
@@ -421,18 +420,13 @@
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "95563",
     "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42036"
+   "42896"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -447,28 +441,23 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "42891",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "42896",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42035",
+    "code": "42899",
     "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42891",
-    "session": "2025-SPR",
-    "credit_points": 6
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "42904"
+   "32933"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -483,23 +472,43 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "42035",
+    "code": "32309",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42036",
+    "code": "32569",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "32998",
     "session": "2025-AUT",
     "credit_points": 6
+   },
+   {
+    "code": "37014",
+    "session": "2025-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42050",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42894",
+    "session": "2024-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42897",
+    "session": "2025-AUT",
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "42891"
+   "32548"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -514,28 +523,23 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "32027",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32548",
+    "code": "32547",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "42900",
     "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42036",
-    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42035"
+   "49227"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -550,23 +554,28 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32310",
+    "code": "32130",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32524",
+    "code": "32309",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32541",
+    "code": "42822",
     "session": "2025-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "49202",
+    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32547"
+   "32520"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -579,9 +588,20 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [],
+  "completed": [
+   {
+    "code": "32027",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32146",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
   "enrolled": [
-   "42036"
+   "95566"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -596,28 +616,48 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "32559",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "32569",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42037",
+    "code": "32931",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "42096",
+    "session": "2025-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42828",
+    "session": "2024-AUT",
+    "credit_points": 3
+   },
+   {
+    "code": "42850",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "49227",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "95563",
     "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32524"
+   "43011"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -632,18 +672,38 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32931",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32309",
+    "code": "42218",
+    "session": "2024-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42825",
+    "session": "2025-AUT",
+    "credit_points": 3
+   },
+   {
+    "code": "42895",
+    "session": "2025-SPR",
+    "credit_points": 1
+   },
+   {
+    "code": "43030",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "49003",
     "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "43030"
+   "42035"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -658,48 +718,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32524",
+    "code": "40005",
     "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32541",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "32548",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42035",
-    "session": "2025-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42037",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42891",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42904",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32309"
+   "42904"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -714,38 +739,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "42824",
     "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32541",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "32547",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42000",
-    "session": "2025-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42036",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42891",
-    "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 3
    }
   ],
   "enrolled": [
-   "42037"
+   "42897"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -760,13 +760,33 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "42000",
+    "code": "32009",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32501",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32570",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32603",
     "session": "2024-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42037"
+   "32571"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -781,12 +801,12 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32118",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32524",
+    "code": "32310",
     "session": "2024-SPR",
     "credit_points": 6
    },
@@ -796,18 +816,18 @@
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "42000",
     "session": "2025-SPR",
     "credit_points": 6
    },
    {
-    "code": "43030",
+    "code": "42145",
     "session": "2024-AUT",
-    "credit_points": 6
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "32310"
+   "32531"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -822,23 +842,23 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32310",
+    "code": "32040",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "42894",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42904",
+    "code": "43011",
     "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42000"
+   "42890"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -853,38 +873,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32011",
     "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32309",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "32310",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32524",
-    "session": "2025-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42904",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32547"
+   "32513"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -897,9 +892,25 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [],
+  "completed": [
+   {
+    "code": "32509",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42894",
+    "session": "2024-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42899",
+    "session": "2025-AUT",
+    "credit_points": 2
+   }
+  ],
   "enrolled": [
-   "32309"
+   "42097"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -914,23 +925,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
     "code": "42036",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2025-AUT",
+    "session": "2024-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42000"
+   "32501"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -943,15 +944,9 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [
-   {
-    "code": "32547",
-    "session": "2024-AUT",
-    "credit_points": 6
-   }
-  ],
+  "completed": [],
   "enrolled": [
-   "32309"
+   "42899"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -966,7 +961,7 @@
   "sub_major": null,
   "completed": [],
   "enrolled": [
-   "42036"
+   "32548"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -979,9 +974,20 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [],
+  "completed": [
+   {
+    "code": "32509",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "95566",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
   "enrolled": [
-   "32524"
+   "42824"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -996,18 +1002,23 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "32009",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42891",
+    "code": "32118",
     "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "49202",
+    "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42035"
+   "42892"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1022,23 +1033,38 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32130",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42891",
+    "code": "32144",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42904",
+    "code": "32310",
     "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32560",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32601",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42904",
+    "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "43030"
+   "49680"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1051,9 +1077,30 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [],
+  "completed": [
+   {
+    "code": "32118",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32547",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42027",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42146",
+    "session": "2025-SPR",
+    "credit_points": 2
+   }
+  ],
   "enrolled": [
-   "42035"
+   "42889"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1068,38 +1115,43 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32309",
+    "code": "32040",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32524",
+    "code": "32310",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32541",
+    "code": "32549",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42036",
+    "code": "32601",
     "session": "2025-SPR",
     "credit_points": 6
    },
    {
-    "code": "42037",
+    "code": "42096",
     "session": "2024-AUT",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42904",
+    "code": "42897",
     "session": "2024-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "57304",
+    "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42000"
+   "42050"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1114,33 +1166,43 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32118",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32310",
+    "code": "32531",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32548",
+    "code": "32541",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "32558",
     "session": "2025-SPR",
     "credit_points": 6
    },
    {
-    "code": "42035",
+    "code": "42893",
     "session": "2024-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "49202",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "57304",
+    "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32309"
+   "32547"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1155,13 +1217,33 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "42891",
+    "code": "32509",
     "session": "2024-AUT",
     "credit_points": 6
+   },
+   {
+    "code": "32571",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42177",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42850",
+    "session": "2025-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42897",
+    "session": "2024-AUT",
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "32548"
+   "95563"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1176,23 +1258,18 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32541",
+    "code": "32004",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "42822",
     "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42891",
-    "session": "2025-AUT",
-    "credit_points": 6
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "42036"
+   "57304"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1207,18 +1284,38 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "42037",
+    "code": "37013",
     "session": "2024-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "42028",
+    "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42891",
+    "code": "42050",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42827",
+    "session": "2025-SPR",
+    "credit_points": 3
+   },
+   {
+    "code": "42893",
+    "session": "2024-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "43031",
     "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32524"
+   "95563"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1231,9 +1328,30 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [],
+  "completed": [
+   {
+    "code": "32004",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32524",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "42892",
+    "session": "2025-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "49680",
+    "session": "2025-SPR",
+    "credit_points": 6
+   }
+  ],
   "enrolled": [
-   "42904"
+   "42822"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1248,18 +1366,13 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32310",
+    "code": "42000",
     "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "32548"
+   "32040"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1274,48 +1387,48 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32516",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32309",
+    "code": "32569",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32310",
+    "code": "32931",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "32541",
+    "code": "32933",
     "session": "2025-SPR",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "42028",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42000",
+    "code": "42823",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42036",
+    "code": "42900",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42037",
+    "code": "49202",
     "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42891"
+   "42096"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1330,48 +1443,18 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "37013",
     "session": "2024-AUT",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "32310",
+    "code": "95566",
     "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "32524",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32541",
-    "session": "2025-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "32547",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32548",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42037",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2025-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42904"
+   "42096"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1386,13 +1469,38 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32547",
+    "code": "32003",
     "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32146",
+    "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "32548",
+    "session": "2025-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "42897",
+    "session": "2025-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "43031",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "57304",
+    "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42904"
+   "42028"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1405,9 +1513,20 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [],
+  "completed": [
+   {
+    "code": "32560",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "32569",
+    "session": "2024-SPR",
+    "credit_points": 6
+   }
+  ],
   "enrolled": [
-   "42035"
+   "43031"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1422,28 +1541,43 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32310",
+    "code": "32027",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32524",
+    "code": "42037",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32547",
+    "code": "42097",
     "session": "2025-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "42144",
+    "session": "2025-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "42893",
+    "session": "2024-AUT",
+    "credit_points": 2
+   },
+   {
+    "code": "49202",
+    "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42000",
-    "session": "2025-SPR",
+    "code": "95563",
+    "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "43030"
+   "42899"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1458,28 +1592,38 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32547",
+    "code": "32040",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "42036",
+    "code": "32130",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "42037",
+    "code": "32541",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "43030",
+    "code": "42218",
     "session": "2025-SPR",
+    "credit_points": 2
+   },
+   {
+    "code": "49003",
+    "session": "2024-AUT",
+    "credit_points": 6
+   },
+   {
+    "code": "95563",
+    "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42904"
+   "32933"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1494,18 +1638,18 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32541",
+    "code": "42218",
     "session": "2024-AUT",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42891",
+    "code": "42850",
     "session": "2024-SPR",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42000"
+   "42825"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1520,38 +1664,48 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32144",
+    "code": "32003",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "32309",
+    "code": "32027",
     "session": "2024-SPR",
     "credit_points": 6
    },
    {
-    "code": "32524",
+    "code": "32113",
     "session": "2025-AUT",
     "credit_points": 6
    },
    {
-    "code": "42036",
+    "code": "37013",
     "session": "2025-SPR",
-    "credit_points": 6
+    "credit_points": 2
    },
    {
-    "code": "42037",
+    "code": "40005",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "43030",
+    "code": "42821",
     "session": "2024-SPR",
-    "credit_points": 6
+    "credit_points": 2
+   },
+   {
+    "code": "42825",
+    "session": "2025-AUT",
+    "credit_points": 3
+   },
+   {
+    "code": "42899",
+    "session": "2025-SPR",
+    "credit_points": 2
    }
   ],
   "enrolled": [
-   "42035"
+   "42820"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1566,18 +1720,23 @@
   "sub_major": null,
   "completed": [
    {
-    "code": "32524",
+    "code": "32146",
     "session": "2024-AUT",
     "credit_points": 6
    },
    {
-    "code": "43030",
+    "code": "42891",
     "session": "2024-SPR",
+    "credit_points": 6
+   },
+   {
+    "code": "43011",
+    "session": "2025-AUT",
     "credit_points": 6
    }
   ],
   "enrolled": [
-   "42891"
+   "32516"
   ],
   "credit_point_cap_per_session": 24
  },
@@ -1590,45 +1749,9 @@
   ],
   "major": "MAJ02093",
   "sub_major": null,
-  "completed": [
-   {
-    "code": "32144",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "32548",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42036",
-    "session": "2025-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42037",
-    "session": "2025-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "42891",
-    "session": "2024-AUT",
-    "credit_points": 6
-   },
-   {
-    "code": "42904",
-    "session": "2024-SPR",
-    "credit_points": 6
-   },
-   {
-    "code": "43030",
-    "session": "2025-AUT",
-    "credit_points": 6
-   }
-  ],
+  "completed": [],
   "enrolled": [
-   "42035"
+   "42097"
   ],
   "credit_point_cap_per_session": 24
  }
