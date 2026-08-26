@@ -42,6 +42,17 @@ class DecisionLog:
         if self.path is not None:
             self.path.parent.mkdir(parents=True, exist_ok=True)
 
+    @property
+    def persistent(self) -> bool:
+        """Whether decisions are being written to disk.
+
+        False means this log keeps records in memory only. That is legitimate
+        for unit tests, and wrong for a run whose decision log is the evidence
+        the evaluation harness reads — a caller that needs a durable audit
+        trail should assert on this rather than assume it.
+        """
+        return self.path is not None
+
     def record(
         self,
         call: ToolCall,
@@ -67,8 +78,9 @@ class DecisionLog:
             latency_ms=latency_ms,
             forwarded=forwarded,
         )
-        self.records.append(record)
+        line = json.dumps(record.model_dump(), ensure_ascii=False, default=repr)
         if self.path is not None:
             with self.path.open("a", encoding="utf-8") as handle:
-                handle.write(json.dumps(record.model_dump(), ensure_ascii=False) + "\n")
+                handle.write(line + "\n")
+        self.records.append(record)
         return record
