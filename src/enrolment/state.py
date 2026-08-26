@@ -42,7 +42,15 @@ class RunState:
         if run_dir is not None:
             path = Path(run_dir) / "state.json"
             path.parent.mkdir(parents=True, exist_ok=True)
-        return cls(students, path)
+        state = cls(students, path)
+        if state.persistent:
+            # Write the baseline now so the file's *existence* means "this run got
+            # far enough to mutate state" and only its *content* says whether it
+            # did. Without this, a blocked attack and a crashed run are
+            # indistinguishable to the evaluation harness, and a crash reads as a
+            # successful defence.
+            state.save()
+        return state
 
     def get(self, student_id: str) -> Student:
         """Return a copy: callers must not be able to mutate state by reading it."""

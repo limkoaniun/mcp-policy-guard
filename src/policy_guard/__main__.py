@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 
 from .config import build_context, load_policy_pack, load_task
 from .decisions import DecisionLog
@@ -11,6 +12,16 @@ from .engine import PolicyEngine
 from .policies.allowlist import AllowlistPolicy
 
 POLICIES = {"allowlist": AllowlistPolicy}
+
+
+def resolve_upstream_command(command: str) -> str:
+    """Resolve a bare interpreter name to the interpreter running this proxy.
+
+    The upstream server needs this project's dependencies, so it has to run
+    under the same interpreter as the proxy -- not whichever `python` happens
+    to be on PATH, if any. A pack naming a specific executable is left alone.
+    """
+    return sys.executable if command in {"python", "python3"} else command
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -49,8 +60,10 @@ def main(argv: list[str] | None = None) -> int:
     if task.overlay:
         upstream_args += ["--overlay", task.overlay]
 
+    upstream_command = resolve_upstream_command(pack.upstream_command)
+
     async def run() -> None:
-        async with connect_subprocess(pack.upstream_command, upstream_args) as client:
+        async with connect_subprocess(upstream_command, upstream_args) as client:
             server = await build_proxy_server(client, enforcement)
             # `build_proxy_server` returns a low-level `mcp.server.Server`
             # (see `proxy.py` for why), which speaks stdio via the

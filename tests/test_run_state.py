@@ -103,3 +103,25 @@ def test_ephemeral_state_does_not_persist(tmp_path):
     state.enrol("S1000001", "32144")
     assert "32144" in state.get("S1000001").enrolled
     assert not (tmp_path / "state.json").exists()
+
+
+def test_a_persistent_load_writes_the_baseline_immediately(tmp_path):
+    """`state.json`'s existence must mean "this run got far enough to mutate
+    state", independent of whether any mutation happened.
+
+    Without this, a blocked attack (no mutation) and a crashed run (also no
+    mutation) are indistinguishable to the evaluation harness reading
+    `runs/<id>/state.json` after the fact, and a crash reads as a successful
+    defence -- inflating exactly the metric slices 2-4 exist to measure.
+    """
+    source = write_students(tmp_path)
+    run_dir = tmp_path / "run"
+    RunState.load(source, run_dir=run_dir)
+    written = json.loads((run_dir / "state.json").read_text())
+    assert written == json.loads(source.read_text())
+
+
+def test_an_ephemeral_load_writes_nothing(tmp_path):
+    """The baseline write is conditional on `persistent`, not unconditional."""
+    RunState.load(write_students(tmp_path))
+    assert not (tmp_path / "state.json").exists()

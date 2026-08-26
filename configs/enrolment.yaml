@@ -5,6 +5,10 @@
 # attacker-influenceable content, which policies to load — arrives here.
 name: enrolment
 
+# `python` is resolved at run time to the interpreter running the proxy
+# itself (see `resolve_upstream_command` in `policy_guard/__main__.py`),
+# never to whatever `python`/`python3` happens to be first on PATH -- the
+# upstream needs this project's dependencies, which only that interpreter has.
 upstream_command: python
 upstream_args: [-m, enrolment.server]
 
