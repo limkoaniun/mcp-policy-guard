@@ -29,6 +29,14 @@ class TaskContext(BaseModel):
     task_id: str
     description: str = ""
     allowed_tools: frozenset[str] = frozenset()
+    # Declared rather than left to `getattr(..., "tainted", False)` at the call
+    # site: an absent field read defensively is a hard-coded constant wearing
+    # the clothes of a measurement. Every decision record carries this value,
+    # so a harness computing a tainted-call rate would have read 0% forever
+    # without anything raising. Nothing sets it True yet -- taint tracking is
+    # slice 3 -- but the field it will set now exists, and a typo in that name
+    # will fail loudly instead of silently reporting 0%.
+    tainted: bool = False
 
 
 class Decision(BaseModel):

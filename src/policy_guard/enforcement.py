@@ -78,7 +78,7 @@ class EnforcementExtension:
             task_id=self.context.task_id,
             forwarded=forward,
             latency_ms=(time.perf_counter() - started) * 1000,
-            tainted=getattr(self.context, "tainted", False),
+            tainted=self.context.tainted,
             approval_mode=approval_mode,
         )
         return decision, forward

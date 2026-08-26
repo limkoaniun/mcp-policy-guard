@@ -158,3 +158,29 @@ def test_intercept_tool_call_short_circuits_on_deny_and_forwards_on_allow():
     )
     assert recorded_ctx == [sentinel_ctx]
     assert allow_result == "forwarded-result"
+
+
+def test_the_logged_tainted_flag_is_read_from_the_context():
+    """Driven through `decide()`, which is where the value is actually read.
+
+    `tests/test_decisions.py` passes `tainted=True` straight into `log.record`,
+    so it never exercised the line that supplies it. That line was
+    `getattr(self.context, "tainted", False)` against a `TaskContext` with no
+    such field, which made `tainted` a hard-coded `false` wearing the clothes
+    of a measurement: every record in every `decisions.jsonl` said `false`, a
+    harness computing a tainted-call rate got 0%, and nothing raised.
+
+    Reading it as a plain attribute is the point of the fix -- a later
+    field-name typo then fails loudly instead of silently reporting 0% forever.
+    """
+    default = build()
+    default.decide(ToolCall(tool="search_subjects"))
+    assert default.log.records[0].tainted is False
+
+    engine = PolicyEngine([AllowlistPolicy()])
+    context = TaskContext(
+        task_id="OI-001", allowed_tools=frozenset({"search_subjects"}), tainted=True
+    )
+    tainted = EnforcementExtension(engine, context, DecisionLog(None))
+    tainted.decide(ToolCall(tool="search_subjects"))
+    assert tainted.log.records[0].tainted is True
