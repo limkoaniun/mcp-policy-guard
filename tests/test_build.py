@@ -11,6 +11,7 @@ from enrolment.build import (
     handbook_subject_url,
     subject_codes_for_scope,
 )
+from enrolment.evop import EvopPageError
 from enrolment.models import (
     BlockItem,
     Course,
@@ -94,12 +95,16 @@ def evop_page(code: str) -> str:
     )
 
 
+LOGIN_PAGE = "<html><body><h1>Please log in</h1><form><input name='u'></form></body></html>"
+
+
 class SyntheticFetcher:
     """Serves a coherent, synthesised page for whatever the build asks for."""
 
-    def __init__(self, aos_subjects: dict[str, list[str]]):
+    def __init__(self, aos_subjects: dict[str, list[str]], evop_body: str | None = None):
         course = json.loads((FIXTURES / "handbook_course_c04296.json").read_text())
         self.aos_subjects = aos_subjects
+        self.evop_body = evop_body
         self.bodies = {"handbook_course_c04296.html": wrap(course)}
         for aos, codes in aos_subjects.items():
             self.bodies[f"handbook_aos_{aos}.html"] = wrap(aos_page(f"{aos} Major", *codes))
@@ -114,7 +119,9 @@ class SyntheticFetcher:
         elif name.startswith("handbook_subject_"):
             body = wrap(subject_page(name.removeprefix("handbook_subject_").removesuffix(".html")))
         elif name.startswith("evop_"):
-            body = evop_page(name.removeprefix("evop_").removesuffix(".html"))
+            body = self.evop_body or evop_page(
+                name.removeprefix("evop_").removesuffix(".html")
+            )
         else:
             raise AssertionError(f"unexpected fetch: {name}")
         return FetchResult(
@@ -205,12 +212,15 @@ def test_a_build_with_no_requisite_rules_at_all_is_not_clean():
     """
     report = CoverageReport(subjects=12, with_requisite_rules=0, no_rules_at_all=12)
     assert report.clean is False
-    assert "NO REQUISITE RULES" in report.render()
+    assert report.produced_nothing is True
+    assert "PRODUCED NO USABLE DATA" in report.render()
 
 
-def test_an_empty_build_is_still_clean():
-    """Nothing fetched at all is a different condition, and not this one."""
-    assert CoverageReport(subjects=0, with_requisite_rules=0).clean is True
+def test_a_build_with_no_subjects_at_all_is_not_clean():
+    """An empty catalogue is the same failure one step earlier."""
+    report = CoverageReport(subjects=0, with_requisite_rules=0)
+    assert report.clean is False
+    assert "PRODUCED NO USABLE DATA" in report.render()
 
 
 def test_without_requisite_rules_is_split_into_its_two_meanings():
@@ -325,6 +335,19 @@ def test_build_records_the_area_of_study_structures_it_fetched(tmp_path):
     ]
     catalogue = json.loads((tmp_path / "catalogue.json").read_text())
     assert set(catalogue) == {"32541", "43030", "32144", "32309", "32548"}
+
+
+def test_a_build_served_login_pages_aborts_instead_of_writing_an_empty_dataset(tmp_path):
+    """End-to-end: the whole point of the eVOP page check.
+
+    An unauthenticated run must not write catalogue.json and requisites.json
+    full of subjects with no requisites and then exit 0.
+    """
+    fetcher = SyntheticFetcher({"MAJ02093": ["32309"]}, evop_body=LOGIN_PAGE)
+
+    with pytest.raises(EvopPageError, match="32541"):
+        build(tmp_path, fetcher, scope="thin")
+    assert not (tmp_path / "requisites.json").exists()
 
 
 def test_a_targeted_rebuild_does_not_blank_an_existing_aos_file(tmp_path):

@@ -174,9 +174,6 @@ def _check_is_access_conditions_page(lines: list[str], code: str, table_start: i
     pages carry a `Logout` link, so `search.cfm` may well be session-scoped —
     an unauthenticated run must abort, not emit an empty dataset and exit 0.
     """
-    if any(line.startswith(NO_RESTRICTIONS_MARKER) for line in lines):
-        return
-
     # Restrict the header scan to what precedes the tables: a requisite row
     # such as "32144 Technology Research Preparation" is shaped like a header.
     headers = [
@@ -184,17 +181,22 @@ def _check_is_access_conditions_page(lines: list[str], code: str, table_start: i
         for line in lines[:table_start]
         if (match := HEADER_RE.match(line))
     ]
-    if not headers:
-        raise EvopPageError(
-            f"eVOP page for subject {code} is not an access-conditions page: it carries "
-            f"neither a '<code> <title>' header nor the no-restrictions notice. "
-            f"Refusing to read this as 'no requisites published'."
-        )
-    if code not in headers:
+    # The header is checked before the no-restrictions notice, so a page that
+    # names a different subject is rejected either way round.
+    if headers and code not in headers:
         raise EvopPageError(
             f"eVOP page fetched for subject {code} identifies itself as subject "
-            f"{headers[0]}; refusing to attribute its requisites to {code}."
+            f"{headers[0]}; refusing to attribute its content to {code}."
         )
+    if headers:
+        return
+    if any(line.startswith(NO_RESTRICTIONS_MARKER) for line in lines):
+        return
+    raise EvopPageError(
+        f"eVOP page for subject {code} is not an access-conditions page: it carries "
+        f"neither a '<code> <title>' header nor the no-restrictions notice. "
+        f"Refusing to read this as 'no requisites published'."
+    )
 
 
 def parse_evop(html: str, code: str, source_url: str, fetched_at: str) -> SubjectRequisites:

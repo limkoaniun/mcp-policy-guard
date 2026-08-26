@@ -69,13 +69,18 @@ class CoverageReport:
     external_subject_references: list[str] = field(default_factory=list)
 
     @property
+    def produced_nothing(self) -> bool:
+        """Whether this build is empty enough to be a failure rather than a result.
+
+        No subjects at all, or subjects but not one requisite rule between
+        them: both are what a broken or unauthenticated fetch looks like from
+        the outside, and neither is a course description anyone should trust.
+        """
+        return self.subjects == 0 or self.with_requisite_rules == 0
+
+    @property
     def clean(self) -> bool:
-        if self.unparsed_items or self.unparsed_rules:
-            return False
-        # A build that produced subjects but not one requisite rule is a
-        # failure signal, not a finding: it is what an unauthenticated or
-        # otherwise broken eVOP fetch looks like from the outside.
-        return not (self.subjects and self.with_requisite_rules == 0)
+        return not (self.unparsed_items or self.unparsed_rules or self.produced_nothing)
 
     def render(self) -> str:
         lines = [
@@ -91,10 +96,10 @@ class CoverageReport:
             lines.append(f"  UNPARSED {code} item {label}: {text}")
         for code, which, rule, message in self.unparsed_rules:
             lines.append(f"  UNPARSED RULE {code} {which}: {rule!r} -- {message}")
-        if self.subjects and self.with_requisite_rules == 0:
+        if self.produced_nothing:
             lines.append(
-                "  NO REQUISITE RULES WERE FOUND FOR ANY SUBJECT: "
-                "treat this build as failed, not as a course without requisites."
+                "  THIS BUILD PRODUCED NO USABLE DATA: "
+                "treat it as failed, not as a course without requisites."
             )
         return "\n".join(lines)
 
@@ -257,10 +262,9 @@ def main(argv: list[str] | None = None) -> int:
     fetcher = Fetcher(cache_dir=Path(args.data_dir) / "raw", delay=args.delay)
     report = build(args.data_dir, fetcher, scope=args.scope)
     print(report.render())
-    if report.subjects and report.with_requisite_rules == 0:
-        # Unconditional, not gated behind --fail-on-unparsed: a dataset with
-        # no requisite rules at all is not a finding to review later, it is a
-        # build that did not work.
+    if report.produced_nothing:
+        # Unconditional, not gated behind --fail-on-unparsed: an empty dataset
+        # is not a finding to review later, it is a build that did not work.
         return 1
     return 1 if args.fail_on_unparsed and not report.clean else 0
 
