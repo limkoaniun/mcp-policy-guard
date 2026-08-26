@@ -1,3 +1,6 @@
+import pytest
+from pydantic import ValidationError
+
 from enrolment.models import (
     CompletedSubject,
     RequisiteItem,
@@ -6,6 +9,8 @@ from enrolment.models import (
     SubjectRequisites,
 )
 from enrolment.scenarios import (
+    FAILURE_MODES,
+    ComplianceScenario,
     generate_scenarios,
     summarise,
     write_jsonl,
@@ -95,7 +100,26 @@ REQUISITES = {
         source_url="u",
         fetched_at=WHEN,
     ),
+    "99004": SubjectRequisites(
+        code="99004",
+        requisite_rule="(1)",
+        requisite_items={
+            "1": RequisiteItem(
+                label="1",
+                kind="aos",
+                # As UTS actually publishes it: an aos requisite behind an
+                # "Admission into ..." prefix, typed as an admission requisite.
+                type="admission",
+                text="Admission into MAJ02902 36cp Information Technology Major MBA",
+                aos_code="MAJ02902",
+                admission_descriptor="MAJ02902 36cp Information Technology Major MBA",
+            ),
+        },
+        source_url="u",
+        fetched_at=WHEN,
+    ),
 }
+CATALOGUE["99004"] = subject("99004")
 
 
 def student(student_id: str, *completed: str) -> Student:
@@ -188,3 +212,48 @@ def test_unmet_credit_points_requisite_is_labelled():
     scenarios = generate_scenarios([student("S1")], CATALOGUE, REQUISITES)
     by_code = {s.subject_code: s for s in scenarios}
     assert by_code["99003"].failure_mode == "unmet_credit_points"
+
+
+def test_unmet_area_of_study_requisite_has_its_own_failure_mode():
+    """It used to fold into unmet_academic, hiding the population entirely.
+
+    Area-of-study requisites are exactly the ones that were being misread as
+    admission requisites, so they have to stay visible in `summarise()`.
+    """
+    scenarios = generate_scenarios([student("S1")], CATALOGUE, REQUISITES)
+    by_code = {s.subject_code: s for s in scenarios}
+    assert by_code["99004"].failure_mode == "unmet_aos"
+    assert by_code["99004"].expected_satisfied is False
+    assert summarise(scenarios)["unmet_aos"] == 1
+
+
+def test_a_student_holding_the_major_is_compliant():
+    holder = student("S2")
+    holder.major = "MAJ02902"
+    scenarios = generate_scenarios([holder], CATALOGUE, REQUISITES)
+    by_code = {s.subject_code: s for s in scenarios}
+    assert by_code["99004"].failure_mode == "compliant"
+
+
+def test_every_generated_failure_mode_is_a_declared_one():
+    scenarios = generate_scenarios([student("S1"), student("S2", "31473")], CATALOGUE, REQUISITES)
+    assert {s.failure_mode for s in scenarios} <= set(FAILURE_MODES)
+
+
+def test_an_undeclared_failure_mode_is_rejected_at_construction():
+    """FAILURE_MODES was declared and never referenced.
+
+    A mode nothing downstream knows about would land in `summarise()` as a
+    category no reader is looking for -- a population quietly missing from a
+    summary that reads as complete.
+    """
+    with pytest.raises(ValidationError, match="unknown failure mode"):
+        ComplianceScenario(
+            scenario_id="S1-32146",
+            student_id="S1",
+            subject_code="32146",
+            failure_mode="unmet_prerequisite",
+            rule_depth=1,
+            expected_satisfied=False,
+            explanation="",
+        )

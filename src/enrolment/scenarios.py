@@ -16,7 +16,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from .models import Student, Subject, SubjectRequisites
 from .requisites import evaluate_requisites
@@ -25,6 +25,7 @@ from .rules import depth, parse
 FAILURE_MODES = (
     "compliant",
     "unmet_academic",
+    "unmet_aos",
     "unmet_admission",
     "unmet_credit_points",
     "antirequisite",
@@ -41,15 +42,34 @@ class ComplianceScenario(BaseModel):
     expected_satisfied: bool
     explanation: str
 
+    @field_validator("failure_mode")
+    @classmethod
+    def _known_failure_mode(cls, value: str) -> str:
+        """Reject a mode `summarise()` would silently drop into its own bucket.
+
+        FAILURE_MODES was previously declared and never referenced, so a typo
+        or a newly-classified kind produced a scenario whose category nothing
+        downstream knew to look for -- a population quietly missing from every
+        summary that reads as a complete one.
+        """
+        if value not in FAILURE_MODES:
+            raise ValueError(f"unknown failure mode {value!r}: expected one of {FAILURE_MODES}")
+        return value
+
 
 def classify_failure(result, record: SubjectRequisites | None) -> str:
     """Categorise one evaluation outcome for the compliance dataset.
 
     When an AND-composed rule has several simultaneously-unmet items of
     different kinds, this returns only the single highest-priority kind
-    (admission > credit_points > academic) — it is not an exhaustive account
-    of everything unmet. `summarise()` counts should be read as "at least
-    this many failed for this reason", not precise per-category tallies.
+    (admission > aos > credit_points > academic) — it is not an exhaustive
+    account of everything unmet. `summarise()` counts should be read as "at
+    least this many failed for this reason", not precise per-category tallies.
+
+    Area-of-study failures get their own mode rather than folding into
+    `unmet_academic`: UTS publishes them behind an "Admission into ..." prefix,
+    which is exactly where they were being misread as admission requisites, so
+    that population needs to stay visible in `summarise()`.
     """
     if result.blocked_by_antirequisite:
         return "antirequisite"
@@ -64,6 +84,8 @@ def classify_failure(result, record: SubjectRequisites | None) -> str:
     }
     if "admission" in kinds:
         return "unmet_admission"
+    if "aos" in kinds:
+        return "unmet_aos"
     if "credit_points" in kinds:
         return "unmet_credit_points"
     return "unmet_academic"
