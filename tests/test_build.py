@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from enrolment.build import (
     CoverageReport,
     build,
@@ -50,6 +52,73 @@ class FakeFetcher:
             raise AssertionError(f"unexpected fetch: {name}")
         return FetchResult(
             url=url, name=name, body=self.bodies[name], fetched_at=WHEN, from_cache=True
+        )
+
+
+def aos_page(title: str, *subject_codes: str) -> dict:
+    return {
+        "title": title,
+        "credit_points": 24,
+        "curriculumStructure": {
+            "container": [
+                {
+                    "title": "Choose 24 credit points",
+                    "relationship": [
+                        {
+                            "academic_item_code": code,
+                            "academic_item_name": f"Subject {code}",
+                            "academic_item_credit_points": 6,
+                            "academic_item_type": {"value": "subject"},
+                        }
+                        for code in subject_codes
+                    ],
+                }
+            ]
+        },
+    }
+
+
+def subject_page(code: str) -> dict:
+    return {"code": code, "title": f"Subject {code}", "credit_points": 6, "offering": []}
+
+
+def evop_page(code: str) -> str:
+    return (
+        f"<p>{code} Subject {code}</p>"
+        "<p>Requisite rule: (1)</p>"
+        "<table>"
+        "<tr><td>Item</td><td>Type</td><td>Details</td></tr>"
+        "<tr><td>1</td><td>Academic requisite</td><td>48024 Programming 2</td></tr>"
+        "</table>"
+        "<p>Note: See also the information on understanding subjects.</p>"
+    )
+
+
+class SyntheticFetcher:
+    """Serves a coherent, synthesised page for whatever the build asks for."""
+
+    def __init__(self, aos_subjects: dict[str, list[str]]):
+        course = json.loads((FIXTURES / "handbook_course_c04296.json").read_text())
+        self.aos_subjects = aos_subjects
+        self.bodies = {"handbook_course_c04296.html": wrap(course)}
+        for aos, codes in aos_subjects.items():
+            self.bodies[f"handbook_aos_{aos}.html"] = wrap(aos_page(f"{aos} Major", *codes))
+        self.requested: list[str] = []
+
+    def get(self, url: str, name: str):
+        from enrolment.fetch import FetchResult
+
+        self.requested.append(name)
+        if name in self.bodies:
+            body = self.bodies[name]
+        elif name.startswith("handbook_subject_"):
+            body = wrap(subject_page(name.removeprefix("handbook_subject_").removesuffix(".html")))
+        elif name.startswith("evop_"):
+            body = evop_page(name.removeprefix("evop_").removesuffix(".html"))
+        else:
+            raise AssertionError(f"unexpected fetch: {name}")
+        return FetchResult(
+            url=url, name=name, body=body, fetched_at=WHEN, from_cache=True
         )
 
 
@@ -120,11 +189,107 @@ def test_clean_report_has_no_unparsed_items():
     report = CoverageReport(
         subjects=3,
         with_requisite_rules=2,
-        without_requisite_rules=1,
+        antirequisite_only=1,
+        no_rules_at_all=0,
         unparsed_items=[],
         external_subject_references=["48024"],
     )
     assert report.clean is True
+
+
+def test_a_build_with_no_requisite_rules_at_all_is_not_clean():
+    """Zero rules across a whole build is what a broken eVOP fetch looks like.
+
+    eVOP carries a Logout link, so search.cfm may be session-scoped; an
+    unauthenticated run must not report a plausible, entirely empty dataset.
+    """
+    report = CoverageReport(subjects=12, with_requisite_rules=0, no_rules_at_all=12)
+    assert report.clean is False
+    assert "NO REQUISITE RULES" in report.render()
+
+
+def test_an_empty_build_is_still_clean():
+    """Nothing fetched at all is a different condition, and not this one."""
+    assert CoverageReport(subjects=0, with_requisite_rules=0).clean is True
+
+
+def test_without_requisite_rules_is_split_into_its_two_meanings():
+    catalogue = {
+        code: Subject(code=code, name="X", credit_points=6, source_url="u", fetched_at=WHEN)
+        for code in ("1", "2", "3")
+    }
+    requisites = {
+        "1": SubjectRequisites(code="1", requisite_rule="(1)", source_url="u", fetched_at=WHEN),
+        "2": SubjectRequisites(
+            code="2", antirequisite_rule="(1)", source_url="u", fetched_at=WHEN
+        ),
+        "3": SubjectRequisites(code="3", source_url="u", fetched_at=WHEN),
+    }
+    report = coverage_report(catalogue, requisites)
+    assert (report.with_requisite_rules, report.antirequisite_only, report.no_rules_at_all) == (
+        1,
+        1,
+        1,
+    )
+    rendered = report.render()
+    assert "anti-requisite only:         1" in rendered
+    assert "no rules at all:             1" in rendered
+
+
+def test_unparseable_rule_is_reported_by_the_gate_not_raised_later():
+    """A RuleSyntaxError used to surface inside generate_scenarios instead.
+
+    That is after the whole build has completed, with no partial output and no
+    itemised account -- while the coverage report called it clean.
+    """
+    catalogue = {
+        "32146": Subject(
+            code="32146", name="X", credit_points=6, source_url="u", fetched_at=WHEN
+        )
+    }
+    requisites = {
+        "32146": SubjectRequisites(
+            code="32146",
+            requisite_rule="(1 AND 2 OR)",
+            antirequisite_rule="(1 AND",
+            source_url="u",
+            fetched_at=WHEN,
+        )
+    }
+    report = coverage_report(catalogue, requisites)
+    assert report.clean is False
+    assert [(code, which) for code, which, _, _ in report.unparsed_rules] == [
+        ("32146", "requisite"),
+        ("32146", "antirequisite"),
+    ]
+    rendered = report.render()
+    assert "unparsed rule expressions:   2" in rendered
+    assert "(1 AND 2 OR)" in rendered
+
+
+def test_valid_rules_are_not_reported_as_unparsed():
+    requisites = {
+        "32146": SubjectRequisites(
+            code="32146",
+            requisite_rule="((1 AND (2 OR 2a)) OR (3))",
+            antirequisite_rule="(1 AND 2)",
+            source_url="u",
+            fetched_at=WHEN,
+        )
+    }
+    catalogue = {
+        "32146": Subject(
+            code="32146", name="X", credit_points=6, source_url="u", fetched_at=WHEN
+        )
+    }
+    assert coverage_report(catalogue, requisites).unparsed_rules == []
+
+
+@pytest.mark.parametrize("scope", ["Thin", "", "everything", "full-ish"])
+def test_unknown_scope_is_rejected_rather_than_silently_widened(scope):
+    course = Course(code="C04296", title="X", source_url="u", fetched_at=WHEN)
+    with pytest.raises(ValueError, match="unknown scope"):
+        subject_codes_for_scope(course, {}, scope)
 
 
 def test_build_writes_all_three_files(tmp_path):
@@ -140,3 +305,30 @@ def test_build_writes_all_three_files(tmp_path):
     assert course["code"] == "C04296"
     assert report.subjects == 1
     assert report.clean is True
+
+
+def test_build_records_the_area_of_study_structures_it_fetched(tmp_path):
+    """The aos pages were fetched to derive subject codes, then thrown away.
+
+    Without them the set of real MAJ/SMJ codes is nowhere in the dataset, and
+    the aos requisites this package now parses cannot be checked against it.
+    """
+    fetcher = SyntheticFetcher({"MAJ02093": ["32309", "32548"]})
+    build(tmp_path, fetcher, scope="thin")
+
+    aos = json.loads((tmp_path / "aos.json").read_text())
+    assert set(aos) == {"MAJ02093"}
+    assert aos["MAJ02093"]["code"] == "MAJ02093"
+    assert [item["code"] for item in aos["MAJ02093"]["blocks"][0]["items"]] == [
+        "32309",
+        "32548",
+    ]
+    catalogue = json.loads((tmp_path / "catalogue.json").read_text())
+    assert set(catalogue) == {"32541", "43030", "32144", "32309", "32548"}
+
+
+def test_a_targeted_rebuild_does_not_blank_an_existing_aos_file(tmp_path):
+    """Passing an explicit code list fetches no aos pages; {} would be a lie."""
+    (tmp_path / "aos.json").write_text('{"MAJ02093": {}}', encoding="utf-8")
+    build(tmp_path, FakeFetcher(), scope="thin", codes=["32146"])
+    assert json.loads((tmp_path / "aos.json").read_text()) == {"MAJ02093": {}}
