@@ -163,7 +163,14 @@ def main(argv: list[str] | None = None) -> int:
             # scoreable for a defence that was never tested against a live
             # server. Ask the upstream one question before vouching for it.
             try:
-                await client.list_tools()
+                # `cache_mode="bypass"`: the default ("use") would let a server
+                # that advertises a `tools/list` cache hint serve this probe
+                # from the client's own response cache -- which is warm in a
+                # real run because the agent's own `tools/list` populated it
+                # -- and a cache hit against a dead process would defeat the
+                # whole point of asking. The round trip has to be guaranteed
+                # by us, not left to the upstream's discretion.
+                await client.list_tools(cache_mode="bypass")
             except Exception as error:
                 raise UpstreamError(
                     "upstream was not alive at the end of the run, so this run "

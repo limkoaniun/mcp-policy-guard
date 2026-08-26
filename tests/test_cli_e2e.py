@@ -372,6 +372,110 @@ def test_an_upstream_that_dies_between_calls_fails_a_run_of_denials(tmp_path):
     assert "must be excluded from scoring" in stderr
 
 
+CACHED_DYING_PACK = """
+name: fake
+upstream_command: python
+upstream_args: [{script}, --die-after-call, --tools-list-ttl-ms, "60000"]
+policies: [allowlist]
+trust: {{}}
+"""
+
+
+def test_the_liveness_probe_is_not_satisfied_from_a_warm_cache(tmp_path):
+    """A server-supplied cache hint on `tools/list` must not blunt the probe.
+
+    The SDK's response cache only serves an entry when the *upstream* opted
+    in with a `ttlMs` hint -- here the fixture supplies one on `tools/list`,
+    and the agent's own `tools/list` request (mirrored through the proxy)
+    warms the client's cache with it, exactly as a real agent would. The
+    upstream then dies and every later call is denied by policy, the same
+    shape as `test_an_upstream_that_dies_between_calls_fails_a_run_of_denials`.
+    The only difference is the warm, hinted cache -- so if the end-of-run
+    probe used the SDK's default `cache_mode="use"`, it would be served this
+    stale, cached reply instead of asking the dead process, and the run would
+    wrongly certify itself complete. It must not.
+    """
+    script = REPO / "tests" / "fake_upstream.py"
+    pack_path = tmp_path / "pack.yaml"
+    pack_path.write_text(CACHED_DYING_PACK.format(script=script))
+    task_path = tmp_path / "task.yaml"
+    task_path.write_text(DENIED_AFTER_DEATH_TASK)
+    run_dir = tmp_path / "run"
+
+    with subprocess.Popen(
+        [
+            sys.executable, "-m", "policy_guard",
+            "--task", str(task_path),
+            "--policy-pack", str(pack_path),
+            "--run-dir", str(run_dir),
+            "--enforcement", "on",
+        ],
+        cwd=str(REPO),
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as process:
+        try:
+            _jsonrpc(process, [
+                {
+                    "jsonrpc": "2.0", "id": 1, "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2025-06-18",
+                        "capabilities": {},
+                        "clientInfo": {"name": "test", "version": "1"},
+                    },
+                },
+                {"jsonrpc": "2.0", "method": "notifications/initialized"},
+                # Warms the proxy's own client-side cache with the upstream's
+                # `ttlMs` hint, exactly as an agent's routine tool discovery
+                # would in a real run.
+                {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}},
+            ])
+            assert _reply(process, 2) is not None, "tools/list must succeed"
+
+            _jsonrpc(process, [
+                {
+                    "jsonrpc": "2.0", "id": 3, "method": "tools/call",
+                    "params": {"name": "read_thing", "arguments": {"code": "X"}},
+                },
+            ])
+            assert _reply(process, 3) is not None, "the allowed call must succeed"
+
+            # the upstream is now gone, and the proxy has no idea
+            assert _wait_for(run_dir / "upstream_dead"), "the fixture never died"
+
+            _jsonrpc(process, [
+                {
+                    "jsonrpc": "2.0", "id": 4, "method": "tools/call",
+                    "params": {"name": "destroy_thing", "arguments": {"code": "X"}},
+                },
+            ])
+            denied = _reply(process, 4)
+            assert denied is not None
+            assert denied["result"]["isError"] is True
+
+            # the agent disconnects, which is an ordinary clean shutdown
+            process.stdin.close()
+            returncode = process.wait(timeout=60)
+            stderr = process.stderr.read()
+        finally:
+            if process.poll() is None:  # pragma: no cover - only on a hang
+                process.kill()
+
+    assert not (run_dir / "complete").exists(), (
+        "the upstream was dead when the attack was denied, so a cached reply "
+        "to the end-of-run probe must not let this run certify as scoreable"
+    )
+    assert returncode == EXIT_RUN_FAILED, (
+        f"the proxy exited {returncode}, not {EXIT_RUN_FAILED} -- the "
+        "liveness probe was satisfied from the client's response cache "
+        "instead of asking the dead upstream"
+    )
+    assert "UpstreamError" in stderr
+    assert "must be excluded from scoring" in stderr
+
+
 FAKE_PACK = """
 name: fake
 upstream_command: python

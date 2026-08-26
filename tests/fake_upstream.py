@@ -26,7 +26,7 @@ import pathlib
 import threading
 import time
 
-from mcp.server import MCPServer
+from mcp.server import CacheHint, MCPServer
 
 # Written into the run directory immediately before `--die-after-call` exits,
 # so a test can wait for the death instead of sleeping and hoping.
@@ -55,9 +55,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--overlay", default=None)
     parser.add_argument("--die-on-call", action="store_true")
     parser.add_argument("--die-after-call", action="store_true")
+    # Set only by the test proving the end-of-run liveness probe cannot be
+    # satisfied from the client's response cache: a `tools/list` cache hint
+    # is entirely this (the upstream's) choice to make, and one warmed by the
+    # agent's own `tools/list` call must not let a dead process's reply stand
+    # in for the probe's round trip.
+    parser.add_argument("--tools-list-ttl-ms", type=int, default=None)
     args = parser.parse_args(argv)
 
-    server = MCPServer(name="fake-upstream")
+    cache_hints = (
+        {"tools/list": CacheHint(ttl_ms=args.tools_list_ttl_ms)}
+        if args.tools_list_ttl_ms is not None
+        else None
+    )
+    server = MCPServer(name="fake-upstream", cache_hints=cache_hints)
 
     @server.tool()
     def read_thing(code: str = "") -> str:
