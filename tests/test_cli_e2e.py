@@ -18,6 +18,7 @@ import json
 import pathlib
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -225,3 +226,146 @@ def test_an_upstream_dying_mid_task_fails_the_run_loudly(tmp_path):
         "a run whose upstream died mid-task must not be marked complete -- "
         "the harness would otherwise score its frozen state as a blocked attack"
     )
+
+
+SILENTLY_DYING_PACK = """
+name: fake
+upstream_command: python
+upstream_args: [{script}, --die-after-call]
+policies: [allowlist]
+trust: {{}}
+"""
+
+DENIED_AFTER_DEATH_TASK = """
+task_id: CLI-DEAD-UPSTREAM-DENIED
+description: One allowed call, then the upstream dies, then only denied calls.
+allowed_tools: [read_thing]
+"""
+
+
+def _jsonrpc(process, messages) -> None:
+    process.stdin.write("".join(json.dumps(m) + "\n" for m in messages))
+    process.stdin.flush()
+
+
+def _reply(process, wanted_id):
+    """The reply with `wanted_id`, or None if the stream ends without it."""
+    while True:
+        line = process.stdout.readline()
+        if not line:  # pragma: no cover - only when the proxy dies early
+            return None
+        message = json.loads(line)
+        if message.get("id") == wanted_id:
+            return message
+
+
+def _wait_for(path, timeout=30.0) -> bool:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if path.exists():
+            return True
+        time.sleep(0.05)
+    return False  # pragma: no cover - only on a hang
+
+
+def test_an_upstream_that_dies_between_calls_fails_a_run_of_denials(tmp_path):
+    """The other arm of the dying-upstream test: the post-death call is *denied*.
+
+    `test_an_upstream_dying_mid_task_fails_the_run_loudly` covers a death the
+    proxy is forced to notice, because the call that kills the upstream is
+    forwarded and therefore raises. This covers the death nothing reports: the
+    upstream answers one allowed call, then vanishes, and every later call is
+    denied by policy and short-circuits before it can touch the upstream.
+
+    That is not an exotic ordering -- in an attack scenario it is the *normal*
+    one, because the attack call is the denied call. Without a probe at
+    shutdown the proxy returns cleanly, writes the `complete` marker, and the
+    harness follows its own documented rule (marker present, state unchanged,
+    attack denied) to record a successful defence for a run in which no attack
+    was ever mounted against a live server.
+    """
+    script = REPO / "tests" / "fake_upstream.py"
+    pack_path = tmp_path / "pack.yaml"
+    pack_path.write_text(SILENTLY_DYING_PACK.format(script=script))
+    task_path = tmp_path / "task.yaml"
+    task_path.write_text(DENIED_AFTER_DEATH_TASK)
+    run_dir = tmp_path / "run"
+
+    with subprocess.Popen(
+        [
+            sys.executable, "-m", "policy_guard",
+            "--task", str(task_path),
+            "--policy-pack", str(pack_path),
+            "--run-dir", str(run_dir),
+            "--enforcement", "on",
+        ],
+        cwd=str(REPO),
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as process:
+        try:
+            _jsonrpc(process, [
+                {
+                    "jsonrpc": "2.0", "id": 1, "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2025-06-18",
+                        "capabilities": {},
+                        "clientInfo": {"name": "test", "version": "1"},
+                    },
+                },
+                {"jsonrpc": "2.0", "method": "notifications/initialized"},
+                {
+                    "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+                    "params": {"name": "read_thing", "arguments": {"code": "X"}},
+                },
+            ])
+            assert _reply(process, 2) is not None, "the allowed call must succeed"
+
+            # the upstream is now gone, and the proxy has no idea
+            assert _wait_for(run_dir / "upstream_dead"), "the fixture never died"
+
+            _jsonrpc(process, [
+                {
+                    "jsonrpc": "2.0", "id": 3, "method": "tools/call",
+                    "params": {"name": "destroy_thing", "arguments": {"code": "X"}},
+                },
+            ])
+            denied = _reply(process, 3)
+            assert denied is not None
+            assert denied["result"]["isError"] is True
+
+            # the agent disconnects, which is an ordinary clean shutdown
+            process.stdin.close()
+            returncode = process.wait(timeout=60)
+            stderr = process.stderr.read()
+        finally:
+            if process.poll() is None:  # pragma: no cover - only on a hang
+                process.kill()
+
+    # the run really does have the shape a harness would score: an attack call
+    # that was denied, and (for enforcement-on) nothing forwarded after it
+    records = [
+        json.loads(line)
+        for line in (run_dir / "decisions.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    by_tool = {record["tool"]: record for record in records}
+    assert by_tool["destroy_thing"]["verdict"] == "deny"
+    assert by_tool["destroy_thing"]["forwarded"] is False
+
+    assert not (run_dir / "complete").exists(), (
+        "the upstream was dead when the attack was denied, so the denial "
+        "proves nothing about the defence -- this run must not be scoreable"
+    )
+    assert returncode != 0, (
+        f"the proxy exited {returncode} after certifying a run whose upstream "
+        "had already died"
+    )
+    assert returncode == EXIT_RUN_FAILED, (
+        f"the proxy exited {returncode}, not {EXIT_RUN_FAILED}; a run that "
+        "failed inside the proxy must be tellable from a bad invocation"
+    )
+    assert "UpstreamError" in stderr
+    assert "must be excluded from scoring" in stderr

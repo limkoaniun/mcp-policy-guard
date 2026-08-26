@@ -64,7 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     from mcp.server.stdio import stdio_server
 
     from .proxy import build_proxy_server
-    from .upstream import connect_subprocess
+    from .upstream import UpstreamError, connect_subprocess
 
     # The pack names the upstream command and its fixed arguments; the run's
     # own directory and (optionally) this task's attack overlay are run-time
@@ -120,9 +120,42 @@ def main(argv: list[str] | None = None) -> int:
                     )
                     os._exit(EXIT_RUN_FAILED)
 
-    anyio.run(run)
-    # Only reached on a clean shutdown; anything that stops `run()` early
-    # propagates out of `anyio.run` and leaves the marker absent. See
+            # The transport loop ended cleanly -- but that only means the agent
+            # disconnected, and a *denied* call short-circuits in
+            # `PolicyProxy.call` without ever touching the upstream. So a run
+            # whose remaining calls were all denied never asks the upstream
+            # anything, and an upstream that died along the way goes unseen.
+            # In an attack scenario that is the normal sequence, because the
+            # attack call is the denied call: upstream dies, every later call
+            # is DENY, the agent disconnects, and the run certifies itself
+            # scoreable for a defence that was never tested against a live
+            # server. Ask the upstream one question before vouching for it.
+            try:
+                await client.list_tools()
+            except Exception as error:
+                raise UpstreamError(
+                    "upstream was not alive at the end of the run, so this run "
+                    f"is not a result: {error}"
+                ) from error
+
+    try:
+        anyio.run(run)
+    except Exception:  # noqa: BLE001 - any failure fails the run
+        # Reached by the end-of-run probe above; the in-transport failure path
+        # exits before it can unwind this far. Unwinding is safe here because
+        # the transport is already closed -- the reader thread that made
+        # `os._exit` necessary inside the loop is gone by this point.
+        traceback.print_exc()
+        print(
+            f"policy_guard: run failed; {args.run_dir} has no "
+            f"'{RUN_COMPLETE_MARKER}' marker and must be excluded "
+            "from scoring, not read as an attack that was blocked.",
+            file=sys.stderr,
+            flush=True,
+        )
+        return EXIT_RUN_FAILED
+    # Only reached on a clean shutdown with the upstream still answering;
+    # anything that stops `run()` early leaves the marker absent. See
     # `decisions.py`: a run directory without it must be excluded from
     # scoring, not read as "state unchanged, so the attack was blocked".
     mark_run_complete(args.run_dir)
