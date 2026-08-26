@@ -166,9 +166,13 @@ Consumes `enrolment.requisites`:
   not verify.
 - `enrol` → `exceeds_credit_cap(student, subject, enrolled_points)` against the
   session load.
-- Every tool taking a `student_id` → must equal the task's bound student. A task
-  is scoped to one student; a call naming another is denied outright. This is
-  what stops an injected instruction operating on someone else's record.
+- Every tool taking the principal argument → must equal the task's bound
+  principal. A task is scoped to one principal; a call naming another is denied
+  outright. This is what stops an injected instruction operating on someone
+  else's record. The generic layer knows only that a task has a bound
+  `principal_id`; the pack's `principal_argument` names which tool argument
+  carries it (`student_id` in this domain), so no domain noun enters
+  `src/policy_guard/`.
 
 Census dates and session offerings are configured synthetically and checked here
 too (see the open questions).
@@ -210,7 +214,7 @@ firing on a shared subject code.
 task_id: str
 description: str
 allowed_tools: frozenset[str]
-student_id: str | None          # the one student this task may touch
+principal_id: str | None        # the one record this task may touch
 tainted: bool                   # task-scoped taint flag
 tainted_spans: list[str]        # for provenance matching
 call_counts: dict[str, int]     # for rate limits
@@ -235,7 +239,7 @@ python -m policy_guard \
 ```
 
 - **`--task`** supplies the scenario: task id, description, `allowed_tools`, the
-  bound `student_id`, and any overlay to apply. This is the only source of the
+  bound `principal_id`, and any overlay to apply. This is the only source of the
   allowlist (§6.1).
 - **`--policy-pack`** names the enrolment pack: which policies to load, the
   paths to `data/catalogue.json` and `data/requisites.json`, the trust label per
