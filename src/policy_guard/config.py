@@ -35,9 +35,33 @@ class PolicyPack(BaseModel):
     name: str
     upstream_command: str
     upstream_args: list[str] = Field(default_factory=list)
-    policies: list[str] = Field(default_factory=list)
+    # `validate_default=True` so the validator below also fires when the key is
+    # omitted entirely -- an omitted `policies:` is the same allow-everything
+    # engine as an empty one, and must fail the same way.
+    policies: list[str] = Field(default_factory=list, validate_default=True)
     trust: dict[str, str] = Field(default_factory=dict)
     principal_argument: str | None = None
+
+    @field_validator("policies")
+    @classmethod
+    def _at_least_one_policy(cls, value: list[str]) -> list[str]:
+        """A pack naming no policies is rejected rather than defaulted.
+
+        `PolicyEngine([])` returns ALLOW / "no policy objected" for every call,
+        so a pack with an empty (or omitted) `policies:` list would invert
+        deny-by-default into allow-everything -- and the run would be
+        indistinguishable, in `decisions.jsonl`, from a genuine enforcement-on
+        run in which no rule happened to object. That is a failure presenting
+        as a confident success, biased toward the defence, so it fails loudly
+        at load time instead.
+        """
+        if not value:
+            raise ValueError(
+                "policy pack names no policies; an empty `policies:` list would "
+                "make the engine allow every call, which is indistinguishable "
+                "from enforcement that had nothing to object to"
+            )
+        return value
 
     @field_validator("trust")
     @classmethod

@@ -1,6 +1,11 @@
+import ast
+import pathlib
+
 import pytest
 
-from policy_guard.config import build_context, load_policy_pack, load_task
+from policy_guard.config import PolicyPack, build_context, load_policy_pack, load_task
+
+REPO = pathlib.Path(__file__).resolve().parents[1]
 
 TASK = """
 task_id: OI-001
@@ -65,10 +70,67 @@ def test_an_unknown_trust_label_is_rejected(tmp_path):
 
 
 def test_the_shipped_enrolment_pack_is_valid():
-    pack = load_policy_pack("configs/enrolment.yaml")
+    pack = load_policy_pack(REPO / "configs" / "enrolment.yaml")
     assert pack.name == "enrolment"
     assert "get_subject_details" in pack.trust
     assert pack.principal_argument == "student_id"
+
+
+def test_a_policy_pack_naming_no_policies_is_rejected(tmp_path):
+    """An empty `policies:` list would invert deny-by-default into allow-everything.
+
+    `PolicyEngine([])` returns ALLOW / "no policy objected" for every call, and
+    the resulting `decisions.jsonl` is indistinguishable from a genuine
+    enforcement-on run whose policies had nothing to object to.
+    """
+    path = tmp_path / "pack.yaml"
+    path.write_text(PACK.replace("policies: [allowlist]", "policies: []"))
+    with pytest.raises(ValueError, match="no policies"):
+        load_policy_pack(path)
+
+
+def test_a_policy_pack_omitting_the_policies_key_is_rejected(tmp_path):
+    """Deny-by-default must survive a pack that simply omits the list.
+
+    This is the pack-side mirror of
+    `test_a_task_with_no_allowed_tools_denies_everything`.
+    """
+    path = tmp_path / "pack.yaml"
+    path.write_text(PACK.replace("policies: [allowlist]", ""))
+    with pytest.raises(ValueError, match="no policies"):
+        load_policy_pack(path)
+
+
+def test_main_refuses_to_enforce_with_an_empty_engine(tmp_path, monkeypatch):
+    """Guard, not regression: `PolicyPack` validation already makes an empty
+    engine unreachable from a loaded pack, so this cannot be driven through the
+    CLI without bypassing that validation (`model_construct` below does).
+
+    It is here so that a future pack-contract change -- slice 2 moves the
+    `POLICIES` registry -- cannot reintroduce an enforcement-on run that allows
+    every call while its log reads like enforcement.
+    """
+    from policy_guard import __main__ as cli
+
+    task = tmp_path / "task.yaml"
+    task.write_text(TASK)
+    pack_path = tmp_path / "pack.yaml"
+    pack_path.write_text(PACK)
+
+    empty = PolicyPack.model_construct(
+        name="empty", upstream_command="python", upstream_args=[], policies=[], trust={}
+    )
+    monkeypatch.setattr(cli, "load_policy_pack", lambda _path: empty)
+
+    with pytest.raises(ValueError, match="no policies"):
+        cli.main(
+            [
+                "--task", str(task),
+                "--policy-pack", str(pack_path),
+                "--run-dir", str(tmp_path / "run"),
+                "--enforcement", "on",
+            ]
+        )
 
 
 def test_policy_guard_names_no_domain_concept_in_code():
@@ -76,12 +138,9 @@ def test_policy_guard_names_no_domain_concept_in_code():
 
     Prose in docstrings may mention the case study; a code symbol may not.
     """
-    import ast
-    import pathlib
-
     banned = {"student", "enrolment", "enrol", "subject", "prerequisite", "requisite"}
     offenders = []
-    for path in pathlib.Path("src/policy_guard").rglob("*.py"):
+    for path in (REPO / "src" / "policy_guard").rglob("*.py"):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):
             names = []
@@ -98,3 +157,50 @@ def test_policy_guard_names_no_domain_concept_in_code():
                 if any(word in lowered for word in banned):
                     offenders.append(f"{path}:{node.lineno} {name}")
     assert not offenders, "domain concepts leaked into policy_guard: " + "; ".join(offenders)
+
+
+def sibling_packages() -> set[str]:
+    """Top-level packages that live under `src/` alongside `policy_guard`."""
+    return {
+        entry.name
+        for entry in (REPO / "src").iterdir()
+        if entry.is_dir() and (entry / "__init__.py").exists() and entry.name != "policy_guard"
+    }
+
+
+def test_policy_guard_imports_no_sibling_package():
+    """Spec §7.1: "`src/policy_guard/` reads this config and never imports
+    `enrolment`."
+
+    The identifier check above cannot see this: an `import` statement binds a
+    name the walker's `Name`/`arg`/`AnnAssign` cases never visit, so
+    `from enrolment import state as _s` passes it untouched. This walks the
+    import statements themselves and states the spec sentence directly -- and
+    generally, so a second domain package added under `src/` is covered
+    without editing a word list.
+    """
+    siblings = sibling_packages()
+    assert siblings, "no sibling package under src/ -- this test would prove nothing"
+
+    offenders = []
+    for path in (REPO / "src" / "policy_guard").rglob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            modules = []
+            if isinstance(node, ast.Import):
+                modules = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom):
+                # `level > 0` is a relative import, which by construction
+                # cannot leave `policy_guard`.
+                if node.level:
+                    continue
+                modules = [node.module or ""]
+                # `from pkg import name` may also name a submodule.
+                modules += [f"{node.module}.{alias.name}" for alias in node.names]
+            for module in modules:
+                if module.split(".")[0] in siblings:
+                    offenders.append(f"{path}:{node.lineno} imports {module}")
+    assert not offenders, (
+        "policy_guard imports a sibling domain package, which breaks the "
+        "domain-agnostic claim: " + "; ".join(offenders)
+    )

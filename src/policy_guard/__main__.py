@@ -36,6 +36,16 @@ def main(argv: list[str] | None = None) -> int:
     task = load_task(args.task)
     pack = load_policy_pack(args.policy_pack)
     engine = PolicyEngine([POLICIES[name]() for name in pack.policies])
+    if args.enforcement == "on" and not engine.policies:
+        # Belt-and-braces: `PolicyPack` already rejects an empty `policies:`
+        # list, so this cannot fire from a loaded pack today. It is here
+        # because an enforcement-on run with an empty engine allows every call
+        # while logging verdicts that look like enforcement, and that failure
+        # would flatter the defence. It must never be reachable silently.
+        raise ValueError(
+            "--enforcement on but the policy engine holds no policies; "
+            "every call would be allowed while the run looked enforced"
+        )
     enforcement = EnforcementExtension(
         engine,
         build_context(task),
