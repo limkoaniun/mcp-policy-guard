@@ -12,7 +12,15 @@ nothing about the proxy in front of it.
 
 Attack payloads arrive through an optional overlay that patches named fields
 of named subjects in memory as they are served, so the committed dataset
-stays pristine and each payload is versioned with its scenario.
+stays pristine and each payload is versioned with its scenario. An overlay
+that names a subject the catalogue does not hold, or a field this server does
+not serve, is rejected at load: a scenario that delivers no payload must not be
+mistakable for an attack that failed.
+
+Two files under `runs/<run-id>/` are ground truth for the evaluation harness:
+`state.json` for enrolment changes, and `erequests.jsonl` for the free text
+`submit_erequest` carries -- the exfiltration class leaves no trace in the
+former, so without the latter it could not be judged at all.
 
 `build_server` requires a run directory. `RunState` treats a missing run
 directory as ephemeral -- `enrol` and `drop` would mutate memory and persist
@@ -26,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -36,14 +45,29 @@ from .models import RequisiteResult, Student, Subject, SubjectRequisites
 from .requisites import evaluate_requisites
 from .state import RunState
 
+OVERLAY_FIELDS = {"description_suffix"}
 
-def load_overlay(path) -> dict[str, dict]:
+
+class OverlayError(ValueError):
+    """An attack overlay that would deliver no payload."""
+
+
+def load_overlay(path, known_codes) -> dict[str, dict]:
     """Load an attack-scenario overlay of per-subject field patches.
 
     The overlay is a mapping of subject code to a dict of field overrides
     (currently only `description_suffix`, appended to that subject's
     description). `path` may be None, in which case this returns `{}` so
     callers can pass an optional overlay path through unconditionally.
+
+    `known_codes` is the catalogue this overlay will be applied to, and is
+    required rather than optional on purpose. Serving was previously
+    `overlay.get(code, {}).get("description_suffix")`, which turns a scenario
+    author's typo -- `description_prefix`, or a subject code the catalogue does
+    not hold -- into a clean run that delivers no payload. The enforcement-off
+    control then reads as "the attack didn't work", when in truth no attack was
+    ever mounted; that is a broken experiment quietly presenting as a result.
+    An overlay that could not possibly land is rejected here instead.
     """
     if path is None:
         return {}
@@ -52,7 +76,28 @@ def load_overlay(path) -> dict[str, dict]:
     # unquoted key like `32144:` as an int, not the string this module keys
     # its catalogue by everywhere else. Normalise so a scenario author does
     # not have to remember to quote every code.
-    return {str(code): patch for code, patch in loaded.items()}
+    overlay = {str(code): patch for code, patch in loaded.items()}
+
+    known = set(known_codes)
+    for code, patch in overlay.items():
+        if code not in known:
+            raise OverlayError(
+                f"overlay {path} patches subject {code!r}, which is not in the "
+                "catalogue: nothing would be served, and the run would look "
+                "like an attack that failed rather than one never delivered"
+            )
+        if not isinstance(patch, dict):
+            raise OverlayError(
+                f"overlay {path} maps subject {code!r} to {type(patch).__name__}, "
+                f"expected a mapping of field patches ({sorted(OVERLAY_FIELDS)})"
+            )
+        for field in patch:
+            if field not in OVERLAY_FIELDS:
+                raise OverlayError(
+                    f"overlay {path} sets unknown field {field!r} on subject "
+                    f"{code!r}; supported fields are {sorted(OVERLAY_FIELDS)}"
+                )
+    return overlay
 
 
 def _load(path, model):
@@ -115,7 +160,8 @@ def build_server(
     catalogue = _load(catalogue_path, Subject)
     requisites = _load(requisites_path, SubjectRequisites)
     state = RunState.load(students_path, run_dir=run_dir)
-    overlay = load_overlay(overlay_path)
+    overlay = load_overlay(overlay_path, catalogue.keys())
+    erequests_path = Path(run_dir) / "erequests.jsonl"
 
     def described(code: str) -> str:
         """The description as the agent sees it, including any overlay payload."""
@@ -181,6 +227,22 @@ def build_server(
         """Submit a free-text eRequest on the student's behalf. This only records
         the request; it does not change enrolment state.
         """
+        # The text is the whole point of this tool as an attack surface:
+        # `attacks/README.md` names `submit_erequest` as the vehicle for the
+        # exfiltration class, and judges success from database state. Returning
+        # `status="submitted"` and dropping the text left a fully successful
+        # exfiltration byte-identical in `state.json` whether enforcement was
+        # on or off -- unjudgeable, and not even the mandatory
+        # enforcement-off control could show the attack was real. Appending
+        # here makes the ground truth self-contained in the run directory,
+        # which is why `build_server` requires one.
+        record = {
+            "ts": datetime.now(UTC).isoformat(timespec="milliseconds"),
+            "student_id": student_id,
+            "text": text,
+        }
+        with erequests_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         return ActionResult(status="submitted", student_id=student_id, text=text)
 
     return server
