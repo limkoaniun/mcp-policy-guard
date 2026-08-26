@@ -78,7 +78,7 @@ def _reference_eval(expr: str, truth: dict[str, bool]) -> bool:
 
     py = re.sub(r"\d+[a-z]*", lambda m: str(truth[m.group(0)]), expr)
     py = py.replace("AND", " and ").replace("OR", " or ")
-    return bool(eval(py))
+    return bool(eval(py))  # noqa: S307 - test-only oracle over a closed grammar
 
 
 @pytest.mark.parametrize("expr", REAL_RULES.values())
@@ -94,7 +94,17 @@ def test_agrees_with_truth_table_oracle(expr):
 def test_minimal_unmet_picks_cheapest_or_branch():
     node = parse("(1 AND 2) OR 3")
     truth = {"1": True, "2": False, "3": False}
-    assert minimal_unmet(node, truth) == frozenset({"3"})
+    result = minimal_unmet(node, truth)
+    # Both branches cost one label, so either is minimal; the rule is that
+    # the result is a smallest satisfying set, not which tie-break wins.
+    assert len(result) == 1
+    assert result in (frozenset({"2"}), frozenset({"3"}))
+
+
+def test_minimal_unmet_prefers_a_strictly_cheaper_or_branch():
+    node = parse("(1 AND 2) OR (3 AND 4 AND 5)")
+    truth = {"1": False, "2": False, "3": False, "4": False, "5": False}
+    assert minimal_unmet(node, truth) == frozenset({"1", "2"})
 
 
 def test_minimal_unmet_is_empty_when_satisfied():

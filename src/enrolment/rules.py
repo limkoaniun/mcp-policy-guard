@@ -143,6 +143,4 @@ def minimal_unmet(node: Node, truth: dict[str, bool]) -> frozenset[str]:
         return frozenset() if truth.get(node.name, False) else frozenset({node.name})
     if isinstance(node, And):
         return frozenset().union(*(minimal_unmet(part, truth) for part in node.parts))
-    return min(
-        (minimal_unmet(part, truth) for part in reversed(node.parts)), key=len
-    )
+    return min((minimal_unmet(part, truth) for part in node.parts), key=len)
