@@ -1,0 +1,6 @@
+# Captured HTTP responses are a provenance archive: store them exactly as the
+# server sent them. UTS eVOP pages use CRLF, and letting git normalise them to
+# LF would mean the committed cache is no longer byte-identical to what was
+# actually served — which is the one property the archive exists to have.
+data/raw/** -text
+tests/fixtures/*.html -text
