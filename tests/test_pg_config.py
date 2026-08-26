@@ -6,7 +6,7 @@ TASK = """
 task_id: OI-001
 description: Tell me about 32144
 allowed_tools: [search_subjects, get_subject_details]
-student_id: S1000001
+principal_id: S1000001
 overlay: attacks/scenarios/output-injection/OI-001.overlay.yaml
 """
 
@@ -28,7 +28,7 @@ def test_task_loads(tmp_path):
     task = load_task(path)
     assert task.task_id == "OI-001"
     assert task.allowed_tools == ["search_subjects", "get_subject_details"]
-    assert task.student_id == "S1000001"
+    assert task.principal_id == "S1000001"
 
 
 def test_context_carries_the_allowlist_as_a_frozenset(tmp_path):
@@ -68,3 +68,33 @@ def test_the_shipped_enrolment_pack_is_valid():
     pack = load_policy_pack("configs/enrolment.yaml")
     assert pack.name == "enrolment"
     assert "get_subject_details" in pack.trust
+    assert pack.principal_argument == "student_id"
+
+
+def test_policy_guard_names_no_domain_concept_in_code():
+    """The domain-agnostic claim should be provable, not argued.
+
+    Prose in docstrings may mention the case study; a code symbol may not.
+    """
+    import ast
+    import pathlib
+
+    banned = {"student", "enrolment", "enrol", "subject", "prerequisite", "requisite"}
+    offenders = []
+    for path in pathlib.Path("src/policy_guard").rglob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            names = []
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                names = [node.name]
+            elif isinstance(node, ast.Name):
+                names = [node.id]
+            elif isinstance(node, ast.arg):
+                names = [node.arg]
+            elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+                names = [node.target.id]
+            for name in names:
+                lowered = name.lower()
+                if any(word in lowered for word in banned):
+                    offenders.append(f"{path}:{node.lineno} {name}")
+    assert not offenders, "domain concepts leaked into policy_guard: " + "; ".join(offenders)

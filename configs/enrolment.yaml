@@ -20,3 +20,9 @@ trust:
   enrol: trusted
   drop: trusted
   submit_erequest: trusted
+
+# Which tool argument carries the principal this task is scoped to. The generic
+# layer knows a task has a bound principal; only the pack knows this domain
+# calls it `student_id`. Argument validation will use this to reject a call that
+# names a different one.
+principal_argument: student_id

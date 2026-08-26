@@ -27,7 +27,7 @@ class TaskDefinition(BaseModel):
     task_id: str
     description: str = ""
     allowed_tools: list[str] = Field(default_factory=list)
-    student_id: str | None = None
+    principal_id: str | None = None
     overlay: str | None = None
 
 
@@ -37,6 +37,7 @@ class PolicyPack(BaseModel):
     upstream_args: list[str] = Field(default_factory=list)
     policies: list[str] = Field(default_factory=list)
     trust: dict[str, str] = Field(default_factory=dict)
+    principal_argument: str | None = None
 
     @field_validator("trust")
     @classmethod
