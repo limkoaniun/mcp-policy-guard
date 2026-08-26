@@ -220,3 +220,11 @@ def test_the_manifest_will_not_quietly_default_a_field(tmp_path):
     with pytest.raises(ValidationError):
         write_run_manifest(tmp_path / "run", **incomplete)
     assert not (tmp_path / "run" / "manifest.json").exists()
+
+
+def test_the_manifest_rejects_a_misspelled_field(tmp_path):
+    """A silently dropped field is the same defect one layer down."""
+    typo = {k: v for k, v in MANIFEST_FIELDS.items() if k != "overlay"}
+    typo["overlay_path"] = "/attacks/oi-001.yaml"
+    with pytest.raises(ValidationError):
+        write_run_manifest(tmp_path / "run", **typo)

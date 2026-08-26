@@ -97,8 +97,14 @@ def main(argv: list[str] | None = None) -> int:
         task_path=str(Path(args.task).resolve()),
         policy_pack_path=str(Path(args.policy_pack).resolve()),
         policies=list(pack.policies),
-        enforcement=args.enforcement,
-        approval_mode=args.approval_mode,
+        # Read back off the extension rather than off `args`, so the manifest
+        # records the arm that is actually in force rather than the one that
+        # was asked for. The two are derived from the same flag today; a
+        # manifest that re-derives it from the flag could not notice if they
+        # ever came apart, and a recorded arm that silently disagrees with the
+        # enforced one is the worst version of this defect.
+        enforcement="on" if enforcement.enforcement else "off",
+        approval_mode=enforcement.approval_mode,
         overlay=str(Path(overlay).resolve()) if overlay else None,
         upstream_command=upstream_command,
         upstream_args=list(upstream_args),

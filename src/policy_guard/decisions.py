@@ -26,12 +26,13 @@ scores a successful defence.
 **A run directory lacking `complete` must be excluded from scoring, never read
 as "state unchanged, so the attack was blocked."**
 
-## What arm this was: `runs/<id>/manifest.json`
-
-Written at startup, before anything can go wrong, it records enforcement
-on/off, the approval mode, the task and policy pack, and whether an attack
-overlay was actually delivered. See `RunManifest` for why: without it, two runs
-from opposite arms of the experiment can leave identical logs.
+The marker attests two things: the proxy shut down cleanly, *and* the upstream
+server was still answering when it did. The second half is not decoration. A
+denied call short-circuits inside the proxy and never touches the upstream, so
+a run whose remaining calls were all denied -- which in an attack scenario is
+the normal shape, the attack call being the denied one -- would otherwise never
+notice a dead upstream and would certify itself. `__main__` therefore asks the
+upstream one question before writing this file.
 
 What the marker does *not* attest, stated plainly so nothing reads more into it
 than it carries: it says the **proxy** shut down cleanly, not that the
@@ -40,6 +41,13 @@ which the proxy cannot tell from an agent that finished, so the run is marked
 complete. A harness must therefore check its own agent's exit as well as this
 marker before scoring a run. Closing that gap needs a signal from the agent
 side and belongs with the evaluation harness, which has its own spec.
+
+## What arm this was: `runs/<id>/manifest.json`
+
+Written at startup, before anything can go wrong, it records enforcement
+on/off, the approval mode, the task and policy pack, and whether an attack
+overlay was actually delivered. See `RunManifest` for why: without it, two runs
+from opposite arms of the experiment can leave identical logs.
 """
 
 from __future__ import annotations
@@ -48,7 +56,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .models import Decision, ToolCall
 
@@ -94,9 +102,12 @@ class RunManifest(BaseModel):
     was attacked and defended. Hence `overlay` is recorded explicitly as
     `null` rather than left out.
 
-    Every field is required. A manifest whose whole job is to say what the run
-    was must not be able to record a quietly defaulted answer.
+    Every field is required and extras are rejected. A manifest whose whole job
+    is to say what the run was must not be able to record a quietly defaulted
+    answer, nor to swallow a misspelled one.
     """
+
+    model_config = ConfigDict(extra="forbid")
 
     ts: str
     task_id: str
