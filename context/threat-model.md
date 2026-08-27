@@ -56,7 +56,11 @@ concern would leave the more probable failure unaddressed.
 ## Trust boundaries
 
 - **Agent ⇄ proxy:** trusted
-- **Proxy ⇄ tool servers:** per-server trust labels (trusted / untrusted)
+- **Proxy ⇄ tool servers:** trust labels are declared **per tool**, defaulting to
+  the server's label. Per-server alone is too coarse for this domain: the
+  enrolment server returns both attacker-influenced catalogue text
+  (`get_subject_details`) and trustworthy computed results
+  (`check_prerequisites`).
 - **Tool results from untrusted servers:** always tainted
 - **The model's reasoning:** never trusted to enforce a rule that can be checked
   deterministically

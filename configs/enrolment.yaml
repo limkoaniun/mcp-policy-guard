@@ -1,0 +1,32 @@
+# The enrolment policy pack.
+#
+# src/policy_guard/ reads this and never imports `enrolment`. Everything the
+# proxy knows about this domain — the upstream command, which tools return
+# attacker-influenceable content, which policies to load — arrives here.
+name: enrolment
+
+# `python` is resolved at run time to the interpreter running the proxy
+# itself (see `resolve_upstream_command` in `policy_guard/__main__.py`),
+# never to whatever `python`/`python3` happens to be first on PATH -- the
+# upstream needs this project's dependencies, which only that interpreter has.
+upstream_command: python
+upstream_args: [-m, enrolment.server]
+
+policies: [allowlist]
+
+# Trust is per tool, not per server: this one server returns both
+# attacker-influenceable catalogue text and trustworthy computed results.
+trust:
+  search_subjects: untrusted
+  get_subject_details: untrusted
+  get_student_record: trusted
+  check_prerequisites: trusted
+  enrol: trusted
+  drop: trusted
+  submit_erequest: trusted
+
+# Which tool argument carries the principal this task is scoped to. The generic
+# layer knows a task has a bound principal; only the pack knows this domain
+# calls it `student_id`. Argument validation will use this to reject a call that
+# names a different one.
+principal_argument: student_id

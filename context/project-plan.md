@@ -121,7 +121,10 @@ demonstration frontend; final report.
 
 Each gets its own spec → plan → implementation cycle, in this order:
 
-1. **Proxy and policy engine** — completes the vertical slice
+1. ~~**Proxy and policy engine**~~ — specified in
+   `context/2026-08-26-enforcement-layer-design.md`, which grew to cover the
+   enrolment MCP server and all four policy families, decomposed into four
+   sequenced slices
 2. **Enrolment MCP server and policy pack** — including the admission-descriptor
    normalisation decision and the session-load model the credit-point cap needs
 3. **Adversarial attack suite**
