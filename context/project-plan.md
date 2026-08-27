@@ -129,7 +129,13 @@ Each gets its own spec → plan → implementation cycle, in this order:
    normalisation decision and the session-load model the credit-point cap needs
 3. **Adversarial attack suite**
 4. **Evaluation harness and metrics**
-5. **Demonstration frontend**
+5. **Demonstration frontend** — note the dependency: the chat panel needs the
+   agent harness, so it cannot be built before that lands. The *viewer* half
+   (decision trace, enforcement on/off side by side, state diff) reads only
+   artifacts that already exist and could be built at any time; a static
+   generator producing one self-contained HTML file is the shape that survives
+   leaving the machine. Building it early would also stress-test the
+   `decisions.jsonl` format before slices 2-4 depend on it.
 
 ---
 
