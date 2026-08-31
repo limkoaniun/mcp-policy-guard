@@ -79,3 +79,20 @@ def test_expand_structure_omits_a_choice_point_left_unchosen():
     blocks = expand_structure(course, aos, major=None, sub_major=None)
 
     assert [b.path for b in blocks] == ["Core"]
+
+
+def test_expand_structure_keys_core_off_quota_not_title():
+    """Core/project split is keyed off block structure, not title."""
+    course = course_of(
+        # Block titled 'Custom Core' with quota matching item total = core
+        block("Custom Core", 12, ["C1", "C2"]),  # quota=12, items=2*6=12 => core
+        # Block titled 'Custom Project' with quota < item total = project
+        block("Custom Project", 6, ["P1", "P2"]),  # quota=6, items=2*6=12 => project
+    )
+
+    blocks = expand_structure(course, {}, major=None, sub_major=None)
+
+    # First block should be core despite being titled 'Custom Core'
+    assert blocks[0].kind == "core"
+    # Second block should be project despite being titled 'Custom Project'
+    assert blocks[1].kind == "project"

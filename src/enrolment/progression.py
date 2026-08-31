@@ -19,11 +19,12 @@ See `context/2026-08-31-scenario-suite-design.md` §2.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Literal
 
 from pydantic import BaseModel
 
-from .models import Course
+from .models import Course, CourseBlock
 
 BlockKind = Literal["core", "project", "major", "sub_major", "elective"]
 
@@ -49,7 +50,33 @@ class Block(BaseModel):
     kind: BlockKind
 
 
-def _leaves(node: Course, prefix: str, kind: BlockKind) -> list[Block]:
+def _compute_core_or_project(container: CourseBlock) -> BlockKind:
+    """Determine if a block is 'core' (complete-all) or 'project' (select-from).
+
+    A complete-all block's quota equals the sum of its items' credit points.
+    A select-from block's quota is less than that sum.
+    If any item has None credit_points, treat it as 0 and force 'project'.
+    """
+    subject_items = [i for i in container.items if i.item_type == "subject"]
+    if not subject_items:
+        return "project"
+
+    # If any item has None credit_points, force project
+    if any(i.credit_points is None for i in subject_items):
+        return "project"
+
+    total_cp = sum(i.credit_points for i in subject_items)
+    quota = container.credit_points or 0
+
+    # If quota equals total, it's core; otherwise project
+    return "core" if quota == total_cp else "project"
+
+
+def _leaves(
+    node: Course,
+    prefix: str,
+    kind: BlockKind | Callable[[CourseBlock], BlockKind],
+) -> list[Block]:
     """Every block of `node` that directly lists subjects."""
     found: list[Block] = []
 
@@ -59,12 +86,13 @@ def _leaves(node: Course, prefix: str, kind: BlockKind) -> list[Block]:
         for child in container.children:
             walk(child, name)
         if codes:
+            block_kind = kind(container) if callable(kind) else kind
             found.append(
                 Block(
                     path=f"{prefix}{name}",
                     quota=container.credit_points or 0,
                     eligible=frozenset(codes),
-                    kind=kind,
+                    kind=block_kind,
                 )
             )
 
@@ -98,9 +126,8 @@ def expand_structure(
                     aos[sub_major], f"SubMajor:{aos[sub_major].title}/", "sub_major"
                 )
         else:
-            kind: BlockKind = "core" if container.title == "Core" else "project"
             wrapper = course.model_copy(update={"blocks": [container]})
-            blocks += _leaves(wrapper, "", kind)
+            blocks += _leaves(wrapper, "", _compute_core_or_project)
             for level in [container, *container.children]:
                 for item in level.items:
                     if item.item_type == "stream" and item.code in aos:
