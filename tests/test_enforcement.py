@@ -3,6 +3,7 @@ from policy_guard.enforcement import EnforcementExtension
 from policy_guard.engine import PolicyEngine
 from policy_guard.models import Decision, TaskContext, ToolCall, Verdict
 from policy_guard.policies.allowlist import AllowlistPolicy
+from policy_guard.policies.arg_validation import ArgumentValidationPolicy
 
 
 def build(enforcement=True, allowed=("search_subjects",)):
@@ -149,9 +150,6 @@ def test_the_logged_tainted_flag_is_read_from_the_context():
     tainted = EnforcementExtension(engine, context, DecisionLog(None))
     tainted.decide(ToolCall(tool="search_subjects"))
     assert tainted.log.records[0].tainted is True
-
-
-from policy_guard.policies.arg_validation import ArgumentValidationPolicy
 
 
 def ctx(**kwargs):

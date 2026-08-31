@@ -8,7 +8,7 @@ Two responsibilities, both generic:
   noun enters this package.
 - **Domain rules.** The pack supplies validators keyed by tool name. A
   validator returns a deny reason, or `None` if it has no objection. All the
-  enrolment knowledge lives on the far side of that callable.
+  domain knowledge lives on the far side of that callable.
 
 A validator that raises is not swallowed: `enforcement.py` synthesises a DENY
 around a raising policy, which is the correct outcome. The layer must never
