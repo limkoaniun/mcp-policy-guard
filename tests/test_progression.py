@@ -1,7 +1,5 @@
-import pytest
-
 from enrolment.models import BlockItem, Course, CourseBlock
-from enrolment.progression import Block, expand_structure
+from enrolment.progression import expand_structure
 
 WHEN = "2026-08-31T00:00:00"
 
