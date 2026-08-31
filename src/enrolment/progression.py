@@ -22,9 +22,9 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from .models import Course, CourseBlock
+from .models import Course, CourseBlock, Student
 
 BlockKind = Literal["core", "project", "major", "sub_major", "elective"]
 
@@ -245,3 +245,53 @@ def assign(
 
     total_counted = sum(p.credit_points for p in placements)
     return total_counted, placements
+
+
+class PlanSummary(BaseModel):
+    """Where a student's completed subjects land, and what is still required."""
+
+    major: str | None = None
+    sub_major: str | None = None
+    counted: int
+    placements: list[Placement] = Field(default_factory=list)
+    unplaced: list[str] = Field(default_factory=list)
+    counted_in_major: int
+    remaining_in_major: int
+    remaining_by_block: dict[str, int] = Field(default_factory=dict)
+    total_required: int
+    remaining_total: int
+
+
+def summarise_plan(student: Student, course: Course, aos: dict[str, Course]) -> PlanSummary:
+    """The student's progress through their declared major and sub-major.
+
+    Credit points come from the student's own record rather than the
+    catalogue: a record may carry subjects from outside this course (prior
+    study, a transfer), and a catalogue lookup would raise on them instead
+    of reporting them as counting nowhere.
+    """
+    blocks = expand_structure(course, aos, student.major, student.sub_major)
+    completed = {c.code: c.credit_points for c in student.completed}
+    counted, placements = assign(completed, blocks)
+
+    placed = {p.code for p in placements}
+    used: dict[str, int] = {}
+    for placement in placements:
+        used[placement.block] = used.get(placement.block, 0) + placement.credit_points
+
+    in_major = sum(p.credit_points for p in placements if p.block.startswith("Major:"))
+    major_quota = sum(b.quota for b in blocks if b.kind == "major")
+    total_required = course.credit_points or 0
+
+    return PlanSummary(
+        major=student.major,
+        sub_major=student.sub_major,
+        counted=counted,
+        placements=placements,
+        unplaced=sorted(set(completed) - placed),
+        counted_in_major=in_major,
+        remaining_in_major=major_quota - in_major,
+        remaining_by_block={b.path: b.quota - used.get(b.path, 0) for b in blocks},
+        total_required=total_required,
+        remaining_total=max(0, total_required - counted),
+    )

@@ -210,3 +210,61 @@ def test_assign_is_exact_not_merely_feasible():
     assert counted == 6
     assert len(placements) == 1
     assert placements[0].credit_points == 6
+
+
+from enrolment.models import Student
+from enrolment.progression import summarise_plan
+
+
+def student_of(major=None, sub_major=None, completed=()):
+    return Student(
+        student_id="S1",
+        course="C04296",
+        admitted_to=["C04296"],
+        major=major,
+        sub_major=sub_major,
+        completed=[
+            {"code": c, "session": "2025-AUT", "credit_points": 6} for c in completed
+        ],
+    )
+
+
+def test_summarise_plan_reports_the_completion_gap():
+    course = course_of(
+        block("Core", 12, ["C1", "C2"]),
+        block("Majors", 36, ["MAJ01"], item_type="major"),
+        cp=48,
+    )
+    aos = {"MAJ01": course_of(block("Alpha", 36, ["A1", "A2"]), code="MAJ01", cp=36)}
+
+    summary = summarise_plan(student_of("MAJ01", None, ["C1", "A1"]), course, aos)
+
+    assert summary.counted == 12
+    assert summary.remaining_total == 36
+    assert summary.counted_in_major == 6
+    assert summary.remaining_in_major == 30
+    assert summary.remaining_by_block == {"Core": 6, "Major:Test Course/Alpha": 30}
+    assert summary.unplaced == []
+
+
+def test_summarise_plan_lists_subjects_that_count_nowhere():
+    course = course_of(block("Core", 12, ["C1"]), cp=12)
+
+    summary = summarise_plan(student_of(completed=["C1", "OUTSIDE"]), course, {})
+
+    assert summary.counted == 6
+    assert summary.unplaced == ["OUTSIDE"]
+
+
+def test_summarise_plan_reports_no_major_gap_when_none_is_declared():
+    course = course_of(
+        block("Core", 12, ["C1"]),
+        block("Majors", 36, ["MAJ01"], item_type="major"),
+        cp=48,
+    )
+    aos = {"MAJ01": course_of(block("Alpha", 36, ["A1"]), code="MAJ01", cp=36)}
+
+    summary = summarise_plan(student_of(None, None, ["C1"]), course, aos)
+
+    assert summary.counted_in_major == 0
+    assert summary.remaining_in_major == 0
