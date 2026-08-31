@@ -37,6 +37,10 @@ class TaskContext(BaseModel):
     # slice 3 -- but the field it will set now exists, and a typo in that name
     # will fail loudly instead of silently reporting 0%.
     tainted: bool = False
+    # The one principal this task is scoped to. A call naming a different one
+    # is denied by argument validation: this is what stops an injected
+    # instruction operating on someone else's record.
+    principal_id: str | None = None
 
 
 class Decision(BaseModel):

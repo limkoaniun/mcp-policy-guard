@@ -149,3 +149,55 @@ def test_the_logged_tainted_flag_is_read_from_the_context():
     tainted = EnforcementExtension(engine, context, DecisionLog(None))
     tainted.decide(ToolCall(tool="search_subjects"))
     assert tainted.log.records[0].tainted is True
+
+
+from policy_guard.policies.arg_validation import ArgumentValidationPolicy
+
+
+def ctx(**kwargs):
+    defaults = {"task_id": "T1", "allowed_tools": frozenset({"enrol"})}
+    defaults.update(kwargs)
+    return TaskContext(**defaults)
+
+
+def test_arg_validation_denies_a_call_naming_another_principal():
+    policy = ArgumentValidationPolicy(principal_argument="student_id")
+    call = ToolCall(tool="enrol", arguments={"student_id": "S9000002", "code": "42027"})
+
+    decision = policy.check(call, ctx(principal_id="S9000001"))
+
+    assert decision.verdict is Verdict.DENY
+    assert "S9000002" in decision.reason
+    assert "S9000001" in decision.reason
+
+
+def test_arg_validation_allows_the_bound_principal():
+    policy = ArgumentValidationPolicy(principal_argument="student_id")
+    call = ToolCall(tool="enrol", arguments={"student_id": "S9000001", "code": "42027"})
+
+    assert policy.check(call, ctx(principal_id="S9000001")) is None
+
+
+def test_arg_validation_denies_when_the_principal_argument_is_missing():
+    """A call that omits the principal cannot be verified, so it is denied."""
+    policy = ArgumentValidationPolicy(principal_argument="student_id")
+
+    decision = policy.check(ToolCall(tool="enrol", arguments={"code": "42027"}),
+                            ctx(principal_id="S9000001"))
+
+    assert decision.verdict is Verdict.DENY
+
+
+def test_arg_validation_has_no_opinion_when_no_principal_is_bound():
+    policy = ArgumentValidationPolicy(principal_argument="student_id")
+    call = ToolCall(tool="enrol", arguments={"student_id": "S9000002"})
+
+    assert policy.check(call, ctx()) is None
+
+
+def test_build_context_carries_the_principal():
+    from policy_guard.config import TaskDefinition, build_context
+
+    task = TaskDefinition(task_id="T1", allowed_tools=["enrol"], principal_id="S9000001")
+
+    assert build_context(task).principal_id == "S9000001"

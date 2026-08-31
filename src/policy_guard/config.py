@@ -92,4 +92,5 @@ def build_context(task: TaskDefinition) -> TaskContext:
         task_id=task.task_id,
         description=task.description,
         allowed_tools=frozenset(task.allowed_tools),
+        principal_id=task.principal_id,
     )
