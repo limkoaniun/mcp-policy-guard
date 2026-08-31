@@ -78,6 +78,9 @@ async def test_the_shipped_cli_mirrors_allows_and_denies(tmp_path):
             "enrol",
             "drop",
             "submit_erequest",
+            "get_study_plan",
+            "preview_major_change",
+            "get_session_options",
         }
 
         # 2. an allowed call reaches the upstream and returns its real answer

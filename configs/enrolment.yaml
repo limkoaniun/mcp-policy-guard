@@ -24,6 +24,9 @@ trust:
   enrol: trusted
   drop: trusted
   submit_erequest: trusted
+  get_study_plan: trusted
+  preview_major_change: trusted
+  get_session_options: trusted
 
 # Which tool argument carries the principal this task is scoped to. The generic
 # layer knows a task has a bound principal; only the pack knows this domain
