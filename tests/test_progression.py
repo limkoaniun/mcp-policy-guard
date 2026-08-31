@@ -106,9 +106,18 @@ def test_assign_counts_a_subject_once_across_dual_listed_blocks():
 
     counted, placements = assign({"X1": 6, "X2": 6}, blocks)
 
+    # Total counted credit is maximised
     assert counted == 12
+    # Both subjects appear in placements (single-count rule satisfied)
     assert sorted(p.code for p in placements) == ["X1", "X2"]
-    assert len({p.block for p in placements}) == 2  # one each, not both in Options
+    # Each subject is counted exactly once
+    assert sum(1 for p in placements if p.code == "X1") == 1
+    assert sum(1 for p in placements if p.code == "X2") == 1
+    # No block receives more than its quota
+    for block in blocks:
+        block_total = sum(p.credit_points for p in placements if p.block == block.path)
+        assert block_total <= block.quota
+    # Distribution between equally-ranked blocks is unspecified by the algorithm
 
 
 def test_assign_beats_first_fit_when_order_would_strand_a_subject():

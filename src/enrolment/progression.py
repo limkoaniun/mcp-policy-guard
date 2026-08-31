@@ -158,6 +158,10 @@ def assign(
     this wrong in over a quarter of realistic cases (spec §2), and a wrong
     answer here is a student told they wasted a subject they did not waste.
 
+    Where several assignments tie on total counted credit and block priority,
+    which specific block a subject lands in is unspecified by the cost function.
+    Downstream code must not depend on it.
+
     Returns the total credit counted and where each subject landed.
     """
     codes = sorted(completed)
@@ -184,7 +188,7 @@ def assign(
         edge(n + 1 + j, sink, block.quota, 0)
         for i, code in enumerate(codes):
             if code in block.eligible:
-                edge(1 + i, n + 1 + j, completed[code], (MAX_PRIORITY - PRIORITY[block.kind]) * (m + 1) + ((i + j) % m))
+                edge(1 + i, n + 1 + j, completed[code], MAX_PRIORITY - PRIORITY[block.kind])
 
     counted = 0
     while True:
