@@ -19,7 +19,6 @@ See `context/2026-08-31-scenario-suite-design.md` §2.
 
 from __future__ import annotations
 
-import collections
 from collections.abc import Callable, Sequence
 from typing import Literal
 
@@ -42,6 +41,12 @@ PRIORITY: dict[BlockKind, int] = {
 }
 
 MAX_PRIORITY = max(PRIORITY.values())
+
+# Score scale for lexicographic ordering: maximise counted credit first, then priority-weighted
+# placement. We encode as one integer: score = cp * SCALE + cp * PRIORITY[block.kind].
+# SCALE must exceed the maximum achievable priority sum. With 96 cp maximum and PRIORITY[core]=40,
+# the ceiling is 96 * 40 = 3840. SCALE = 100_000 comfortably exceeds this.
+SCALE = 100_000
 
 
 class Placement(BaseModel):
@@ -153,75 +158,114 @@ def assign(
 ) -> tuple[int, list[Placement]]:
     """Assign completed subjects to blocks, maximising counted credit.
 
-    Each subject is counted at most once and no block exceeds its quota.
-    Solved as min-cost max-flow so the answer is optimal: a greedy pass gets
-    this wrong in over a quarter of realistic cases (spec §2), and a wrong
-    answer here is a student told they wasted a subject they did not waste.
+    Each subject is an indivisible whole: it is counted entirely toward one block,
+    or not at all. No subject is split across blocks. Solved by exact whole-subject
+    search, which is proven optimal: it maximises total counted credit first, then
+    applies the priority-based tie-break (spec §7) among all equally-maximum solutions.
+    A greedy pass gets this wrong in over a quarter of realistic cases (spec §2).
 
     Where several assignments tie on total counted credit and block priority,
-    which specific block a subject lands in is unspecified by the cost function.
+    which specific block a subject lands in is unspecified by the algorithm.
     Downstream code must not depend on it.
 
     Returns the total credit counted and where each subject landed.
     """
-    codes = sorted(completed)
-    n, m = len(codes), len(blocks)
-    if not n or not m:
+    if not completed or not blocks:
         return 0, []
 
-    source, sink = 0, n + m + 1
-    size = sink + 1
-    capacity = [[0] * size for _ in range(size)]
-    cost = [[0] * size for _ in range(size)]
-    neighbours: dict[int, set[int]] = collections.defaultdict(set)
+    # Sort subjects by descending credit points, then by code, for stable pruning order.
+    subjects = sorted(completed.items(), key=lambda x: (-x[1], x[0]))
+    codes = [code for code, _ in subjects]
+    cps = [cp for _, cp in subjects]
+    n = len(subjects)
 
-    def edge(u: int, v: int, cap: int, price: int) -> None:
-        capacity[u][v] += cap
-        cost[u][v] = price
-        cost[v][u] = -price
-        neighbours[u].add(v)
-        neighbours[v].add(u)
+    # Precompute per-subject eligible block indices.
+    eligible: list[list[int]] = []
+    for code in codes:
+        indices = [j for j, block in enumerate(blocks) if code in block.eligible]
+        eligible.append(indices)
 
-    for i, code in enumerate(codes):
-        edge(source, 1 + i, completed[code], 0)
-    for j, block in enumerate(blocks):
-        edge(n + 1 + j, sink, block.quota, 0)
-        for i, code in enumerate(codes):
-            if code in block.eligible:
-                edge(1 + i, n + 1 + j, completed[code], MAX_PRIORITY - PRIORITY[block.kind])
+    # Precompute suffix array of remaining credit points for pruning.
+    suffix = [0] * (n + 1)
+    for i in range(n - 1, -1, -1):
+        suffix[i] = suffix[i + 1] + cps[i]
 
-    counted = 0
-    while True:
-        distance = {source: 0}
-        parent: dict[int, int | None] = {source: None}
-        queue = collections.deque([source])
-        queued = {source}
-        while queue:
-            u = queue.popleft()
-            queued.discard(u)
-            for v in neighbours[u]:
-                if capacity[u][v] > 0 and distance[u] + cost[u][v] < distance.get(v, 1 << 30):
-                    distance[v] = distance[u] + cost[u][v]
-                    parent[v] = u
-                    if v not in queued:
-                        queue.append(v)
-                        queued.add(v)
-        if sink not in parent:
-            break
-        path, node = [], sink
-        while parent[node] is not None:
-            path.append((parent[node], node))
-            node = parent[node]
-        pushed = min(capacity[u][v] for u, v in path)
-        for u, v in path:
-            capacity[u][v] -= pushed
-            capacity[v][u] += pushed
-        counted += pushed
+    # Convert blocks sequence to list for indexing.
+    blocks_list = list(blocks)
 
-    placements = [
-        Placement(code=code, block=block.path, credit_points=capacity[n + 1 + j][1 + i])
-        for i, code in enumerate(codes)
-        for j, block in enumerate(blocks)
-        if code in block.eligible and capacity[n + 1 + j][1 + i] > 0
-    ]
-    return counted, placements
+    memo: dict[tuple[int, tuple[int, ...]]] = {}
+    best_score = [0]
+    best_placements = [[]]
+
+    def recurse(
+        subject_idx: int,
+        remaining_quotas: tuple[int, ...]
+    ) -> tuple[int, dict[int, int]]:
+        """Recurse over subjects. Return (score, assignments) where assignments maps
+        subject index to block index (or is absent if not assigned)."""
+
+        # Base case: all subjects processed.
+        if subject_idx >= n:
+            return 0, {}
+
+        # Memoization: check if we've seen this state before at a better or equal score.
+        key = (subject_idx, remaining_quotas)
+        if key in memo:
+            return memo[key]
+
+        # Pruning: if remaining capacity can't beat the best score, return early.
+        max_gain = suffix[subject_idx] * (SCALE + MAX_PRIORITY)
+        if best_score[0] + max_gain <= best_score[0]:
+            return -1, {}
+
+        cp = cps[subject_idx]
+
+        # Try assigning this subject whole to each eligible block with room.
+        best_local_score = -1
+        best_local_assignments: dict[int, int] = {}
+
+        for block_idx in eligible[subject_idx]:
+            if remaining_quotas[block_idx] >= cp:
+                # Assign subject to this block.
+                new_quotas = list(remaining_quotas)
+                new_quotas[block_idx] -= cp
+                score, future_assignments = recurse(subject_idx + 1, tuple(new_quotas))
+                if score >= 0:
+                    # Score for placing this subject: cp * SCALE + cp * priority.
+                    block_priority = PRIORITY[blocks_list[block_idx].kind]
+                    local_score = score + cp * SCALE + cp * block_priority
+                    if local_score > best_local_score:
+                        best_local_score = local_score
+                        best_local_assignments = {subject_idx: block_idx, **future_assignments}
+
+        # Try not assigning this subject.
+        score, future_assignments = recurse(subject_idx + 1, remaining_quotas)
+        if score >= 0 and score > best_local_score:
+            best_local_score = score
+            best_local_assignments = future_assignments
+
+        # Update global best if this is better.
+        if best_local_score > best_score[0]:
+            best_score[0] = best_local_score
+            best_placements[0] = best_local_assignments
+
+        # Memoize.
+        memo[key] = (best_local_score, best_local_assignments)
+        return best_local_score, best_local_assignments
+
+    initial_quotas = tuple(block.quota for block in blocks_list)
+    _, assignments = recurse(0, initial_quotas)
+
+    # Convert assignments to Placement objects.
+    placements = []
+    for subj_idx, block_idx in assignments.items():
+        placements.append(
+            Placement(
+                code=codes[subj_idx],
+                block=blocks_list[block_idx].path,
+                credit_points=cps[subj_idx]
+            )
+        )
+
+    total_counted = sum(p.credit_points for p in placements)
+    return total_counted, placements

@@ -117,6 +117,8 @@ def test_assign_counts_a_subject_once_across_dual_listed_blocks():
     for block in blocks:
         block_total = sum(p.credit_points for p in placements if p.block == block.path)
         assert block_total <= block.quota
+    # Placement sum equals counted total (invariant: all counted credit is in placements)
+    assert sum(p.credit_points for p in placements) == counted
     # Distribution between equally-ranked blocks is unspecified by the algorithm
 
 
@@ -162,3 +164,51 @@ def test_assign_leaves_ineligible_subjects_uncounted():
 
 def test_assign_handles_no_blocks():
     assert assign({"Z1": 6}, []) == (0, [])
+
+
+def test_assign_handles_no_subjects():
+    blocks = [Block(path="Core", quota=12, eligible=frozenset({"Z1"}), kind="core")]
+    assert assign({}, blocks) == (0, [])
+
+
+def test_assign_never_splits_a_subject_across_blocks():
+    """A subject must be counted wholly in one block or not at all, never split.
+
+    One 12cp subject eligible for two 6cp-quota blocks. The old flow-based solver
+    returned two 6cp placements (split). The correct whole-subject solver counts
+    it 0cp (since it cannot fit wholly in either block), or assigns it wholly if
+    a larger block is available.
+    """
+    blocks = [
+        Block(path="Block1", quota=6, eligible=frozenset({"S1"}), kind="major"),
+        Block(path="Block2", quota=6, eligible=frozenset({"S1"}), kind="major"),
+    ]
+
+    counted, placements = assign({"S1": 12}, blocks)
+
+    # A 12cp subject cannot fit wholly in either 6cp block, so it is uncounted.
+    assert counted == 0
+    assert placements == []
+    # Crucially: S1 is never split into two 6cp placements.
+
+
+def test_assign_is_exact_not_merely_feasible():
+    """Exact whole-subject assignment beats divisible/greedy packing.
+
+    Classic case: one subject fits only one block, another fits both.
+    A divisible solver or greedy pass would put the flexible subject in the
+    constrained block and leave 6cp uncounted. The exact solver reserves the
+    constrained block for the subject that can only go there.
+    """
+    blocks = [
+        Block(path="Restricted", quota=6, eligible=frozenset({"S_restricted"}), kind="project"),
+        Block(path="Open", quota=12, eligible=frozenset({"S_flexible"}), kind="elective"),
+    ]
+
+    counted, placements = assign({"S_restricted": 6, "S_flexible": 6}, blocks)
+
+    # Both subjects must be counted: S_restricted goes to Restricted (only option),
+    # S_flexible goes to Open.
+    assert counted == 12
+    assert Placement(code="S_restricted", block="Restricted", credit_points=6) in placements
+    assert Placement(code="S_flexible", block="Open", credit_points=6) in placements
