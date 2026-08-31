@@ -49,7 +49,16 @@ major" stream dual-lists twenty-four.
 
 **A subject may only be counted once.** So deciding how much of a course a student
 has completed is not a lookup — it is a maximum assignment of subjects to blocks
-under quota constraints, which is a flow problem, not a filter.
+under quota constraints, which is a constrained assignment problem, not a filter.
+
+**A subject is indivisible.** It counts wholly against one block or not at all.
+That single word is what makes this an assignment problem rather than a flow
+problem, and getting it wrong is not hypothetical: the first implementation of
+this layer modelled it as min-cost max-flow, where a 12cp subject could be
+counted 6cp in one block and 6cp in another. Against the committed dataset that
+told student S1000038 they held 12 credit points when the correct figure is 11.
+The shipped evaluator does an exact whole-subject search instead, verified
+against exhaustive enumeration.
 
 The consequence is measurable. Comparing a naive first-fit allocation against the
 optimal assignment over 3,000 randomly generated completed-subject sets across six
@@ -76,11 +85,17 @@ checkable, and that a plausible-looking method gets wrong a quarter of the time.
 1. **Block satisfaction.** For a chosen major and sub-major, expand the course tree
    into leaf blocks, each with a quota and an eligible subject set.
 2. **Single-count assignment.** Assign completed subjects to blocks so that total
-   counted credit is maximised, each subject used at most once, no block exceeding
-   its quota. Solved exactly, not greedily.
+   counted credit is maximised, each subject used at most once and **wholly**, and
+   no block exceeds its quota. Solved exactly, not greedily. "Used at most once"
+   forbids splitting as well as double-counting: a subject contributes all of its
+   credit points to one block or none of them to any.
 3. **Tie-break.** Where several assignments tie on total credit, prefer the one
    filling the most constrained blocks first — core and major before electives.
-   *This is a genuine decision, not a detail: see §7.*
+   *This is a genuine decision, not a detail: see §7.* Where assignments tie on
+   both total credit and block priority, **which particular block a subject lands
+   in is unspecified**, and nothing may depend on it. An earlier implementation
+   invented an index-derived rule to break exactly this tie; it made a student's
+   result an artefact of the order blocks happened to be enumerated in.
 4. **Carry-over on change of major.** Re-run assignment against the target major's
    structure and report credit counting inside the new major, credit displaced into
    electives, and credit that counts nowhere.
@@ -301,7 +316,7 @@ any supervisor correspondence should name it precisely.
 
 **Verification.** Every number in §2, §4 and §7 was produced by running the
 committed evaluator over the committed dataset, not by hand. The allocation figures
-came from a throwaway max-flow prototype; §9 step 3 exists so they become permanent
+came from a throwaway prototype; §9 step 3 exists so they become permanent
 assertions rather than claims in a document. Given the failure pattern already
 recorded in `context/project-plan.md` — scaffolding that was confidently wrong
 without saying so — a document full of unverified arithmetic would have been the
