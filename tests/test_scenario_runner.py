@@ -6,7 +6,7 @@ import pathlib
 
 import pytest
 
-from enrolment.scenario_runner import run_scenario
+from enrolment.scenario_runner import _judge, run_scenario
 from enrolment.scenarios_spec import Scenario
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -100,3 +100,45 @@ async def test_the_run_must_be_marked_complete(tmp_path):
     )
     assert (tmp_path / "run" / "complete").exists()
     assert result.passed
+
+
+@pytest.mark.anyio
+async def test_a_scenario_with_no_replay_calls_fails_instead_of_passing_vacuously(tmp_path):
+    """`load_scenario` already refuses an empty `replay` at load time (see
+    tests/test_scenarios_spec.py); this is the runner's own belt-and-braces
+    check for a `Scenario` built directly via `model_validate`, bypassing the
+    loader -- exactly as this file's own `scenario()` helper does. Without it,
+    a scenario replaying no calls would exercise no enforcement and still
+    report `passed=True`."""
+    empty = scenario(replay=[])
+    result = await run_scenario(
+        empty, run_dir=tmp_path / "run", pack_path=PACK, repo_root=REPO
+    )
+    assert not result.passed
+    assert any("replay is empty" in failure for failure in result.failures)
+
+
+@pytest.mark.anyio
+async def test_a_missing_state_file_fails_an_enrolled_unchanged_scenario(tmp_path):
+    """`state.json`'s own docstring makes its *existence* mean "this run got
+    far enough to mutate state", precisely so a crash cannot be read as a
+    successful defence. A judgement that skips the enrolled-unchanged check
+    whenever the file happens to be missing would invert that -- and would
+    only be saved from producing a false pass today by the `complete`-marker
+    check catching the same crash, which makes it a check whose correctness
+    depends on a different check.
+
+    A real run is driven first so the rest of the artifacts (`decisions.jsonl`,
+    the `complete` marker) are genuine; only `state.json` is then removed, and
+    judging is re-run directly against that doctored directory so the
+    `complete` marker cannot be the thing that fails the scenario instead.
+    """
+    result = await run_scenario(
+        scenario(), run_dir=tmp_path / "run", pack_path=PACK, repo_root=REPO
+    )
+    assert result.passed, result.failures
+    (tmp_path / "run" / "state.json").unlink()
+
+    rejudged = _judge(scenario(), tmp_path / "run", PACK, REPO)
+    assert not rejudged.passed
+    assert any("state.json" in failure for failure in rejudged.failures)

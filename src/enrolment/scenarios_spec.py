@@ -101,6 +101,12 @@ def load_scenario(path, *, personas, known_tools) -> Scenario:
             f"expected one of {sorted(ATTACK_CLASSES)}"
         )
 
+    if not scenario.replay:
+        raise ScenarioError(
+            f"{path}: replay is empty; a scenario that replays no calls "
+            f"asserts nothing about enforcement"
+        )
+
     if scenario.injected and scenario.payload is None and scenario.attack_class not in {
         "tool-shadowing",
         "exfiltration",

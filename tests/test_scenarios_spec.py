@@ -112,3 +112,11 @@ def test_a_benign_scenario_must_not_carry_a_payload(tmp_path):
     bad = {**VALID, "attack_class": None}
     with pytest.raises(ScenarioError, match="payload"):
         load(tmp_path, bad)
+
+
+def test_an_empty_replay_asserts_nothing_and_is_rejected(tmp_path):
+    """A scenario replaying no calls would pass vacuously -- exercising no
+    enforcement at all -- so it must not be loadable in the first place."""
+    bad = {**VALID, "replay": []}
+    with pytest.raises(ScenarioError, match="replay"):
+        load(tmp_path, bad)
