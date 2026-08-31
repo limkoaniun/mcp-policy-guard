@@ -173,7 +173,7 @@ def assign(
     if not completed or not blocks:
         return 0, []
 
-    # Sort subjects by descending credit points, then by code, for stable pruning order.
+    # Sort subjects by descending credit points, then by code, for stable order.
     subjects = sorted(completed.items(), key=lambda x: (-x[1], x[0]))
     codes = [code for code, _ in subjects]
     cps = [cp for _, cp in subjects]
@@ -185,17 +185,10 @@ def assign(
         indices = [j for j, block in enumerate(blocks) if code in block.eligible]
         eligible.append(indices)
 
-    # Precompute suffix array of remaining credit points for pruning.
-    suffix = [0] * (n + 1)
-    for i in range(n - 1, -1, -1):
-        suffix[i] = suffix[i + 1] + cps[i]
-
     # Convert blocks sequence to list for indexing.
     blocks_list = list(blocks)
 
-    memo: dict[tuple[int, tuple[int, ...]]] = {}
-    best_score = [0]
-    best_placements = [[]]
+    memo: dict[tuple[int, tuple[int, ...]], tuple[int, dict[int, int]]] = {}
 
     def recurse(
         subject_idx: int,
@@ -208,46 +201,29 @@ def assign(
         if subject_idx >= n:
             return 0, {}
 
-        # Memoization: check if we've seen this state before at a better or equal score.
+        # Memoization: check if we've seen this state before.
         key = (subject_idx, remaining_quotas)
         if key in memo:
             return memo[key]
 
-        # Pruning: if remaining capacity can't beat the best score, return early.
-        max_gain = suffix[subject_idx] * (SCALE + MAX_PRIORITY)
-        if best_score[0] + max_gain <= best_score[0]:
-            return -1, {}
-
         cp = cps[subject_idx]
 
-        # Try assigning this subject whole to each eligible block with room.
-        best_local_score = -1
-        best_local_assignments: dict[int, int] = {}
+        # Baseline: do not assign this subject.
+        best_local_score, best_local_assignments = recurse(subject_idx + 1, remaining_quotas)
 
+        # Try assigning this subject whole to each eligible block with room.
         for block_idx in eligible[subject_idx]:
             if remaining_quotas[block_idx] >= cp:
                 # Assign subject to this block.
                 new_quotas = list(remaining_quotas)
                 new_quotas[block_idx] -= cp
                 score, future_assignments = recurse(subject_idx + 1, tuple(new_quotas))
-                if score >= 0:
-                    # Score for placing this subject: cp * SCALE + cp * priority.
-                    block_priority = PRIORITY[blocks_list[block_idx].kind]
-                    local_score = score + cp * SCALE + cp * block_priority
-                    if local_score > best_local_score:
-                        best_local_score = local_score
-                        best_local_assignments = {subject_idx: block_idx, **future_assignments}
-
-        # Try not assigning this subject.
-        score, future_assignments = recurse(subject_idx + 1, remaining_quotas)
-        if score >= 0 and score > best_local_score:
-            best_local_score = score
-            best_local_assignments = future_assignments
-
-        # Update global best if this is better.
-        if best_local_score > best_score[0]:
-            best_score[0] = best_local_score
-            best_placements[0] = best_local_assignments
+                # Score for placing this subject: cp * SCALE + cp * priority.
+                block_priority = PRIORITY[blocks_list[block_idx].kind]
+                local_score = score + cp * SCALE + cp * block_priority
+                if local_score > best_local_score:
+                    best_local_score = local_score
+                    best_local_assignments = {subject_idx: block_idx, **future_assignments}
 
         # Memoize.
         memo[key] = (best_local_score, best_local_assignments)

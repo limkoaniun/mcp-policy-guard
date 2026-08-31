@@ -193,22 +193,20 @@ def test_assign_never_splits_a_subject_across_blocks():
 
 
 def test_assign_is_exact_not_merely_feasible():
-    """Exact whole-subject assignment beats divisible/greedy packing.
+    """Whole-subject assignment differs from divisible (split) packing.
 
-    Classic case: one subject fits only one block, another fits both.
-    A divisible solver or greedy pass would put the flexible subject in the
-    constrained block and leave 6cp uncounted. The exact solver reserves the
-    constrained block for the subject that can only go there.
+    One block (quota 9) eligible for two 6cp subjects. A divisible solver would
+    return 9 (first subject wholly, second subject split: 3cp of its 6cp).
+    Whole-subject assignment must return 6, because the second subject cannot
+    fit wholly in the remaining 3cp, so only one subject is counted.
     """
     blocks = [
-        Block(path="Restricted", quota=6, eligible=frozenset({"S_restricted"}), kind="project"),
-        Block(path="Open", quota=12, eligible=frozenset({"S_flexible"}), kind="elective"),
+        Block(path="Shared", quota=9, eligible=frozenset({"S1", "S2"}), kind="core"),
     ]
 
-    counted, placements = assign({"S_restricted": 6, "S_flexible": 6}, blocks)
+    counted, placements = assign({"S1": 6, "S2": 6}, blocks)
 
-    # Both subjects must be counted: S_restricted goes to Restricted (only option),
-    # S_flexible goes to Open.
-    assert counted == 12
-    assert Placement(code="S_restricted", block="Restricted", credit_points=6) in placements
-    assert Placement(code="S_flexible", block="Open", credit_points=6) in placements
+    # Exactly one 6cp subject fits wholly; the other does not fit.
+    assert counted == 6
+    assert len(placements) == 1
+    assert placements[0].credit_points == 6
