@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from policy_guard.decisions import DecisionLog
@@ -250,3 +251,107 @@ def test_enrolment_validators_allow_a_satisfied_enrolment():
     validators = build_validators(DATA, DATA / "personas.json")
 
     assert validators["enrol"]({"student_id": "S9000001", "code": "32009"}) is None
+
+
+def _write_students(path, student_id, enrolled, cap=24):
+    path.write_text(
+        json.dumps(
+            {
+                student_id: {
+                    "student_id": student_id,
+                    "course": "C04296",
+                    "completed": [],
+                    "enrolled": list(enrolled),
+                    "credit_point_cap_per_session": cap,
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def test_the_credit_cap_binds_against_live_run_state_across_repeated_calls(tmp_path):
+    """The test that matters most in this branch.
+
+    `build_validators` used to load `students_path` once and close over it.
+    The upstream mutates a run's real enrolment in `<run_dir>/state.json` via
+    `enrolment.state.RunState`; the closure never re-read it, so the
+    credit-point cap was checked against the same frozen baseline on every
+    call. A student starting 18cp under a 24cp cap was ALLOWED five
+    consecutive requisite-free enrolments and reached 48cp -- double the cap,
+    every call permitted, because the cap never bound again after the first.
+
+    This drives the `enrol` validator against a real `RunState` on the same
+    run directory, actually applying every call it allows, and asserts the
+    cap holds across the whole sequence -- not only on the first call --
+    using requisite-free 6cp subjects throughout so the cap is the only gate
+    that could possibly fire (the same trap Ruling A already caught once in
+    this task: a requisite denial would pass this test without the cap ever
+    being exercised).
+    """
+    from enrolment.policy_pack import build_validators
+    from enrolment.state import RunState
+
+    student_id = "S9100001"
+    cap = 24
+    # 3 requisite-free 6cp subjects = 18cp baseline, 6cp under the cap.
+    baseline = ["42913", "42850", "32567"]
+    # Requisite-free 6cp subjects, disjoint from the baseline.
+    candidates = ["32549", "32569", "32560", "32603"]
+
+    students_path = tmp_path / "students.json"
+    _write_students(students_path, student_id, baseline, cap)
+
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    state = RunState.load(students_path, run_dir=run_dir)
+
+    validators = build_validators(DATA, students_path, run_dir=run_dir)
+    enrol = validators["enrol"]
+
+    sequence = []
+    for code in candidates:
+        reason = enrol({"student_id": student_id, "code": code})
+        allowed = reason is None
+        if allowed:
+            state.enrol(student_id, code)
+        sequence.append((code, allowed))
+
+    # Exactly one more 6cp subject fits under the 24cp cap (18 + 6 = 24, not
+    # over); every subsequent attempt must be denied, not just the first.
+    assert sequence == [
+        ("32549", True),
+        ("32569", False),
+        ("32560", False),
+        ("32603", False),
+    ], sequence
+
+    catalogue = json.loads((DATA / "catalogue.json").read_text())
+    final = json.loads((run_dir / "state.json").read_text())
+    final_enrolled = final[student_id]["enrolled"]
+    final_load = sum(catalogue[c]["credit_points"] for c in final_enrolled)
+    assert final_load == 24
+    assert final_load <= cap
+
+
+def test_enrolment_validators_deny_an_unknown_enrolled_code_rather_than_price_it_at_zero(
+    tmp_path,
+):
+    """An enrolled code missing from the catalogue must not silently count as 0cp.
+
+    `catalogue[c].credit_points for c in student.enrolled if c in catalogue`
+    would drop an unrecognised code from the sum entirely -- undercounting
+    the session load the cap is checked against, which is the fail-open
+    direction and contradicts "never permit what could not be verified".
+    """
+    from enrolment.policy_pack import build_validators
+
+    student_id = "S9100002"
+    students_path = tmp_path / "students.json"
+    _write_students(students_path, student_id, ["NOTACODE"])
+
+    validators = build_validators(DATA, students_path)
+    reason = validators["enrol"]({"student_id": student_id, "code": "32549"})
+
+    assert reason is not None
+    assert "NOTACODE" in reason

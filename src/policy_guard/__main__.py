@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import os
 import sys
 import traceback
@@ -21,32 +22,60 @@ from .policies.allowlist import AllowlistPolicy
 from .policies.arg_validation import ArgumentValidationPolicy
 
 
-def _load_domain_rules(pack) -> dict:
+def _load_domain_rules(pack, run_dir=None) -> dict:
     """Resolve the pack's `domain_rules` to a validator mapping.
 
     The pack names the module by import path; this is the one place the
     generic layer resolves it, at run time, so `policy_guard` never carries a
-    static import of a domain package.
+    static import of a domain package. `pack.domain_rules_args` supplies
+    whatever else the factory needs -- where the domain's data lives -- so
+    that configuration has one home (the pack) rather than being duplicated
+    into environment variables nothing keeps in sync with it. `run_dir` is
+    passed through separately because it is a run-time fact the pack cannot
+    know in advance, the same way `__main__` already appends it to the
+    upstream's own arguments.
+
+    A malformed `domain_rules` value raises `ValueError` naming the pack, the
+    value, and what went wrong, rather than letting a bare `AttributeError`
+    or `ModuleNotFoundError` reach the operator with no context.
     """
     if not pack.domain_rules:
         return {}
-    import importlib
 
-    module_name, _, attribute = pack.domain_rules.partition(":")
-    factory = getattr(importlib.import_module(module_name), attribute)
-    return factory(
-        os.environ.get("PG_DATA_DIR", "data"),
-        os.environ.get("PG_STUDENTS", "data/students.json"),
-    )
+    module_name, sep, attribute = pack.domain_rules.partition(":")
+    if not sep or not module_name or not attribute:
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r}, which is not a 'module:callable' "
+            "import path"
+        )
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError as error:
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r}: module {module_name!r} could not be "
+            f"imported ({error})"
+        ) from error
+    try:
+        factory = getattr(module, attribute)
+    except AttributeError as error:
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r}: module {module_name!r} has no attribute "
+            f"{attribute!r}"
+        ) from error
+    return factory(**pack.domain_rules_args, run_dir=run_dir)
 
 
-# Each entry takes the loaded pack, so a policy may draw configuration from
-# it. Zero-argument policies simply ignore the argument.
+# Each entry takes the loaded pack and the run directory, so a policy may
+# draw configuration from either. Policies that need neither simply ignore
+# the arguments.
 POLICIES = {
-    "allowlist": lambda pack: AllowlistPolicy(),
-    "arg_validation": lambda pack: ArgumentValidationPolicy(
+    "allowlist": lambda pack, run_dir: AllowlistPolicy(),
+    "arg_validation": lambda pack, run_dir: ArgumentValidationPolicy(
         principal_argument=pack.principal_argument,
-        validators=_load_domain_rules(pack),
+        validators=_load_domain_rules(pack, run_dir=run_dir),
     ),
 }
 
@@ -105,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
             "principal_argument if this task is not meant to be "
             "principal-scoped."
         )
-    engine = PolicyEngine([POLICIES[name](pack) for name in pack.policies])
+    engine = PolicyEngine([POLICIES[name](pack, args.run_dir) for name in pack.policies])
     if args.enforcement == "on" and not engine.policies:
         # Belt-and-braces: `PolicyPack` already rejects an empty `policies:`
         # list, so this cannot fire from a loaded pack today. It is here

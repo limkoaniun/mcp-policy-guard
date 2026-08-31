@@ -44,6 +44,12 @@ class PolicyPack(BaseModel):
     # Import path to the domain's validator factory, "module:callable".
     # The generic layer resolves it without knowing what it builds.
     domain_rules: str | None = None
+    # Keyword arguments passed to the resolved `domain_rules` factory,
+    # alongside the run directory. This is what lets the pack be the single
+    # source of truth for where a domain's own data lives, instead of that
+    # configuration being duplicated into environment variables that nothing
+    # keeps in sync with the upstream server's own arguments.
+    domain_rules_args: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("policies")
     @classmethod

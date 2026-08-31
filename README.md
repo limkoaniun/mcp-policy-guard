@@ -106,6 +106,17 @@ python -m policy_guard --task <task.yaml> --policy-pack configs/enrolment.yaml \
     --run-dir <run-dir> --enforcement on
 ```
 
+A policy pack (e.g. `configs/enrolment.yaml`) may name `domain_rules` — a
+`"module:callable"` import path to a domain's argument-validator factory,
+resolved by `policy_guard/__main__.py` without a static import — and
+`domain_rules_args`, the keyword arguments passed to that factory alongside
+the run directory. This is the pack's single source of truth for where a
+domain's data lives; in the shipped pack, `domain_rules_args.students_path`
+must name the same file as the enrolment server's own `--students` argument,
+since the proxy's validators and the upstream's mutable run state (`enrol`/
+`drop`, tracked in `<run-dir>/state.json`) have to agree on the same student
+records.
+
 ## Status
 
 **Done.** The full C04296 dataset is built and committed — 93 subjects, 201

@@ -37,3 +37,13 @@ principal_argument: student_id
 # Import path to this domain's argument validators. `src/policy_guard/`
 # resolves it without importing `enrolment` itself.
 domain_rules: enrolment.policy_pack:build_validators
+
+# Keyword arguments for that factory. This is the single source of truth for
+# where the dataset lives -- in particular `students_path` must name the same
+# file as the upstream server's own `--students` (defaulted above, via
+# `upstream_args`, to the enrolment server's `--students data/students.json`),
+# since the proxy's validators and the upstream's mutable run state must agree
+# on which student records they are both talking about.
+domain_rules_args:
+  data_dir: data
+  students_path: data/students.json
