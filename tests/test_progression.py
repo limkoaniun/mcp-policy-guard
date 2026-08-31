@@ -1,5 +1,15 @@
-from enrolment.models import BlockItem, Course, CourseBlock
-from enrolment.progression import Block, Placement, assign, expand_structure
+import pytest
+
+from enrolment.models import BlockItem, Course, CourseBlock, Student
+from enrolment.progression import (
+    Block,
+    MajorComparison,
+    Placement,
+    assign,
+    compare_major,
+    expand_structure,
+    summarise_plan,
+)
 
 WHEN = "2026-08-31T00:00:00"
 
@@ -212,10 +222,6 @@ def test_assign_is_exact_not_merely_feasible():
     assert placements[0].credit_points == 6
 
 
-from enrolment.models import Student
-from enrolment.progression import summarise_plan
-
-
 def student_of(major=None, sub_major=None, completed=()):
     return Student(
         student_id="S1",
@@ -268,3 +274,55 @@ def test_summarise_plan_reports_no_major_gap_when_none_is_declared():
 
     assert summary.counted_in_major == 0
     assert summary.remaining_in_major == 0
+
+
+def two_major_course():
+    course = course_of(
+        block("Core", 12, ["C1"]),
+        block("Majors", 36, ["MAJ01", "MAJ02"], item_type="major"),
+        cp=48,
+    )
+    aos = {
+        "MAJ01": course_of(block("Alpha", 36, ["A1", "A2"]), code="MAJ01", cp=36),
+        "MAJ02": course_of(block("Beta", 36, ["B1", "B2"]), code="MAJ02", cp=36),
+    }
+    return course, aos
+
+
+def test_compare_major_reports_credit_that_carries():
+    course, aos = two_major_course()
+    student = student_of("MAJ01", None, ["A1", "A2"])
+
+    comparison: MajorComparison = compare_major(student, course, aos, "MAJ02")
+
+    assert comparison.from_major == "MAJ01"
+    assert comparison.to_major == "MAJ02"
+    assert comparison.counted_in_current_major == 12
+    assert comparison.counted_in_target_major == 0
+    assert comparison.remaining_in_target_major == 36
+    assert sorted(comparison.displaced) == ["A1", "A2"]
+
+
+def test_compare_major_reports_nothing_displaced_when_everything_carries():
+    course = course_of(
+        block("Core", 12, ["C1"]),
+        block("Majors", 36, ["MAJ01", "MAJ02"], item_type="major"),
+        cp=48,
+    )
+    aos = {
+        "MAJ01": course_of(block("Alpha", 36, ["S1", "S2"]), code="MAJ01", cp=36),
+        "MAJ02": course_of(block("Beta", 36, ["S1", "S2"]), code="MAJ02", cp=36),
+    }
+    student = student_of("MAJ01", None, ["S1", "S2"])
+
+    comparison: MajorComparison = compare_major(student, course, aos, "MAJ02")
+
+    assert comparison.counted_in_target_major == 12
+    assert comparison.displaced == []
+
+
+def test_compare_major_rejects_an_unknown_target():
+    course, aos = two_major_course()
+
+    with pytest.raises(KeyError):
+        compare_major(student_of("MAJ01"), course, aos, "MAJ99")

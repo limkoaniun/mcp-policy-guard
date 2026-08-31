@@ -295,3 +295,53 @@ def summarise_plan(student: Student, course: Course, aos: dict[str, Course]) -> 
         total_required=total_required,
         remaining_total=max(0, total_required - counted),
     )
+
+
+class MajorComparison(BaseModel):
+    """What changing major would cost this student."""
+
+    from_major: str | None = None
+    to_major: str
+    counted_in_current_major: int
+    counted_in_target_major: int
+    remaining_in_target_major: int
+    displaced: list[str] = Field(default_factory=list)
+    unplaced: list[str] = Field(default_factory=list)
+    current: PlanSummary
+    target: PlanSummary
+
+
+def compare_major(
+    student: Student, course: Course, aos: dict[str, Course], target_major: str
+) -> MajorComparison:
+    """Re-run the plan against a different major and report the difference.
+
+    `displaced` is the subjects that count inside the current major but not
+    inside the target -- the concrete cost of the change. They may still count
+    elsewhere (electives, a sub-major), which is why it is reported separately
+    from `unplaced`, the subjects that count nowhere at all.
+    """
+    if target_major not in aos:
+        raise KeyError(
+            f"{target_major} is not a known area of study; "
+            f"cannot compare a major that does not exist"
+        )
+
+    current = summarise_plan(student, course, aos)
+    switched = student.model_copy(update={"major": target_major})
+    target = summarise_plan(switched, course, aos)
+
+    in_current = {p.code for p in current.placements if p.block.startswith("Major:")}
+    in_target = {p.code for p in target.placements if p.block.startswith("Major:")}
+
+    return MajorComparison(
+        from_major=student.major,
+        to_major=target_major,
+        counted_in_current_major=current.counted_in_major,
+        counted_in_target_major=target.counted_in_major,
+        remaining_in_target_major=target.remaining_in_major,
+        displaced=sorted(in_current - in_target),
+        unplaced=target.unplaced,
+        current=current,
+        target=target,
+    )
