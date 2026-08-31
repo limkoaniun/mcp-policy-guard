@@ -1,5 +1,5 @@
 from enrolment.models import BlockItem, Course, CourseBlock
-from enrolment.progression import expand_structure
+from enrolment.progression import Block, Placement, assign, expand_structure
 
 WHEN = "2026-08-31T00:00:00"
 
@@ -96,3 +96,60 @@ def test_expand_structure_keys_core_off_quota_not_title():
     assert blocks[0].kind == "core"
     # Second block should be project despite being titled 'Custom Project'
     assert blocks[1].kind == "project"
+
+
+def test_assign_counts_a_subject_once_across_dual_listed_blocks():
+    blocks = [
+        Block(path="Options", quota=12, eligible=frozenset({"X1", "X2"}), kind="major"),
+        Block(path="Advanced", quota=12, eligible=frozenset({"X1", "X2"}), kind="major"),
+    ]
+
+    counted, placements = assign({"X1": 6, "X2": 6}, blocks)
+
+    assert counted == 12
+    assert sorted(p.code for p in placements) == ["X1", "X2"]
+    assert len({p.block for p in placements}) == 2  # one each, not both in Options
+
+
+def test_assign_beats_first_fit_when_order_would_strand_a_subject():
+    """The spec's minimal case: 32933 fits only the project block, 32040 fits both.
+
+    First-fit puts 32040 in the project block, fills the 6cp quota, and strands
+    32933 -- reporting 6cp. The optimal assignment counts 12cp.
+    """
+    blocks = [
+        Block(path="Project", quota=6, eligible=frozenset({"32933", "32040"}), kind="project"),
+        Block(path="Electives", quota=12, eligible=frozenset({"32040"}), kind="elective"),
+    ]
+
+    counted, placements = assign({"32933": 6, "32040": 6}, blocks)
+
+    assert counted == 12
+    assert Placement(code="32933", block="Project", credit_points=6) in placements
+    assert Placement(code="32040", block="Electives", credit_points=6) in placements
+
+
+def test_assign_prefers_the_constrained_block_when_totals_tie():
+    """One subject, two blocks with room. Core outranks elective."""
+    blocks = [
+        Block(path="Electives", quota=12, eligible=frozenset({"Y1"}), kind="elective"),
+        Block(path="Core", quota=12, eligible=frozenset({"Y1"}), kind="core"),
+    ]
+
+    counted, placements = assign({"Y1": 6}, blocks)
+
+    assert counted == 6
+    assert placements == [Placement(code="Y1", block="Core", credit_points=6)]
+
+
+def test_assign_leaves_ineligible_subjects_uncounted():
+    blocks = [Block(path="Core", quota=12, eligible=frozenset({"Z1"}), kind="core")]
+
+    counted, placements = assign({"Z1": 6, "Z9": 6}, blocks)
+
+    assert counted == 6
+    assert [p.code for p in placements] == ["Z1"]
+
+
+def test_assign_handles_no_blocks():
+    assert assign({"Z1": 6}, []) == (0, [])

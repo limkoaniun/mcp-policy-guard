@@ -19,7 +19,8 @@ See `context/2026-08-31-scenario-suite-design.md` §2.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+import collections
+from collections.abc import Callable, Sequence
 from typing import Literal
 
 from pydantic import BaseModel
@@ -39,6 +40,16 @@ PRIORITY: dict[BlockKind, int] = {
     "sub_major": 10,
     "elective": 0,
 }
+
+MAX_PRIORITY = max(PRIORITY.values())
+
+
+class Placement(BaseModel):
+    """One subject's credit points, counted against one block."""
+
+    code: str
+    block: str
+    credit_points: int
 
 
 class Block(BaseModel):
@@ -135,3 +146,78 @@ def expand_structure(
                             aos[item.code], f"Elective:{item.code}/", "elective"
                         )
     return blocks
+
+
+def assign(
+    completed: dict[str, int], blocks: Sequence[Block]
+) -> tuple[int, list[Placement]]:
+    """Assign completed subjects to blocks, maximising counted credit.
+
+    Each subject is counted at most once and no block exceeds its quota.
+    Solved as min-cost max-flow so the answer is optimal: a greedy pass gets
+    this wrong in over a quarter of realistic cases (spec §2), and a wrong
+    answer here is a student told they wasted a subject they did not waste.
+
+    Returns the total credit counted and where each subject landed.
+    """
+    codes = sorted(completed)
+    n, m = len(codes), len(blocks)
+    if not n or not m:
+        return 0, []
+
+    source, sink = 0, n + m + 1
+    size = sink + 1
+    capacity = [[0] * size for _ in range(size)]
+    cost = [[0] * size for _ in range(size)]
+    neighbours: dict[int, set[int]] = collections.defaultdict(set)
+
+    def edge(u: int, v: int, cap: int, price: int) -> None:
+        capacity[u][v] += cap
+        cost[u][v] = price
+        cost[v][u] = -price
+        neighbours[u].add(v)
+        neighbours[v].add(u)
+
+    for i, code in enumerate(codes):
+        edge(source, 1 + i, completed[code], 0)
+    for j, block in enumerate(blocks):
+        edge(n + 1 + j, sink, block.quota, 0)
+        for i, code in enumerate(codes):
+            if code in block.eligible:
+                edge(1 + i, n + 1 + j, completed[code], (MAX_PRIORITY - PRIORITY[block.kind]) * (m + 1) + ((i + j) % m))
+
+    counted = 0
+    while True:
+        distance = {source: 0}
+        parent: dict[int, int | None] = {source: None}
+        queue = collections.deque([source])
+        queued = {source}
+        while queue:
+            u = queue.popleft()
+            queued.discard(u)
+            for v in neighbours[u]:
+                if capacity[u][v] > 0 and distance[u] + cost[u][v] < distance.get(v, 1 << 30):
+                    distance[v] = distance[u] + cost[u][v]
+                    parent[v] = u
+                    if v not in queued:
+                        queue.append(v)
+                        queued.add(v)
+        if sink not in parent:
+            break
+        path, node = [], sink
+        while parent[node] is not None:
+            path.append((parent[node], node))
+            node = parent[node]
+        pushed = min(capacity[u][v] for u, v in path)
+        for u, v in path:
+            capacity[u][v] -= pushed
+            capacity[v][u] += pushed
+        counted += pushed
+
+    placements = [
+        Placement(code=code, block=block.path, credit_points=capacity[n + 1 + j][1 + i])
+        for i, code in enumerate(codes)
+        for j, block in enumerate(blocks)
+        if code in block.eligible and capacity[n + 1 + j][1 + i] > 0
+    ]
+    return counted, placements
