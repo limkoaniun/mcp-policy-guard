@@ -1,6 +1,6 @@
 import pytest
 
-from enrolment.models import BlockItem, Course, CourseBlock, Student
+from enrolment.models import BlockItem, Course, CourseBlock, Student, Subject
 from enrolment.progression import (
     Block,
     MajorComparison,
@@ -8,6 +8,8 @@ from enrolment.progression import (
     assign,
     compare_major,
     expand_structure,
+    offered_in,
+    session_options,
     summarise_plan,
 )
 
@@ -326,3 +328,53 @@ def test_compare_major_rejects_an_unknown_target():
 
     with pytest.raises(KeyError):
         compare_major(student_of("MAJ01"), course, aos, "MAJ99")
+
+
+def subject_of(code, sessions):
+    return Subject(
+        code=code,
+        name=f"Subject {code}",
+        credit_points=6,
+        sessions=list(sessions),
+        source_url="https://example.test",
+        fetched_at=WHEN,
+    )
+
+
+def test_offered_in_matches_a_published_session():
+    assert offered_in(subject_of("A1", ["Autumn", "Spring"]), "Spring")
+    assert not offered_in(subject_of("A1", ["Autumn"]), "Spring")
+
+
+def test_offered_in_is_false_when_no_sessions_are_published():
+    """Absent availability is not permission: an unknown offering is not offered."""
+    assert not offered_in(subject_of("A1", []), "Spring")
+
+
+def test_session_options_lists_only_untaken_subjects_offered_that_session():
+    course = course_of(block("Core", 12, ["C1", "C2", "C3"]), cp=12)
+    catalogue = {
+        "C1": subject_of("C1", ["Autumn"]),
+        "C2": subject_of("C2", ["Spring"]),
+        "C3": subject_of("C3", ["Autumn", "Spring"]),
+    }
+
+    options = session_options(
+        student_of(completed=["C1"]), course, {}, catalogue, "Spring"
+    )
+
+    assert options == {"Core": ["C2", "C3"]}
+
+
+def test_session_options_omits_a_block_that_is_already_full():
+    course = course_of(block("Core", 6, ["C1", "C2"]), cp=6)
+    catalogue = {
+        "C1": subject_of("C1", ["Spring"]),
+        "C2": subject_of("C2", ["Spring"]),
+    }
+
+    options = session_options(
+        student_of(completed=["C1"]), course, {}, catalogue, "Spring"
+    )
+
+    assert options == {}

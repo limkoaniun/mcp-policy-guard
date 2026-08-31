@@ -24,7 +24,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from .models import Course, CourseBlock, Student
+from .models import Course, CourseBlock, Student, Subject
 
 BlockKind = Literal["core", "project", "major", "sub_major", "elective"]
 
@@ -345,3 +345,47 @@ def compare_major(
         current=current,
         target=target,
     )
+
+
+def offered_in(subject: Subject, session: str) -> bool:
+    """Whether the subject is published as running in `session`.
+
+    A subject with no published sessions is not offered. Treating an absent
+    field as "available" would turn missing data into permission, which is
+    the same failure this project keeps finding: uncertainty presenting as a
+    confident yes.
+    """
+    return session in subject.sessions
+
+
+def session_options(
+    student: Student,
+    course: Course,
+    aos: dict[str, Course],
+    catalogue: dict[str, Subject],
+    session: str,
+) -> dict[str, list[str]]:
+    """Per unfilled block, the subjects this student could take in `session`.
+
+    This is what turns a denial into advice. A student blocked from a subject
+    offered in one session only needs to know the order to take things in,
+    not merely that the answer is no.
+    """
+    blocks = expand_structure(course, aos, student.major, student.sub_major)
+    summary = summarise_plan(student, course, aos)
+    already = {c.code for c in student.completed}
+
+    options: dict[str, list[str]] = {}
+    for block in blocks:
+        if summary.remaining_by_block.get(block.path, 0) <= 0:
+            continue
+        available = sorted(
+            code
+            for code in block.eligible
+            if code not in already
+            and code in catalogue
+            and offered_in(catalogue[code], session)
+        )
+        if available:
+            options[block.path] = available
+    return options
