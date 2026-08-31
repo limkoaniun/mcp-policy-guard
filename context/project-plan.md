@@ -127,9 +127,19 @@ Each gets its own spec → plan → implementation cycle, in this order:
    sequenced slices
 2. **Enrolment MCP server and policy pack** — including the admission-descriptor
    normalisation decision and the session-load model the credit-point cap needs
-3. **Adversarial attack suite**
-4. **Evaluation harness and metrics**
-5. **Demonstration frontend** — note the dependency: the chat panel needs the
+3. ~~**Progression layer**~~ — specified in
+   `context/2026-08-31-scenario-suite-design.md`. The Layer 2 study-plan
+   evaluator (`src/enrolment/progression.py`: block expansion, optimal
+   assignment, carry-over, completion gap) and the personas
+   (`data/personas.json`) are built, but the enforcement layer wired up so
+   far is Layer-1-only: requisite, anti-requisite and credit-point-cap
+   validation, from `src/enrolment/requisites.py`, wired into
+   `ArgumentValidationPolicy` as `enrolment.policy_pack:build_validators`
+   (`src/enrolment/policy_pack.py` imports `requisites`, not `progression`),
+   loaded by import path so `src/policy_guard/` never imports `enrolment`
+4. **Adversarial attack suite**
+5. **Evaluation harness and metrics**
+6. **Demonstration frontend** — note the dependency: the chat panel needs the
    agent harness, so it cannot be built before that lands. The *viewer* half
    (decision trace, enforcement on/off side by side, state diff) reads only
    artifacts that already exist and could be built at any time; a static

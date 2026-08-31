@@ -41,6 +41,21 @@ class PolicyPack(BaseModel):
     policies: list[str] = Field(default_factory=list, validate_default=True)
     trust: dict[str, str] = Field(default_factory=dict)
     principal_argument: str | None = None
+    # Tools that legitimately take no principal argument (e.g. a catalogue
+    # search with no student to bind to), and so must not be denied merely
+    # for omitting it. Named as the EXEMPT set, not the scoped one: a tool
+    # left off this list stays enforced by default, where a scoped-list
+    # would silently drop binding for anything an author forgot to add.
+    principal_exempt_tools: list[str] = Field(default_factory=list)
+    # Import path to the domain's validator factory, "module:callable".
+    # The generic layer resolves it without knowing what it builds.
+    domain_rules: str | None = None
+    # Keyword arguments passed to the resolved `domain_rules` factory,
+    # alongside the run directory. This is what lets the pack be the single
+    # source of truth for where a domain's own data lives, instead of that
+    # configuration being duplicated into environment variables that nothing
+    # keeps in sync with the upstream server's own arguments.
+    domain_rules_args: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("policies")
     @classmethod
@@ -92,4 +107,5 @@ def build_context(task: TaskDefinition) -> TaskContext:
         task_id=task.task_id,
         description=task.description,
         allowed_tools=frozenset(task.allowed_tools),
+        principal_id=task.principal_id,
     )

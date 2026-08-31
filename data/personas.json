@@ -1,0 +1,87 @@
+{
+  "S9000001": {
+    "student_id": "S9000001",
+    "course": "C04296",
+    "admitted_to": [
+      "C04296",
+      "Master's Coursework courses owned by FEIT",
+      "Master's Coursework owned by FEIT",
+      "Master's Coursework course owned by FEIT",
+      "Master's Coursework Degree owned by FEIT",
+      "Masters Coursework courses owned by Faculty of Engineering and Information Technology"
+    ],
+    "major": "MAJ02093",
+    "sub_major": null,
+    "completed": [
+      {"code": "32524", "session": "2024-AUT", "credit_points": 6},
+      {"code": "32548", "session": "2024-SPR", "credit_points": 6},
+      {"code": "32547", "session": "2025-AUT", "credit_points": 6},
+      {"code": "42891", "session": "2025-SPR", "credit_points": 6}
+    ],
+    "enrolled": [],
+    "credit_point_cap_per_session": 24
+  },
+  "S9000002": {
+    "student_id": "S9000002",
+    "course": "C04296",
+    "admitted_to": [
+      "C04296",
+      "Master's Coursework courses owned by FEIT",
+      "Master's Coursework owned by FEIT",
+      "Master's Coursework course owned by FEIT",
+      "Master's Coursework Degree owned by FEIT",
+      "Masters Coursework courses owned by Faculty of Engineering and Information Technology"
+    ],
+    "major": "MAJ02083",
+    "sub_major": null,
+    "completed": [
+      {"code": "32524", "session": "2024-AUT", "credit_points": 6},
+      {"code": "32009", "session": "2024-SPR", "credit_points": 6},
+      {"code": "32541", "session": "2025-AUT", "credit_points": 6}
+    ],
+    "enrolled": [],
+    "credit_point_cap_per_session": 24
+  },
+  "S9000003": {
+    "student_id": "S9000003",
+    "course": "C04296",
+    "admitted_to": [
+      "C04296",
+      "Master's Coursework courses owned by FEIT",
+      "Master's Coursework owned by FEIT",
+      "Master's Coursework course owned by FEIT",
+      "Master's Coursework Degree owned by FEIT",
+      "Masters Coursework courses owned by Faculty of Engineering and Information Technology"
+    ],
+    "major": "MAJ02093",
+    "sub_major": null,
+    "completed": [
+      {"code": "420108", "session": "2023-SPR", "credit_points": 6},
+      {"code": "32524", "session": "2024-AUT", "credit_points": 6},
+      {"code": "42891", "session": "2024-SPR", "credit_points": 6}
+    ],
+    "enrolled": [],
+    "credit_point_cap_per_session": 24
+  },
+  "S9000004": {
+    "student_id": "S9000004",
+    "course": "C04296",
+    "admitted_to": [
+      "C04296",
+      "Master's Coursework courses owned by FEIT",
+      "Master's Coursework owned by FEIT",
+      "Master's Coursework course owned by FEIT",
+      "Master's Coursework Degree owned by FEIT",
+      "Masters Coursework courses owned by Faculty of Engineering and Information Technology"
+    ],
+    "major": "MAJ02093",
+    "sub_major": "SMJ10093",
+    "completed": [
+      {"code": "32144", "session": "2024-AUT", "credit_points": 6},
+      {"code": "32040", "session": "2024-SPR", "credit_points": 6},
+      {"code": "32933", "session": "2025-AUT", "credit_points": 6}
+    ],
+    "enrolled": ["32541", "43030", "32548", "32547"],
+    "credit_point_cap_per_session": 24
+  }
+}

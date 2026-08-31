@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import os
 import sys
 import traceback
@@ -18,8 +19,79 @@ from .decisions import (
 from .enforcement import EnforcementExtension
 from .engine import PolicyEngine
 from .policies.allowlist import AllowlistPolicy
+from .policies.arg_validation import ArgumentValidationPolicy
 
-POLICIES = {"allowlist": AllowlistPolicy}
+
+def _load_domain_rules(pack, run_dir=None) -> dict:
+    """Resolve the pack's `domain_rules` to a validator mapping.
+
+    The pack names the module by import path; this is the one place the
+    generic layer resolves it, at run time, so `policy_guard` never carries a
+    static import of a domain package. `pack.domain_rules_args` supplies
+    whatever else the factory needs -- where the domain's data lives -- so
+    that configuration has one home (the pack) rather than being duplicated
+    into environment variables nothing keeps in sync with it. `run_dir` is
+    passed through separately because it is a run-time fact the pack cannot
+    know in advance, the same way `__main__` already appends it to the
+    upstream's own arguments.
+
+    A malformed `domain_rules` value raises `ValueError` naming the pack, the
+    value, and what went wrong, rather than letting a bare `AttributeError`
+    or `ModuleNotFoundError` reach the operator with no context.
+    """
+    if not pack.domain_rules:
+        return {}
+
+    module_name, sep, attribute = pack.domain_rules.partition(":")
+    if not sep or not module_name or not attribute:
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r}, which is not a 'module:callable' "
+            "import path"
+        )
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError as error:
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r}: module {module_name!r} could not be "
+            f"imported ({error})"
+        ) from error
+    try:
+        factory = getattr(module, attribute)
+    except AttributeError as error:
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r}: module {module_name!r} has no attribute "
+            f"{attribute!r}"
+        ) from error
+    try:
+        return factory(**pack.domain_rules_args, run_dir=run_dir)
+    except TypeError as error:
+        # A pack whose `domain_rules_args` does not match the factory's
+        # parameters -- commonly, a `domain_rules` set with no
+        # `domain_rules_args` at all -- would otherwise surface as a bare
+        # `TypeError` naming neither the pack nor the value at fault, which
+        # this function's own docstring promises not to do.
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r} with domain_rules_args "
+            f"{pack.domain_rules_args!r}, which does not match what "
+            f"{attribute!r} in {module_name!r} accepts: {error}"
+        ) from error
+
+
+# Each entry takes the loaded pack and the run directory, so a policy may
+# draw configuration from either. Policies that need neither simply ignore
+# the arguments.
+POLICIES = {
+    "allowlist": lambda pack, run_dir: AllowlistPolicy(),
+    "arg_validation": lambda pack, run_dir: ArgumentValidationPolicy(
+        principal_argument=pack.principal_argument,
+        validators=_load_domain_rules(pack, run_dir=run_dir),
+        exempt_tools=pack.principal_exempt_tools,
+    ),
+}
 
 # Distinct from 1 so a run that failed *inside* the proxy is tellable from a
 # bad invocation (argparse exits 2) or an ordinary uncaught error.
@@ -47,7 +119,36 @@ def main(argv: list[str] | None = None) -> int:
 
     task = load_task(args.task)
     pack = load_policy_pack(args.policy_pack)
-    engine = PolicyEngine([POLICIES[name]() for name in pack.policies])
+    if (
+        args.enforcement == "on"
+        and pack.principal_argument
+        and "arg_validation" in pack.policies
+        and not task.principal_id
+    ):
+        # `ArgumentValidationPolicy` correctly returns "no opinion" when a
+        # pack declares `principal_argument` but the task binds no
+        # `principal_id` -- some tasks legitimately are not principal-scoped.
+        # But that is indistinguishable from a task author who simply forgot
+        # to set `principal_id`, and in that case principal binding is
+        # silently inert: every call is treated as unscoped, no call is ever
+        # denied for naming the wrong principal, and `decisions.jsonl` looks
+        # exactly like a normal enforced run. Same species of failure as
+        # `PolicyPack._at_least_one_policy` in `config.py` guards against for
+        # an empty `policies:` list -- a failure presenting as a confident
+        # success, biased toward the defence, must fail loudly at load time
+        # rather than silently.
+        raise ValueError(
+            f"policy pack {pack.name!r} declares principal_argument "
+            f"{pack.principal_argument!r} and loads arg_validation, but task "
+            f"{task.task_id!r} sets no principal_id. Without one, principal "
+            "binding is inert -- no call would ever be denied for naming the "
+            "wrong principal -- and this run would be indistinguishable in "
+            "decisions.jsonl from a genuinely principal-scoped enforced run. "
+            "Set principal_id on the task, or drop arg_validation/"
+            "principal_argument if this task is not meant to be "
+            "principal-scoped."
+        )
+    engine = PolicyEngine([POLICIES[name](pack, args.run_dir) for name in pack.policies])
     if args.enforcement == "on" and not engine.policies:
         # Belt-and-braces: `PolicyPack` already rejects an empty `policies:`
         # list, so this cannot fire from a loaded pack today. It is here
@@ -79,6 +180,19 @@ def main(argv: list[str] | None = None) -> int:
     # without a run directory -- see `enrolment/server.py` for why a missing
     # one is rejected outright rather than falling back to an ephemeral run.
     upstream_args = [*pack.upstream_args, "--run-dir", args.run_dir]
+    # If the pack's `domain_rules_args` names a `students_path`, append it as
+    # the upstream's own `--students` too. Nothing else reconciled these:
+    # left to their separate defaults, `_load_domain_rules`'s validators and
+    # the upstream's own `RunState` could silently judge two different
+    # student files, agreeing only by coincidence -- and if they diverged
+    # nothing would crash, the validators would just be checking records
+    # nobody was actually enrolling into. Deriving the flag from the same
+    # pack field this way makes the two agree by construction. A pack with
+    # no `students_path` in `domain_rules_args` is unaffected: the upstream
+    # keeps its own default.
+    domain_records_path = pack.domain_rules_args.get("students_path")
+    if domain_records_path:
+        upstream_args += ["--students", domain_records_path]
     # One source for "was an overlay delivered", used both to build the
     # upstream's arguments and to record the fact, so the two cannot disagree.
     overlay = task.overlay or None

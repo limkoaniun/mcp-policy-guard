@@ -74,6 +74,16 @@ def test_the_shipped_enrolment_pack_is_valid():
     assert pack.name == "enrolment"
     assert "get_subject_details" in pack.trust
     assert pack.principal_argument == "student_id"
+    assert pack.domain_rules == "enrolment.policy_pack:build_validators"
+    # The pack is the single source of truth for where the domain's data
+    # lives -- in particular `students_path` here must agree with the
+    # upstream server's own `--students` default, since the proxy's
+    # validators and the upstream's mutable run state have to talk about the
+    # same student records.
+    assert pack.domain_rules_args == {
+        "data_dir": "data",
+        "students_path": "data/students.json",
+    }
 
 
 def test_a_policy_pack_naming_no_policies_is_rejected(tmp_path):
@@ -123,6 +133,201 @@ def test_main_refuses_to_enforce_with_an_empty_engine(tmp_path, monkeypatch):
     monkeypatch.setattr(cli, "load_policy_pack", lambda _path: empty)
 
     with pytest.raises(ValueError, match="no policies"):
+        cli.main(
+            [
+                "--task", str(task),
+                "--policy-pack", str(pack_path),
+                "--run-dir", str(tmp_path / "run"),
+                "--enforcement", "on",
+            ]
+        )
+
+
+def test_policy_pack_accepts_domain_rules(tmp_path):
+    path = tmp_path / "pack.yaml"
+    path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist]\n"
+        "domain_rules: enrolment.policy_pack:build_validators\n",
+        encoding="utf-8",
+    )
+
+    assert load_policy_pack(path).domain_rules == "enrolment.policy_pack:build_validators"
+
+
+def test_policy_pack_accepts_domain_rules_args(tmp_path):
+    """`domain_rules_args` is the pack's single source of truth for where a
+    domain's data lives -- see the fix report for why `PG_DATA_DIR`/
+    `PG_STUDENTS` environment variables were the wrong home for this.
+    """
+    path = tmp_path / "pack.yaml"
+    path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist]\n"
+        "domain_rules: enrolment.policy_pack:build_validators\n"
+        "domain_rules_args:\n"
+        "  data_dir: data\n"
+        "  students_path: data/students.json\n",
+        encoding="utf-8",
+    )
+
+    pack = load_policy_pack(path)
+    assert pack.domain_rules_args == {
+        "data_dir": "data",
+        "students_path": "data/students.json",
+    }
+
+
+def test_load_domain_rules_resolves_the_pack_declared_factory():
+    """The happy path for the entire mechanism Task 9 exists to build.
+
+    Paths are anchored on `REPO`, not relative -- a relative "data" resolves
+    against the test runner's working directory, not the repo, and fails
+    with `FileNotFoundError` when pytest is invoked from anywhere else.
+    """
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist"],
+        domain_rules="enrolment.policy_pack:build_validators",
+        domain_rules_args={
+            "data_dir": str(REPO / "data"),
+            "students_path": str(REPO / "data" / "students.json"),
+        },
+    )
+
+    validators = cli._load_domain_rules(pack)
+
+    assert set(validators) == {"enrol"}
+    assert callable(validators["enrol"])
+
+
+def test_load_domain_rules_returns_empty_when_the_pack_declares_none():
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(name="t", upstream_command="python", policies=["allowlist"])
+
+    assert cli._load_domain_rules(pack) == {}
+
+
+def test_the_registry_wires_the_resolved_validators_into_arg_validation():
+    """Not just that `_load_domain_rules` resolves something -- that the
+    `POLICIES` registry actually hands the result to `ArgumentValidationPolicy`.
+
+    `REPO`-anchored for the same reason as the test above.
+    """
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist", "arg_validation"],
+        principal_argument="student_id",
+        domain_rules="enrolment.policy_pack:build_validators",
+        domain_rules_args={
+            "data_dir": str(REPO / "data"),
+            "students_path": str(REPO / "data" / "students.json"),
+        },
+    )
+
+    policy = cli.POLICIES["arg_validation"](pack, None)
+
+    assert policy.principal_argument == "student_id"
+    assert set(policy.validators) == {"enrol"}
+
+
+def test_load_domain_rules_rejects_a_value_with_no_colon():
+    """`"enrolment.policy_pack"` used to reach `getattr(module, "")`, a bare
+    `AttributeError` with no context about which pack or value was at fault.
+    """
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist"],
+        domain_rules="enrolment.policy_pack",
+    )
+
+    with pytest.raises(ValueError, match="module:callable"):
+        cli._load_domain_rules(pack)
+
+
+def test_load_domain_rules_rejects_an_unimportable_module():
+    """An unknown module used to surface as a raw `ModuleNotFoundError`."""
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist"],
+        domain_rules="no_such_module_xyz:build_validators",
+    )
+
+    with pytest.raises(ValueError, match="no_such_module_xyz"):
+        cli._load_domain_rules(pack)
+
+
+def test_load_domain_rules_rejects_an_unknown_attribute():
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist"],
+        domain_rules="enrolment.policy_pack:no_such_function",
+    )
+
+    with pytest.raises(ValueError, match="no_such_function"):
+        cli._load_domain_rules(pack)
+
+
+def test_load_domain_rules_raises_a_contextual_error_for_mismatched_domain_rules_args():
+    """A `domain_rules_args` that does not match the factory's parameters --
+    most simply, none supplied at all -- used to reach the factory call as a
+    bare `TypeError` ("missing 2 required positional arguments"), naming
+    neither the pack nor the value at fault. This function's own docstring
+    promises a contextual `ValueError` for exactly this shape of mistake.
+    """
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist"],
+        domain_rules="enrolment.policy_pack:build_validators",
+        # domain_rules_args deliberately omitted -- build_validators requires
+        # data_dir and students_path.
+    )
+
+    with pytest.raises(ValueError, match="domain_rules_args"):
+        cli._load_domain_rules(pack)
+
+
+def test_main_refuses_to_enforce_a_declared_but_unbound_principal(tmp_path, monkeypatch):
+    """RULING C: a pack that declares `principal_argument` and loads
+    `arg_validation` must not run with an unbound principal in silence.
+
+    `ArgumentValidationPolicy` correctly returns "no opinion" when a task
+    legitimately is not principal-scoped, but that is indistinguishable from a
+    task author who simply forgot to set `principal_id` -- and in the second
+    case principal binding is silently off while `decisions.jsonl` looks like
+    a normal enforced run. This is the same species of failure
+    `PolicyPack._at_least_one_policy` guards against for an empty
+    `policies:` list: a failure presenting as a confident success, biased
+    toward the defence, must fail loudly at load time.
+    """
+    from policy_guard import __main__ as cli
+
+    task = tmp_path / "task.yaml"
+    task.write_text("task_id: T\ndescription: no principal_id set\nallowed_tools: [enrol]\n")
+    pack_path = tmp_path / "pack.yaml"
+    pack_path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist, arg_validation]\n"
+        "principal_argument: student_id\n"
+    )
+
+    with pytest.raises(ValueError, match="principal_id"):
         cli.main(
             [
                 "--task", str(task),

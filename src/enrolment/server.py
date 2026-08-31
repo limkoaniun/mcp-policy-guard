@@ -1,8 +1,16 @@
 """The enrolment MCP server.
 
-Seven tools over the committed dataset, standing in for My Student Admin and
+Ten tools over the committed dataset, standing in for My Student Admin and
 eRequests. The catalogue and requisites are opened read-only; only the run's
 own student state is mutable.
+
+Three of the ten -- `get_study_plan`, `preview_major_change` and
+`get_session_options` -- are the progression layer: they report how far a
+student's completed subjects get them through their course, what changing
+major would cost, and what they could still take in a given session. Unlike
+the catalogue-facing tools, their output is always our own evaluator's
+computed result, never republished catalogue text, so they are trusted
+outright rather than needing the overlay's attention.
 
 Two of these tools return attacker-influenceable content -- `search_subjects`
 and `get_subject_details` both surface catalogue text -- which is why trust
@@ -41,7 +49,14 @@ import yaml
 from mcp.server import MCPServer
 from pydantic import BaseModel
 
-from .models import RequisiteResult, Student, Subject, SubjectRequisites
+from .models import Course, RequisiteResult, Student, Subject, SubjectRequisites
+from .progression import (
+    MajorComparison,
+    PlanSummary,
+    compare_major,
+    session_options,
+    summarise_plan,
+)
 from .requisites import evaluate_requisites
 from .state import RunState
 
@@ -141,12 +156,17 @@ def build_server(
     students_path,
     run_dir,
     overlay_path=None,
+    course_path="data/course.json",
+    aos_path="data/aos.json",
 ) -> MCPServer:
     """Build the enrolment MCP server.
 
     `run_dir` is required (see module docstring for why): pass the run's own
     directory, e.g. `runs/<run-id>`. `overlay_path`, if given, points at a
     YAML file of attack-scenario field patches (see `load_overlay`).
+    `course_path` and `aos_path` back the progression-layer tools and default
+    to the committed dataset, matching the convention `main()` already uses
+    for `--catalogue`, `--requisites` and `--students`.
     """
     if not run_dir:
         raise ValueError(
@@ -162,6 +182,8 @@ def build_server(
     state = RunState.load(students_path, run_dir=run_dir)
     overlay = load_overlay(overlay_path, catalogue.keys())
     erequests_path = Path(run_dir) / "erequests.jsonl"
+    course = Course(**json.loads(Path(course_path).read_text(encoding="utf-8")))
+    aos = _load(aos_path, Course)
 
     def described(code: str) -> str:
         """The description as the agent sees it, including any overlay payload."""
@@ -245,6 +267,31 @@ def build_server(
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         return ActionResult(status="submitted", student_id=student_id, text=text)
 
+    @server.tool()
+    def get_study_plan(student_id: str) -> PlanSummary:
+        """How far through the course the student is: where each completed
+        subject counts, what is still required per block, and the total gap.
+        """
+        return summarise_plan(state.get(student_id), course, aos)
+
+    @server.tool()
+    def preview_major_change(student_id: str, target_major: str) -> MajorComparison:
+        """What changing to `target_major` would cost: how much credit counts
+        inside the new major, how much is displaced, and what remains.
+        Does not change anything -- submit an eRequest to actually apply.
+        """
+        return compare_major(state.get(student_id), course, aos, target_major)
+
+    @server.tool()
+    def get_session_options(student_id: str, session: str) -> dict[str, list[str]]:
+        """Per unfilled block, the subjects the student could take in `session`
+        (e.g. "Autumn", "Spring") -- eligible, not already completed, and
+        published as running then.
+        """
+        return session_options(
+            state.get(student_id), course, aos, catalogue, session
+        )
+
     return server
 
 
@@ -253,6 +300,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--catalogue", default="data/catalogue.json")
     parser.add_argument("--requisites", default="data/requisites.json")
     parser.add_argument("--students", default="data/students.json")
+    parser.add_argument("--course", default="data/course.json")
+    parser.add_argument("--aos", default="data/aos.json")
     parser.add_argument("--run-dir", required=True)
     parser.add_argument("--overlay", default=None)
     args = parser.parse_args(argv)
@@ -262,6 +311,8 @@ def main(argv: list[str] | None = None) -> int:
         args.students,
         run_dir=args.run_dir,
         overlay_path=args.overlay,
+        course_path=args.course,
+        aos_path=args.aos,
     )
     server.run("stdio")
     return 0

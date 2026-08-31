@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -54,13 +55,34 @@ def server_for(tmp_path, overlay_path=None):
                         run_dir=tmp_path / "run", overlay_path=overlay_path)
 
 
+COURSE = Path(DATA) / "course.json"
+AOS = Path(DATA) / "aos.json"
+PERSONAS = Path(DATA) / "personas.json"
+CATALOGUE = Path(DATA) / "catalogue.json"
+REQUISITES = Path(DATA) / "requisites.json"
+
+
+def personas_server_for(tmp_path):
+    """A server built from the real committed dataset, not synthetic fixtures.
+
+    The progression figures asserted below only hold against the real
+    catalogue/requisites/course/aos/personas data, so this deliberately does
+    not go through `fixture_paths`/`server_for`.
+    """
+    return build_server(
+        CATALOGUE, REQUISITES, PERSONAS, run_dir=tmp_path / "run",
+        course_path=COURSE, aos_path=AOS,
+    )
+
+
 @pytest.mark.anyio
-async def test_exposes_the_seven_tools(tmp_path):
+async def test_exposes_the_ten_tools(tmp_path):
     async with connect_in_process(server_for(tmp_path)) as client:
         names = {tool.name for tool in (await client.list_tools()).tools}
     assert names == {
         "search_subjects", "get_subject_details", "get_student_record",
         "check_prerequisites", "enrol", "drop", "submit_erequest",
+        "get_study_plan", "preview_major_change", "get_session_options",
     }
 
 
@@ -242,3 +264,48 @@ def test_build_server_rejects_a_misaimed_overlay(tmp_path):
     path.write_text("99999:\n  description_suffix: 'INJECTED'\n")
     with pytest.raises(OverlayError):
         server_for(tmp_path, overlay_path=path)
+
+
+# The three progression-layer tools are exercised against the real committed
+# dataset, not the synthetic fixtures above: the figures asserted here only
+# hold for the real catalogue/requisites/course/aos/personas data.
+
+@pytest.mark.anyio
+async def test_get_study_plan_reports_progress(tmp_path):
+    async with connect_in_process(personas_server_for(tmp_path)) as client:
+        result = await client.call_tool("get_study_plan", {"student_id": "S9000001"})
+
+    payload = result.structured_content
+    assert payload is not None
+    assert payload["counted"] == 24
+    assert payload["counted_in_major"] == 24
+    assert payload["remaining_total"] == 72
+
+
+@pytest.mark.anyio
+async def test_preview_major_change_reports_carry_over(tmp_path):
+    async with connect_in_process(personas_server_for(tmp_path)) as client:
+        result = await client.call_tool(
+            "preview_major_change",
+            {"student_id": "S9000001", "target_major": "MAJ02084"},
+        )
+
+    payload = result.structured_content
+    assert payload is not None
+    assert payload["counted_in_target_major"] == 0
+    assert payload["remaining_in_target_major"] == 36
+
+
+@pytest.mark.anyio
+async def test_get_session_options_reports_only_subjects_running_that_session(tmp_path):
+    async with connect_in_process(personas_server_for(tmp_path)) as client:
+        result = await client.call_tool(
+            "get_session_options",
+            {"student_id": "S9000002", "session": "Autumn"},
+        )
+
+    payload = result.structured_content
+    assert payload is not None
+    offered = {code for codes in payload.values() for code in codes}
+    assert "42027" in offered      # Autumn only
+    assert "32520" not in offered  # Spring only

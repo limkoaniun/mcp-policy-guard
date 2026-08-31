@@ -99,7 +99,30 @@ python -m enrolment.build --scope full      # the whole C04296 tree
 The build prints a coverage report. Any requisite item it could not interpret is
 listed there rather than silently dropped, and gates widening the fetch.
 
-The proxy itself is not yet runnable — see below.
+Run the proxy in front of the enrolment MCP server, from the repository
+root (the shipped pack's `upstream_args`, `domain_rules_args` and `--students`
+are relative paths resolved against the current working directory, not
+against the pack file's location):
+
+```bash
+python -m policy_guard --task <task.yaml> --policy-pack configs/enrolment.yaml \
+    --run-dir <run-dir> --enforcement on
+```
+
+A policy pack (e.g. `configs/enrolment.yaml`) may name `domain_rules` — a
+`"module:callable"` import path to a domain's argument-validator factory,
+resolved by `policy_guard/__main__.py` without a static import — and
+`domain_rules_args`, the keyword arguments passed to that factory alongside
+the run directory. This is the pack's single source of truth for where a
+domain's data lives: `domain_rules_args.students_path`, in the shipped pack,
+is also read by `__main__.main` and appended as the upstream server's own
+`--students` argument, so the file the proxy's validators check a student's
+enrolment against and the file the upstream server actually mutates cannot
+diverge. A pack may also name `principal_exempt_tools` — tools that legitimately
+take no principal argument (e.g. a catalogue search with no student to bind
+to) and so are not denied merely for omitting it; a call to one of these
+naming the *wrong* principal is still denied unconditionally, and any tool
+left off the list stays enforced by default.
 
 ## Status
 
@@ -109,11 +132,18 @@ unparsed requisites and zero unreadable rules. Rebuilds from cache in 0.24s. And
 the data layer behind it: requisite rule parser and evaluator, catalogue
 and requisite extractors, cached fetcher with provenance, build pipeline with
 coverage gate, synthetic student generator, and the compliance scenario generator.
-177 tests.
 
-**Next.** The MCP proxy and policy engine — `src/policy_guard/proxy.py` is still a
-stub. Then the enrolment MCP server, the remaining three policies, and the agent
-harness.
+The MCP proxy and policy engine are runnable end to end: the enrolment MCP
+server, the transparent proxy (`python -m policy_guard`), and two policies —
+the tool allowlist and argument validation, which binds every principal-scoped
+call to the task's principal (exempting the tools the pack declares as
+legitimately not principal-scoped) and enforces requisites, anti-requisites
+and the credit-point cap via `enrolment.policy_pack:build_validators`, loaded
+by import path so `src/policy_guard/` never imports `enrolment` directly. 355
+tests.
+
+**Next.** The remaining policies (taint tracking, rate & scope limits), the
+agent harness, and the adversarial attack suite.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
