@@ -249,12 +249,16 @@ Three of the spec's open questions stop being abstract once these personas exist
 
 **Admission descriptor normalisation (spec §10.6) is now measurable, and it is the
 suite's blocker.** The dataset publishes **82 distinct admission descriptors**, of
-which **14 are FEIT master's variants differing only in wording** — `Master's
-Coursework owned by FEIT`, `Master's Coursework courses owned by FEIT`, `Master's
-Coursework course owned by FEIT`, `Master's Coursework Degree owned by FEIT`,
-`Masters Coursework courses owned by Faculty of Engineering and Information
-Technology`. The evaluator matches descriptors exactly after whitespace and case
-normalisation.
+which **5 are wording-only variants of one FEIT master's-coursework admission** —
+`Master's Coursework owned by FEIT`, `Master's Coursework courses owned by FEIT`,
+`Master's Coursework course owned by FEIT`, `Master's Coursework Degree owned by
+FEIT`, `Masters Coursework courses owned by Faculty of Engineering and Information
+Technology`. (Grouping by keyword match alone reaches a nominal count of 14 by also
+pulling in nine descriptors that name substantively different admissions —
+`Master's Research owned by FEIT` is a different degree type, and the eight
+`Master's Combined Coursework ...` forms name combined/co-owned degrees — so those
+nine are excluded from the wording-only count above.) The evaluator matches
+descriptors exactly after whitespace and case normalisation.
 
 Measured against a C04296 student holding 24cp:
 
@@ -266,13 +270,24 @@ Measured against a C04296 student holding 24cp:
 Without a ruling, 32541 Project Management — a *core* subject — reports "not met"
 against a student who plainly satisfies it. Any admission-related number in the
 report is unreportable until this is settled. **The question for the supervisor is
-narrow: which of the 14 descriptors does a C04296 student legitimately hold?**
+narrow: which of the 5 wording-only descriptors does a C04296 student legitimately
+hold?**
 
-**The assignment tie-break (§3 rule 3) is worth one session of study.** For S9000001
-switching to Internetworking, an allocator indifferent between equal-credit
-assignments reports 18/36cp counted inside the major; one that fills major blocks
-first reports 24/36. The student is told either 12cp or 18cp remaining. The spec
-must state the rule, and the report must state that it is our reading.
+**The assignment tie-break (§3 rule 3) is worth up to two sessions of study, not
+one.** For S9000001 switching to Internetworking, exhaustive enumeration over every
+assignment tying for the maximum 24cp counted finds three achievable totals for
+credit counted *inside the major*: 12, 18 or 24 of its 36cp quota, depending only on
+which equally-credit-maximal assignment is chosen. The shipped solver's
+priority-based tie-break (core and major blocks fill first) reports the best case,
+24/36 — 12cp remaining. An allocator indifferent between tied assignments does not
+reliably land on the untested middle value either: zeroing this same solver's
+tie-break priorities and re-running it reports the *worst* case, 12/36 — 24cp
+remaining, purely as an artefact of the search's own iteration order. That is a
+12cp swing between readings, two sessions of a single subject, not one — and it
+demonstrates the risk this section opened with rather than merely illustrating it:
+an unspecified tie-break is not a safe middle ground, it is a third arbitrary
+outcome. The spec must state the rule, and the report must state that it is our
+reading.
 
 **The literal anti-requisite reading (spec §10.1) now has a face.** 32541 publishes
 `(1 AND 2 AND 3 AND 4)`. Read literally, a student is blocked only by holding all

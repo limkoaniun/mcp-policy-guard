@@ -41,6 +41,12 @@ class PolicyPack(BaseModel):
     policies: list[str] = Field(default_factory=list, validate_default=True)
     trust: dict[str, str] = Field(default_factory=dict)
     principal_argument: str | None = None
+    # Tools that legitimately take no principal argument (e.g. a catalogue
+    # search with no student to bind to), and so must not be denied merely
+    # for omitting it. Named as the EXEMPT set, not the scoped one: a tool
+    # left off this list stays enforced by default, where a scoped-list
+    # would silently drop binding for anything an author forgot to add.
+    principal_exempt_tools: list[str] = Field(default_factory=list)
     # Import path to the domain's validator factory, "module:callable".
     # The generic layer resolves it without knowing what it builds.
     domain_rules: str | None = None

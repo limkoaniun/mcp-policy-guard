@@ -40,8 +40,6 @@ PRIORITY: dict[BlockKind, int] = {
     "elective": 0,
 }
 
-MAX_PRIORITY = max(PRIORITY.values())
-
 # Score scale for lexicographic ordering: maximise counted credit first, then priority-weighted
 # placement. We encode as one integer: score = cp * SCALE + cp * PRIORITY[block.kind].
 # SCALE must exceed the maximum achievable priority sum. With 96 cp maximum and PRIORITY[core]=40,

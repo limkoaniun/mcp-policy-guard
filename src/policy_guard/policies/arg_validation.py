@@ -5,7 +5,15 @@ Two responsibilities, both generic:
 - **Principal binding.** A task is scoped to one principal. A call naming a
   different one is denied outright, whatever the agent's reason. The pack's
   `principal_argument` names which tool argument carries it, so no domain
-  noun enters this package.
+  noun enters this package. Not every tool takes that argument -- a
+  catalogue search has no student to bind to -- so the pack also declares
+  `exempt_tools`: tools that legitimately omit the principal argument, and so
+  are not denied merely for lacking it. Deny-on-*mismatch* stays unconditional
+  for every tool, exempt or not -- exemption means "may omit the argument",
+  never "may name a different principal". The pack names the exempt tools
+  rather than the scoped ones on purpose: forgetting to list a tool leaves it
+  enforced (fail-closed), where a scoped-list would silently disable binding
+  for anything omitted from it.
 - **Domain rules.** The pack supplies validators keyed by tool name. A
   validator returns a deny reason, or `None` if it has no objection. All the
   domain knowledge lives on the far side of that callable.
@@ -17,7 +25,7 @@ permit an action it could not verify.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 
 from ..models import Decision, TaskContext, ToolCall, Verdict
 
@@ -31,9 +39,11 @@ class ArgumentValidationPolicy:
         self,
         principal_argument: str | None = None,
         validators: Mapping[str, Validator] | None = None,
+        exempt_tools: Iterable[str] | None = None,
     ):
         self.principal_argument = principal_argument
         self.validators = dict(validators or {})
+        self.exempt_tools = frozenset(exempt_tools or ())
 
     def check(self, call: ToolCall, context: TaskContext) -> Decision | None:
         denial = self._check_principal(call, context)
@@ -55,6 +65,13 @@ class ArgumentValidationPolicy:
         if named == context.principal_id:
             return None
         if named is None:
+            if call.tool in self.exempt_tools:
+                # Declared by the pack as legitimately not principal-scoped
+                # (e.g. a catalogue search that takes no student argument).
+                # Only the absent-argument branch is exempt -- a call naming
+                # the *wrong* principal falls through to the unconditional
+                # deny below regardless of exemption.
+                return None
             return Decision(
                 verdict=Verdict.DENY,
                 policy=self.name,

@@ -175,6 +175,11 @@ def test_one_descriptor_wrongly_blocks_twelve_subjects(personas, requisites, cat
 
 
 def _admission_blocked(student, requisites, catalogue) -> int:
+    # Counts only `result.unmet`, never `result.unresolved` -- this silently
+    # relies on the committed dataset having zero unresolvable requisite
+    # items (asserted elsewhere by the build's coverage gate), since an
+    # unresolved admission item would not appear in `unmet` and would make
+    # this an undercount rather than the exact figure the docstring claims.
     blocked = 0
     for code in catalogue:
         result = evaluate_requisites(code, student, requisites)

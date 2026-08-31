@@ -111,6 +111,80 @@ async def test_the_shipped_cli_mirrors_allows_and_denies(tmp_path):
     assert by_tool["drop"]["forwarded"] is False
 
 
+PRINCIPAL_EXEMPTION_TASK = f"""
+task_id: CLI-E2E-PRINCIPAL-EXEMPTION
+description: Exercises principal_exempt_tools against the real shipped pack.
+allowed_tools: [search_subjects, get_subject_details, get_student_record, enrol]
+principal_id: {STUDENT}
+"""
+
+# A second, distinct student -- used only to name the "wrong" principal.
+OTHER_STUDENT = "S1000002"
+
+
+@pytest.mark.anyio
+async def test_principal_exempt_tools_succeed_and_binding_still_holds(tmp_path):
+    """This is the test that would have caught the bug the fix wave found.
+
+    `search_subjects` and `get_subject_details` are the entire
+    untrusted-content injection surface the attack suite depends on, and
+    neither tool takes a `student_id`. Before `principal_exempt_tools`,
+    `ArgumentValidationPolicy` denied both outright for lacking the
+    principal argument -- with `principal_id` set (which the RULING C guard
+    in `__main__.py` makes effectively mandatory for this pack), the shipped
+    configuration could not read the catalogue at all. The earlier e2e suite
+    stayed green throughout because it allowlisted `get_subject_details`
+    without ever actually calling it.
+
+    Drives the real shipped `configs/enrolment.yaml` end to end: the two
+    exempt tools must succeed with no principal argument at all; a normal
+    principal-scoped tool must still succeed when the principal matches; and
+    `enrol` must still be denied outright when it names a different student,
+    proving exemption did not weaken binding for anything else.
+    """
+    task_path = tmp_path / "task.yaml"
+    task_path.write_text(PRINCIPAL_EXEMPTION_TASK)
+    run_dir = tmp_path / "run"
+
+    async with connect_subprocess(
+        sys.executable, cli_arguments(task_path, run_dir), cwd=str(REPO)
+    ) as client:
+        searched = await client.call_tool("search_subjects", {"query": "network"})
+        assert searched.is_error is False
+
+        details = await client.call_tool("get_subject_details", {"code": ENROLLED})
+        assert details.is_error is False
+
+        record = await client.call_tool("get_student_record", {"student_id": STUDENT})
+        assert record.is_error is False
+
+        mismatched = await client.call_tool(
+            "enrol", {"student_id": OTHER_STUDENT, "code": "32549"}
+        )
+        assert mismatched.is_error is True
+        assert OTHER_STUDENT in str(mismatched.content)
+        assert STUDENT in str(mismatched.content)
+
+    records = [
+        json.loads(line)
+        for line in (run_dir / "decisions.jsonl").read_text().splitlines()
+        if line.strip()
+    ]
+    by_tool = {record["tool"]: record for record in records}
+    assert by_tool["search_subjects"]["verdict"] == "allow"
+    assert by_tool["get_subject_details"]["verdict"] == "allow"
+    assert by_tool["get_student_record"]["verdict"] == "allow"
+    assert by_tool["enrol"]["verdict"] == "deny"
+    assert by_tool["enrol"]["forwarded"] is False
+
+    # Fix 2: the upstream's own `--students` must be derived from the same
+    # pack field the validators were built against (`domain_rules_args`),
+    # not left to agree with it only by coincident defaults.
+    manifest = json.loads((run_dir / "manifest.json").read_text())
+    assert "--students" in manifest["upstream_args"]
+    assert "data/students.json" in manifest["upstream_args"]
+
+
 @pytest.mark.anyio
 async def test_a_clean_run_writes_the_end_of_run_marker(tmp_path):
     """`state.json` says the run started; `complete` says it finished.

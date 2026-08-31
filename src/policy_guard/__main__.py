@@ -65,7 +65,20 @@ def _load_domain_rules(pack, run_dir=None) -> dict:
             f"{pack.domain_rules!r}: module {module_name!r} has no attribute "
             f"{attribute!r}"
         ) from error
-    return factory(**pack.domain_rules_args, run_dir=run_dir)
+    try:
+        return factory(**pack.domain_rules_args, run_dir=run_dir)
+    except TypeError as error:
+        # A pack whose `domain_rules_args` does not match the factory's
+        # parameters -- commonly, a `domain_rules` set with no
+        # `domain_rules_args` at all -- would otherwise surface as a bare
+        # `TypeError` naming neither the pack nor the value at fault, which
+        # this function's own docstring promises not to do.
+        raise ValueError(
+            f"policy pack {pack.name!r} names domain_rules "
+            f"{pack.domain_rules!r} with domain_rules_args "
+            f"{pack.domain_rules_args!r}, which does not match what "
+            f"{attribute!r} in {module_name!r} accepts: {error}"
+        ) from error
 
 
 # Each entry takes the loaded pack and the run directory, so a policy may
@@ -76,6 +89,7 @@ POLICIES = {
     "arg_validation": lambda pack, run_dir: ArgumentValidationPolicy(
         principal_argument=pack.principal_argument,
         validators=_load_domain_rules(pack, run_dir=run_dir),
+        exempt_tools=pack.principal_exempt_tools,
     ),
 }
 
@@ -166,6 +180,19 @@ def main(argv: list[str] | None = None) -> int:
     # without a run directory -- see `enrolment/server.py` for why a missing
     # one is rejected outright rather than falling back to an ephemeral run.
     upstream_args = [*pack.upstream_args, "--run-dir", args.run_dir]
+    # If the pack's `domain_rules_args` names a `students_path`, append it as
+    # the upstream's own `--students` too. Nothing else reconciled these:
+    # left to their separate defaults, `_load_domain_rules`'s validators and
+    # the upstream's own `RunState` could silently judge two different
+    # student files, agreeing only by coincidence -- and if they diverged
+    # nothing would crash, the validators would just be checking records
+    # nobody was actually enrolling into. Deriving the flag from the same
+    # pack field this way makes the two agree by construction. A pack with
+    # no `students_path` in `domain_rules_args` is unaffected: the upstream
+    # keeps its own default.
+    domain_records_path = pack.domain_rules_args.get("students_path")
+    if domain_records_path:
+        upstream_args += ["--students", domain_records_path]
     # One source for "was an overlay delivered", used both to build the
     # upstream's arguments and to record the fact, so the two cannot disagree.
     overlay = task.overlay or None

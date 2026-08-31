@@ -191,6 +191,46 @@ def test_arg_validation_denies_when_the_principal_argument_is_missing():
     assert decision.verdict is Verdict.DENY
 
 
+def test_arg_validation_allows_an_exempt_tool_called_without_the_principal():
+    """A tool the pack declares exempt has no principal to bind to at all.
+
+    `search_subjects(query)` and `get_subject_details(code)` are the real
+    example: neither takes a `student_id`, so denying them for lacking one
+    would deny every call to the entire catalogue-search surface -- which is
+    exactly what happened before `exempt_tools` existed, and it made the
+    shipped enrolment pack unable to read the catalogue at all once
+    `principal_id` became effectively mandatory.
+    """
+    policy = ArgumentValidationPolicy(
+        principal_argument="student_id", exempt_tools=["search_subjects"]
+    )
+    call = ToolCall(tool="search_subjects", arguments={"query": "network"})
+
+    assert policy.check(call, ctx(principal_id="S9000001")) is None
+
+
+def test_arg_validation_still_denies_an_exempt_tool_given_the_wrong_principal():
+    """Exemption covers *omitting* the principal, never naming the wrong one.
+
+    A call that manages to supply a mismatched `student_id` on an otherwise
+    exempt tool must still be denied outright -- exemption is not a way to
+    launder an impersonating call through an argument the tool happens not to
+    require.
+    """
+    policy = ArgumentValidationPolicy(
+        principal_argument="student_id", exempt_tools=["search_subjects"]
+    )
+    call = ToolCall(
+        tool="search_subjects", arguments={"query": "network", "student_id": "S9000002"}
+    )
+
+    decision = policy.check(call, ctx(principal_id="S9000001"))
+
+    assert decision.verdict is Verdict.DENY
+    assert "S9000002" in decision.reason
+    assert "S9000001" in decision.reason
+
+
 def test_arg_validation_has_no_opinion_when_no_principal_is_bound():
     policy = ArgumentValidationPolicy(principal_argument="student_id")
     call = ToolCall(tool="enrol", arguments={"student_id": "S9000002"})

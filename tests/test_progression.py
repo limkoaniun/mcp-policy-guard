@@ -378,3 +378,15 @@ def test_session_options_omits_a_block_that_is_already_full():
     )
 
     assert options == {}
+
+
+def test_session_options_skips_a_block_subject_missing_from_the_catalogue():
+    """`code in catalogue` gates the lookup for exactly this case: a code
+    eligible for a block but absent from the supplied catalogue is skipped,
+    not a `KeyError`."""
+    course = course_of(block("Core", 12, ["C1", "C2"]), cp=12)
+    catalogue = {"C1": subject_of("C1", ["Spring"])}  # C2 missing
+
+    options = session_options(student_of(), course, {}, catalogue, "Spring")
+
+    assert options == {"Core": ["C1"]}

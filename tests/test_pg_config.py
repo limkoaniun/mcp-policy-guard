@@ -177,7 +177,12 @@ def test_policy_pack_accepts_domain_rules_args(tmp_path):
 
 
 def test_load_domain_rules_resolves_the_pack_declared_factory():
-    """The happy path for the entire mechanism Task 9 exists to build."""
+    """The happy path for the entire mechanism Task 9 exists to build.
+
+    Paths are anchored on `REPO`, not relative -- a relative "data" resolves
+    against the test runner's working directory, not the repo, and fails
+    with `FileNotFoundError` when pytest is invoked from anywhere else.
+    """
     from policy_guard import __main__ as cli
 
     pack = PolicyPack(
@@ -185,7 +190,10 @@ def test_load_domain_rules_resolves_the_pack_declared_factory():
         upstream_command="python",
         policies=["allowlist"],
         domain_rules="enrolment.policy_pack:build_validators",
-        domain_rules_args={"data_dir": "data", "students_path": "data/students.json"},
+        domain_rules_args={
+            "data_dir": str(REPO / "data"),
+            "students_path": str(REPO / "data" / "students.json"),
+        },
     )
 
     validators = cli._load_domain_rules(pack)
@@ -205,6 +213,8 @@ def test_load_domain_rules_returns_empty_when_the_pack_declares_none():
 def test_the_registry_wires_the_resolved_validators_into_arg_validation():
     """Not just that `_load_domain_rules` resolves something -- that the
     `POLICIES` registry actually hands the result to `ArgumentValidationPolicy`.
+
+    `REPO`-anchored for the same reason as the test above.
     """
     from policy_guard import __main__ as cli
 
@@ -214,7 +224,10 @@ def test_the_registry_wires_the_resolved_validators_into_arg_validation():
         policies=["allowlist", "arg_validation"],
         principal_argument="student_id",
         domain_rules="enrolment.policy_pack:build_validators",
-        domain_rules_args={"data_dir": "data", "students_path": "data/students.json"},
+        domain_rules_args={
+            "data_dir": str(REPO / "data"),
+            "students_path": str(REPO / "data" / "students.json"),
+        },
     )
 
     policy = cli.POLICIES["arg_validation"](pack, None)
@@ -266,6 +279,28 @@ def test_load_domain_rules_rejects_an_unknown_attribute():
     )
 
     with pytest.raises(ValueError, match="no_such_function"):
+        cli._load_domain_rules(pack)
+
+
+def test_load_domain_rules_raises_a_contextual_error_for_mismatched_domain_rules_args():
+    """A `domain_rules_args` that does not match the factory's parameters --
+    most simply, none supplied at all -- used to reach the factory call as a
+    bare `TypeError` ("missing 2 required positional arguments"), naming
+    neither the pack nor the value at fault. This function's own docstring
+    promises a contextual `ValueError` for exactly this shape of mistake.
+    """
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t",
+        upstream_command="python",
+        policies=["allowlist"],
+        domain_rules="enrolment.policy_pack:build_validators",
+        # domain_rules_args deliberately omitted -- build_validators requires
+        # data_dir and students_path.
+    )
+
+    with pytest.raises(ValueError, match="domain_rules_args"):
         cli._load_domain_rules(pack)
 
 

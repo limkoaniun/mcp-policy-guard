@@ -34,16 +34,24 @@ trust:
 # names a different one.
 principal_argument: student_id
 
+# Tools that legitimately take no `student_id` -- a catalogue search and a
+# subject lookup have no student to bind to -- so calling them without one is
+# not itself grounds for denial. A call to one of these naming the *wrong*
+# student_id is still denied unconditionally; this only exempts the
+# no-argument case. Every other tool stays enforced by default, including any
+# added later and not listed here.
+principal_exempt_tools: [search_subjects, get_subject_details]
+
 # Import path to this domain's argument validators. `src/policy_guard/`
 # resolves it without importing `enrolment` itself.
 domain_rules: enrolment.policy_pack:build_validators
 
 # Keyword arguments for that factory. This is the single source of truth for
-# where the dataset lives -- in particular `students_path` must name the same
-# file as the upstream server's own `--students` (defaulted above, via
-# `upstream_args`, to the enrolment server's `--students data/students.json`),
-# since the proxy's validators and the upstream's mutable run state must agree
-# on which student records they are both talking about.
+# where the dataset lives. `students_path` in particular: `__main__.main`
+# reads this same value and appends it as the upstream server's own
+# `--students` argument, so the file the proxy's validators check a
+# student's enrolment against and the file the upstream server actually
+# mutates cannot diverge -- they are, by construction, the same path.
 domain_rules_args:
   data_dir: data
   students_path: data/students.json
