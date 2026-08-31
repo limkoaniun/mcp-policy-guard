@@ -12,7 +12,7 @@ name: enrolment
 upstream_command: python
 upstream_args: [-m, enrolment.server]
 
-policies: [allowlist]
+policies: [allowlist, arg_validation]
 
 # Trust is per tool, not per server: this one server returns both
 # attacker-influenceable catalogue text and trustworthy computed results.
@@ -33,3 +33,7 @@ trust:
 # calls it `student_id`. Argument validation will use this to reject a call that
 # names a different one.
 principal_argument: student_id
+
+# Import path to this domain's argument validators. `src/policy_guard/`
+# resolves it without importing `enrolment` itself.
+domain_rules: enrolment.policy_pack:build_validators

@@ -18,8 +18,37 @@ from .decisions import (
 from .enforcement import EnforcementExtension
 from .engine import PolicyEngine
 from .policies.allowlist import AllowlistPolicy
+from .policies.arg_validation import ArgumentValidationPolicy
 
-POLICIES = {"allowlist": AllowlistPolicy}
+
+def _load_domain_rules(pack) -> dict:
+    """Resolve the pack's `domain_rules` to a validator mapping.
+
+    The pack names the module by import path; this is the one place the
+    generic layer resolves it, at run time, so `policy_guard` never carries a
+    static import of a domain package.
+    """
+    if not pack.domain_rules:
+        return {}
+    import importlib
+
+    module_name, _, attribute = pack.domain_rules.partition(":")
+    factory = getattr(importlib.import_module(module_name), attribute)
+    return factory(
+        os.environ.get("PG_DATA_DIR", "data"),
+        os.environ.get("PG_STUDENTS", "data/students.json"),
+    )
+
+
+# Each entry takes the loaded pack, so a policy may draw configuration from
+# it. Zero-argument policies simply ignore the argument.
+POLICIES = {
+    "allowlist": lambda pack: AllowlistPolicy(),
+    "arg_validation": lambda pack: ArgumentValidationPolicy(
+        principal_argument=pack.principal_argument,
+        validators=_load_domain_rules(pack),
+    ),
+}
 
 # Distinct from 1 so a run that failed *inside* the proxy is tellable from a
 # bad invocation (argparse exits 2) or an ordinary uncaught error.
@@ -47,7 +76,36 @@ def main(argv: list[str] | None = None) -> int:
 
     task = load_task(args.task)
     pack = load_policy_pack(args.policy_pack)
-    engine = PolicyEngine([POLICIES[name]() for name in pack.policies])
+    if (
+        args.enforcement == "on"
+        and pack.principal_argument
+        and "arg_validation" in pack.policies
+        and not task.principal_id
+    ):
+        # `ArgumentValidationPolicy` correctly returns "no opinion" when a
+        # pack declares `principal_argument` but the task binds no
+        # `principal_id` -- some tasks legitimately are not principal-scoped.
+        # But that is indistinguishable from a task author who simply forgot
+        # to set `principal_id`, and in that case principal binding is
+        # silently inert: every call is treated as unscoped, no call is ever
+        # denied for naming the wrong principal, and `decisions.jsonl` looks
+        # exactly like a normal enforced run. Same species of failure as
+        # `PolicyPack._at_least_one_policy` in `config.py` guards against for
+        # an empty `policies:` list -- a failure presenting as a confident
+        # success, biased toward the defence, must fail loudly at load time
+        # rather than silently.
+        raise ValueError(
+            f"policy pack {pack.name!r} declares principal_argument "
+            f"{pack.principal_argument!r} and loads arg_validation, but task "
+            f"{task.task_id!r} sets no principal_id. Without one, principal "
+            "binding is inert -- no call would ever be denied for naming the "
+            "wrong principal -- and this run would be indistinguishable in "
+            "decisions.jsonl from a genuinely principal-scoped enforced run. "
+            "Set principal_id on the task, or drop arg_validation/"
+            "principal_argument if this task is not meant to be "
+            "principal-scoped."
+        )
+    engine = PolicyEngine([POLICIES[name](pack) for name in pack.policies])
     if args.enforcement == "on" and not engine.policies:
         # Belt-and-braces: `PolicyPack` already rejects an empty `policies:`
         # list, so this cannot fire from a loaded pack today. It is here

@@ -291,13 +291,15 @@ kept out of `students.json` so the generated statistics stay uncontaminated.
 ## 9. Build order this implies
 
 1. Approve this document.
-2. Build the Layer 2 evaluator — `src/enrolment/progression.py` — block expansion,
-   optimal assignment, carry-over, completion gap. Pure and testable, no MCP
-   dependency, same shape as the Layer 1 evaluator that preceded it.
-3. Author `data/personas.json`; assert the figures in §4 as tests, so the numbers in
-   this document are enforced rather than remembered.
-4. Add the study-plan tools to the enrolment MCP server and the corresponding
-   argument-validation policies.
+2. ✅ Complete. Build the Layer 2 evaluator — `src/enrolment/progression.py` —
+   block expansion, optimal assignment, carry-over, completion gap. Pure and
+   testable, no MCP dependency, same shape as the Layer 1 evaluator that
+   preceded it.
+3. ✅ Complete. Author `data/personas.json`; assert the figures in §4 as tests,
+   so the numbers in this document are enforced rather than remembered.
+4. ✅ Complete. Add the study-plan tools to the enrolment MCP server and the
+   corresponding argument-validation policies (`enrolment.policy_pack:build_validators`,
+   loaded into `ArgumentValidationPolicy` by import path).
 5. Write the eight scenarios; add the injected overlays with the attack suite.
 
 Step 2 is new work not in `context/project-plan.md`, and should be added there as a

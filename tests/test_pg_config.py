@@ -133,6 +133,51 @@ def test_main_refuses_to_enforce_with_an_empty_engine(tmp_path, monkeypatch):
         )
 
 
+def test_policy_pack_accepts_domain_rules(tmp_path):
+    path = tmp_path / "pack.yaml"
+    path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist]\n"
+        "domain_rules: enrolment.policy_pack:build_validators\n",
+        encoding="utf-8",
+    )
+
+    assert load_policy_pack(path).domain_rules == "enrolment.policy_pack:build_validators"
+
+
+def test_main_refuses_to_enforce_a_declared_but_unbound_principal(tmp_path, monkeypatch):
+    """RULING C: a pack that declares `principal_argument` and loads
+    `arg_validation` must not run with an unbound principal in silence.
+
+    `ArgumentValidationPolicy` correctly returns "no opinion" when a task
+    legitimately is not principal-scoped, but that is indistinguishable from a
+    task author who simply forgot to set `principal_id` -- and in the second
+    case principal binding is silently off while `decisions.jsonl` looks like
+    a normal enforced run. This is the same species of failure
+    `PolicyPack._at_least_one_policy` guards against for an empty
+    `policies:` list: a failure presenting as a confident success, biased
+    toward the defence, must fail loudly at load time.
+    """
+    from policy_guard import __main__ as cli
+
+    task = tmp_path / "task.yaml"
+    task.write_text("task_id: T\ndescription: no principal_id set\nallowed_tools: [enrol]\n")
+    pack_path = tmp_path / "pack.yaml"
+    pack_path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist, arg_validation]\n"
+        "principal_argument: student_id\n"
+    )
+
+    with pytest.raises(ValueError, match="principal_id"):
+        cli.main(
+            [
+                "--task", str(task),
+                "--policy-pack", str(pack_path),
+                "--run-dir", str(tmp_path / "run"),
+                "--enforcement", "on",
+            ]
+        )
+
+
 def test_policy_guard_names_no_domain_concept_in_code():
     """The domain-agnostic claim should be provable, not argued.
 

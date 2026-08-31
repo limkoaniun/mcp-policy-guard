@@ -99,7 +99,12 @@ python -m enrolment.build --scope full      # the whole C04296 tree
 The build prints a coverage report. Any requisite item it could not interpret is
 listed there rather than silently dropped, and gates widening the fetch.
 
-The proxy itself is not yet runnable — see below.
+Run the proxy in front of the enrolment MCP server:
+
+```bash
+python -m policy_guard --task <task.yaml> --policy-pack configs/enrolment.yaml \
+    --run-dir <run-dir> --enforcement on
+```
 
 ## Status
 
@@ -109,11 +114,17 @@ unparsed requisites and zero unreadable rules. Rebuilds from cache in 0.24s. And
 the data layer behind it: requisite rule parser and evaluator, catalogue
 and requisite extractors, cached fetcher with provenance, build pipeline with
 coverage gate, synthetic student generator, and the compliance scenario generator.
-177 tests.
 
-**Next.** The MCP proxy and policy engine — `src/policy_guard/proxy.py` is still a
-stub. Then the enrolment MCP server, the remaining three policies, and the agent
-harness.
+The MCP proxy and policy engine are runnable end to end: the enrolment MCP
+server, the transparent proxy (`python -m policy_guard`), and two policies —
+the tool allowlist and argument validation, which binds every call to the
+task's principal and enforces requisites, anti-requisites and the
+credit-point cap via `enrolment.policy_pack:build_validators`, loaded by
+import path so `src/policy_guard/` never imports `enrolment` directly. 341
+tests.
+
+**Next.** The remaining policies (taint tracking, rate & scope limits), the
+agent harness, and the adversarial attack suite.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
