@@ -139,11 +139,32 @@ the tool allowlist and argument validation, which binds every principal-scoped
 call to the task's principal (exempting the tools the pack declares as
 legitimately not principal-scoped) and enforces requisites, anti-requisites
 and the credit-point cap via `enrolment.policy_pack:build_validators`, loaded
-by import path so `src/policy_guard/` never imports `enrolment` directly. 355
-tests.
+by import path so `src/policy_guard/` never imports `enrolment` directly.
 
-**Next.** The remaining policies (taint tracking, rate & scope limits), the
-agent harness, and the adversarial attack suite.
+The adversarial scenario suite exists and replays against the real proxy:
+sixteen hand-authored scenarios (`attacks/scenarios/`, schema in
+`src/enrolment/scenarios_spec.py`, runner in
+`src/enrolment/scenario_runner.py`) — eight injected across the four attack
+classes and their eight benign twins — run against `configs/enrolment-personas.yaml`.
+395 tests. Three limitations of that suite as it stands, stated plainly rather
+than left implicit:
+
+1. Half the injected suite (SC-01, SC-03, SC-05, SC-08) is marked
+   `deliverable: false`, because nothing yet delivers a tool-metadata payload
+   or registers a decoy tool. Those four have no enforcement-off arm.
+2. No scenario demonstrates an attack *succeeding*. There is no agent harness
+   yet, so every enforcement-off arm goes unrun; the suite currently measures
+   that the proxy denies the right calls for the right reasons, not that
+   those calls would otherwise have done damage.
+3. The exfiltration class is undefended in its canonical form: SC-07's third
+   call, a `submit_erequest` carrying another student's record under the
+   *correct* principal, is allowed. Principal binding does not apply because
+   the principal is right, and the `taint` and `limits` policies that would
+   catch it are one-line stubs outside the shipped pack.
+
+**Next.** The remaining policies (taint tracking, rate & scope limits) and
+the agent harness — which the suite above is built to plug into without
+changing its assertions once it lands.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
