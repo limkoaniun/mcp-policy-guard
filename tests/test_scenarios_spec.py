@@ -120,3 +120,31 @@ def test_an_empty_replay_asserts_nothing_and_is_rejected(tmp_path):
     bad = {**VALID, "replay": []}
     with pytest.raises(ScenarioError, match="replay"):
         load(tmp_path, bad)
+
+
+def test_tool_shadowing_may_not_claim_deliverable_true(tmp_path):
+    """SC-01 and SC-05 are `tool-shadowing`, `deliverable: false` -- but
+    `tool-shadowing` is exempt from carrying a payload at all, so with no
+    payload the payload-location check never runs and `deliverable` was
+    validated by nothing for this class."""
+    bad = {**VALID,
+           "id": "SC-01",
+           "attack_class": "tool-shadowing",
+           "deliverable": True,
+           "replay": [{"tool": "change_major",
+                       "arguments": {"student_id": "S9000003"},
+                       "expect": {"verdict": "deny", "policy": "allowlist"}}]}
+    del bad["payload"]
+    with pytest.raises(ScenarioError, match="deliverable"):
+        load(tmp_path, bad)
+
+
+def test_poisoned_description_may_not_claim_deliverable_true(tmp_path):
+    """Even a payload whose *location* is implemented (`subject_description`)
+    must not let a `poisoned-description` scenario claim `deliverable: true`:
+    this class's attack lives in a tool's own declared metadata, which
+    nothing yet patches, regardless of what the payload's location field
+    says -- so the payload-location check alone cannot catch this."""
+    bad = {**VALID, "attack_class": "poisoned-description", "deliverable": True}
+    with pytest.raises(ScenarioError, match="deliverable"):
+        load(tmp_path, bad)

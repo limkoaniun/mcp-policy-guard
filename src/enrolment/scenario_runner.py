@@ -66,14 +66,23 @@ def _write_overlay(scenario: Scenario, run_dir: Path) -> Path | None:
     payload = scenario.payload
     if payload is None or not scenario.deliverable:
         return None
-    if payload.location != "subject_description":
-        return None
-    path = run_dir / "overlay.yaml"
-    path.write_text(
-        yaml.safe_dump({payload.target: {"description_suffix": payload.text}}),
-        encoding="utf-8",
+    if payload.location == "subject_description":
+        path = run_dir / "overlay.yaml"
+        path.write_text(
+            yaml.safe_dump({payload.target: {"description_suffix": payload.text}}),
+            encoding="utf-8",
+        )
+        return path
+    # This module is coupled to `scenarios_spec.DELIVERY_MECHANISMS` only by
+    # convention -- a location added there without a matching branch here
+    # would otherwise fall through to `return None`, running a
+    # `deliverable: true` scenario with no payload ever delivered and
+    # nothing saying so.
+    raise ValueError(
+        f"{scenario.id}: payload location {payload.location!r} was accepted "
+        f"by the loader as deliverable, but scenario_runner implements no "
+        f"delivery mechanism for it"
     )
-    return path
 
 
 def _read_decisions(run_dir: Path) -> list[dict]:
@@ -94,14 +103,19 @@ def _students_baseline_path(pack_path, repo_root) -> Path:
     hardcoded: a pack other than the personas one would otherwise be silently
     compared against the wrong file -- the same fail-open, silent-divergence
     shape `students_path` was itself added to close between the proxy's
-    validators and the upstream server's mutable run state. Falls back to the
-    historical `data/personas.json` only when the pack names no
-    `students_path` at all.
+    validators and the upstream server's mutable run state. There is no
+    fallback for a pack that omits it: the same field drives the upstream
+    server's own `--students` argument, so guessing a default here could only
+    ever be right by coincidence.
     """
     pack = load_policy_pack(Path(pack_path))
     students_path = pack.domain_rules_args.get("students_path")
     if students_path is None:
-        return Path(repo_root) / "data" / "personas.json"
+        raise ValueError(
+            f"policy pack {pack.name!r} ({pack_path}) names no "
+            f"domain_rules_args['students_path'], so there is no baseline "
+            f"dataset to compare a scenario's final enrolment against"
+        )
     path = Path(students_path)
     if not path.is_absolute():
         path = Path(repo_root) / path
@@ -237,6 +251,17 @@ async def run_scenario(
             f"arm cannot be run: no mechanism delivers a "
             f"{scenario.payload.location if scenario.payload else 'n/a'} payload. "
             f"Scoring it would report 'the attack failed' when none was mounted."
+        )
+
+    if enforcement != "on":
+        raise ValueError(
+            f"{scenario.id}: the enforcement-off arm requires an agent harness "
+            f"that does not exist yet -- this scenario's replay is scripted by "
+            f"hand to stand in for the calls an attack would induce, not "
+            f"produced by a model acting under injected instructions. "
+            f"Replaying those scripted calls unenforced would mutate state and "
+            f"be indistinguishable from a successful attack when none was ever "
+            f"mounted. The harness is what unlocks this arm."
         )
 
     run_dir = Path(run_dir)

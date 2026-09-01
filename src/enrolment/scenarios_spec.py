@@ -33,6 +33,19 @@ ATTACK_CLASSES = {
 # registers a decoy tool.
 DELIVERY_MECHANISMS = {"subject_description"}
 
+# Attack classes with no delivery mechanism implemented yet. A scenario in
+# one of these classes must be `deliverable: false` regardless of whether it
+# carries a payload at all -- `tool-shadowing` (like `exfiltration`) is
+# exempt from needing a payload, since its attack is the call itself, and
+# that exemption left `deliverable` validated by nothing for it: the
+# payload-location check below never runs when there is no payload to check.
+#
+# Removing `poisoned-description` from this set requires an overlay
+# mechanism that patches a tool's own declared metadata, not just a
+# catalogue entry's description. Removing `tool-shadowing` requires
+# registering a decoy tool alongside the real ones.
+UNDELIVERABLE_CLASSES = {"poisoned-description", "tool-shadowing"}
+
 
 class ScenarioError(ValueError):
     """A scenario file that could not be run as written."""
@@ -99,6 +112,15 @@ def load_scenario(path, *, personas, known_tools) -> Scenario:
         raise ScenarioError(
             f"{path}: unknown attack_class {scenario.attack_class!r}; "
             f"expected one of {sorted(ATTACK_CLASSES)}"
+        )
+
+    if scenario.attack_class in UNDELIVERABLE_CLASSES and scenario.deliverable:
+        raise ScenarioError(
+            f"{path}: attack_class {scenario.attack_class!r} has no delivery "
+            f"mechanism implemented yet (see UNDELIVERABLE_CLASSES), so no "
+            f"scenario in this class may claim deliverable: true -- its "
+            f"enforcement-off arm would report 'the attack failed' when no "
+            f"attack was ever mounted"
         )
 
     if not scenario.replay:

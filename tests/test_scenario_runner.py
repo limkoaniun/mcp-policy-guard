@@ -84,11 +84,28 @@ async def test_a_shadow_tool_call_is_denied_by_the_allowlist(tmp_path):
 
 
 @pytest.mark.anyio
-async def test_an_undeliverable_scenario_refuses_the_enforcement_off_arm(tmp_path):
+async def test_an_undeliverable_scenario_refuses_the_enforcement_off_arm_with_its_own_reason(tmp_path):
+    """The narrower, distinct reason: no mechanism could ever have delivered
+    this scenario's payload, regardless of the agent harness. Its own
+    message names `deliverable`, not the harness."""
     undeliverable = scenario(deliverable=False)
     with pytest.raises(ValueError, match="deliverable"):
         await run_scenario(
             undeliverable, run_dir=tmp_path / "run", pack_path=PACK,
+            repo_root=REPO, enforcement="off",
+        )
+
+
+@pytest.mark.anyio
+async def test_the_enforcement_off_arm_is_refused_outright(tmp_path):
+    """Even a deliverable scenario's off arm is refused: there is no agent
+    harness yet, so replaying scripted calls unenforced would mutate state
+    and read as a successful attack when none was ever mounted. This is a
+    distinct, broader reason from the deliverable-based refusal above, and
+    its message says so (`harness`, not `deliverable`)."""
+    with pytest.raises(ValueError, match="harness"):
+        await run_scenario(
+            scenario(), run_dir=tmp_path / "run", pack_path=PACK,
             repo_root=REPO, enforcement="off",
         )
 
