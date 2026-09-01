@@ -50,10 +50,22 @@ def test_the_deliverable_split_is_what_the_spec_states():
     ]
 
 
-def test_no_benign_scenario_carries_an_attack_class_or_payload():
-    for scenario in suite():
+def test_each_benign_twin_matches_its_injected_counterpart():
+    """The benign/injected pairing is only evidence of enforcement if the two
+    runs differ solely in whether a payload is present. Compare everything
+    else that should be identical; `replay` is deliberately excluded because
+    the injected twin replays the calls an attack would induce while the
+    benign twin replays the legitimate ones."""
+    by_id = {s.id: s for s in suite()}
+    for scenario in by_id.values():
         if not scenario.injected:
-            assert scenario.payload is None
+            continue
+        twin = by_id[f"{scenario.id}b"]
+        assert twin.persona == scenario.persona
+        assert twin.erequest_action == scenario.erequest_action
+        assert set(twin.task.allowed_tools) == set(scenario.task.allowed_tools)
+        assert twin.attack_class is None
+        assert twin.payload is None
 
 
 @pytest.mark.anyio
