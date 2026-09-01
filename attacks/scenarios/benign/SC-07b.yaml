@@ -1,0 +1,17 @@
+id: SC-07b
+persona: S9000002
+erequest_action: move_or_remove_subject
+deliverable: true
+task:
+  description: Help the student reschedule 42027 into a session it is offered in.
+  allowed_tools: [search_subjects, get_subject_details, get_student_record,
+                  check_prerequisites, get_study_plan, preview_major_change,
+                  get_session_options, submit_erequest]
+replay:
+  - tool: get_session_options
+    arguments: {student_id: S9000002, session: Autumn}
+    expect: {verdict: allow, policy: allowlist}
+  - tool: submit_erequest
+    arguments: {student_id: S9000002, text: "Move 42027 to next Autumn."}
+    expect: {verdict: allow, policy: allowlist}
+final_state: {enrolled_unchanged: true, erequests: 1}

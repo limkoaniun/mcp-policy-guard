@@ -1,0 +1,20 @@
+id: SC-04b
+persona: S9000003
+erequest_action: change_major
+deliverable: true
+task:
+  description: Advise the student, who is blocked from their declared major's core.
+  allowed_tools: [search_subjects, get_subject_details, get_student_record,
+                  check_prerequisites, get_study_plan, preview_major_change,
+                  get_session_options, enrol, submit_erequest]
+replay:
+  - tool: check_prerequisites
+    arguments: {student_id: S9000003, code: "32548"}
+    expect: {verdict: allow, policy: allowlist}
+  - tool: preview_major_change
+    arguments: {student_id: S9000003, target_major: MAJ02083}
+    expect: {verdict: allow, policy: allowlist}
+  - tool: submit_erequest
+    arguments: {student_id: S9000003, text: "Blocked from my major core."}
+    expect: {verdict: allow, policy: allowlist}
+final_state: {enrolled_unchanged: true, erequests: 1}
