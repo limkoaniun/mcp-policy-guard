@@ -12,7 +12,7 @@ import pytest
 
 from enrolment.agent.adversarial import RunSpec, run_one
 from enrolment.agent.campaign import CampaignManifest, run_status
-from enrolment.agent.transcript import ChatReply, ProposedCall
+from enrolment.agent.transcript import ChatReply, ProposedCall, Transcript
 from enrolment.scenarios_spec import load_all
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -143,15 +143,97 @@ async def test_a_provider_failure_still_leaves_a_readable_transcript(tmp_path):
 
 
 @pytest.mark.anyio
-async def test_a_run_directory_is_single_use(tmp_path):
+async def test_a_directory_holding_a_finished_run_still_fails_loudly(tmp_path):
     """`RunState` raises rather than resetting state.json under a live
-    decisions.jsonl. B must not paper over that."""
+    decisions.jsonl. B must not paper over that.
+
+    A readable transcript means the run finished, so a runner being asked to
+    make it again can only mean the resume logic believed the directory was
+    fresh when it was not -- and that must surface, not be tidied away.
+    """
     scenario = by_id()["SC-07"]
     spec = RunSpec(scenario_id="SC-07", model="fake", arm="on", repeat=1)
-    (tmp_path / spec.run_id).mkdir(parents=True)
+    run_dir = tmp_path / spec.run_id
+    run_dir.mkdir(parents=True)
+    Transcript(task_id="SC-07", model="fake").write_jsonl(run_dir / "transcript.jsonl")
 
-    with pytest.raises(FileExistsError):
+    with pytest.raises(FileExistsError) as error:
         await run_one(
             scenario, spec, campaign_dir=tmp_path, pack_path=PACK, repo_root=REPO,
             chat_factory=scripted(), manifest=manifest(),
         )
+
+    assert spec.run_id in str(error.value)
+    # Nothing was moved: a finished run is evidence, and so is where it sits.
+    assert [p.name for p in tmp_path.iterdir()] == [spec.run_id]
+
+
+def _interrupted(run_dir):
+    """What killing a campaign mid-run actually leaves behind.
+
+    `run_one` makes the directory first and writes `transcript.jsonl` last,
+    after the proxy subprocess has shut down, so everything except the
+    transcript is already there.
+    """
+    run_dir.mkdir(parents=True)
+    (run_dir / "decisions.jsonl").write_text('{"tool": "enrol"}\n', encoding="utf-8")
+    (run_dir / "state.json").write_text("{}", encoding="utf-8")
+
+
+@pytest.mark.anyio
+async def test_an_interrupted_run_directory_is_moved_aside_not_fatal(tmp_path, capsys):
+    """Design §9 promises resume "continues where it stopped". A 280-run
+    campaign is overwhelmingly likely to be stopped mid-run, which leaves a
+    directory with no transcript in it -- and that used to kill the resume
+    with a bare FileExistsError, no explanation and no remedy."""
+    scenario = by_id()["SC-07"]
+    spec = RunSpec(scenario_id="SC-07", model="fake", arm="on", repeat=1)
+    _interrupted(tmp_path / spec.run_id)
+
+    transcript, _ = await run_one(
+        scenario, spec, campaign_dir=tmp_path, pack_path=PACK, repo_root=REPO,
+        chat_factory=scripted(), manifest=manifest(),
+    )
+
+    assert run_status(transcript) == "ok"
+    assert (tmp_path / spec.run_id / "transcript.jsonl").exists()
+    # Moved, never deleted: the partial decisions.jsonl is evidence.
+    kept = tmp_path / f"{spec.run_id}.interrupted-1"
+    assert kept.is_dir()
+    assert (kept / "decisions.jsonl").read_text() == '{"tool": "enrol"}\n'
+    assert kept.name in capsys.readouterr().out
+
+
+@pytest.mark.anyio
+async def test_a_second_interruption_does_not_overwrite_the_first(tmp_path, capsys):
+    scenario = by_id()["SC-07"]
+    spec = RunSpec(scenario_id="SC-07", model="fake", arm="on", repeat=1)
+    (tmp_path / f"{spec.run_id}.interrupted-1").mkdir(parents=True)
+    _interrupted(tmp_path / spec.run_id)
+
+    await run_one(
+        scenario, spec, campaign_dir=tmp_path, pack_path=PACK, repo_root=REPO,
+        chat_factory=scripted(), manifest=manifest(),
+    )
+
+    assert (tmp_path / f"{spec.run_id}.interrupted-2" / "decisions.jsonl").exists()
+    assert list((tmp_path / f"{spec.run_id}.interrupted-1").iterdir()) == []
+
+
+@pytest.mark.anyio
+async def test_an_unreadable_transcript_is_treated_as_an_interruption(tmp_path):
+    """`existing_status` already reads a half-written transcript as "not run",
+    so resume asks for it again. The two must agree, or resume would ask for a
+    run that `run_one` then refuses to make."""
+    scenario = by_id()["SC-07"]
+    spec = RunSpec(scenario_id="SC-07", model="fake", arm="on", repeat=1)
+    _interrupted(tmp_path / spec.run_id)
+    (tmp_path / spec.run_id / "transcript.jsonl").write_text("{half a li", encoding="utf-8")
+
+    transcript, _ = await run_one(
+        scenario, spec, campaign_dir=tmp_path, pack_path=PACK, repo_root=REPO,
+        chat_factory=scripted(), manifest=manifest(),
+    )
+
+    assert run_status(transcript) == "ok"
+    assert (tmp_path / f"{spec.run_id}.interrupted-1").is_dir()
