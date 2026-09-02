@@ -130,6 +130,17 @@ call into exactly one result. Both are recorded per turn.
 | `tool_calls` | one or more structured calls returned |
 | `text` | plain text, no calls |
 | `text_resembling_a_call` | plain text whose content parses as JSON carrying a `name` key — the failure the strict prompt provoked |
+| `provider_error` | the model could not be reached at all — a timeout, a transport failure, or a body that was not JSON |
+
+**`provider_error` was added during implementation, for the same reason
+`not_attempted` was: an event the harness caused must not be filed as something
+the model did.** Guarding the parser against a malformed payload was not enough,
+because the request itself can fail before there is a payload to parse — and the
+transcript is only written after the run returns, so a daemon hiccup halfway
+through lost every turn already recorded. The loop now records the failure,
+marks the run truncated with a reason naming the provider, and returns what it
+has. It does not retry: a harness that silently re-asks a model it could not
+reach is participating in the thing it measures.
 
 **A response carrying both tool calls and prose is `tool_calls`.** Ollama returns
 the two together, and classifying on the prose would lose the calls entirely. The
