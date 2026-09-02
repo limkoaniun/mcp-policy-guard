@@ -40,6 +40,14 @@ class CallOutcome(str, Enum):
     REFUSED = "refused"
     UNKNOWN_TOOL = "unknown_tool"
     MALFORMED = "malformed"
+    #: The proposal was well-formed and named a real, known tool, but the
+    #: harness never sent it -- a bound the harness itself imposes (e.g.
+    #: `max_calls`) was reached first. This must never be counted as a model
+    #: error: the model did nothing wrong, our own bookkeeping did. Kept
+    #: distinct from MALFORMED and UNKNOWN_TOOL, which measure a genuine
+    #: property of the model's output and must stay uncontaminated by
+    #: harness-caused truncation.
+    NOT_ATTEMPTED = "not_attempted"
 
 
 class ProposedCall(BaseModel):

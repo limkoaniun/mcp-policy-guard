@@ -224,10 +224,32 @@ async def test_the_call_budget_records_proposals_it_swallows():
     calls = transcript.turns[0].calls
     assert len(calls) == 3
     assert calls[0].outcome is CallOutcome.FORWARDED
-    assert calls[1].outcome is not CallOutcome.FORWARDED
-    assert calls[2].outcome is not CallOutcome.FORWARDED
-    assert calls[1].outcome is not CallOutcome.REFUSED
-    assert calls[2].outcome is not CallOutcome.REFUSED
+    assert calls[1].outcome is CallOutcome.NOT_ATTEMPTED
+    assert calls[2].outcome is CallOutcome.NOT_ATTEMPTED
+    assert len(client.called) == 1
+
+
+@pytest.mark.anyio
+async def test_a_swallowed_proposal_that_is_itself_malformed_stays_malformed():
+    """A genuine model defect must not be laundered into NOT_ATTEMPTED just
+    because the budget also ran out -- MALFORMED measures the model, and
+    detecting unreadable shape costs nothing against the budget."""
+    client = FakeClient()
+    chat = scripted(
+        ChatReply(
+            content="",
+            calls=[
+                call("enrol", {"code": "1"}),
+                ProposedCall(name="enrol", arguments=None, raw={}),
+            ],
+        )
+    )
+
+    transcript = await run_agent(task(), client, chat, model="fake", max_calls=1)
+
+    calls = transcript.turns[0].calls
+    assert calls[0].outcome is CallOutcome.FORWARDED
+    assert calls[1].outcome is CallOutcome.MALFORMED
     assert len(client.called) == 1
 
 

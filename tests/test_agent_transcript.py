@@ -16,7 +16,7 @@ def test_outcome_enums_carry_exactly_the_specified_members():
         "tool_calls", "text", "text_resembling_a_call",
     }
     assert {o.value for o in CallOutcome} == {
-        "forwarded", "refused", "unknown_tool", "malformed",
+        "forwarded", "refused", "unknown_tool", "malformed", "not_attempted",
     }
 
 

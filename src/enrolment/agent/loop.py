@@ -13,17 +13,21 @@ not that a policy refused it, which an MCP result cannot say.
 
 # NOTE on CallOutcome for budget-swallowed proposals: when `max_calls` trips
 # partway through a reply's call list, the remaining proposals are recorded
-# as CallOutcome.MALFORMED rather than left unrecorded. Neither existing
-# member is a clean fit -- these calls were never sent to the client, so they
-# are not FORWARDED or REFUSED, but they may well have named a real, known
-# tool with well-formed arguments, so MALFORMED is a stretch too. MALFORMED
-# was chosen over UNKNOWN_TOOL because this project's headline classification
-# is whether the model hallucinated a nonexistent tool (see
-# test_a_hallucinated_tool_name_is_not_executed); tagging a budget-exhaustion
-# artifact as UNKNOWN_TOOL would contaminate that count directly, whereas
-# MALFORMED is the less central metric. The detail string always states the
-# true reason -- budget exhaustion, not malformed shape -- so a reader is not
-# misled even though the enum value alone would be.
+# rather than left unrecorded, using CallOutcome.NOT_ATTEMPTED -- a proposal
+# the harness never sent because a harness-side bound was reached first, not
+# because the model did anything wrong. It must never be folded into
+# MALFORMED or UNKNOWN_TOOL: those measure a genuine property of the model's
+# output (how often it emits garbage, or hallucinates a tool), and reported
+# as a result, so they must stay uncontaminated by our own bookkeeping.
+#
+# One ordering choice this forces: a swallowed proposal that is *itself*
+# unreadable (no name, unparseable arguments) or names an unknown tool is
+# still classified MALFORMED / UNKNOWN_TOOL, never NOT_ATTEMPTED. Checking
+# shape and tool identity costs nothing against the budget -- it never
+# touches `calls_made` or the client -- so there is no reason to hide a real
+# model defect behind the harness's bookkeeping just because the harness also
+# ran out of room to execute it. NOT_ATTEMPTED is reserved for proposals that
+# were otherwise entirely fine.
 
 from __future__ import annotations
 
@@ -176,21 +180,43 @@ async def run_agent(
             for index, proposed in enumerate(reply.calls):
                 if calls_made >= max_calls:
                     # The budget tripped before this proposal (and any after
-                    # it in this reply) could even be evaluated. Record each
-                    # one rather than dropping it silently -- a proposal the
+                    # it in this reply) could even be sent. Record each one
+                    # rather than dropping it silently -- a proposal the
                     # budget swallowed must not become indistinguishable from
                     # an attack that was never attempted. See the module-level
-                    # NOTE above for why MALFORMED is the outcome used here.
+                    # NOTE above: a genuine model defect (unreadable shape, or
+                    # an unknown tool) still wins over NOT_ATTEMPTED, since
+                    # detecting it costs nothing against the budget.
                     for swallowed in reply.calls[index:]:
+                        if swallowed.name is None or not isinstance(swallowed.arguments, dict):
+                            record.calls.append(
+                                CallRecord(
+                                    tool=swallowed.name or "",
+                                    outcome=CallOutcome.MALFORMED,
+                                    detail=(
+                                        "the model's call could not be read as a name "
+                                        "and arguments"
+                                    ),
+                                )
+                            )
+                            continue
+
+                        if swallowed.name not in known:
+                            record.calls.append(
+                                CallRecord(
+                                    tool=swallowed.name,
+                                    arguments=swallowed.arguments,
+                                    outcome=CallOutcome.UNKNOWN_TOOL,
+                                    detail="no such tool is exposed by the upstream",
+                                )
+                            )
+                            continue
+
                         record.calls.append(
                             CallRecord(
-                                tool=swallowed.name or "",
-                                arguments=(
-                                    swallowed.arguments
-                                    if isinstance(swallowed.arguments, dict)
-                                    else {}
-                                ),
-                                outcome=CallOutcome.MALFORMED,
+                                tool=swallowed.name,
+                                arguments=swallowed.arguments,
+                                outcome=CallOutcome.NOT_ATTEMPTED,
                                 detail=(
                                     f"not attempted: call budget (max_calls={max_calls}) "
                                     "was exhausted before this proposal could be evaluated"
