@@ -43,6 +43,13 @@ This plan covers §10 of the spec — subsystem A only. It does NOT build the ad
 
 ### Task 1: Transcript models and outcome enums
 
+> **Superseded during execution:** `CallOutcome` shipped with five members, not
+> four -- `NOT_ATTEMPTED` was added after Task 2 landed, to record a proposal
+> the harness's own `max_calls` bound dropped, without attributing it to the
+> model as `MALFORMED`. `ResponseOutcome` grew a fourth member too,
+> `PROVIDER_ERROR`, for a chat callable that raises rather than replies. See
+> `src/enrolment/agent/transcript.py` and the task-2 fix reports.
+
 **Files:**
 - Create: `src/enrolment/agent/__init__.py`, `src/enrolment/agent/transcript.py`
 - Test: `tests/test_agent_transcript.py`
@@ -277,6 +284,17 @@ git commit -m "feat(agent): transcript records that describe a run without judgi
 ---
 
 ### Task 2: The conversation loop
+
+> **Superseded during execution:** a proposal the call budget swallows
+> partway through a reply is no longer silently discarded from the reply's
+> remaining calls. Each one is now recorded as its own `CallRecord` --
+> `CallOutcome.NOT_ATTEMPTED` if it was otherwise well-formed and named a
+> known tool, or `MALFORMED`/`UNKNOWN_TOOL` if it was already bad regardless
+> of the budget. `run_agent` also now catches an exception from the chat
+> callable itself (a provider timeout or transport error), recording a
+> `PROVIDER_ERROR` turn and returning the turns already gathered rather than
+> losing them. See `run_agent` in `src/enrolment/agent/loop.py` and the
+> task-2 fix reports.
 
 **Files:**
 - Create: `src/enrolment/agent/loop.py`

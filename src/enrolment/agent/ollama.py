@@ -16,6 +16,7 @@ cold-start effect.
 from __future__ import annotations
 
 import json
+import time
 import urllib.request
 
 from .transcript import ChatReply, ProposedCall
@@ -55,6 +56,23 @@ def _arguments(raw):
     return None
 
 
+def _provider_latency_ms(payload: dict) -> float | None:
+    """Ollama's self-reported `total_duration`, in milliseconds, or `None`.
+
+    This is a *provider*-reported figure, not the wall-clock latency the
+    design's §6/§7 name and build the overhead metric on: `total_duration`
+    excludes HTTP transport time, which the wall-clock figure -- measured
+    around the request in `ollama_chat` -- does not. `None` here means the
+    field was absent from the payload, which `(payload.get(...) or 0)` would
+    otherwise silently render as a confident zero milliseconds -- a
+    measurement that did not happen, reported as though it did.
+    """
+    total_duration = payload.get("total_duration")
+    if total_duration is None:
+        return None
+    return total_duration / 1_000_000
+
+
 def parse_reply(payload: dict) -> ChatReply:
     """Normalise one `/api/chat` response.
 
@@ -68,6 +86,13 @@ def parse_reply(payload: dict) -> ChatReply:
     `name=None, arguments=None` -- which the loop records as malformed --
     rather than a crash. The raw payload is always kept, however unreadable,
     so a later reader can see what the provider actually sent.
+
+    Does not set `ChatReply.latency_ms` -- this function only normalises an
+    already-received payload and has no idea how long the request took.
+    `ollama_chat` measures wall clock around the request and sets it there;
+    a `ChatReply` from `parse_reply` alone keeps the default 0.0, meaning
+    "not measured here", not "instant." Ollama's own self-reported duration,
+    when present, is carried separately as `provider_latency_ms`.
     """
     message = payload.get("message")
     if not isinstance(message, dict):
@@ -98,7 +123,7 @@ def parse_reply(payload: dict) -> ChatReply:
     return ChatReply(
         content=message.get("content") or "",
         calls=calls,
-        latency_ms=(payload.get("total_duration") or 0) / 1_000_000,
+        provider_latency_ms=_provider_latency_ms(payload),
         raw_message=message,
     )
 
@@ -149,7 +174,13 @@ def ollama_chat(
     seed: int | None = None,
     timeout: int = 180,
 ):
-    """A `Chat` callable bound to one model."""
+    """A `Chat` callable bound to one model.
+
+    `latency_ms` on the returned reply is wall clock measured around the
+    HTTP request here -- the "wall-clock latency of the model call" the
+    design's §6 names -- not Ollama's self-reported `total_duration`, which
+    excludes transport time and is kept separately as `provider_latency_ms`.
+    """
     options: dict = {"temperature": temperature}
     if seed is not None:
         options["seed"] = seed
@@ -158,6 +189,11 @@ def ollama_chat(
         body = {"model": model, "messages": messages, "stream": False, "options": options}
         if tools:
             body["tools"] = tools
-        return parse_reply(_post(f"{url}/api/chat", body, timeout))
+        started = time.perf_counter()
+        payload = _post(f"{url}/api/chat", body, timeout)
+        elapsed_ms = (time.perf_counter() - started) * 1000
+        reply = parse_reply(payload)
+        reply.latency_ms = elapsed_ms
+        return reply
 
     return chat

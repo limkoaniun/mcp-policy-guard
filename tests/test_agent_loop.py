@@ -278,3 +278,29 @@ async def test_the_loop_never_repairs_a_malformed_call():
 
     assert client.called == []
     assert transcript.turns[-1].outcome is ResponseOutcome.TEXT
+
+
+@pytest.mark.anyio
+async def test_a_provider_error_mid_run_preserves_the_turns_already_recorded():
+    """The caller writes the transcript only after run_agent returns, so a
+    daemon hiccup after some turns already succeeded must not lose them."""
+    client = FakeClient()
+    seen = []
+
+    def flaky_chat(messages, tools):
+        seen.append(1)
+        if len(seen) == 1:
+            return ChatReply(content="first turn ok")
+        raise TimeoutError("daemon did not respond")
+
+    transcript = await run_agent(
+        task(turns=("first", "second")), client, flaky_chat, model="fake"
+    )
+
+    assert len(transcript.turns) == 2
+    assert transcript.turns[0].outcome is ResponseOutcome.TEXT
+    assert transcript.turns[0].text == "first turn ok"
+    assert transcript.turns[1].outcome is ResponseOutcome.PROVIDER_ERROR
+    assert "TimeoutError" in transcript.turns[1].text
+    assert transcript.truncated is True
+    assert "TimeoutError" in transcript.truncation_reason

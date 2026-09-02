@@ -2,13 +2,26 @@
 
 The model arrives as a callable rather than an import, so every outcome class
 is reachable in a test with no daemon running. The MCP client is duck-typed:
-anything with async `list_tools()` and `call_tool(name, arguments)` works.
+anything satisfying this shape works, which lets the tests use a fake and the
+experiments use the real proxy client --
+
+- async `list_tools()` returning an object with a `.tools` list, each tool
+  carrying `.name`, `.description` and `.input_schema`;
+- async `call_tool(name, arguments)` returning an object carrying `.is_error`
+  and `.content`.
 
 Two things this loop deliberately does not do. It does not repair the model's
 mistakes -- a malformed call is recorded and the conversation continues,
 because repairing them would make the harness a participant in what it
 measures. And it does not judge: `refused` means the call returned an error,
 not that a policy refused it, which an MCP result cannot say.
+
+A third thing it does not do: retry. A chat callable that raises (a daemon
+timeout, a connection error, an unparseable body) is recorded as a
+PROVIDER_ERROR turn and the run ends there, returning every turn already
+gathered -- not swallowed, and not retried in place, because a retry the
+harness performed silently on the model's behalf is exactly the kind of
+repair this loop refuses to do everywhere else.
 """
 
 # NOTE on CallOutcome for budget-swallowed proposals: when `max_calls` trips
@@ -79,6 +92,15 @@ def _looks_like_a_call(text: str) -> bool:
     JSON object naming a tool instead of calling one. This guesses at that
     intent; it is not an observation of a call, and every report of
     TEXT_RESEMBLING_A_CALL must say so.
+
+    Requiring a sibling `arguments`/`parameters`/`tool` key alongside "name"
+    (see `_CALL_SIBLING_KEYS`) means a hallucinated *zero-argument* call --
+    `{"name": "list_all_majors"}` with nothing beside it -- reads as plain
+    TEXT, not TEXT_RESEMBLING_A_CALL. That is a deliberate trade: it
+    under-reports this class rather than risk inflating it onto benign JSON
+    prose that also happens to carry a "name" key, and under-reporting a rare
+    edge case is the safer failure than corrupting a headline completion-rate
+    metric on ordinary benign tasks.
     """
     stripped = (text or "").strip()
     if not stripped.startswith("{"):
@@ -98,6 +120,19 @@ def _classify(reply: ChatReply) -> ResponseOutcome:
     if _looks_like_a_call(reply.content):
         return ResponseOutcome.TEXT_RESEMBLING_A_CALL
     return ResponseOutcome.TEXT
+
+
+def _bounded(text: str, limit: int) -> str:
+    """Cut `text` to `limit` characters, marking the cut so a reader can tell
+    a short result from a clipped one.
+
+    Follows the `[truncated]` convention already used elsewhere in this
+    project (see `_describe` in `src/enrolment/requisites.py`) rather than
+    inventing a second one.
+    """
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip() + " [truncated]"
 
 
 def _tool_message(content: str, call_id: str | None) -> dict:
@@ -161,7 +196,30 @@ async def run_agent(
         messages.append({"role": "user", "content": text})
 
         for model_turn in range(max_model_turns):
-            reply = chat(messages, payload)
+            try:
+                reply = chat(messages, payload)
+            except Exception as exc:  # noqa: BLE001 - any provider failure ends the run, recorded
+                # `_post` (or whatever the chat callable does under the hood)
+                # can still raise -- timeout, connection error, a body that
+                # isn't JSON. `run_agent` is the last point that can catch
+                # this before the caller writes the transcript, and it must:
+                # every turn already recorded here is otherwise lost even
+                # though it happened. Not retried -- see the module docstring.
+                failure = f"{type(exc).__name__}: {exc}"
+                transcript.turns.append(
+                    TurnRecord(
+                        user_turn=user_turn,
+                        model_turn=model_turn,
+                        outcome=ResponseOutcome.PROVIDER_ERROR,
+                        text=failure,
+                    )
+                )
+                transcript.truncated = True
+                transcript.truncation_reason = (
+                    f"provider error on user turn {user_turn}: {failure}"
+                )
+                return transcript
+
             outcome = _classify(reply)
             record = TurnRecord(
                 user_turn=user_turn,
@@ -259,10 +317,10 @@ async def run_agent(
                         tool=proposed.name,
                         arguments=proposed.arguments,
                         outcome=CallOutcome.REFUSED if result.is_error else CallOutcome.FORWARDED,
-                        detail=body[:500],
+                        detail=_bounded(body, 500),
                     )
                 )
-                messages.append(_tool_message(body[:2000], proposed.call_id))
+                messages.append(_tool_message(_bounded(body, 2000), proposed.call_id))
 
             transcript.turns.append(record)
 

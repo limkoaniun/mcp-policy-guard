@@ -1,5 +1,5 @@
-"""Parsing is tested against payloads recorded from a real daemon; the one live
-test skips loudly when none is running."""
+"""Parsing is tested against payloads recorded from a real daemon; the three
+live tests skip loudly when none is running."""
 
 import json
 import urllib.error
@@ -7,6 +7,7 @@ import urllib.request
 
 import pytest
 
+import enrolment.agent.ollama as ollama_module
 from enrolment.agent.ollama import (
     OLLAMA_URL,
     model_fingerprint,
@@ -91,10 +92,14 @@ def test_parse_reply_handles_a_text_only_response():
     assert reply.content == "Subject 32541 is Project Management."
 
 
-def test_parse_reply_converts_duration_to_milliseconds():
-    """Ollama reports total_duration in nanoseconds."""
+def test_parse_reply_converts_duration_to_milliseconds_as_provider_latency():
+    """Ollama reports total_duration in nanoseconds. This is the *provider's*
+    figure, not the wall-clock latency the design names -- that is measured
+    around the HTTP request in `ollama_chat`, which `parse_reply` alone
+    cannot do, so `latency_ms` here stays at its unmeasured default."""
     reply = parse_reply(WITH_CALLS)
-    assert reply.latency_ms == pytest.approx(239.166, rel=1e-3)
+    assert reply.provider_latency_ms == pytest.approx(239.166, rel=1e-3)
+    assert reply.latency_ms == 0.0
 
 
 def test_parse_reply_keeps_the_raw_message_for_the_conversation():
@@ -179,28 +184,84 @@ def test_parse_reply_marks_a_json_number_arguments_payload_as_unreadable():
     assert reply.calls[0].arguments is None
 
 
-def test_parse_reply_defaults_latency_to_zero_when_total_duration_is_absent():
+def test_an_absent_total_duration_produces_no_provider_latency_not_a_zero():
+    """A measurement that did not happen must not be reported as zero
+    milliseconds -- `(payload.get(...) or 0)` would have rendered this as a
+    confident 0.0, which is what this fix removed."""
     payload = json.loads(json.dumps(TEXT_ONLY))
     del payload["total_duration"]
 
     reply = parse_reply(payload)
 
-    assert reply.latency_ms == 0.0
+    assert reply.provider_latency_ms is None
 
 
-def _daemon_is_up() -> bool:
-    try:
-        with urllib.request.urlopen(f"{OLLAMA_URL}/api/version", timeout=2):
-            return True
-    except (urllib.error.URLError, OSError):
+class _FakeChatResponse:
+    """Stands in for the object `urllib.request.urlopen` returns."""
+
+    def __init__(self, payload: dict):
+        self._raw = json.dumps(payload).encode()
+
+    def read(self) -> bytes:
+        return self._raw
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
         return False
 
 
+def test_ollama_chat_measures_wall_clock_not_the_providers_own_figure(monkeypatch):
+    """`latency_ms` must be the wall-clock time this call actually took, not
+    Ollama's self-reported `total_duration` -- the payload below claims an
+    absurd duration so the two are impossible to confuse if the code
+    regresses to reading `total_duration` for `latency_ms` again."""
+    payload = dict(TEXT_ONLY)
+    payload["total_duration"] = 999_999_999_000  # ~1000s -- must not leak into latency_ms
+
+    ticks = iter([100.0, 100.25])  # 250ms elapsed, measured around the request
+
+    monkeypatch.setattr(ollama_module.time, "perf_counter", lambda: next(ticks))
+    monkeypatch.setattr(
+        ollama_module.urllib.request,
+        "urlopen",
+        lambda request, timeout=None: _FakeChatResponse(payload),
+    )
+
+    chat = ollama_chat("llama3.2:latest")
+    reply = chat([{"role": "user", "content": "hi"}], [])
+
+    assert reply.latency_ms == pytest.approx(250.0)
+    assert reply.provider_latency_ms == pytest.approx(999_999_999_000 / 1_000_000)
+    assert reply.latency_ms != reply.provider_latency_ms
+
+
+LIVE_MODEL = "llama3.2:latest"
+
+
+def _model_is_ready(model: str = LIVE_MODEL) -> bool:
+    """The daemon must be up AND have `model` pulled.
+
+    Checking only that the daemon answers was not enough: on a daemon
+    without the model, `warm_up` 404s and the live tests' assertions fail --
+    an error where a skip is meant.
+    """
+    try:
+        with urllib.request.urlopen(f"{OLLAMA_URL}/api/tags", timeout=2) as response:
+            payload = json.loads(response.read())
+    except (urllib.error.URLError, OSError, ValueError):
+        return False
+    names = {entry.get("name") for entry in payload.get("models") or []}
+    return model in names
+
+
 LIVE = pytest.mark.skipif(
-    not _daemon_is_up(),
+    not _model_is_ready(),
     reason=(
         "no Ollama daemon responding at "
-        f"{OLLAMA_URL} -- start it with `ollama serve` to run the live tests. "
+        f"{OLLAMA_URL} with {LIVE_MODEL!r} pulled -- start the daemon with "
+        f"`ollama serve` and `ollama pull {LIVE_MODEL}` to run the live tests. "
         "Skipped, not passed: this test proves nothing when it does not run."
     ),
 )

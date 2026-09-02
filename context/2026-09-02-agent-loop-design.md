@@ -292,16 +292,19 @@ Stated so no later document assumes otherwise.
 3. ✅ `src/enrolment/agent/ollama.py` — the real adapter, plus the warm-up request
    and version/digest capture. Landed as specified.
 4. ✅ End-to-end tests against a live daemon, skipped loudly with a reported
-   reason when none responds. Landed as **two** live-marked tests in
+   reason when none responds. Landed as **three** live-marked tests in
    `tests/test_agent_ollama.py`, not the one this section originally scoped:
-   `test_a_live_chat_returns_a_parsed_reply` exercises the adapter directly,
-   and `test_a_live_model_drives_the_real_proxy_and_is_denied` is the fuller
-   end-to-end run — model, real proxy and dataset together.
+   `test_model_fingerprint_names_what_produced_a_number` checks the daemon
+   version and the model's digest, `test_a_live_chat_returns_a_parsed_reply`
+   exercises the adapter directly, and
+   `test_a_live_model_drives_the_real_proxy_and_is_denied` is the fuller
+   end-to-end run — model, real proxy and dataset together. The skip guard
+   checks the daemon has the target model pulled, not only that it answers.
 
 All four steps landed. Steps 1 and 2 are the subsystem; 3 and 4 connect it to a
 real model. Tests: `tests/test_agent_transcript.py`,
-`tests/test_agent_loop.py`, `tests/test_agent_ollama.py` — 38 tests between
-them, part of the full suite's 436.
+`tests/test_agent_loop.py`, `tests/test_agent_ollama.py` — 42 tests between
+them, part of the full suite's 440.
 
 This is subsystem A only. Subsystems B (adversarial runs), C (compliance
 runs) and D (metrics and ablations) are unstarted; no metric from
