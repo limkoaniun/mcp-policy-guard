@@ -124,6 +124,14 @@ to) and so are not denied merely for omitting it; a call to one of these
 naming the *wrong* principal is still denied unconditionally, and any tool
 left off the list stays enforced by default.
 
+Run the adversarial campaign (subsystem B). Resumable: kill it and re-invoke
+the same command to continue.
+
+```bash
+python -m enrolment.agent.adversarial --campaign experiments/runs/adversarial/first --dry-run
+python -m enrolment.agent.adversarial --campaign experiments/runs/adversarial/first
+```
+
 ## Status
 
 **Done.** The full C04296 dataset is built and committed — 93 subjects, 201
@@ -177,11 +185,25 @@ enforcement; that ceiling applies identically whether enforcement is on or
 off, so the on/off comparison still holds, but the absolute completion number
 must be read as a capability floor, not as what the proxy costs.
 
-**Next.** The remaining policies (taint tracking, rate & scope limits) and the
-other three subsystems of the agent harness — adversarial runs, compliance
-runs, and metrics/ablations — none of which exist yet. Until they land, no
-metric from `context/project-spec.md` §7 (attack success rate, rule violation
-rate, benign task completion, enforcement overhead) can be reported.
+**Subsystem B exists** — adversarial runs
+(`context/2026-09-02-adversarial-runs-design.md`).
+`python -m enrolment.agent.adversarial --campaign <dir>` drives the sixteen
+scenarios through a real model across two models, five repeats and both
+enforcement arms: 280 runs, resumable, indexed. It drives and records; it does
+not judge. Turn scripts are derived from each scenario's own description
+rather than authored, so twins cannot diverge and no attack was tuned to
+succeed.
+
+Two of the four attack classes have an enforcement-off arm. `tool-shadowing`
+and `poisoned-description` remain `deliverable: false` — nothing patches tool
+metadata or registers a decoy tool — so their four scenarios report the
+enforcement-on arm only, and the results table says so rather than omitting
+them.
+
+**Next.** The remaining policies (taint tracking, rate & scope limits), the
+two missing payload-delivery mechanisms, and subsystems C (compliance runs)
+and D (metrics and ablations). Until D lands, no metric from
+`context/project-spec.md` §7 can be reported.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
