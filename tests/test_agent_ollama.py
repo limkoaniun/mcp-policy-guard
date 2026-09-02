@@ -102,6 +102,92 @@ def test_parse_reply_keeps_the_raw_message_for_the_conversation():
     assert reply.raw_message == WITH_CALLS["message"]
 
 
+def test_parse_reply_handles_tool_calls_as_a_string():
+    """A provider that sends a malformed shape must not crash the harness --
+    a run that raises loses every turn already recorded."""
+    reply = parse_reply({"message": {"role": "assistant", "tool_calls": "nonsense"}})
+    assert isinstance(reply, ChatReply)
+    assert reply.calls == []
+
+
+def test_parse_reply_handles_tool_calls_as_a_dict():
+    reply = parse_reply({"message": {"role": "assistant", "tool_calls": {"oops": 1}}})
+    assert isinstance(reply, ChatReply)
+    assert reply.calls == []
+
+
+def test_parse_reply_handles_tool_calls_as_an_int():
+    reply = parse_reply({"message": {"role": "assistant", "tool_calls": 7}})
+    assert isinstance(reply, ChatReply)
+    assert reply.calls == []
+
+
+def test_parse_reply_handles_a_non_dict_message():
+    reply = parse_reply({"message": "oops"})
+    assert isinstance(reply, ChatReply)
+    assert reply.calls == []
+    assert reply.content == ""
+
+
+def test_parse_reply_handles_a_malformed_call_entry_that_is_not_a_dict():
+    """An individual tool_calls entry that is itself not a dict still becomes
+    a recorded (malformed) call, and the unreadable value survives in raw."""
+    payload = {"message": {"role": "assistant", "tool_calls": ["nonsense"]}}
+
+    reply = parse_reply(payload)
+
+    assert len(reply.calls) == 1
+    assert reply.calls[0].name is None
+    assert reply.calls[0].arguments is None
+    assert reply.calls[0].raw == {"unparsed": "nonsense"}
+
+
+def test_parse_reply_handles_a_call_entry_whose_function_is_not_a_dict():
+    payload = {
+        "message": {
+            "role": "assistant",
+            "tool_calls": [{"id": "call_abc", "function": "nonsense"}],
+        }
+    }
+
+    reply = parse_reply(payload)
+
+    assert len(reply.calls) == 1
+    assert reply.calls[0].name is None
+    assert reply.calls[0].arguments is None
+    assert reply.calls[0].call_id == "call_abc"
+    assert reply.calls[0].raw == {"id": "call_abc", "function": "nonsense"}
+
+
+def test_parse_reply_marks_a_json_list_arguments_payload_as_unreadable():
+    """A JSON string is only usable when it parses to an object; a list is a
+    valid JSON document but not a set of named arguments."""
+    payload = json.loads(json.dumps(WITH_CALLS))
+    payload["message"]["tool_calls"][0]["function"]["arguments"] = "[1, 2, 3]"
+
+    reply = parse_reply(payload)
+
+    assert reply.calls[0].arguments is None
+
+
+def test_parse_reply_marks_a_json_number_arguments_payload_as_unreadable():
+    payload = json.loads(json.dumps(WITH_CALLS))
+    payload["message"]["tool_calls"][0]["function"]["arguments"] = "42"
+
+    reply = parse_reply(payload)
+
+    assert reply.calls[0].arguments is None
+
+
+def test_parse_reply_defaults_latency_to_zero_when_total_duration_is_absent():
+    payload = json.loads(json.dumps(TEXT_ONLY))
+    del payload["total_duration"]
+
+    reply = parse_reply(payload)
+
+    assert reply.latency_ms == 0.0
+
+
 def _daemon_is_up() -> bool:
     try:
         with urllib.request.urlopen(f"{OLLAMA_URL}/api/version", timeout=2):

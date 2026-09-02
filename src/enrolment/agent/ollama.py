@@ -56,11 +56,37 @@ def _arguments(raw):
 
 
 def parse_reply(payload: dict) -> ChatReply:
-    """Normalise one `/api/chat` response."""
-    message = payload.get("message") or {}
+    """Normalise one `/api/chat` response.
+
+    A provider can send a shape this harness has never seen -- a string where
+    a list belongs, a dict where an object belongs. This is experimental data
+    collection, not a config check at startup: a run that raises on one bad
+    response loses every turn already recorded, while a run that records "the
+    provider sent something unreadable" keeps the rest of the evidence and
+    still says something true. So every level here is guarded rather than
+    trusted, and an unreadable shape becomes a `ProposedCall` with
+    `name=None, arguments=None` -- which the loop records as malformed --
+    rather than a crash. The raw payload is always kept, however unreadable,
+    so a later reader can see what the provider actually sent.
+    """
+    message = payload.get("message")
+    if not isinstance(message, dict):
+        message = {}
+
+    raw_calls = message.get("tool_calls")
+    entries = raw_calls if isinstance(raw_calls, list) else []
+
     calls = []
-    for entry in message.get("tool_calls") or []:
-        function = entry.get("function") or {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            calls.append(ProposedCall(name=None, arguments=None, raw={"unparsed": entry}))
+            continue
+        function = entry.get("function")
+        if not isinstance(function, dict):
+            calls.append(
+                ProposedCall(name=None, arguments=None, call_id=entry.get("id"), raw=entry)
+            )
+            continue
         calls.append(
             ProposedCall(
                 name=function.get("name"),
