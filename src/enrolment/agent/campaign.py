@@ -177,3 +177,67 @@ def load_or_create_manifest(campaign_dir, manifest: CampaignManifest) -> Campaig
             + "; ".join(differences)
         )
     return stored
+
+
+async def run_campaign(
+    specs,
+    runner,
+    *,
+    campaign_dir,
+    describe,
+    max_replacements: int = 2,
+) -> list[IndexRecord]:
+    """Run every spec that has not already been run, and index the results.
+
+    `runner` is `async (spec) -> (status, duration_s)`; `describe` is
+    `(spec) -> dict` supplying an `IndexRecord`'s domain fields. Both are
+    injected so this module stays free of any domain import and subsystem C
+    can reuse it unchanged.
+
+    Two rules decide what actually runs.
+
+    **Resume** (design §9): a spec whose run directory already holds a
+    readable transcript is not re-run -- unless its status is
+    `provider_error`, which is not a completed run but the trigger below. The
+    check reads the transcript, never the proxy's `complete` marker, which is
+    written on clean shutdown regardless of truncation.
+
+    **Replacement** (design §8): a `provider_error` is infrastructure, not
+    model behaviour, and left alone it shrinks a repeat group for a reason
+    unrelated to the experiment. So a fresh run is made in a new directory,
+    bounded at `max_replacements`, with the failure kept on disk and the
+    relationship recorded in both directions. A `truncated` run is never
+    replaced: a bound being reached is a result.
+
+    Exceptions from `runner` are not caught. A run directory that already
+    exists means the resume logic believed it was fresh when it was not, and
+    that must surface.
+    """
+    campaign_dir = Path(campaign_dir)
+    records: list[IndexRecord] = []
+
+    async def execute(spec) -> IndexRecord:
+        """Run `spec`, or adopt the run already sitting on disk for it."""
+        found = existing_status(campaign_dir / spec.run_id)
+        if found is None:
+            status, duration = await runner(spec)
+        else:
+            status, duration = found, 0.0
+        record = IndexRecord(run_id=spec.run_id, status=status,
+                             duration_s=duration, **describe(spec))
+        records.append(record)
+        write_index(campaign_dir, records)
+        return record
+
+    for spec in specs:
+        current, record = spec, await execute(spec)
+
+        while record.status == "provider_error" and current.attempt < max_replacements:
+            current = current.replacement()
+            replacement = await execute(current)
+            record.replaced_by = replacement.run_id
+            replacement.replaces = record.run_id
+            write_index(campaign_dir, records)
+            record = replacement
+
+    return records
