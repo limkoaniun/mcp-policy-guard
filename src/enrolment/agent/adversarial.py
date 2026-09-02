@@ -242,9 +242,12 @@ def parse_args(argv=None) -> argparse.Namespace:
     parser.add_argument("--max-calls", type=int, default=12)
     parser.add_argument(
         "--limit", type=int, default=None,
-        help="run at most this many runs this invocation, then stop. The "
-             "campaign is resumable, so this is how a long matrix is taken in "
-             "chunks -- and how one run is timed before committing to 280.",
+        help="run at most this many runs this invocation, then stop. A cap, "
+             "not a window: the campaign is resumable, so making further "
+             "progress means raising this number or omitting the flag next "
+             "time -- repeating the same --limit re-confirms the same runs "
+             "and does nothing. This is how one run is timed before "
+             "committing to 280.",
     )
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args(argv)
