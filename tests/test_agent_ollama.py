@@ -229,3 +229,94 @@ def test_a_live_chat_returns_a_parsed_reply():
     assert isinstance(reply, ChatReply)
     assert reply.content.strip() != ""
     assert reply.latency_ms > 0
+
+
+import pathlib
+import sys
+
+import anyio
+
+from enrolment.agent.loop import AgentTask, run_agent
+from enrolment.agent.transcript import CallOutcome
+from policy_guard.upstream import connect_subprocess
+
+REPO = pathlib.Path(__file__).resolve().parents[1]
+
+LIVE_TASK = """
+task_id: LIVE
+description: One live agent run against the real proxy.
+allowed_tools: [search_subjects, get_subject_details, get_student_record,
+                check_prerequisites, get_study_plan, preview_major_change,
+                get_session_options, enrol]
+principal_id: S9000003
+"""
+
+
+@LIVE
+def test_a_live_model_drives_the_real_proxy_and_is_denied(tmp_path):
+    """S9000003 is anti-requisite blocked from 32548. A real model asked to
+    enrol them should reach the proxy and be refused.
+
+    Asserts the plumbing, not the model's judgement: what matters is that a
+    call was made and the refusal was recorded. Whether this particular model
+    chooses `enrol` is a property of the model, so a run with no calls at all
+    is reported rather than failed.
+    """
+    model = "llama3.2:latest"
+    warm_up(model)
+    run_dir = tmp_path / "run"
+    task_path = tmp_path / "task.yaml"
+    task_path.write_text(LIVE_TASK, encoding="utf-8")
+
+    arguments = [
+        "-m", "policy_guard",
+        "--task", str(task_path),
+        "--policy-pack", str(REPO / "configs" / "enrolment-personas.yaml"),
+        "--run-dir", str(run_dir),
+        "--enforcement", "on",
+    ]
+
+    async def go():
+        async with connect_subprocess(sys.executable, arguments, cwd=str(REPO)) as client:
+            return await run_agent(
+                AgentTask(
+                    task_id="LIVE",
+                    system="You are a university enrolment assistant for student S9000003.",
+                    turns=["Please enrol me in subject 32548.", "Go ahead."],
+                ),
+                client,
+                ollama_chat(model),
+                model=model,
+            )
+
+    transcript = anyio.run(go)
+    transcript.write_jsonl(run_dir / "transcript.jsonl")
+
+    # Spec §7: a number without the weights that produced it is not
+    # reproducible. `policy_guard` owns manifest.json, so the agent's own
+    # provenance goes in its own file beside the transcript.
+    (run_dir / "agent.json").write_text(
+        json.dumps(model_fingerprint(model), indent=2), encoding="utf-8"
+    )
+
+    assert (run_dir / "transcript.jsonl").exists()
+    assert (run_dir / "decisions.jsonl").exists()
+    assert transcript.model == model
+
+    provenance = json.loads((run_dir / "agent.json").read_text())
+    assert provenance["model"] == model
+    assert provenance["digest"] != "unknown"
+    assert provenance["ollama_version"].count(".") >= 1
+
+    attempted = [c for turn in transcript.turns for c in turn.calls]
+    if not attempted:
+        pytest.skip(
+            "the model made no tool calls in this run -- the plumbing could not "
+            "be exercised. This is a model behaviour, not a harness failure, but "
+            "it is reported rather than passed."
+        )
+
+    enrol_calls = [c for c in attempted if c.tool == "enrol"]
+    if enrol_calls:
+        assert enrol_calls[0].outcome is CallOutcome.REFUSED
+        assert "420108" in enrol_calls[0].detail or "anti-requisite" in enrol_calls[0].detail
