@@ -1,6 +1,7 @@
 """The campaign's own bookkeeping: what was run, under what method."""
 
 import json
+import pathlib
 
 import pytest
 
@@ -52,6 +53,43 @@ def test_the_index_is_rewritten_whole_not_appended(tmp_path):
 
 def test_reading_an_absent_index_gives_nothing(tmp_path):
     assert read_index(tmp_path) == []
+
+
+def test_the_index_is_replaced_atomically(tmp_path):
+    """It is rewritten after every run of a campaign designed to be killed
+    mid-flight, so a kill must never catch it half-written -- and must leave
+    no scratch file for a later reader to mistake for data."""
+    write_index(tmp_path, [record("A")])
+    write_index(tmp_path, [record("A"), record("B")])
+
+    assert [p.name for p in sorted(tmp_path.iterdir())] == ["index.jsonl"]
+
+
+def test_a_write_that_fails_partway_leaves_the_previous_index_intact(tmp_path, monkeypatch):
+    """Writing in place truncates first: a crash mid-write turns the campaign's
+    record of itself into a fragment. Writing a sibling and renaming cannot."""
+    write_index(tmp_path, [record("A"), record("B")])
+    real_write_text = pathlib.Path.write_text
+
+    def fail_partway(self, *args, **kwargs):
+        real_write_text(self, '{"run_id": "A', encoding="utf-8")
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(pathlib.Path, "write_text", fail_partway)
+
+    with pytest.raises(OSError):
+        write_index(tmp_path, [record("A"), record("B"), record("C")])
+
+    monkeypatch.undo()
+    assert [r.run_id for r in read_index(tmp_path)] == ["A", "B"]
+
+
+def test_a_run_that_was_not_timed_here_says_so_rather_than_claiming_zero(tmp_path):
+    """`duration_s` is optional because "adopted from disk, not measured by
+    this invocation" is a different fact from "took no time"."""
+    write_index(tmp_path, [record("A", duration_s=None)])
+
+    assert read_index(tmp_path)[0].duration_s is None
 
 
 def test_a_new_campaign_writes_its_manifest(tmp_path):

@@ -116,6 +116,14 @@ def test_an_unreadable_transcript_has_no_status(tmp_path):
     assert existing_status(tmp_path) is None
 
 
+def test_a_transcript_of_the_wrong_shape_has_no_status(tmp_path):
+    """Valid JSON that is not a header. Subscripting it raises TypeError, not
+    ValueError, so the resume check would have died on it instead of reading
+    it as "not run" the way an unparseable one already does."""
+    (tmp_path / "transcript.jsonl").write_text("[1, 2, 3]\n", encoding="utf-8")
+    assert existing_status(tmp_path) is None
+
+
 def test_a_written_transcript_reports_its_status(tmp_path):
     header_only(True, "max_calls (12) reached").write_jsonl(tmp_path / "transcript.jsonl")
     assert existing_status(tmp_path) == "truncated"

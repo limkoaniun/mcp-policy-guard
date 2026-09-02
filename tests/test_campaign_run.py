@@ -7,7 +7,7 @@ ones that are hard to provoke with real infrastructure is deterministic.
 import pytest
 
 from enrolment.agent.adversarial import RunSpec
-from enrolment.agent.campaign import read_index, run_campaign
+from enrolment.agent.campaign import IndexRecord, read_index, run_campaign, write_index
 from enrolment.agent.transcript import ResponseOutcome, Transcript, TurnRecord
 
 
@@ -133,6 +133,103 @@ async def test_the_index_is_on_disk_after_every_run(tmp_path):
     await run_campaign([spec(repeat=1), spec(repeat=2)], runner,
                        campaign_dir=tmp_path, describe=describe)
     assert len(read_index(tmp_path)) == 2
+
+
+@pytest.mark.anyio
+async def test_an_adopted_run_keeps_the_duration_that_was_measured(tmp_path):
+    """A resumed run must not be indexed with a duration that never happened.
+
+    `duration_s` is read by the scoring subsystem. Re-deriving every prior row
+    at zero on every resume -- and design §9 says the campaign *will* be
+    resumed -- would put a fabricated measurement in the artifact D reads,
+    the same species of bug `ollama._provider_latency_ms` exists to refuse.
+    """
+    write_transcript(tmp_path, "SC-07-fake-on-r1")
+    write_index(tmp_path, [
+        IndexRecord(run_id="SC-07-fake-on-r1", status="ok", duration_s=41.5,
+                    **describe(spec(repeat=1))),
+    ])
+
+    runner, seen = recording_runner({})
+    records = await run_campaign(
+        [spec(repeat=1), spec(repeat=2)], runner,
+        campaign_dir=tmp_path, describe=describe,
+    )
+
+    assert seen == ["SC-07-fake-on-r2"]
+    assert {r.run_id: r.duration_s for r in records} == {
+        "SC-07-fake-on-r1": 41.5, "SC-07-fake-on-r2": 0.5,
+    }
+
+
+@pytest.mark.anyio
+async def test_an_adopted_run_with_no_prior_row_is_untimed_not_instant(tmp_path):
+    """Nothing measured this run, so nothing here claims a measurement."""
+    write_transcript(tmp_path, "SC-07-fake-on-r1")
+    runner, seen = recording_runner({})
+
+    records = await run_campaign([spec()], runner, campaign_dir=tmp_path, describe=describe)
+
+    assert seen == []
+    assert records[0].duration_s is None
+    assert read_index(tmp_path)[0].duration_s is None
+
+
+@pytest.mark.anyio
+async def test_a_short_spec_list_does_not_delete_the_rows_it_omits(tmp_path):
+    """`--limit` is a cap on one invocation, not a claim about the campaign.
+
+    The index is rewritten whole, so deriving it from this invocation's specs
+    alone deleted the row of every already-completed run past the cap. The run
+    directories survive, but the index is what the scoring subsystem reads.
+    """
+    runner, _ = recording_runner({})
+    await run_campaign(
+        [spec(repeat=1), spec(repeat=2), spec(repeat=3)], runner,
+        campaign_dir=tmp_path, describe=describe,
+    )
+    for repeat in (1, 2, 3):
+        write_transcript(tmp_path, f"SC-07-fake-on-r{repeat}")
+
+    capped, seen = recording_runner({})
+    await run_campaign([spec(repeat=1)], capped, campaign_dir=tmp_path, describe=describe)
+
+    assert seen == []
+    assert {r.run_id for r in read_index(tmp_path)} == {
+        "SC-07-fake-on-r1", "SC-07-fake-on-r2", "SC-07-fake-on-r3",
+    }
+    assert [r.duration_s for r in read_index(tmp_path)] == [0.5, 0.5, 0.5]
+
+
+@pytest.mark.anyio
+async def test_a_replacement_already_on_disk_is_adopted_not_re_run(tmp_path):
+    """Design §8 and §9 together, on the state a resumed campaign actually has.
+
+    A `provider_error` on disk is deliberately not skipped -- it is the
+    trigger for its own replacement. But if that replacement already ran, it
+    must be adopted like any other completed run, or every resume of a
+    campaign that ever hit a dropped connection would re-run the answer to it.
+    """
+    write_transcript(tmp_path, "SC-07-fake-on-r1", provider_error=True)
+    write_transcript(tmp_path, "SC-07-fake-on-r1a")
+    write_index(tmp_path, [
+        IndexRecord(run_id="SC-07-fake-on-r1", status="provider_error",
+                    duration_s=3.5, replaced_by="SC-07-fake-on-r1a",
+                    **describe(spec())),
+        IndexRecord(run_id="SC-07-fake-on-r1a", status="ok", duration_s=12.25,
+                    replaces="SC-07-fake-on-r1",
+                    **describe(spec().replacement())),
+    ])
+
+    runner, seen = recording_runner({})
+    records = await run_campaign([spec()], runner, campaign_dir=tmp_path, describe=describe)
+
+    assert seen == []
+    by_id = {r.run_id: r for r in records}
+    assert by_id["SC-07-fake-on-r1"].duration_s == 3.5
+    assert by_id["SC-07-fake-on-r1a"].duration_s == 12.25
+    assert by_id["SC-07-fake-on-r1"].replaced_by == "SC-07-fake-on-r1a"
+    assert by_id["SC-07-fake-on-r1a"].replaces == "SC-07-fake-on-r1"
 
 
 @pytest.mark.anyio

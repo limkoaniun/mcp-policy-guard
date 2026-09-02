@@ -379,9 +379,17 @@ def main(argv=None) -> int:
     counts: dict[str, int] = {}
     for record in records:
         counts[record.status] = counts.get(record.status, 0) + 1
-    total = sum(r.duration_s for r in records)
+    timed = [r.duration_s for r in records if r.duration_s is not None]
+    untimed = len(records) - len(timed)
     print(f"{len(records)} runs indexed: {counts}")
-    print(f"{total / 60:.1f} minutes of run time")
+    print(f"{sum(timed) / 60:.1f} minutes of run time across {len(timed)} timed runs")
+    if untimed:
+        # Adopted from disk with no stored duration -- an earlier invocation
+        # ran them and its index row is gone, or was never written. Averaging
+        # zeros into the total above would report a campaign as faster than it
+        # was, on evidence that does not exist.
+        print(f"{untimed} of them carry no duration and are not in that total: "
+              f"they were adopted from disk, not timed here")
     return 0
 
 

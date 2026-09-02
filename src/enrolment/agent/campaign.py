@@ -80,13 +80,16 @@ def existing_status(run_dir) -> str | None:
 
     A transcript that cannot be parsed reads as "not run", so a run
     interrupted midway through being recorded is re-run rather than skipped.
+    `TypeError` is in that set because a line of valid JSON that is not an
+    object -- a truncated write can leave one -- is subscripted, not
+    validated, and raises there rather than as a `ValueError`.
     """
     path = Path(run_dir) / TRANSCRIPT
     if not path.exists():
         return None
     try:
         transcript = Transcript.read_jsonl(path)
-    except (ValueError, KeyError, json.JSONDecodeError):
+    except (ValueError, KeyError, TypeError):
         return None
     return run_status(transcript)
 
@@ -110,7 +113,12 @@ class IndexRecord(BaseModel):
     repeat: int
     attempt: int = 0
     status: str
-    duration_s: float = 0.0
+    #: Wall clock, or `None` for a run adopted from disk that no invocation
+    #: is able to say it timed. Optional rather than `0.0` for the reason
+    #: `ollama._provider_latency_ms` gives: a default zero renders a
+    #: measurement that did not happen as one that did, in the artifact the
+    #: scoring subsystem reads.
+    duration_s: float | None = None
     #: Set on a replacement, naming the provider-error run it stands in for.
     replaces: str | None = None
     #: Set on the failure, naming the run that replaced it. Both directions
@@ -126,12 +134,19 @@ def write_index(campaign_dir, records: list[IndexRecord]) -> Path:
     copy behind for a reader to trip over. The file is small -- one short line
     per run -- so rewriting it after every run costs nothing and means a
     campaign killed mid-flight still leaves a consistent index.
+
+    Written to a sibling and renamed over the top, because "killed mid-flight"
+    is the design's expectation rather than an edge case: an in-place rewrite
+    truncates first, so a kill landing in the wrong microsecond would turn the
+    campaign's own record of itself into a fragment.
     """
     campaign_dir = Path(campaign_dir)
     campaign_dir.mkdir(parents=True, exist_ok=True)
     path = campaign_dir / INDEX
     lines = [json.dumps(r.model_dump(), ensure_ascii=False) for r in records]
-    path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    scratch = path.with_suffix(path.suffix + ".tmp")
+    scratch.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    scratch.replace(path)
     return path
 
 
@@ -209,24 +224,48 @@ async def run_campaign(
     relationship recorded in both directions. A `truncated` run is never
     replaced: a bound being reached is a result.
 
+    **Prior rows are merged, not discarded.** The index is rewritten whole,
+    so an invocation that derived it from `specs` alone would delete the row
+    of every run outside this invocation's slice -- which `--limit` produces
+    by design, and which a resume produces for any run whose spec list has
+    since been capped. The run directories survive, but the index is what the
+    scoring subsystem reads. Merging is also what lets an adopted run keep the
+    duration that was actually measured for it: re-deriving that row at zero
+    would put a wall clock that never elapsed into D's input, and design §9
+    says this campaign *will* be resumed.
+
     Exceptions from `runner` are not caught. A run directory that already
-    exists means the resume logic believed it was fresh when it was not, and
-    that must surface.
+    exists and holds a readable transcript means the resume logic believed it
+    was fresh when it was not, and that must surface.
     """
     campaign_dir = Path(campaign_dir)
-    records: list[IndexRecord] = []
+    # Insertion-ordered, and seeded from disk: overwriting a key keeps its
+    # original position, so a resumed campaign's index stays in run order
+    # rather than being reshuffled by which runs this invocation touched.
+    records: dict[str, IndexRecord] = {r.run_id: r for r in read_index(campaign_dir)}
+
+    def flush() -> None:
+        write_index(campaign_dir, list(records.values()))
 
     async def execute(spec) -> IndexRecord:
         """Run `spec`, or adopt the run already sitting on disk for it."""
+        prior = records.get(spec.run_id)
         found = existing_status(campaign_dir / spec.run_id)
         if found is None:
             status, duration = await runner(spec)
+            replaces, replaced_by = None, None
         else:
-            status, duration = found, 0.0
-        record = IndexRecord(run_id=spec.run_id, status=status,
-                             duration_s=duration, **describe(spec))
-        records.append(record)
-        write_index(campaign_dir, records)
+            # Nothing here timed this run. If an earlier invocation did, its
+            # figure is carried forward; if none did, the field stays None,
+            # which says "not measured" rather than "instant".
+            status = found
+            duration = prior.duration_s if prior is not None else None
+            replaces = prior.replaces if prior is not None else None
+            replaced_by = prior.replaced_by if prior is not None else None
+        record = IndexRecord(run_id=spec.run_id, status=status, duration_s=duration,
+                             replaces=replaces, replaced_by=replaced_by, **describe(spec))
+        records[record.run_id] = record
+        flush()
         return record
 
     for spec in specs:
@@ -237,7 +276,7 @@ async def run_campaign(
             replacement = await execute(current)
             record.replaced_by = replacement.run_id
             replacement.replaces = record.run_id
-            write_index(campaign_dir, records)
+            flush()
             record = replacement
 
-    return records
+    return list(records.values())

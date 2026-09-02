@@ -1,5 +1,7 @@
 """Argument handling and the preflight. No daemon, no runs."""
 
+import json
+import pathlib
 import urllib.error
 
 import pytest
@@ -7,6 +9,8 @@ import pytest
 import enrolment.agent.ollama as ollama_module
 from enrolment.agent import adversarial
 from enrolment.agent.adversarial import parse_args, preflight
+from enrolment.agent.campaign import read_index
+from enrolment.agent.transcript import Transcript
 
 
 def test_models_are_a_comma_separated_list():
@@ -101,3 +105,132 @@ def test_preflight_warms_every_model_before_any_measured_run(monkeypatch):
 
     assert warmed == ["llama3.1:8b", "llama3.2"]
     assert fingerprints["llama3.2"]["digest"] == "sha256:x"
+
+
+def _stub_run_one(calls, duration=2.0):
+    """Stands in for the one function that needs a proxy and a model."""
+
+    async def run_one(scenario, spec, *, campaign_dir, pack_path, repo_root,
+                      chat_factory, manifest):
+        calls.append({
+            "run_id": spec.run_id, "scenario_id": scenario.id,
+            "chat": chat_factory(spec.model), "arm": spec.arm,
+            "system_prompt": manifest.system_prompt,
+            "max_model_turns": manifest.max_model_turns,
+            "pack_path": pack_path,
+        })
+        (pathlib.Path(campaign_dir) / spec.run_id).mkdir(parents=True, exist_ok=True)
+        return Transcript(task_id=scenario.id, model=spec.model), duration
+
+    return run_one
+
+
+def test_main_runs_the_matrix_it_reported_and_indexes_it(tmp_path, monkeypatch, capsys):
+    """The whole non-dry-run path, with only the daemon and the proxy stubbed.
+
+    This is the path a campaign actually takes and the one that had no test:
+    the preflight regression of Critical 1 reached final review because
+    nothing here ever wired `preflight` to `run_campaign`.
+    """
+    calls = []
+    monkeypatch.setattr(
+        adversarial, "preflight",
+        lambda models: {m: {"model": m, "digest": "d0", "ollama_version": "0.33.2"}
+                        for m in models},
+    )
+    monkeypatch.setattr(
+        adversarial, "ollama_chat",
+        lambda model, **kwargs: f"chat({model}, {kwargs['temperature']}, {kwargs['seed']})",
+    )
+    monkeypatch.setattr(adversarial, "run_one", _stub_run_one(calls))
+
+    exit_code = adversarial.main([
+        "--campaign", str(tmp_path), "--models", "m", "--repeats", "1", "--limit", "2",
+    ])
+    printed = capsys.readouterr().out
+
+    assert exit_code == 0
+
+    # build_manifest reached the manifest on disk, fingerprints and all.
+    stored = json.loads((tmp_path / "campaign.json").read_text())
+    assert stored["models"] == ["m"]
+    assert stored["repeats"] == 1
+    assert stored["system_prompt"] == adversarial.SYSTEM_PROMPT
+    assert stored["nudge"] == adversarial.NUDGE
+    assert stored["fingerprints"] == {"m": {"model": "m", "digest": "d0",
+                                            "ollama_version": "0.33.2"}}
+
+    # --limit is a cap on this invocation: two runs, the first two of the matrix.
+    assert [c["run_id"] for c in calls] == ["SC-01-m-on-r1", "SC-01b-m-on-r1"]
+
+    # chat_factory carries the manifest's decoding settings, not the daemon's.
+    assert {c["chat"] for c in calls} == {"chat(m, 0.0, None)"}
+    assert {c["system_prompt"] for c in calls} == {adversarial.SYSTEM_PROMPT}
+    assert {c["max_model_turns"] for c in calls} == {4}
+    assert {c["pack_path"] for c in calls} == {adversarial.REPO_ROOT / adversarial.DEFAULT_PACK}
+
+    # describe supplied the domain fields; run_status supplied the status.
+    index = {r.run_id: r for r in read_index(tmp_path)}
+    assert set(index) == {"SC-01-m-on-r1", "SC-01b-m-on-r1"}
+    assert index["SC-01-m-on-r1"].attack_class == "tool-shadowing"
+    assert index["SC-01b-m-on-r1"].attack_class is None
+    assert index["SC-01b-m-on-r1"].status == "ok"
+    assert index["SC-01b-m-on-r1"].duration_s == 2.0
+    assert index["SC-01b-m-on-r1"].arm == "on"
+
+    assert "2 runs indexed" in printed
+    assert "2 timed runs" in printed
+
+
+def test_main_does_not_average_untimed_runs_into_its_total(tmp_path, monkeypatch, capsys):
+    """A resumed campaign adopts rows it did not time. Reporting them as zero
+    would state a wall clock that never elapsed."""
+    monkeypatch.setattr(
+        adversarial, "preflight", lambda models: {m: {"digest": "d0"} for m in models}
+    )
+    monkeypatch.setattr(adversarial, "ollama_chat", lambda model, **kwargs: None)
+    monkeypatch.setattr(adversarial, "run_one", _stub_run_one([], duration=60.0))
+
+    argv = ["--campaign", str(tmp_path), "--models", "m", "--repeats", "1", "--limit", "2"]
+    adversarial.main(argv)
+    capsys.readouterr()
+    # The transcripts the stub never wrote, so the second invocation adopts them.
+    for run_id in ("SC-01-m-on-r1", "SC-01b-m-on-r1"):
+        Transcript(task_id=run_id, model="m").write_jsonl(
+            tmp_path / run_id / "transcript.jsonl"
+        )
+
+    adversarial.main(argv)
+    printed = capsys.readouterr().out
+
+    # Durations survive the resume rather than being re-derived at zero.
+    assert [r.duration_s for r in read_index(tmp_path)] == [60.0, 60.0]
+    assert "2.0 minutes of run time across 2 timed runs" in printed
+    assert "carry no duration" not in printed
+
+
+def test_main_says_how_many_runs_it_could_not_time(tmp_path, monkeypatch, capsys):
+    """Run directories with no index row behind them -- what the old --limit
+    bug left. They are adopted, and the summary states that it cannot time
+    them rather than folding zeros into the total."""
+    monkeypatch.setattr(
+        adversarial, "preflight", lambda models: {m: {"digest": "d0"} for m in models}
+    )
+    monkeypatch.setattr(adversarial, "ollama_chat", lambda model, **kwargs: None)
+    monkeypatch.setattr(adversarial, "run_one", _stub_run_one([], duration=60.0))
+
+    argv = ["--campaign", str(tmp_path), "--models", "m", "--repeats", "1", "--limit", "2"]
+    adversarial.main(argv)
+    for run_id in ("SC-01-m-on-r1", "SC-01b-m-on-r1"):
+        Transcript(task_id=run_id, model="m").write_jsonl(
+            tmp_path / run_id / "transcript.jsonl"
+        )
+    (tmp_path / "index.jsonl").unlink()
+    capsys.readouterr()
+
+    adversarial.main(argv)
+    printed = capsys.readouterr().out
+
+    assert [r.duration_s for r in read_index(tmp_path)] == [None, None]
+    assert "0.0 minutes of run time across 0 timed runs" in printed
+    assert "2 of them carry no duration" in printed
