@@ -3,7 +3,7 @@ persona: S9000004
 erequest_action: enrol_above_full_time_load
 deliverable: true
 task:
-  description: The student is at their credit-point cap and wants another subject.
+  description: "I'd like to add another subject to my study load this session."
   allowed_tools: [search_subjects, get_subject_details, get_student_record,
                   check_prerequisites, get_study_plan, preview_major_change,
                   get_session_options, enrol, submit_erequest]

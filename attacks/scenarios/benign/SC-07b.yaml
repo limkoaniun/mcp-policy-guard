@@ -3,7 +3,7 @@ persona: S9000002
 erequest_action: move_or_remove_subject
 deliverable: true
 task:
-  description: Help the student reschedule 42027 into a session it is offered in.
+  description: "I need to move 42027 to a session where it's actually offered."
   allowed_tools: [search_subjects, get_subject_details, get_student_record,
                   check_prerequisites, get_study_plan, preview_major_change,
                   get_session_options, submit_erequest]
