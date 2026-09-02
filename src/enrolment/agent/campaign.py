@@ -89,3 +89,91 @@ def existing_status(run_dir) -> str | None:
     except (ValueError, KeyError, json.JSONDecodeError):
         return None
     return run_status(transcript)
+
+
+INDEX = "index.jsonl"
+
+
+class CampaignMismatchError(ValueError):
+    """A campaign being resumed under a different method than it started."""
+
+
+class IndexRecord(BaseModel):
+    """One row of what was run. Not a judgement: `status` is the projection
+    `run_status` made, and nothing here says whether an attack succeeded."""
+
+    run_id: str
+    scenario_id: str
+    attack_class: str | None = None
+    model: str
+    arm: str
+    repeat: int
+    attempt: int = 0
+    status: str
+    duration_s: float = 0.0
+    #: Set on a replacement, naming the provider-error run it stands in for.
+    replaces: str | None = None
+    #: Set on the failure, naming the run that replaced it. Both directions
+    #: are recorded so D counts the replacement and a reader sees the failure.
+    replaced_by: str | None = None
+
+
+def write_index(campaign_dir, records: list[IndexRecord]) -> Path:
+    """Rewrite the index whole.
+
+    Not append-only: a replacement gives its predecessor a `replaced_by`
+    after that record was first written, and appending would leave the stale
+    copy behind for a reader to trip over. The file is small -- one short line
+    per run -- so rewriting it after every run costs nothing and means a
+    campaign killed mid-flight still leaves a consistent index.
+    """
+    campaign_dir = Path(campaign_dir)
+    campaign_dir.mkdir(parents=True, exist_ok=True)
+    path = campaign_dir / INDEX
+    lines = [json.dumps(r.model_dump(), ensure_ascii=False) for r in records]
+    path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    return path
+
+
+def read_index(campaign_dir) -> list[IndexRecord]:
+    path = Path(campaign_dir) / INDEX
+    if not path.exists():
+        return []
+    return [
+        IndexRecord.model_validate(json.loads(line))
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+
+def load_or_create_manifest(campaign_dir, manifest: CampaignManifest) -> CampaignManifest:
+    """Write the manifest for a new campaign, or check it for a resumed one.
+
+    A campaign resumed under a different system prompt, model list, repeat
+    count or bound is not the same campaign, and the two halves are not
+    comparable. Refused rather than merged. `fingerprints` is exempt: a digest
+    is observed rather than chosen, and re-reading one from the daemon must
+    not read as a change of method.
+    """
+    campaign_dir = Path(campaign_dir)
+    campaign_dir.mkdir(parents=True, exist_ok=True)
+    path = campaign_dir / MANIFEST
+
+    if not path.exists():
+        path.write_text(json.dumps(manifest.model_dump(), indent=2), encoding="utf-8")
+        return manifest
+
+    stored = CampaignManifest.model_validate(json.loads(path.read_text(encoding="utf-8")))
+    differences = [
+        f"{field}: campaign has {getattr(stored, field)!r}, "
+        f"invoked with {getattr(manifest, field)!r}"
+        for field in METHOD_FIELDS
+        if getattr(stored, field) != getattr(manifest, field)
+    ]
+    if differences:
+        raise CampaignMismatchError(
+            f"{path} was started under a different method and cannot be resumed "
+            f"under this one -- half a campaign run each way is not a campaign. "
+            + "; ".join(differences)
+        )
+    return stored
