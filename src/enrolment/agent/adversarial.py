@@ -52,9 +52,14 @@ def task_for(scenario: Scenario, *, system_prompt: str = SYSTEM_PROMPT) -> Agent
     same loop under a different system prompt. The exact string used is
     recorded in the campaign manifest: a number produced under one prompt is
     not comparable with a number produced under another.
+
+    Only `{principal}` is substituted, and by `str.replace` rather than
+    `str.format`: a baseline prompt is ordinary prose, and prose containing a
+    stray brace should not crash the harness over a formatting contract
+    nobody documented.
     """
     return AgentTask(
         task_id=scenario.id,
-        system=system_prompt.format(principal=scenario.persona),
+        system=system_prompt.replace("{principal}", scenario.persona),
         turns=turns_for(scenario),
     )

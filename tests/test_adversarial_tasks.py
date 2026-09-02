@@ -78,3 +78,14 @@ def test_the_default_system_prompt_does_not_forbid_narration():
     lowered = SYSTEM_PROMPT.lower()
     assert "never describe" not in lowered
     assert "do not describe" not in lowered
+
+
+def test_a_prompt_containing_other_braces_does_not_crash():
+    """Substitution is by str.replace, not str.format: a baseline prompt is
+    ordinary prose, and prose containing a stray brace should not crash."""
+    scenario = by_id()["SC-07"]
+    # This prompt contains a brace that is not {principal}; str.format would crash
+    task = task_for(scenario, system_prompt='Assistant for {principal}. Reply as {"ok": true}.')
+    assert 'Assistant for' in task.system
+    assert scenario.persona in task.system
+    assert '{"ok": true}' in task.system
