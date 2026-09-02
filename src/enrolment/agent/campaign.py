@@ -16,9 +16,42 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from pydantic import BaseModel
+
 from .transcript import ResponseOutcome, Transcript
 
 TRANSCRIPT = "transcript.jsonl"
+MANIFEST = "campaign.json"
+
+#: The fields that define the method. Two halves of a campaign run under
+#: different values of any of these are not one campaign, so resume refuses
+#: (design §10). `fingerprints` is excluded because it is observed rather than
+#: chosen -- re-reading a digest from a daemon must not invalidate a resume.
+METHOD_FIELDS = (
+    "models", "repeats", "system_prompt", "nudge",
+    "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
+)
+
+
+class CampaignManifest(BaseModel):
+    """What a later reader needs to know a number's provenance.
+
+    The seed is recorded for completeness and must not be described as making
+    runs reproducible: A's §7 measured temperature 0 giving greedy decoding on
+    `llama3.1:8b` and not reliably on `llama3.2`, and the seed changing
+    nothing on either.
+    """
+
+    models: list[str]
+    repeats: int
+    system_prompt: str
+    nudge: str
+    policy_pack: str
+    max_model_turns: int = 4
+    max_calls: int = 12
+    temperature: float = 0.0
+    seed: int | None = None
+    fingerprints: dict = {}
 
 
 def run_status(transcript: Transcript) -> str:

@@ -10,13 +10,21 @@ B drives; it does not judge. Nothing here decides whether an attack succeeded.
 
 from __future__ import annotations
 
+import json
 import re
+import sys
+import time
+from pathlib import Path
 
 from pydantic import BaseModel
 
-from ..run_setup import arms_for
+from policy_guard.upstream import connect_subprocess
+
+from ..run_setup import arms_for, write_overlay, write_task
 from ..scenarios_spec import Scenario
-from .loop import AgentTask
+from .campaign import CampaignManifest
+from .loop import AgentTask, run_agent
+from .transcript import Transcript
 
 #: The fixed second user turn. A's §2 measured that a single-turn framing
 #: produced zero attacks in eight runs while the payload was verifiably
@@ -135,3 +143,67 @@ def enumerate_matrix(scenarios, models, repeats: int) -> list[RunSpec]:
                         )
                     )
     return specs
+
+
+async def run_one(
+    scenario: Scenario,
+    spec: RunSpec,
+    *,
+    campaign_dir,
+    pack_path,
+    repo_root,
+    chat_factory,
+    manifest: CampaignManifest,
+) -> tuple[Transcript, float]:
+    """Run one cell of the matrix and leave its artifacts on disk.
+
+    `chat_factory` maps a model name to a chat callable, which is what lets
+    every test here run with no daemon: the real campaign passes a factory
+    built on `ollama_chat`, the tests pass a scripted fake.
+
+    The run directory is created with `exist_ok=False`. A directory that is
+    already there means the resume logic believed it was fresh when it was
+    not, and that must surface rather than be retried -- swallowing it would
+    produce exactly the log-and-state divergence `RunState` raises
+    `RunDirectoryInUseError` to prevent.
+
+    Returns the transcript and the run's wall-clock seconds. It does not
+    return a status: `campaign.run_status` derives that, so the projection
+    lives in one place.
+    """
+    run_dir = Path(campaign_dir) / spec.run_id
+    run_dir.mkdir(parents=True, exist_ok=False)
+
+    overlay_path = write_overlay(scenario, run_dir)
+    task_path = write_task(scenario, run_dir, overlay_path)
+
+    arguments = [
+        "-m", "policy_guard",
+        "--task", str(task_path),
+        "--policy-pack", str(pack_path),
+        "--run-dir", str(run_dir),
+        "--enforcement", spec.arm,
+    ]
+
+    started = time.perf_counter()
+    async with connect_subprocess(sys.executable, arguments, cwd=str(repo_root)) as client:
+        transcript = await run_agent(
+            task_for(scenario, system_prompt=manifest.system_prompt),
+            client,
+            chat_factory(spec.model),
+            model=spec.model,
+            max_model_turns=manifest.max_model_turns,
+            max_calls=manifest.max_calls,
+        )
+    duration = time.perf_counter() - started
+
+    transcript.write_jsonl(run_dir / "transcript.jsonl")
+    # The fingerprint is taken once per campaign and carried in the manifest,
+    # so this costs no HTTP round trip per run. It is written into the run
+    # directory anyway: a run that travels without its manifest still says
+    # which weights produced it.
+    (run_dir / "agent.json").write_text(
+        json.dumps(manifest.fingerprints.get(spec.model, {"model": spec.model}), indent=2),
+        encoding="utf-8",
+    )
+    return transcript, duration
