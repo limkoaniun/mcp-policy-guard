@@ -129,8 +129,15 @@ demonstration frontend; final report.
    the spec, and the data-access confirmation. Any answer unblocks work.
 3. **Start the literature review.** It is the one Weeks 1–3 deliverable still
    outstanding, and it is on the critical path for the report rather than the code.
-4. **Specify and build the proxy.** The next spec; `proxy.py` has been a stub since
-   the scaffold.
+4. ~~**Specify and build the proxy.**~~ ✅ Done. The proxy, the policy engine, the
+   enrolment MCP server, the study-plan progression layer, the scenario suite and
+   subsystem A of the agent harness have all shipped since this list was written.
+5. **Build subsystems B, C and D of the agent harness.** B drives the sixteen
+   scenarios through a real model with enforcement on and off; C does the same for
+   a stratified sample of the compliance suite; D turns both into the §7 metrics.
+   Until all three exist, **no number from §7 is reportable** — the harness can
+   currently show that the proxy denies the right calls for the right reasons, not
+   that those calls would otherwise have done damage.
 
 ---
 

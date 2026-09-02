@@ -148,6 +148,21 @@ counted as an ordinary text answer.
 | `refused` | the call returned an error |
 | `unknown_tool` | the name is not in the mirrored tool list |
 | `malformed` | arguments absent, unparseable, or not an object |
+| `not_attempted` | well-formed, named a real tool, never sent — a harness bound was reached first |
+
+**`not_attempted` was added during implementation and this table is the record
+of why.** When the call budget trips partway through a reply carrying several
+calls, the proposals not yet attempted were originally discarded, so the turn's
+record looked complete — a proposed `enrol` swallowed by the budget was
+indistinguishable from an attack never attempted. Recording them fixed that, but
+the first attempt filed them as `malformed`, which was worse: `malformed`
+measures how often the *model* emits garbage, and folding the harness's own
+truncation into it inflates a model-quality number with our bookkeeping. Hence a
+member of its own, and the rule that it must never be counted as a model error.
+
+A proposal that is *itself* malformed or names an unknown tool keeps that
+classification even when swallowed — checking its shape costs nothing against
+the budget, so a genuine model defect is never masked by our truncation.
 
 **`refused` deliberately does not say who refused.** An MCP result carries
 `is_error` and nothing more: measured against the real proxy, a policy DENY on
