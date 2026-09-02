@@ -85,9 +85,9 @@ The revised plan's 13-week structure, annotated with actual status.
 | Dataset build pipeline and coverage gate | ✅ Complete; **full C04296 tree built 2026-08-26**, 93 subjects, clean |
 | Synthetic student generator | ✅ Complete |
 | Compliance scenario generator | ✅ Complete |
-| **MCP proxy and policy engine** | **Next.** `proxy.py` is still a stub |
-| Enrolment MCP server | Not started |
-| Agent harness (Ollama) | Not started |
+| MCP proxy and policy engine | ✅ Complete — shipped 2026-08-27 |
+| Enrolment MCP server | ✅ Complete — shipped 2026-08-27 |
+| Agent harness (Ollama) | **Partial.** Subsystem A only — the agent loop (`src/enrolment/agent/`, specified in `context/2026-09-02-agent-loop-design.md`), shipped 2026-09-02. Subsystems B (adversarial runs), C (compliance runs) and D (metrics and ablations) do not exist yet. |
 
 ### Weeks 8–10 — experiments
 

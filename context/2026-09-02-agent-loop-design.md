@@ -269,16 +269,28 @@ Stated so no later document assumes otherwise.
 
 ## 10. Build order
 
-1. `Transcript`, `TurnRecord`, `CallRecord` models and the outcome enums — pure,
-   no I/O.
-2. `run_agent(task, client, chat, ...)` with an injected chat callable, tested
-   against a scripted fake covering every outcome class.
-3. `src/enrolment/agent/ollama.py` — the real adapter, plus the warm-up request
-   and version/digest capture.
-4. One end-to-end test against a live daemon, skipped with a reported reason when
-   none responds.
+1. ✅ `Transcript`, `TurnRecord`, `CallRecord` models and the outcome enums — pure,
+   no I/O. Landed in `src/enrolment/agent/transcript.py`.
+2. ✅ `run_agent(task, client, chat, ...)` with an injected chat callable, tested
+   against a scripted fake covering every outcome class. Landed in
+   `src/enrolment/agent/loop.py`.
+3. ✅ `src/enrolment/agent/ollama.py` — the real adapter, plus the warm-up request
+   and version/digest capture. Landed as specified.
+4. ✅ End-to-end tests against a live daemon, skipped loudly with a reported
+   reason when none responds. Landed as **two** live-marked tests in
+   `tests/test_agent_ollama.py`, not the one this section originally scoped:
+   `test_a_live_chat_returns_a_parsed_reply` exercises the adapter directly,
+   and `test_a_live_model_drives_the_real_proxy_and_is_denied` is the fuller
+   end-to-end run — model, real proxy and dataset together.
 
-Steps 1 and 2 are the subsystem; 3 and 4 connect it to a real model.
+All four steps landed. Steps 1 and 2 are the subsystem; 3 and 4 connect it to a
+real model. Tests: `tests/test_agent_transcript.py`,
+`tests/test_agent_loop.py`, `tests/test_agent_ollama.py` — 38 tests between
+them, part of the full suite's 436.
+
+This is subsystem A only. Subsystems B (adversarial runs), C (compliance
+runs) and D (metrics and ablations) are unstarted; no metric from
+`context/project-spec.md` §7 can be reported until they land.
 
 ## 11. Verification standard
 
