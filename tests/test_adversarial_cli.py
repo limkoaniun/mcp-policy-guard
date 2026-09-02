@@ -11,6 +11,7 @@ from enrolment.agent import adversarial
 from enrolment.agent.adversarial import parse_args, preflight
 from enrolment.agent.campaign import read_index
 from enrolment.agent.transcript import Transcript
+from enrolment.run_setup import off_arm_allowed
 
 
 def test_models_are_a_comma_separated_list():
@@ -234,3 +235,51 @@ def test_main_says_how_many_runs_it_could_not_time(tmp_path, monkeypatch, capsys
     assert [r.duration_s for r in read_index(tmp_path)] == [None, None]
     assert "0.0 minutes of run time across 0 timed runs" in printed
     assert "2 of them carry no duration" in printed
+
+
+def test_the_dry_run_gap_report_is_the_off_arm_rule_and_not_a_copy_of_it(capsys):
+    """Design §6's hole in the headline table is reported from `off_arm_allowed`,
+    the one home of that rule. Re-deriving it inline meant a change in
+    `run_setup` would leave the gap report quietly describing the old rule --
+    and the design's constraint that the two-of-four gap be reported
+    accurately rests on this line."""
+    scenarios = adversarial.load_suite(parse_args(["--campaign", "x"]))
+    adversarial.main(["--campaign", "x", "--dry-run"])
+
+    printed = capsys.readouterr().out
+    excluded = sorted(s.id for s in scenarios if not off_arm_allowed(s))
+
+    assert excluded
+    assert ", ".join(excluded) in printed
+    assert f"{len(excluded)} scenarios" in printed
+
+
+def test_a_re_pulled_model_warns_that_the_stored_digest_is_stale(
+    tmp_path, monkeypatch, capsys
+):
+    """`fingerprints` is rightly outside METHOD_FIELDS -- a digest is observed,
+    not chosen, and re-reading one must not refuse a resume. But `run_one`
+    stamps the *stored* manifest's digest into every run's agent.json, so a
+    model re-pulled mid-campaign gives runs made by the new weights a
+    provenance claim naming the old ones."""
+    digests = iter(["d0", "d1"])
+    monkeypatch.setattr(
+        adversarial, "preflight",
+        lambda models: {m: {"model": m, "digest": next(digests)} for m in models},
+    )
+    monkeypatch.setattr(adversarial, "ollama_chat", lambda model, **kwargs: None)
+    monkeypatch.setattr(adversarial, "run_one", _stub_run_one([]))
+
+    argv = ["--campaign", str(tmp_path), "--models", "m", "--repeats", "1", "--limit", "1"]
+    assert adversarial.main(argv) == 0
+    assert "WARNING" not in capsys.readouterr().out
+
+    assert adversarial.main(argv) == 0
+    printed = capsys.readouterr().out
+
+    assert "WARNING" in printed
+    assert "d0" in printed and "d1" in printed and "'m'" in printed
+    # The resume still works: a digest is observed, not chosen.
+    assert json.loads((tmp_path / "campaign.json").read_text())["fingerprints"] == {
+        "m": {"model": "m", "digest": "d0"}
+    }

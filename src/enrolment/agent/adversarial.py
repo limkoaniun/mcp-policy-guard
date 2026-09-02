@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 from policy_guard.upstream import connect_subprocess
 
-from ..run_setup import arms_for, write_overlay, write_task
+from ..run_setup import arms_for, off_arm_allowed, write_overlay, write_task
 from ..scenarios_spec import Scenario, load_all
 from .campaign import (
     CampaignManifest,
@@ -365,7 +365,11 @@ def _report_matrix(specs, scenarios) -> None:
     on = len([s for s in specs if s.arm == "on"])
     off = len([s for s in specs if s.arm == "off"])
     print(f"{len(specs)} runs: {on} enforcement-on, {off} enforcement-off")
-    excluded = sorted(s.id for s in scenarios if s.injected and not s.deliverable)
+    # Asked of `run_setup`, not restated here. The design's constraint that
+    # the two-of-four-attack-classes gap be reported accurately rests on this
+    # line, and a copy of the rule would keep describing the old one if
+    # `off_arm_allowed` ever changed.
+    excluded = sorted(s.id for s in scenarios if not off_arm_allowed(s))
     print(
         f"no enforcement-off arm ({len(excluded)} scenarios, "
         f"deliverable: false): {', '.join(excluded)}"
@@ -374,6 +378,35 @@ def _report_matrix(specs, scenarios) -> None:
         "  -- their attack classes report the on arm only, and the results "
         "table must say so rather than omit them"
     )
+
+
+def _warn_on_digest_drift(stored: dict, observed: dict) -> None:
+    """Say so when the weights on this machine are not the ones the manifest names.
+
+    `fingerprints` is deliberately outside `METHOD_FIELDS` and stays there: a
+    digest is observed rather than chosen, so re-reading one from the daemon
+    must not read as a change of method and refuse a resume.
+
+    But `run_one` stamps the *stored* manifest's fingerprint into every run's
+    `agent.json`, so a model re-pulled midway through a campaign gives runs
+    produced by the new weights a provenance claim naming the old ones. That
+    is a false statement about what produced a number, and this -- where the
+    freshly observed digest and the stored one are both in hand -- is the only
+    place it can be noticed.
+    """
+    for model, taken in observed.items():
+        was = (stored.get(model) or {}).get("digest")
+        now = taken.get("digest")
+        if was is None or now is None or was == now:
+            continue
+        print(
+            f"WARNING: {model!r} now fingerprints as {now}, but this campaign's "
+            f"manifest records {was} -- the model was re-pulled since the campaign "
+            f"started. Runs already on disk came from weights this daemon no longer "
+            f"has, and runs from here on are still stamped {was} in agent.json, "
+            f"because that is what the manifest says. The two halves were not "
+            f"produced by the same model and the report must say so."
+        )
 
 
 def main(argv=None) -> int:
@@ -391,6 +424,7 @@ def main(argv=None) -> int:
 
     fingerprints = preflight(args.models)
     manifest = load_or_create_manifest(args.campaign, build_manifest(args, fingerprints))
+    _warn_on_digest_drift(manifest.fingerprints, fingerprints)
     by_id = {s.id: s for s in scenarios}
     campaign_dir = Path(args.campaign)
     pack_path = REPO_ROOT / args.pack

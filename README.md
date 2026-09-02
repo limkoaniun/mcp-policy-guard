@@ -176,7 +176,7 @@ drives a model through an MCP conversation against the real proxy and records
 every response and attempted call, without repairing the model's mistakes;
 `src/enrolment/agent/ollama.py` is the only module that knows Ollama's HTTP API
 exists, and the model is otherwise an injected callable, so the loop is
-exhaustively testable with no daemon running. 436 tests pass in total.
+exhaustively testable with no daemon running. 522 tests pass in total.
 
 Measured against both candidate models, effective depth is one tool call per
 user turn — neither recovers from an error within a turn. Benign task
