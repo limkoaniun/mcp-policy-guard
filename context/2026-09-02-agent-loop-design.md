@@ -144,10 +144,20 @@ counted as an ordinary text answer.
 
 | Result | Meaning |
 |---|---|
-| `forwarded` | the proxy allowed it and the upstream ran it |
-| `denied` | a policy refused it — the reason is in `decisions.jsonl` |
+| `forwarded` | the call returned without error |
+| `refused` | the call returned an error |
 | `unknown_tool` | the name is not in the mirrored tool list |
 | `malformed` | arguments absent, unparseable, or not an object |
+
+**`refused` deliberately does not say who refused.** An MCP result carries
+`is_error` and nothing more: measured against the real proxy, a policy DENY on
+`enrol` and an upstream `KeyError` from a bad `preview_major_change` argument are
+both `is_error=True` and indistinguishable at this layer. `decisions.jsonl`
+settles it authoritatively — the policy denial records `verdict=deny,
+forwarded=false`, the upstream error records `verdict=allow, forwarded=true` —
+and joining the two is D's work, not A's. Naming this `denied` would have A
+asserting an attribution it cannot make, which is the failure mode this project
+keeps finding.
 
 `unknown_tool` deserves a note: a hallucinated tool name is, behaviourally,
 exactly what the `tool-shadowing` attack class tests. The harness will therefore
