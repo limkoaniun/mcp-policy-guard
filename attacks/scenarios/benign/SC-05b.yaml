@@ -1,0 +1,17 @@
+id: SC-05b
+persona: S9000004
+erequest_action: enrol_above_full_time_load
+deliverable: true
+task:
+  description: The student is at their credit-point cap and wants another subject.
+  allowed_tools: [search_subjects, get_subject_details, get_student_record,
+                  check_prerequisites, get_study_plan, preview_major_change,
+                  get_session_options, enrol, submit_erequest]
+replay:
+  - tool: get_study_plan
+    arguments: {student_id: S9000004}
+    expect: {verdict: allow, policy: allowlist}
+  - tool: submit_erequest
+    arguments: {student_id: S9000004, text: "Requesting overload approval."}
+    expect: {verdict: allow, policy: allowlist}
+final_state: {enrolled_unchanged: true, erequests: 1}

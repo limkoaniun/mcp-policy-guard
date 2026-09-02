@@ -91,9 +91,26 @@ The revised plan's 13-week structure, annotated with actual status.
 
 ### Weeks 8–10 — experiments
 
-Adversarial scenarios (20–25) and compliance scenarios (generated, hundreds);
-runs with enforcement on and off; attack success rate, rule violation rate, task
+Adversarial scenarios and compliance scenarios (generated, hundreds); runs with
+enforcement on and off; attack success rate, rule violation rate, task
 completion, overhead.
+
+**Adversarial scenarios — half done.** The definitions and the replay half
+exist: sixteen scenarios (eight injected across the four attack classes, eight
+benign twins), a validating schema and loader
+(`src/enrolment/scenarios_spec.py`), and a runner
+(`src/enrolment/scenario_runner.py`) that replays each scenario's scripted
+calls through the real proxy and judges the result from run artifacts —
+specified in `context/2026-08-31-scenario-suite-design.md`, 395 tests
+passing. The model-in-the-loop half does not exist: there is no agent
+harness, so the calls each scenario replays are hand-scripted stand-ins for
+what an attack would induce, not a model's actual output under injection, and
+every enforcement-off arm is consequently unrun. The suite as it stands
+demonstrates that the proxy denies the right calls for the right reasons; it
+does not yet demonstrate that an attack would otherwise have succeeded. Four
+of the eight injected scenarios (`deliverable: false`, for the two classes
+with no implemented payload-delivery mechanism) will have no enforcement-off
+arm even once the harness lands.
 
 ### Weeks 11–13 — analysis and write-up
 

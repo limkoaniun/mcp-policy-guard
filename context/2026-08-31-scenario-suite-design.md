@@ -315,7 +315,27 @@ kept out of `students.json` so the generated statistics stay uncontaminated.
 4. ✅ Complete. Add the study-plan tools to the enrolment MCP server and the
    corresponding argument-validation policies (`enrolment.policy_pack:build_validators`,
    loaded into `ArgumentValidationPolicy` by import path).
-5. Write the eight scenarios; add the injected overlays with the attack suite.
+5. ✅ Complete. Wrote the sixteen scenario files — eight injected across the
+   four attack classes plus their eight benign twins, under
+   `attacks/scenarios/`. Added the schema and loader
+   (`src/enrolment/scenarios_spec.py`) that validates a scenario before it can
+   run, and the runner (`src/enrolment/scenario_runner.py`) that replays a
+   scenario's scripted calls through the real proxy and judges the result
+   from the run's own artifacts. `configs/enrolment-personas.yaml` is the
+   pack the suite runs against. `tests/test_scenario_suite.py` covers the
+   suite as a whole; full test count is now 395.
+
+   Two things this step did not close. Half the injected scenarios (SC-01,
+   SC-03, SC-05, SC-08) carry `deliverable: false` because
+   `poisoned-description` and `tool-shadowing` have no implemented delivery
+   mechanism yet, so those four have no enforcement-off arm. And with no
+   agent harness yet, every enforcement-off arm across the whole suite is
+   currently unrun — the suite demonstrates that the proxy denies the right
+   calls for the right reasons, not that an attack would otherwise have
+   succeeded. Also unresolved: SC-07's third call — an eRequest carrying
+   another student's record, submitted under the *correct* principal — is
+   `allow`, since principal binding does not fire and `taint`/`limits` are
+   still stubs; the exfiltration class is undefended in that form.
 
 Step 2 is new work not in `context/project-plan.md`, and should be added there as a
 follow-on specification between the enrolment MCP server and the attack suite.

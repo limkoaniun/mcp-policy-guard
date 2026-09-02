@@ -409,3 +409,24 @@ def test_policy_guard_imports_no_sibling_package():
         "policy_guard imports a sibling domain package, which breaks the "
         "domain-agnostic claim: " + "; ".join(offenders)
     )
+
+
+def test_the_personas_pack_differs_only_in_the_student_file():
+    """A second pack, not a CLI override: the override would reintroduce the
+    desync `students_path` was added to close."""
+    shipped = load_policy_pack(REPO / "configs" / "enrolment.yaml")
+    personas = load_policy_pack(REPO / "configs" / "enrolment-personas.yaml")
+
+    assert personas.domain_rules_args["students_path"] == "data/personas.json"
+    assert shipped.domain_rules_args["students_path"] == "data/students.json"
+
+    shipped_rest = shipped.model_dump()
+    personas_rest = personas.model_dump()
+    del shipped_rest["domain_rules_args"], personas_rest["domain_rules_args"]
+    del shipped_rest["name"], personas_rest["name"]
+    assert shipped_rest == personas_rest
+
+    other = {k: v for k, v in shipped.domain_rules_args.items() if k != "students_path"}
+    assert other == {
+        k: v for k, v in personas.domain_rules_args.items() if k != "students_path"
+    }
