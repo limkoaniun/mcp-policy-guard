@@ -130,7 +130,7 @@ call into exactly one result. Both are recorded per turn.
 | `tool_calls` | one or more structured calls returned |
 | `text` | plain text, no calls |
 | `text_resembling_a_call` | plain text whose content parses as JSON carrying a `name` key — the failure the strict prompt provoked |
-| `provider_error` | the model could not be reached at all — a timeout, a transport failure, or a body that was not JSON |
+| `provider_error` | the chat callable raised — typically a timeout, a transport failure, or a body that was not JSON |
 
 **`provider_error` was added during implementation, for the same reason
 `not_attempted` was: an event the harness caused must not be filed as something
@@ -226,9 +226,23 @@ responding, with the skip reported rather than silent.
 The proxy already writes `decisions.jsonl`, `state.json`, `erequests.jsonl` and
 the `complete` marker. The loop adds one file to the same run directory:
 
-`transcript.jsonl` — one record per model response: the user turn index, the model
-turn index, the response outcome, the calls attempted with their results and
-arguments, the raw text if any, and the wall-clock latency of the model call.
+`transcript.jsonl` — **a header line, then one record per model response.**
+
+Line 1 is a JSON object carrying the run's own metadata: `task_id`, `model`,
+`truncated` and `truncation_reason`. Every line after it is a turn: the user turn
+index, the model turn index, the response outcome, the calls attempted with their
+results and arguments, the raw text if any, and the wall-clock latency of the
+model call.
+
+**The header is not decoration, and a consumer that skips it will be wrong.**
+Without it a run cut short by a bound was byte-identical on disk to one the model
+finished — and because the proxy writes its `complete` marker on clean shutdown
+regardless, the existing scoreability gate would have called a truncated run
+scoreable. B, C and D must read line 1 and exclude a truncated run from any
+completion denominator rather than counting it as a failure.
+
+`Transcript.read_jsonl` reconstructs a `Transcript` from such a file and is the
+supported way to consume one.
 
 Latency is recorded here because §7's overhead metric is *added* latency per call,
 and separating model time from proxy time requires both. `decisions.jsonl` already
