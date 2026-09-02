@@ -317,6 +317,13 @@ def test_a_live_model_drives_the_real_proxy_and_is_denied(tmp_path):
         )
 
     enrol_calls = [c for c in attempted if c.tool == "enrol"]
-    if enrol_calls:
-        assert enrol_calls[0].outcome is CallOutcome.REFUSED
-        assert "420108" in enrol_calls[0].detail or "anti-requisite" in enrol_calls[0].detail
+    if not enrol_calls:
+        called = sorted({c.tool for c in attempted})
+        pytest.skip(
+            "the model made tool calls, so the plumbing worked, but it never "
+            "attempted `enrol` -- the enforcement assertion was not exercised. "
+            f"Tools it did call instead: {called}."
+        )
+
+    assert enrol_calls[0].outcome is CallOutcome.REFUSED
+    assert "420108" in enrol_calls[0].detail or "anti-requisite" in enrol_calls[0].detail
