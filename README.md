@@ -162,9 +162,26 @@ than left implicit:
    the principal is right, and the `taint` and `limits` policies that would
    catch it are one-line stubs outside the shipped pack.
 
-**Next.** The remaining policies (taint tracking, rate & scope limits) and
-the agent harness — which the suite above is built to plug into without
-changing its assertions once it lands.
+**The agent loop exists** — the first of the four subsystems the agent harness
+needs (`context/2026-09-02-agent-loop-design.md`). `src/enrolment/agent/loop.py`
+drives a model through an MCP conversation against the real proxy and records
+every response and attempted call, without repairing the model's mistakes;
+`src/enrolment/agent/ollama.py` is the only module that knows Ollama's HTTP API
+exists, and the model is otherwise an injected callable, so the loop is
+exhaustively testable with no daemon running. 436 tests pass in total.
+
+Measured against both candidate models, effective depth is one tool call per
+user turn — neither recovers from an error within a turn. Benign task
+completion therefore has a ceiling set by model capability, not by
+enforcement; that ceiling applies identically whether enforcement is on or
+off, so the on/off comparison still holds, but the absolute completion number
+must be read as a capability floor, not as what the proxy costs.
+
+**Next.** The remaining policies (taint tracking, rate & scope limits) and the
+other three subsystems of the agent harness — adversarial runs, compliance
+runs, and metrics/ablations — none of which exist yet. Until they land, no
+metric from `context/project-spec.md` §7 (attack success rate, rule violation
+rate, benign task completion, enforcement overhead) can be reported.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
