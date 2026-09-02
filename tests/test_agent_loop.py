@@ -76,6 +76,7 @@ async def test_a_forwarded_call_is_recorded_with_its_arguments():
     assert first.calls[0].outcome is CallOutcome.FORWARDED
     assert first.calls[0].arguments == {"code": "32548"}
     assert client.called == [("enrol", {"code": "32548"})]
+    assert transcript.model == "fake"
 
 
 @pytest.mark.anyio
@@ -87,7 +88,9 @@ async def test_an_erroring_call_is_refused_without_attributing_blame():
 
     transcript = await run_agent(task(), client, chat, model="fake")
 
+    detail = transcript.turns[0].calls[0].detail
     assert transcript.turns[0].calls[0].outcome is CallOutcome.REFUSED
+    assert "polic" not in detail.lower(), "detail must not claim a policy did the refusing"
 
 
 @pytest.mark.anyio
@@ -122,6 +125,8 @@ async def test_plain_text_ends_the_turn():
     assert transcript.turns[0].outcome is ResponseOutcome.TEXT
     assert transcript.turns[0].text == "hello"
     assert client.called == []
+    assert transcript.truncated is False, "a normal run must not be reported as truncated"
+    assert transcript.truncation_reason is None
 
 
 @pytest.mark.anyio
@@ -132,6 +137,22 @@ async def test_prose_that_looks_like_a_call_is_flagged_by_heuristic():
     transcript = await run_agent(task(), client, chat, model="fake")
 
     assert transcript.turns[0].outcome is ResponseOutcome.TEXT_RESEMBLING_A_CALL
+    assert client.called == []
+
+
+@pytest.mark.anyio
+async def test_benign_json_prose_without_a_call_sibling_key_is_plain_text():
+    """A subject record such as this one also has a "name" key. Without
+    requiring a sibling like "arguments" or "parameters", the heuristic would
+    misclassify ordinary benign completions as TEXT_RESEMBLING_A_CALL, which
+    inflates that class on exactly the benign tasks whose completion rate is
+    a headline metric."""
+    client = FakeClient()
+    chat = scripted(ChatReply(content='{"name": "Data Structures", "code": "31251"}'))
+
+    transcript = await run_agent(task(), client, chat, model="fake")
+
+    assert transcript.turns[0].outcome is ResponseOutcome.TEXT
     assert client.called == []
 
 
@@ -166,6 +187,7 @@ async def test_each_user_turn_gets_its_own_records():
 
     assert {t.user_turn for t in transcript.turns} == {0, 1}
     assert [c[0] for c in client.called] == ["get_subject_details", "enrol"]
+    assert len(transcript.turns) == 4, "a set of user_turn values hides a duplicated/dropped record"
 
 
 @pytest.mark.anyio
@@ -178,6 +200,35 @@ async def test_hitting_the_call_budget_marks_the_run_truncated():
     assert transcript.truncated is True
     assert "max_calls" in transcript.truncation_reason
     assert len(client.called) == 3
+
+
+@pytest.mark.anyio
+async def test_the_call_budget_records_proposals_it_swallows():
+    """A proposal the budget swallows must not vanish -- silently dropping it
+    would make a proposed attack indistinguishable from one never attempted,
+    and no later subsystem can recover evidence that was never written."""
+    client = FakeClient()
+    chat = scripted(
+        ChatReply(
+            content="",
+            calls=[
+                call("enrol", {"code": "1"}),
+                call("enrol", {"code": "2"}),
+                call("enrol", {"code": "3"}),
+            ],
+        )
+    )
+
+    transcript = await run_agent(task(), client, chat, model="fake", max_calls=1)
+
+    calls = transcript.turns[0].calls
+    assert len(calls) == 3
+    assert calls[0].outcome is CallOutcome.FORWARDED
+    assert calls[1].outcome is not CallOutcome.FORWARDED
+    assert calls[2].outcome is not CallOutcome.FORWARDED
+    assert calls[1].outcome is not CallOutcome.REFUSED
+    assert calls[2].outcome is not CallOutcome.REFUSED
+    assert len(client.called) == 1
 
 
 @pytest.mark.anyio

@@ -48,10 +48,16 @@ class ProposedCall(BaseModel):
     `name` and `arguments` are None when the provider's payload could not be
     read as a call at all. The raw payload is kept either way, so a later
     reader can see what the model actually emitted.
+
+    `call_id` is the provider's own id for this call (Ollama's native
+    `/api/chat` returns one per call, e.g. `"call_0xfuf5zb"`), carried so the
+    loop can echo it back on the matching `role: "tool"` message. It is
+    optional and never invented: some providers don't send one.
     """
 
     name: str | None = None
     arguments: dict | None = None
+    call_id: str | None = None
     raw: dict = Field(default_factory=dict)
 
 
