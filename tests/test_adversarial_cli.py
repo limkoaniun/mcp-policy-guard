@@ -1,7 +1,10 @@
 """Argument handling and the preflight. No daemon, no runs."""
 
+import urllib.error
+
 import pytest
 
+import enrolment.agent.ollama as ollama_module
 from enrolment.agent import adversarial
 from enrolment.agent.adversarial import parse_args, preflight
 
@@ -49,6 +52,38 @@ def test_preflight_names_the_model_it_could_not_find(monkeypatch):
         preflight(["llama3.2"])
     assert "llama3.2" in str(error.value)
     assert "ollama pull" in str(error.value)
+
+
+def test_preflight_names_ollama_serve_when_the_daemon_is_unreachable(monkeypatch):
+    """Spec §10 names one failure mode: "Ollama unreachable, *or* the model
+    not pulled." Only the second half was handled; the first escaped as a raw
+    URLError out of the HTTP layer -- a stack trace where the design promises
+    a message the researcher can act on.
+    """
+    def refuse(model, **kwargs):
+        raise urllib.error.URLError(ConnectionRefusedError(61, "Connection refused"))
+
+    monkeypatch.setattr(adversarial, "model_fingerprint", refuse)
+
+    with pytest.raises(RuntimeError) as error:
+        preflight(["llama3.2"])
+
+    assert "ollama serve" in str(error.value)
+    assert "llama3.2" in str(error.value)
+
+
+def test_preflight_accepts_a_bare_name_the_daemon_tags_as_latest(monkeypatch):
+    """The regression Critical 1 named, at the layer that aborted the campaign."""
+    tags = {"models": [{"name": "llama3.2:latest", "digest": "a80c4f17acd5"}]}
+    monkeypatch.setattr(
+        ollama_module, "_get",
+        lambda url, timeout: {"version": "0.33.2"} if url.endswith("version") else tags,
+    )
+    monkeypatch.setattr(adversarial, "warm_up", lambda model, **kwargs: None)
+
+    fingerprints = preflight(["llama3.2"])
+
+    assert fingerprints["llama3.2"]["digest"] == "a80c4f17acd5"
 
 
 def test_preflight_warms_every_model_before_any_measured_run(monkeypatch):

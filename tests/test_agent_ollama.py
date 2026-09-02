@@ -237,6 +237,70 @@ def test_ollama_chat_measures_wall_clock_not_the_providers_own_figure(monkeypatc
     assert reply.latency_ms != reply.provider_latency_ms
 
 
+# Recorded verbatim from `GET /api/tags` on ollama 0.33.2 after
+# `ollama pull llama3.1:8b` and `ollama pull llama3.2`. Note what the daemon
+# does with the second one: a bare-name pull is reported under its `:latest`
+# tag and never under the bare name the researcher typed.
+TAGS = {
+    "models": [
+        {
+            "name": "llama3.1:8b",
+            "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+            "size": 4920753328,
+            "details": {"parameter_size": "8.0B"},
+        },
+        {
+            "name": "llama3.2:latest",
+            "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+            "size": 2019393189,
+            "details": {"parameter_size": "3.2B"},
+        },
+    ]
+}
+
+
+def _fake_tags(monkeypatch, tags=TAGS):
+    def get(url, timeout):
+        return {"version": "0.33.2"} if url.endswith("/api/version") else tags
+
+    monkeypatch.setattr(ollama_module, "_get", get)
+
+
+def test_model_fingerprint_matches_an_exact_tag(monkeypatch):
+    _fake_tags(monkeypatch)
+
+    fingerprint = model_fingerprint("llama3.1:8b")
+
+    assert fingerprint["digest"].startswith("46e0c10c039e")
+    assert fingerprint["ollama_version"] == "0.33.2"
+
+
+def test_model_fingerprint_matches_a_bare_name_against_its_latest_tag(monkeypatch):
+    """`ollama pull llama3.2` is listed by the daemon as `llama3.2:latest`.
+
+    Matching the tag list by exact string read that as "not pulled", which is
+    false: the weights are on the machine. The campaign's preflight gates on
+    this digest, so the falsehood aborted the default campaign before its
+    first run and told the researcher to pull a model they already had.
+    """
+    _fake_tags(monkeypatch)
+
+    fingerprint = model_fingerprint("llama3.2")
+
+    assert fingerprint["digest"].startswith("a80c4f17acd5")
+    assert fingerprint["size"] == 2019393189
+    # The identifier stays as asked for: it is what names the run directories
+    # and what the manifest records as the model that was run.
+    assert fingerprint["model"] == "llama3.2"
+
+
+def test_model_fingerprint_still_reports_a_model_that_is_not_pulled(monkeypatch):
+    """The looser match must not turn "absent" into a confident digest."""
+    _fake_tags(monkeypatch)
+
+    assert model_fingerprint("mistral")["digest"] == "unknown"
+
+
 LIVE_MODEL = "llama3.2:latest"
 
 

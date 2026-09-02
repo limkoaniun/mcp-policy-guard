@@ -273,12 +273,29 @@ def preflight(models, fingerprint=None, warm=None) -> dict:
     Warming follows A's §7: `llama3.2`'s first response after a load differed
     from the two that followed, and a measured run should not be the one that
     is different for a reason unrelated to the experiment.
+
+    Design §10 names one failure mode -- "Ollama unreachable, *or* the model
+    not pulled" -- and both halves get the same treatment here. A transport
+    failure would otherwise escape as a raw `URLError` out of `ollama._get`:
+    a stack trace naming a socket, where the design promises a message naming
+    the daemon and the remedy.
     """
     fingerprint = fingerprint or model_fingerprint
     warm = warm or warm_up
     fingerprints = {}
     for model in models:
-        taken = fingerprint(model)
+        try:
+            taken = fingerprint(model)
+        except OSError as error:
+            # URLError and socket timeouts are both OSError. What the campaign
+            # can say truthfully is that it could not ask, which is not the
+            # same as the model being absent -- so the cause is carried.
+            raise RuntimeError(
+                f"could not reach Ollama to check {model!r} ({error}) -- start "
+                f"the daemon with `ollama serve`. Checked before any run so a "
+                f"campaign fails here rather than producing a matrix of "
+                f"provider errors."
+            ) from error
         if taken.get("digest", "unknown") == "unknown":
             raise RuntimeError(
                 f"no Ollama model {model!r} is available -- start the daemon "

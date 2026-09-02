@@ -133,10 +133,20 @@ def model_fingerprint(model: str, *, url: str = OLLAMA_URL, timeout: int = 30) -
 
     Recorded in the run manifest so a later reader can tell which weights a
     result came from.
+
+    A bare name matches its `:latest` tag. `ollama pull llama3.2` puts the
+    weights on the machine and the daemon then lists them as `llama3.2:latest`
+    -- never under the bare name -- so an exact-string match reported the
+    model as absent when it was present, and the campaign preflight that gates
+    on this digest refused to start over it. `digest: "unknown"` is this
+    module's way of saying "the daemon does not have this", and it must mean
+    only that.
     """
     version = _get(f"{url}/api/version", timeout).get("version", "unknown")
     tags = _get(f"{url}/api/tags", timeout).get("models") or []
-    entry = next((m for m in tags if m.get("name") == model), {})
+    entry = next(
+        (m for m in tags if m.get("name") in (model, f"{model}:latest")), {}
+    )
     return {
         "model": model,
         "digest": entry.get("digest", "unknown"),
