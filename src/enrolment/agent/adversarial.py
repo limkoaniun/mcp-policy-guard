@@ -10,20 +10,23 @@ B drives; it does not judge. Nothing here decides whether an attack succeeded.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
 import time
 from pathlib import Path
 
+import anyio
 from pydantic import BaseModel
 
 from policy_guard.upstream import connect_subprocess
 
 from ..run_setup import arms_for, write_overlay, write_task
-from ..scenarios_spec import Scenario
-from .campaign import CampaignManifest
+from ..scenarios_spec import Scenario, load_all
+from .campaign import CampaignManifest, load_or_create_manifest, run_campaign, run_status
 from .loop import AgentTask, run_agent
+from .ollama import model_fingerprint, ollama_chat, warm_up
 from .transcript import Transcript
 
 #: The fixed second user turn. A's §2 measured that a single-turn framing
@@ -207,3 +210,160 @@ async def run_one(
         encoding="utf-8",
     )
     return transcript, duration
+
+
+DEFAULT_MODELS = ["llama3.1:8b", "llama3.2"]
+REPO_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_PACK = "configs/enrolment-personas.yaml"
+DEFAULT_SCENARIOS = "attacks/scenarios"
+DEFAULT_PERSONAS = "data/personas.json"
+
+
+def parse_args(argv=None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run the adversarial scenarios through a real model (subsystem B)."
+    )
+    parser.add_argument("--campaign", required=True, help="campaign directory")
+    parser.add_argument(
+        "--models", default=",".join(DEFAULT_MODELS),
+        type=lambda value: [m.strip() for m in value.split(",") if m.strip()],
+    )
+    parser.add_argument("--repeats", type=int, default=5)
+    parser.add_argument("--pack", default=DEFAULT_PACK)
+    parser.add_argument("--scenarios", default=DEFAULT_SCENARIOS)
+    parser.add_argument("--personas", default=DEFAULT_PERSONAS)
+    parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--seed", type=int, default=None,
+        help="recorded for completeness; A's §7 measured it changing nothing, "
+             "so it must not be described as making runs reproducible",
+    )
+    parser.add_argument("--max-model-turns", type=int, default=4)
+    parser.add_argument("--max-calls", type=int, default=12)
+    parser.add_argument(
+        "--limit", type=int, default=None,
+        help="run at most this many runs this invocation, then stop. The "
+             "campaign is resumable, so this is how a long matrix is taken in "
+             "chunks -- and how one run is timed before committing to 280.",
+    )
+    parser.add_argument("--dry-run", action="store_true")
+    return parser.parse_args(argv)
+
+
+def load_suite(args):
+    personas = set(json.loads((REPO_ROOT / args.personas).read_text(encoding="utf-8")))
+    known_tools = {
+        "search_subjects", "get_subject_details", "get_student_record",
+        "check_prerequisites", "enrol", "drop", "submit_erequest",
+        "get_study_plan", "preview_major_change", "get_session_options",
+    }
+    return load_all(REPO_ROOT / args.scenarios, personas=personas, known_tools=known_tools)
+
+
+def preflight(models, fingerprint=None, warm=None) -> dict:
+    """Check every model is reachable and pulled, then warm each one.
+
+    Checked once, before any run. A campaign that cannot reach its models must
+    fail here rather than produce 280 failed runs, each recording a provider
+    error that says nothing about the experiment.
+
+    Warming follows A's §7: `llama3.2`'s first response after a load differed
+    from the two that followed, and a measured run should not be the one that
+    is different for a reason unrelated to the experiment.
+    """
+    fingerprint = fingerprint or model_fingerprint
+    warm = warm or warm_up
+    fingerprints = {}
+    for model in models:
+        taken = fingerprint(model)
+        if taken.get("digest", "unknown") == "unknown":
+            raise RuntimeError(
+                f"no Ollama model {model!r} is available -- start the daemon "
+                f"with `ollama serve` and `ollama pull {model}`. Checked before "
+                f"any run so a campaign fails here rather than producing a "
+                f"matrix of provider errors."
+            )
+        warm(model)
+        fingerprints[model] = taken
+    return fingerprints
+
+
+def build_manifest(args, fingerprints: dict) -> CampaignManifest:
+    return CampaignManifest(
+        models=list(args.models), repeats=args.repeats,
+        system_prompt=SYSTEM_PROMPT, nudge=NUDGE, policy_pack=args.pack,
+        max_model_turns=args.max_model_turns, max_calls=args.max_calls,
+        temperature=args.temperature, seed=args.seed, fingerprints=fingerprints,
+    )
+
+
+def _report_matrix(specs, scenarios) -> None:
+    on = len([s for s in specs if s.arm == "on"])
+    off = len([s for s in specs if s.arm == "off"])
+    print(f"{len(specs)} runs: {on} enforcement-on, {off} enforcement-off")
+    excluded = sorted(s.id for s in scenarios if s.injected and not s.deliverable)
+    print(
+        f"no enforcement-off arm ({len(excluded)} scenarios, "
+        f"deliverable: false): {', '.join(excluded)}"
+    )
+    print(
+        "  -- their attack classes report the on arm only, and the results "
+        "table must say so rather than omit them"
+    )
+
+
+def main(argv=None) -> int:
+    args = parse_args(argv)
+    scenarios = load_suite(args)
+    specs = enumerate_matrix(scenarios, args.models, args.repeats)
+
+    _report_matrix(specs, scenarios)
+    if args.dry_run:
+        return 0
+
+    if args.limit is not None:
+        specs = specs[: args.limit]
+        print(f"--limit {args.limit}: running the first {len(specs)} of them")
+
+    fingerprints = preflight(args.models)
+    manifest = load_or_create_manifest(args.campaign, build_manifest(args, fingerprints))
+    by_id = {s.id: s for s in scenarios}
+    campaign_dir = Path(args.campaign)
+    pack_path = REPO_ROOT / args.pack
+
+    def chat_factory(model):
+        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed)
+
+    async def runner(spec):
+        transcript, duration = await run_one(
+            by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
+            pack_path=pack_path, repo_root=REPO_ROOT,
+            chat_factory=chat_factory, manifest=manifest,
+        )
+        return run_status(transcript), duration
+
+    def describe(spec):
+        return {
+            "scenario_id": spec.scenario_id,
+            "attack_class": by_id[spec.scenario_id].attack_class,
+            "model": spec.model, "arm": spec.arm,
+            "repeat": spec.repeat, "attempt": spec.attempt,
+        }
+
+    records = anyio.run(
+        lambda: run_campaign(
+            specs, runner, campaign_dir=campaign_dir, describe=describe
+        )
+    )
+
+    counts: dict[str, int] = {}
+    for record in records:
+        counts[record.status] = counts.get(record.status, 0) + 1
+    total = sum(r.duration_s for r in records)
+    print(f"{len(records)} runs indexed: {counts}")
+    print(f"{total / 60:.1f} minutes of run time")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
