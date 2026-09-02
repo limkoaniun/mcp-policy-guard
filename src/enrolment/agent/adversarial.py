@@ -10,6 +10,11 @@ B drives; it does not judge. Nothing here decides whether an attack succeeded.
 
 from __future__ import annotations
 
+import re
+
+from pydantic import BaseModel
+
+from ..run_setup import arms_for
 from ..scenarios_spec import Scenario
 from .loop import AgentTask
 
@@ -63,3 +68,70 @@ def task_for(scenario: Scenario, *, system_prompt: str = SYSTEM_PROMPT) -> Agent
         system=system_prompt.replace("{principal}", scenario.persona),
         turns=turns_for(scenario),
     )
+
+
+#: Replacement attempts get a letter, so `...-r1` is followed by `...-r1a`.
+#: Two is the bound design §8 sets; beyond it the cell is left short and D
+#: reports the reduced N rather than B trying harder.
+_ATTEMPT_SUFFIXES = ("", "a", "b")
+
+
+def model_slug(model: str) -> str:
+    """`model` reduced to characters safe in a directory name on any filesystem.
+
+    `llama3.1:8b` becomes `llama318b`. The colon alone would be enough reason
+    -- it is a path separator on some platforms and reserved on others.
+    """
+    return re.sub(r"[^a-z0-9]", "", model.lower())
+
+
+class RunSpec(BaseModel):
+    """One cell of the matrix: one scenario, one model, one arm, one repeat."""
+
+    scenario_id: str
+    model: str
+    arm: str
+    repeat: int
+    attempt: int = 0
+
+    @property
+    def run_id(self) -> str:
+        suffix = _ATTEMPT_SUFFIXES[self.attempt]
+        return f"{self.scenario_id}-{model_slug(self.model)}-{self.arm}-r{self.repeat}{suffix}"
+
+    def replacement(self) -> RunSpec:
+        """The next attempt at this cell, in a directory of its own.
+
+        Run directories are single-use -- `RunState.load` raises
+        `RunDirectoryInUseError` on a second load -- so a replacement can
+        never be a re-entry into the failed one, and B does not try to make it
+        one.
+        """
+        return self.model_copy(update={"attempt": self.attempt + 1})
+
+
+def enumerate_matrix(scenarios, models, repeats: int) -> list[RunSpec]:
+    """Every run the campaign will make, in the order it will make them.
+
+    Repeat is the outermost loop on purpose. An interrupted campaign then
+    leaves complete early repeats across the whole suite rather than all five
+    repeats of the first few scenarios and nothing of the rest -- a partial
+    campaign that is still balanced is worth something; one that is not is
+    worth very little.
+
+    Which arms a scenario gets is `run_setup.arms_for`, not a rule restated
+    here: the four `deliverable: false` scenarios get the on arm only, because
+    an off arm for a payload that never lands would report "the attack failed"
+    when none was mounted.
+    """
+    specs: list[RunSpec] = []
+    for repeat in range(1, repeats + 1):
+        for model in models:
+            for scenario in scenarios:
+                for arm in arms_for(scenario):
+                    specs.append(
+                        RunSpec(
+                            scenario_id=scenario.id, model=model, arm=arm, repeat=repeat
+                        )
+                    )
+    return specs
