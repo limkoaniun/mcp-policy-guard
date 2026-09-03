@@ -19,7 +19,7 @@
 - **The depth curve is the core 200; per-mode rates are the full 248.** Every sampled scenario is labelled `core` or `top_up` so the two denominators cannot be confused. (Design §5)
 - **Every compliance scenario runs both arms.** There is no deliverability question here; `off_arm_allowed` is not consulted. (Design §6)
 - **Subsystem B must stay green throughout.** The suite is **522 tests passing** before this plan begins, and every refactor step keeps B's tests passing unchanged in meaning.
-- Default sampling parameters: `per_depth = 40`, `mode_floor = 25`, `sample_seed = 20260903`. Measured on the real suite these give **248 scenarios** — core 200, top-ups `unmet_admission +4`, `unmet_aos +24`, `unmet_credit_points +20` — with final per-mode counts `compliant 78, unmet_academic 95, unmet_admission 25, unmet_aos 25, unmet_credit_points 25` and final per-depth counts `0:40, 1:40, 2:68, 3:60, 4:40`.
+- Default sampling parameters: `per_depth = 40`, `mode_floor = 25`, `sample_seed = 20260903`. Measured on the real suite these give **248 scenarios** — core 200, top-ups `unmet_admission +3`, `unmet_aos +24`, `unmet_credit_points +21` — with final per-mode counts `compliant 78, unmet_academic 95, unmet_admission 25, unmet_aos 25, unmet_credit_points 25` and final per-depth counts `0:40, 1:40, 2:65, 3:63, 4:40`.
 - Style: `ruff` at `line-length = 100`, and its default rule set **includes C408** — a plain `ruff check` flags `dict(a=1)`, so write dict literals. Run `ruff check src tests` before every commit.
 
 ## File Structure
@@ -275,9 +275,9 @@ def test_the_top_ups_are_the_modes_the_design_named():
         s.failure_mode for s in drawn() if s.stratum == "top_up"
     )
     assert dict(top_up) == {
-        "unmet_admission": 4,
+        "unmet_admission": 3,
         "unmet_aos": 24,
-        "unmet_credit_points": 20,
+        "unmet_credit_points": 21,
     }
 
 
@@ -286,7 +286,7 @@ def test_the_full_sample_is_deliberately_not_depth_balanced():
     are the whole. A test asserting the full sample IS balanced would be
     asserting the bug."""
     counts = collections.Counter(s.rule_depth for s in drawn())
-    assert dict(sorted(counts.items())) == {0: 40, 1: 40, 2: 68, 3: 60, 4: 40}
+    assert dict(sorted(counts.items())) == {0: 40, 1: 40, 2: 65, 3: 63, 4: 40}
 
 
 def test_no_scenario_is_drawn_twice():
@@ -553,7 +553,7 @@ def read_sample(campaign_dir) -> list[SampledScenario]:
 - [ ] **Step 4: Run the tests**
 
 Run: `.venv/bin/python -m pytest tests/test_sampling.py -v`
-Expected: 15 passed. If the counts in `test_the_sample_is_the_size_the_design_measured` or `test_the_top_ups_are_the_modes_the_design_named` disagree, **do not adjust the assertion to match the code** — the design's §13 verification standard requires re-deriving. Report the disagreement.
+Expected: 16 passed. If the counts in `test_the_sample_is_the_size_the_design_measured` or `test_the_top_ups_are_the_modes_the_design_named` disagree, **do not adjust the assertion to match the code** — the design's §13 verification standard requires re-deriving. Report the disagreement.
 
 - [ ] **Step 5: Run the full suite and commit**
 
@@ -1902,7 +1902,7 @@ Expected: 10 passed.
 - [ ] **Step 5: Check the dry run against the real suite**
 
 Run: `.venv/bin/python -m enrolment.agent.compliance --campaign /tmp/x --dry-run`
-Expected: 248 scenarios (200 core, 48 top-up), 4960 runs, the per-depth table showing core 40 at every depth and all 40/40/68/60/40, every failure mode at 25 or above, and the note that depth 0 is entirely compliant.
+Expected: 248 scenarios (200 core, 48 top-up), 4960 runs, the per-depth table showing core 40 at every depth and all 40/40/65/63/40, every failure mode at 25 or above, and the note that depth 0 is entirely compliant.
 
 - [ ] **Step 6: Write the live test**
 

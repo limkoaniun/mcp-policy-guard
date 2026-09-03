@@ -112,14 +112,14 @@ suite, at `per_depth = 40` and `mode_floor = 25`:
 
 ```
 core:      40 × 5 depths                     200
-top-up:    unmet_admission                    +4
+top-up:    unmet_admission                    +3
            unmet_aos                         +24
-           unmet_credit_points               +20
+           unmet_credit_points               +21
                                             ----
 total                                         248
 ```
 
-Three modes need topping up, not two — `unmet_admission` falls four short of
+Three modes need topping up, not two — `unmet_admission` falls three short of
 the floor by chance at this seed.
 
 The resulting sample is deliberately **not** depth-balanced, because the
@@ -128,7 +128,7 @@ top-ups concentrate at the depths where those modes live:
 | | depth 0 | depth 1 | depth 2 | depth 3 | depth 4 |
 |---|---|---|---|---|---|
 | core | 40 | 40 | 40 | 40 | 40 |
-| final | 40 | 40 | 68 | 60 | 40 |
+| final | 40 | 40 | 65 | 63 | 40 |
 
 **This forces a rule the report must follow: the depth curve is computed from
 the core 200, and per-mode rates from the full 248.** They are different
@@ -294,6 +294,17 @@ doubles the campaign.
 As A's §11 and B's §15. Every number in §3, §5 and §10 of this document was
 produced by running against the real suite before being written down — the
 cross-tabulation, the expected rare-mode draws, and the 248-scenario sample
-with its per-depth and per-mode composition. Where an implementation disagrees
-with this document, the disagreement is resolved by re-deriving, never by
-relaxing an assertion to match the code.
+with its per-depth and per-mode composition.
+
+**§5's figures were corrected during implementation, and the correction is the
+standard working.** They were first derived from a probe that drew from pools
+in file order, while §8's reproducibility requirement means the sampler must
+sort its pools by `scenario_id` before drawing — so the probe and the
+specification disagreed, and the probe's numbers were the stale ones. The
+totals that carry the argument were unaffected (248 scenarios, a 200-scenario
+core, every failure mode at or above the floor); the top-up split and two
+depth totals moved. Resolved by re-deriving against the sorted sampler, which
+is what this section requires, and recorded here rather than quietly amended.
+
+Where an implementation disagrees with this document, the disagreement is
+resolved by re-deriving, never by relaxing an assertion to match the code.
