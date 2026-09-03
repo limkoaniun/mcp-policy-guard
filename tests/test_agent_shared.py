@@ -5,6 +5,8 @@ one rule two homes -- the divergence shape this codebase has already closed
 twice.
 """
 
+import ast
+
 import pytest
 
 from enrolment.agent import cli_common
@@ -38,19 +40,62 @@ def test_model_slug_moved_unchanged():
     assert model_slug("llama3.2") == "llama32"
 
 
+def domain_imports(source: str) -> list[str]:
+    """Every import in `source` that reaches outside `agent/` into the
+    enrolment domain, named precisely enough to say what was found.
+
+    A substring scan for `"from ..scenarios"` etc. misses an import written
+    in absolute style -- `from enrolment.scenarios_spec import Scenario` is
+    exactly how someone who did not know the rule would write it, and it
+    contains none of those substrings. So this walks the AST instead and
+    checks what an import actually resolves to:
+
+    - An absolute `Import` or `ImportFrom` (`level == 0`) is forbidden if its
+      module is `enrolment` or starts with `enrolment.`.
+    - A relative `ImportFrom` at `level >= 2` climbs above `agent/` and is
+      therefore in the domain by construction, regardless of what it is
+      named -- forbidden outright.
+    - A relative `ImportFrom` at `level == 1` is a sibling inside `agent/`
+      (`.transcript`, `.ollama`, ...) and is fine.
+    """
+    offenders = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "enrolment" or alias.name.startswith("enrolment."):
+                    offenders.append(f"import {alias.name}")
+        elif isinstance(node, ast.ImportFrom):
+            if node.level == 0:
+                module = node.module or ""
+                if module == "enrolment" or module.startswith("enrolment."):
+                    offenders.append(f"from {module} import ...")
+            elif node.level >= 2:
+                offenders.append(f"from {'.' * node.level}{node.module or ''} import ...")
+    return offenders
+
+
 def test_campaign_still_imports_nothing_from_the_domain():
     """RunSpec moving in must not drag a domain import with it. `campaign.py`
     is reused unchanged by subsystem C precisely because it has none."""
     from enrolment.agent import campaign
 
-    source = campaign.__file__
-    with open(source, encoding="utf-8") as handle:
+    with open(campaign.__file__, encoding="utf-8") as handle:
         text = handle.read()
-    for forbidden in (
-        "from ..scenarios", "from ..scenarios_spec", "from ..run_setup",
-        "from .adversarial", "from .compliance", "import enrolment",
-    ):
-        assert forbidden not in text, f"campaign.py imports {forbidden!r}"
+    offenders = domain_imports(text)
+    assert not offenders, f"campaign.py imports from the domain: {offenders}"
+
+
+def test_the_domain_import_check_catches_an_absolute_import():
+    """The substring version of this check missed
+    `from enrolment.scenarios_spec import Scenario`, which is exactly how a
+    domain import would most naturally be written by someone who did not know
+    the rule."""
+    assert domain_imports("from enrolment.scenarios_spec import Scenario") == [
+        "from enrolment.scenarios_spec import ..."
+    ]
+    assert domain_imports(
+        "import json\nfrom .transcript import Transcript\nfrom pydantic import BaseModel\n"
+    ) == []
 
 
 def test_write_task_takes_keyword_arguments(tmp_path):
