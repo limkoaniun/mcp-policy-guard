@@ -16,13 +16,13 @@ import json
 import sys
 from pathlib import Path
 
-import yaml
 from pydantic import BaseModel, Field
 
 from policy_guard.config import load_policy_pack
 from policy_guard.decisions import run_is_complete
 from policy_guard.upstream import connect_subprocess
 
+from .run_setup import off_arm_allowed, write_overlay, write_task
 from .scenarios_spec import Scenario
 
 
@@ -39,50 +39,6 @@ class ScenarioResult(BaseModel):
     passed: bool
     failures: list[str] = Field(default_factory=list)
     calls: list[CallResult] = Field(default_factory=list)
-
-
-def _write_task(scenario: Scenario, run_dir: Path, overlay_path: Path | None) -> Path:
-    task = {
-        "task_id": scenario.id,
-        "description": scenario.task.description,
-        "allowed_tools": list(scenario.task.allowed_tools),
-        "principal_id": scenario.persona,
-    }
-    if overlay_path is not None:
-        task["overlay"] = str(overlay_path)
-    path = run_dir / "task.yaml"
-    path.write_text(yaml.safe_dump(task), encoding="utf-8")
-    return path
-
-
-def _write_overlay(scenario: Scenario, run_dir: Path) -> Path | None:
-    """Deliver the payload when it can be delivered.
-
-    Nothing reads it in the enforcement-ON arm -- there is no model. It is
-    written anyway because `load_overlay` validates that the target subject
-    exists, so a typo in a scenario fails loudly here rather than silently
-    producing a scenario whose off arm could never have worked.
-    """
-    payload = scenario.payload
-    if payload is None or not scenario.deliverable:
-        return None
-    if payload.location == "subject_description":
-        path = run_dir / "overlay.yaml"
-        path.write_text(
-            yaml.safe_dump({payload.target: {"description_suffix": payload.text}}),
-            encoding="utf-8",
-        )
-        return path
-    # This module is coupled to `scenarios_spec.DELIVERY_MECHANISMS` only by
-    # convention -- a location added there without a matching branch here
-    # would otherwise fall through to `return None`, running a
-    # `deliverable: true` scenario with no payload ever delivered and
-    # nothing saying so.
-    raise ValueError(
-        f"{scenario.id}: payload location {payload.location!r} was accepted "
-        f"by the loader as deliverable, but scenario_runner implements no "
-        f"delivery mechanism for it"
-    )
 
 
 def _read_decisions(run_dir: Path) -> list[dict]:
@@ -245,7 +201,7 @@ async def run_scenario(
     enforcement: str = "on",
 ) -> ScenarioResult:
     """Replay `scenario` and report whether every expectation held."""
-    if enforcement == "off" and not scenario.deliverable:
+    if enforcement == "off" and not off_arm_allowed(scenario):
         raise ValueError(
             f"{scenario.id} is marked deliverable: false, so its enforcement-off "
             f"arm cannot be run: no mechanism delivers a "
@@ -255,19 +211,18 @@ async def run_scenario(
 
     if enforcement != "on":
         raise ValueError(
-            f"{scenario.id}: the enforcement-off arm requires an agent harness "
-            f"that does not exist yet -- this scenario's replay is scripted by "
-            f"hand to stand in for the calls an attack would induce, not "
-            f"produced by a model acting under injected instructions. "
-            f"Replaying those scripted calls unenforced would mutate state and "
-            f"be indistinguishable from a successful attack when none was ever "
-            f"mounted. The harness is what unlocks this arm."
+            f"{scenario.id}: the replay arm runs enforcement-on only. Its calls "
+            f"are hand-scripted stand-ins for what an attack would induce, not a "
+            f"model's own output, so replaying them unenforced would mutate state "
+            f"and be indistinguishable from a successful attack when none was "
+            f"mounted. The enforcement-off arm is the model-driven one, in "
+            f"`enrolment.agent.adversarial`."
         )
 
     run_dir = Path(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
-    overlay_path = _write_overlay(scenario, run_dir)
-    task_path = _write_task(scenario, run_dir, overlay_path)
+    overlay_path = write_overlay(scenario, run_dir)
+    task_path = write_task(scenario, run_dir, overlay_path)
 
     arguments = [
         "-m", "policy_guard",

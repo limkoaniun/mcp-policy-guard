@@ -12,6 +12,8 @@ venv/
 .coverage
 htmlcov/
 results/
+# 280 run directories x 6 files each; the README points campaigns here.
+experiments/runs/
 *.log
 .DS_Store
 .idea/

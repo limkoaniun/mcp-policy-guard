@@ -98,12 +98,15 @@ async def test_an_undeliverable_scenario_refuses_the_enforcement_off_arm_with_it
 
 @pytest.mark.anyio
 async def test_the_enforcement_off_arm_is_refused_outright(tmp_path):
-    """Even a deliverable scenario's off arm is refused: there is no agent
-    harness yet, so replaying scripted calls unenforced would mutate state
-    and read as a successful attack when none was ever mounted. This is a
-    distinct, broader reason from the deliverable-based refusal above, and
-    its message says so (`harness`, not `deliverable`)."""
-    with pytest.raises(ValueError, match="harness"):
+    """Even a deliverable scenario's off arm is refused: this is the replay
+    arm, whose calls are hand-scripted stand-ins for what an attack would
+    induce, not a model's own output, so replaying them unenforced would
+    mutate state and read as a successful attack when none was ever mounted.
+    This is a distinct, broader reason from the deliverable-based refusal
+    tested directly above, and the two messages stay distinguishable: this
+    one names the replay arm and its hand-scripted calls, the other names
+    `deliverable`."""
+    with pytest.raises(ValueError, match="replay arm"):
         await run_scenario(
             scenario(), run_dir=tmp_path / "run", pack_path=PACK,
             repo_root=REPO, enforcement="off",
