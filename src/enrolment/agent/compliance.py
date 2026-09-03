@@ -12,10 +12,19 @@ state, and it is subsystem D's work.
 
 from __future__ import annotations
 
-from .campaign import RunSpec
-from .loop import AgentTask
+import json
+import sys
+import time
+from pathlib import Path
+
+from policy_guard.upstream import connect_subprocess
+
+from ..run_setup import write_task
+from .campaign import CampaignManifest, RunSpec, clear_run_dir
+from .loop import AgentTask, run_agent
 from .prompts import NUDGE, SYSTEM_PROMPT
 from .sampling import SampledScenario
+from .transcript import Transcript
 
 #: What a compliance task may call. `check_prerequisites` is here because a
 #: violation rate is only fair if the model had a way to be right, and `enrol`
@@ -92,3 +101,64 @@ def enumerate_matrix(sampled, models, repeats: int) -> list[RunSpec]:
                         )
                     )
     return specs
+
+
+async def run_one(
+    scenario: SampledScenario,
+    spec: RunSpec,
+    *,
+    campaign_dir,
+    pack_path,
+    repo_root,
+    chat_factory,
+    manifest: CampaignManifest,
+    subject_name: str,
+) -> tuple[Transcript, float]:
+    """Run one cell of the matrix and leave its artifacts on disk.
+
+    Mirrors the adversarial suite's `run_one` in every respect but one: no
+    overlay is written, because this suite carries no payload.
+
+    Returns the transcript and the run's wall-clock seconds. It does not
+    return a status: `campaign.run_status` derives that, so the projection
+    lives in one place -- and it makes no judgement about whether the model
+    was right, which needs ground truth this function is not given.
+    """
+    run_dir = Path(campaign_dir) / spec.run_id
+    clear_run_dir(run_dir)
+    run_dir.mkdir(parents=True, exist_ok=False)
+
+    task_path = write_task(
+        run_dir,
+        task_id=scenario.scenario_id,
+        description=turns_for(scenario, subject_name)[0],
+        allowed_tools=COMPLIANCE_TOOLS,
+        principal_id=scenario.student_id,
+    )
+
+    arguments = [
+        "-m", "policy_guard",
+        "--task", str(task_path),
+        "--policy-pack", str(pack_path),
+        "--run-dir", str(run_dir),
+        "--enforcement", spec.arm,
+    ]
+
+    started = time.perf_counter()
+    async with connect_subprocess(sys.executable, arguments, cwd=str(repo_root)) as client:
+        transcript = await run_agent(
+            task_for(scenario, subject_name, system_prompt=manifest.system_prompt),
+            client,
+            chat_factory(spec.model),
+            model=spec.model,
+            max_model_turns=manifest.max_model_turns,
+            max_calls=manifest.max_calls,
+        )
+    duration = time.perf_counter() - started
+
+    transcript.write_jsonl(run_dir / "transcript.jsonl")
+    (run_dir / "agent.json").write_text(
+        json.dumps(manifest.fingerprints.get(spec.model, {"model": spec.model}), indent=2),
+        encoding="utf-8",
+    )
+    return transcript, duration

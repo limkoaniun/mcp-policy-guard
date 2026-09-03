@@ -25,7 +25,7 @@ from ..scenarios_spec import Scenario, load_all
 from .campaign import (
     CampaignManifest,
     RunSpec,
-    existing_status,
+    clear_run_dir,
     load_or_create_manifest,
     run_campaign,
     run_status,
@@ -96,46 +96,6 @@ def enumerate_matrix(scenarios, models, repeats: int) -> list[RunSpec]:
     return specs
 
 
-def _clear_run_dir(run_dir: Path) -> None:
-    """Make way for a fresh run, or refuse to.
-
-    A run directory that already exists is one of two things, and conflating
-    them cost design §9's promise that resume "continues where it stopped".
-
-    **No readable transcript.** `run_one` creates the directory first and
-    writes `transcript.jsonl` last, after the proxy has shut down, so this is
-    exactly what killing a 280-run campaign mid-run leaves behind -- the
-    commonest way this campaign stops. It is an ordinary interrupted run, and
-    `campaign.existing_status` already reads it as "not run" and asks for it
-    again; refusing to make it would leave resume unable to do the one thing
-    it exists for. The directory is moved aside rather than deleted: its
-    partial `decisions.jsonl` is evidence, and this subsystem destroys none.
-
-    **A readable transcript.** The run finished. Being asked to make it again
-    can only mean the resume logic believed the directory was fresh when it
-    was not, and that must surface -- swallowing it would produce exactly the
-    log-and-state divergence `RunState` raises `RunDirectoryInUseError` to
-    prevent.
-    """
-    if not run_dir.exists():
-        return
-    if existing_status(run_dir) is not None:
-        raise FileExistsError(
-            f"{run_dir} already holds a readable transcript, so the resume "
-            f"logic asked for a run that had already been made. Not retried "
-            f"and not moved: that would hide a divergence between what the "
-            f"index says was run and what is on disk."
-        )
-    attempt = 1
-    while (aside := run_dir.with_name(f"{run_dir.name}.interrupted-{attempt}")).exists():
-        attempt += 1
-    run_dir.rename(aside)
-    print(
-        f"{run_dir.name}: an interrupted run with no transcript was moved to "
-        f"{aside.name} and is being run again. Nothing was deleted."
-    )
-
-
 async def run_one(
     scenario: Scenario,
     spec: RunSpec,
@@ -153,14 +113,14 @@ async def run_one(
     built on `ollama_chat`, the tests pass a scripted fake.
 
     A directory that is already there is one of two very different things,
-    and `_clear_run_dir` tells them apart. See its docstring.
+    and `campaign.clear_run_dir` tells them apart. See its docstring.
 
     Returns the transcript and the run's wall-clock seconds. It does not
     return a status: `campaign.run_status` derives that, so the projection
     lives in one place.
     """
     run_dir = Path(campaign_dir) / spec.run_id
-    _clear_run_dir(run_dir)
+    clear_run_dir(run_dir)
     run_dir.mkdir(parents=True, exist_ok=False)
 
     overlay_path = write_overlay(scenario, run_dir)

@@ -33,6 +33,7 @@ MANIFEST = "campaign.json"
 METHOD_FIELDS = (
     "models", "repeats", "system_prompt", "nudge",
     "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
+    "sample_digest",
 )
 
 
@@ -55,6 +56,11 @@ class CampaignManifest(BaseModel):
     temperature: float = 0.0
     seed: int | None = None
     fingerprints: dict = {}
+    #: Which sample this campaign drew, when it drew one. `None` for a suite
+    #: that is not sampled (the adversarial one runs all sixteen scenarios).
+    #: In METHOD_FIELDS because half a campaign over one sample and half over
+    #: another is not a campaign.
+    sample_digest: str | None = None
 
 
 def run_status(transcript: Transcript) -> str:
@@ -95,6 +101,46 @@ def existing_status(run_dir) -> str | None:
     except (ValueError, KeyError, TypeError):
         return None
     return run_status(transcript)
+
+
+def clear_run_dir(run_dir: Path) -> None:
+    """Make way for a fresh run, or refuse to.
+
+    A run directory that already exists is one of two things, and conflating
+    them cost design §9's promise that resume "continues where it stopped".
+
+    **No readable transcript.** `run_one` creates the directory first and
+    writes `transcript.jsonl` last, after the proxy has shut down, so this is
+    exactly what killing a 280-run campaign mid-run leaves behind -- the
+    commonest way this campaign stops. It is an ordinary interrupted run, and
+    `campaign.existing_status` already reads it as "not run" and asks for it
+    again; refusing to make it would leave resume unable to do the one thing
+    it exists for. The directory is moved aside rather than deleted: its
+    partial `decisions.jsonl` is evidence, and this subsystem destroys none.
+
+    **A readable transcript.** The run finished. Being asked to make it again
+    can only mean the resume logic believed the directory was fresh when it
+    was not, and that must surface -- swallowing it would produce exactly the
+    log-and-state divergence `RunState` raises `RunDirectoryInUseError` to
+    prevent.
+    """
+    if not run_dir.exists():
+        return
+    if existing_status(run_dir) is not None:
+        raise FileExistsError(
+            f"{run_dir} already holds a readable transcript, so the resume "
+            f"logic asked for a run that had already been made. Not retried "
+            f"and not moved: that would hide a divergence between what the "
+            f"index says was run and what is on disk."
+        )
+    attempt = 1
+    while (aside := run_dir.with_name(f"{run_dir.name}.interrupted-{attempt}")).exists():
+        attempt += 1
+    run_dir.rename(aside)
+    print(
+        f"{run_dir.name}: an interrupted run with no transcript was moved to "
+        f"{aside.name} and is being run again. Nothing was deleted."
+    )
 
 
 #: Replacement attempts get a letter, so `...-r1` is followed by `...-r1a`.
