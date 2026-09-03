@@ -53,7 +53,13 @@ def test_every_benign_scenario_has_both_arms():
 
 def test_write_task_records_the_principal_and_the_allowlist(tmp_path):
     scenario = by_id()["SC-07"]
-    path = write_task(scenario, tmp_path, None)
+    path = write_task(
+        tmp_path,
+        task_id=scenario.id,
+        description=scenario.task.description,
+        allowed_tools=scenario.task.allowed_tools,
+        principal_id=scenario.persona,
+    )
     written = yaml.safe_load(path.read_text())
     assert written["task_id"] == "SC-07"
     assert written["principal_id"] == scenario.persona

@@ -6,8 +6,13 @@ ones that are hard to provoke with real infrastructure is deterministic.
 
 import pytest
 
-from enrolment.agent.adversarial import RunSpec
-from enrolment.agent.campaign import IndexRecord, read_index, run_campaign, write_index
+from enrolment.agent.campaign import (
+    IndexRecord,
+    RunSpec,
+    read_index,
+    run_campaign,
+    write_index,
+)
 from enrolment.agent.transcript import ResponseOutcome, Transcript, TurnRecord
 
 

@@ -222,7 +222,14 @@ async def run_scenario(
     run_dir = Path(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
     overlay_path = write_overlay(scenario, run_dir)
-    task_path = write_task(scenario, run_dir, overlay_path)
+    task_path = write_task(
+        run_dir,
+        task_id=scenario.id,
+        description=scenario.task.description,
+        allowed_tools=scenario.task.allowed_tools,
+        principal_id=scenario.persona,
+        overlay_path=overlay_path,
+    )
 
     arguments = [
         "-m", "policy_guard",

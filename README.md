@@ -132,6 +132,14 @@ python -m enrolment.agent.adversarial --campaign experiments/runs/adversarial/fi
 python -m enrolment.agent.adversarial --campaign experiments/runs/adversarial/first
 ```
 
+Run the compliance campaign (subsystem C). `--dry-run` prints the sample
+against both denominators before anything runs.
+
+```bash
+python -m enrolment.agent.compliance --campaign experiments/runs/compliance/first --dry-run
+python -m enrolment.agent.compliance --campaign experiments/runs/compliance/first
+```
+
 ## Status
 
 **Done.** The full C04296 dataset is built and committed — 93 subjects, 201
@@ -176,7 +184,7 @@ drives a model through an MCP conversation against the real proxy and records
 every response and attempted call, without repairing the model's mistakes;
 `src/enrolment/agent/ollama.py` is the only module that knows Ollama's HTTP API
 exists, and the model is otherwise an injected callable, so the loop is
-exhaustively testable with no daemon running. 522 tests pass in total.
+exhaustively testable with no daemon running. 583 tests pass in total.
 
 Measured against both candidate models, effective depth is one tool call per
 user turn — neither recovers from an error within a turn. Benign task
@@ -200,10 +208,32 @@ metadata or registers a decoy tool — so their four scenarios report the
 enforcement-on arm only, and the results table says so rather than omitting
 them.
 
+**Subsystem C exists** — compliance runs
+(`context/2026-09-03-compliance-runs-design.md`). A stratified sample of the
+4,650-scenario suite — 40 per rule depth, topped up so no failure mode falls
+below 25, giving 248 scenarios — runs through both models on both enforcement
+arms: 4,960 runs, resumable, indexed, with the drawn sample recorded beside
+them. Running the whole suite would be 93,000 runs and about 77 hours, so
+which sample is drawn is the subsystem's central design decision.
+
+Allocation is equal per depth rather than proportional, because the
+literature reports reasoning collapsing abruptly past a threshold rather than
+degrading gradually: locating a cliff needs equal power either side of it.
+The per-mode floor unbalances the depths, so the depth curve is computed from
+the 200-scenario core and per-mode rates from the full 248 — every scenario
+carries a `core`/`top_up` label so the two denominators cannot be confused.
+
+Two limits the results must state. Depth 0 is entirely compliant, so a zero
+violation rate there is a property of the suite rather than a finding about
+the model. And a run in which the model never attempted the enrolment is
+`not_attempted` — excluded from the violation denominator and published
+beside it, because a model too weak to try would otherwise score identically
+to one that correctly refused.
+
 **Next.** The remaining policies (taint tracking, rate & scope limits), the
-two missing payload-delivery mechanisms, and subsystems C (compliance runs)
-and D (metrics and ablations). Until D lands, no metric from
-`context/project-spec.md` §7 can be reported.
+two missing payload-delivery mechanisms, and subsystem D (metrics and
+ablations). Until D lands, no metric from `context/project-spec.md` §7 can be
+reported.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
