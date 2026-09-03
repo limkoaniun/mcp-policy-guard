@@ -40,14 +40,28 @@ def arms_for(scenario: Scenario) -> list[str]:
     return ["on", "off"] if off_arm_allowed(scenario) else ["on"]
 
 
-def write_task(scenario: Scenario, run_dir, overlay_path) -> Path:
-    """The `task.yaml` the proxy is launched against."""
+def write_task(
+    run_dir,
+    *,
+    task_id: str,
+    description: str,
+    allowed_tools: list[str],
+    principal_id: str,
+    overlay_path=None,
+) -> Path:
+    """The `task.yaml` the proxy is launched against.
+
+    Takes the four fields rather than a `Scenario`, because the compliance
+    suite has no `Scenario` to pass -- its scenarios are (student, subject)
+    pairs. Two suites building `task.yaml` differently is exactly what this
+    module was extracted to prevent, so both call this.
+    """
     run_dir = Path(run_dir)
     task = {
-        "task_id": scenario.id,
-        "description": scenario.task.description,
-        "allowed_tools": list(scenario.task.allowed_tools),
-        "principal_id": scenario.persona,
+        "task_id": task_id,
+        "description": description,
+        "allowed_tools": list(allowed_tools),
+        "principal_id": principal_id,
     }
     if overlay_path is not None:
         task["overlay"] = str(overlay_path)

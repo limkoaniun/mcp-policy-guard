@@ -2,9 +2,11 @@
 
 Domain-neutral by construction -- nothing here imports `scenarios_spec` or
 anything else from the enrolment case study, so subsystem C (compliance runs)
-reuses it unchanged. A "spec" is duck-typed: anything carrying `run_id`,
-`attempt` and a `replacement()` method, plus the fields an `IndexRecord`
-needs.
+reuses it unchanged. `run_campaign` is written against `RunSpec`, defined
+below, but the contract it actually relies on is structural: anything
+carrying `run_id`, `attempt` and a `replacement()` method, plus the fields an
+`IndexRecord` needs, works -- so another subsystem may pass its own rather
+than this one.
 
 Nothing here judges a run. `run_status` is a projection of the transcript A
 already wrote, and is the one place this subsystem could accidentally start
@@ -14,6 +16,7 @@ forming an opinion.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -92,6 +95,46 @@ def existing_status(run_dir) -> str | None:
     except (ValueError, KeyError, TypeError):
         return None
     return run_status(transcript)
+
+
+#: Replacement attempts get a letter, so `...-r1` is followed by `...-r1a`.
+#: Two is the bound design §8 sets; beyond it the cell is left short and D
+#: reports the reduced N rather than B trying harder.
+_ATTEMPT_SUFFIXES = ("", "a", "b")
+
+
+def model_slug(model: str) -> str:
+    """`model` reduced to characters safe in a directory name on any filesystem.
+
+    `llama3.1:8b` becomes `llama318b`. The colon alone would be enough reason
+    -- it is a path separator on some platforms and reserved on others.
+    """
+    return re.sub(r"[^a-z0-9]", "", model.lower())
+
+
+class RunSpec(BaseModel):
+    """One cell of the matrix: one scenario, one model, one arm, one repeat."""
+
+    scenario_id: str
+    model: str
+    arm: str
+    repeat: int
+    attempt: int = 0
+
+    @property
+    def run_id(self) -> str:
+        suffix = _ATTEMPT_SUFFIXES[self.attempt]
+        return f"{self.scenario_id}-{model_slug(self.model)}-{self.arm}-r{self.repeat}{suffix}"
+
+    def replacement(self) -> RunSpec:
+        """The next attempt at this cell, in a directory of its own.
+
+        Run directories are single-use -- `RunState.load` raises
+        `RunDirectoryInUseError` on a second load -- so a replacement can
+        never be a re-entry into the failed one, and B does not try to make it
+        one.
+        """
+        return self.model_copy(update={"attempt": self.attempt + 1})
 
 
 INDEX = "index.jsonl"
@@ -203,6 +246,10 @@ async def run_campaign(
     max_replacements: int = 2,
 ) -> list[IndexRecord]:
     """Run every spec that has not already been run, and index the results.
+
+    Written against `RunSpec`, defined above, but `spec` is accepted
+    structurally -- anything carrying `run_id`, `attempt` and a
+    `replacement()` method will do, so another subsystem may pass its own.
 
     `runner` is `async (spec) -> (status, duration_s)`; `describe` is
     `(spec) -> dict` supplying an `IndexRecord`'s domain fields. Both are

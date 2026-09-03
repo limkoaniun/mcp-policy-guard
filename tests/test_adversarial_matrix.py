@@ -7,8 +7,8 @@ as a projection of A's own transcript and nothing more.
 import json
 import pathlib
 
-from enrolment.agent.adversarial import RunSpec, enumerate_matrix, model_slug
-from enrolment.agent.campaign import existing_status, run_status
+from enrolment.agent.adversarial import enumerate_matrix
+from enrolment.agent.campaign import RunSpec, existing_status, model_slug, run_status
 from enrolment.agent.transcript import ResponseOutcome, Transcript, TurnRecord
 from enrolment.scenarios_spec import load_all
 

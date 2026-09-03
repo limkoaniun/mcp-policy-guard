@@ -7,7 +7,7 @@ import urllib.error
 import pytest
 
 import enrolment.agent.ollama as ollama_module
-from enrolment.agent import adversarial
+from enrolment.agent import adversarial, cli_common
 from enrolment.agent.adversarial import parse_args, preflight
 from enrolment.agent.campaign import read_index
 from enrolment.agent.transcript import Transcript
@@ -50,7 +50,7 @@ def test_preflight_names_the_model_it_could_not_find(monkeypatch):
     """Spec §10: a campaign that cannot reach its models fails immediately,
     rather than producing 280 failed runs."""
     monkeypatch.setattr(
-        adversarial, "model_fingerprint",
+        cli_common, "model_fingerprint",
         lambda model, **kwargs: {"model": model, "digest": "unknown"},
     )
     with pytest.raises(RuntimeError) as error:
@@ -68,7 +68,7 @@ def test_preflight_names_ollama_serve_when_the_daemon_is_unreachable(monkeypatch
     def refuse(model, **kwargs):
         raise urllib.error.URLError(ConnectionRefusedError(61, "Connection refused"))
 
-    monkeypatch.setattr(adversarial, "model_fingerprint", refuse)
+    monkeypatch.setattr(cli_common, "model_fingerprint", refuse)
 
     with pytest.raises(RuntimeError) as error:
         preflight(["llama3.2"])
@@ -84,7 +84,7 @@ def test_preflight_accepts_a_bare_name_the_daemon_tags_as_latest(monkeypatch):
         ollama_module, "_get",
         lambda url, timeout: {"version": "0.33.2"} if url.endswith("version") else tags,
     )
-    monkeypatch.setattr(adversarial, "warm_up", lambda model, **kwargs: None)
+    monkeypatch.setattr(cli_common, "warm_up", lambda model, **kwargs: None)
 
     fingerprints = preflight(["llama3.2"])
 
@@ -97,10 +97,10 @@ def test_preflight_warms_every_model_before_any_measured_run(monkeypatch):
     reason unrelated to the experiment."""
     warmed = []
     monkeypatch.setattr(
-        adversarial, "model_fingerprint",
+        cli_common, "model_fingerprint",
         lambda model, **kwargs: {"model": model, "digest": "sha256:x"},
     )
-    monkeypatch.setattr(adversarial, "warm_up", lambda model, **kwargs: warmed.append(model))
+    monkeypatch.setattr(cli_common, "warm_up", lambda model, **kwargs: warmed.append(model))
 
     fingerprints = preflight(["llama3.1:8b", "llama3.2"])
 
