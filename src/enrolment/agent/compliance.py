@@ -264,6 +264,15 @@ def load_sample(args) -> list[SampledScenario]:
 
 
 def load_catalogue(args) -> dict:
+    """Subject code -> subject name, for the first user turn.
+
+    `entry.get("name", "")` tolerates a subject with no name rather than
+    crashing, which is right for a hole in the catalogue and dangerous as a
+    silent default: if the file's shape drifts -- a wrapper key, a renamed
+    field -- every lookup returns `""` and every run of the campaign is made
+    under `turns_for`'s defensive fallback. `_report_catalogue` prints the
+    resolved count so that drift is visible in the campaign's own output.
+    """
     raw = json.loads((REPO_ROOT / args.catalogue).read_text(encoding="utf-8"))
     return {code: entry.get("name", "") for code, entry in raw.items()}
 
@@ -314,12 +323,39 @@ def _report_sample(sampled, specs) -> None:
         )
 
 
+def _report_catalogue(sampled, names: dict) -> None:
+    """How many sampled subjects the catalogue could actually name.
+
+    The first user turn -- "I'd like to enrol in 32933 Research Project." --
+    is the sentence the whole experiment rests on, and it is built from this
+    lookup. `turns_for` degrades gracefully to the bare code, which is the
+    right behaviour for one missing name and the wrong thing to discover after
+    248 scenarios have run on it. So the count is printed beside the sample,
+    before any run is made, and a shortfall is said loudly rather than left to
+    be inferred from a number.
+    """
+    unnamed = [s for s in sampled if not names.get(s.subject_code)]
+    print(f"\n{len(sampled) - len(unnamed)}/{len(sampled)} sampled subjects "
+          f"resolved to a catalogue name")
+    if unnamed:
+        codes = sorted({s.subject_code for s in unnamed})
+        print(
+            f"  !! {len(unnamed)} runs would ask to enrol in a bare "
+            f"subject code ({', '.join(codes)}). Check the shape of "
+            f"data/catalogue.json before launching: the first user turn is the "
+            f"sentence this experiment rests on, and a degraded one is not the "
+            f"prompt the design specifies."
+        )
+
+
 def main(argv=None) -> int:
     args = parse_args(argv)
     sampled = load_sample(args)
     specs = enumerate_matrix(sampled, args.models, args.repeats)
+    names = load_catalogue(args)
 
     _report_sample(sampled, specs)
+    _report_catalogue(sampled, names)
     if args.dry_run:
         return 0
 
@@ -336,7 +372,6 @@ def main(argv=None) -> int:
 
     campaign_dir = Path(args.campaign)
     write_sample(campaign_dir, sampled)
-    names = load_catalogue(args)
     by_id = {s.scenario_id: s for s in sampled}
     pack_path = REPO_ROOT / args.pack
 

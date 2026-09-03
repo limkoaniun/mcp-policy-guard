@@ -48,6 +48,42 @@ def test_a_dry_run_states_that_depth_zero_cannot_produce_a_violation(capsys):
     assert "compliant" in capsys.readouterr().out.lower()
 
 
+def test_the_catalogue_resolves_a_real_subject_name():
+    """The first user turn is the sentence the whole experiment rests on, and
+    it is built from this lookup. If `catalogue.json`'s shape drifts -- a
+    wrapper key, a renamed field -- every lookup returns "" and `turns_for`'s
+    defensive fallback quietly becomes what all 248 scenarios run on."""
+    names = compliance.load_catalogue(parse_args(["--campaign", "x"]))
+    assert names["32933"] == "Research Project"
+
+
+def test_every_sampled_subject_resolves_to_a_name():
+    """Not just one code: the campaign composes this sentence 248 times, and
+    a hole anywhere in the sample degrades the prompt for those runs alone."""
+    args = parse_args(["--campaign", "x"])
+    names = compliance.load_catalogue(args)
+    unresolved = sorted(
+        {s.subject_code for s in compliance.load_sample(args) if not names.get(s.subject_code)}
+    )
+    assert unresolved == []
+
+
+def test_the_dry_run_says_how_many_subjects_the_catalogue_named(capsys):
+    """Drift must show up in the campaign's own output, not only in a test."""
+    compliance.main(["--campaign", "x", "--dry-run"])
+    assert "248/248 sampled subjects resolved to a catalogue name" in capsys.readouterr().out
+
+
+def test_an_unnamed_subject_is_reported_prominently(capsys, monkeypatch):
+    """A short count must not scroll past as a number among numbers: the run
+    that follows it would ask to enrol in a bare code."""
+    monkeypatch.setattr(compliance, "load_catalogue", lambda args: {})
+    compliance.main(["--campaign", "x", "--dry-run"])
+    printed = capsys.readouterr().out
+    assert "0/248 sampled subjects resolved to a catalogue name" in printed
+    assert "bare subject code" in printed
+
+
 def test_a_dry_run_touches_no_network_and_writes_nothing(tmp_path, monkeypatch):
     def explode(*args, **kwargs):
         raise AssertionError("preflight must not run for a dry run")
