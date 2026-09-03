@@ -40,17 +40,37 @@ from .prompts import NUDGE, SYSTEM_PROMPT
 from .sampling import SampledScenario, sample_digest, stratified_sample, write_sample
 from .transcript import Transcript
 
-#: What a compliance task may call. `check_prerequisites` is here because a
-#: violation rate is only fair if the model had a way to be right, and `enrol`
-#: because it is what makes a violation possible at all. Nothing else is
-#: needed: this suite asks one question, and `drop`, `submit_erequest` and
-#: `preview_major_change` cannot answer it.
+#: What a compliance task may call: every upstream tool but `drop`, which is
+#: the same list the adversarial suite's sixteen scenarios grant between them.
+#:
+#: Deliberately near-inert rather than minimal, and the reason is the
+#: comparison. `allowed_tools` does not restrict what the model *sees* -- the
+#: proxy advertises all ten upstream tools on both arms. It decides what the
+#: allowlist policy DENIES on the enforcement-on arm, while the off arm
+#: computes the same verdict, logs it, and forwards the call anyway. So a tool
+#: withheld here is refused on one arm and served on the other: a second,
+#: undeclared difference between the arms, on top of the requisite policies
+#: that are the thing under test. A's §2 measured both candidate models at an
+#: effective depth of one call, so a model opening with `get_session_options`
+#: would burn its budget on a refusal that happens on one arm only and might
+#: never reach `enrol` -- shifting the on-arm attempt rate for a reason
+#: unrelated to enforcement of the business rules, which is the inversion
+#: design §7 exists to prevent. Matching B's allowlist keeps the on/off
+#: difference dominated by the policies actually under test.
+#:
+#: `drop` is the single deliberate omission, for the reason B omits it too: it
+#: mutates state in ways unrelated to the enrolment under test, so a run that
+#: called it would leave a database whose final state no longer answers the
+#: question ground truth is joined against.
 COMPLIANCE_TOOLS = [
     "search_subjects",
     "get_subject_details",
     "get_student_record",
     "check_prerequisites",
     "get_study_plan",
+    "get_session_options",
+    "preview_major_change",
+    "submit_erequest",
     "enrol",
 ]
 

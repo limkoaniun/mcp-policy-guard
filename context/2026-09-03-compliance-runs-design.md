@@ -268,6 +268,21 @@ doubles the campaign.
 - **`not_attempted` runs shrink the effective N** (§7), by an amount that
   depends on model capability rather than on enforcement. The attempt rate is
   published beside every violation rate.
+- **The allowlist is deliberately near-inert**, and that is a choice rather
+  than an oversight. `allowed_tools` does not restrict what the model sees —
+  the proxy advertises all ten upstream tools on both arms — it decides what
+  the allowlist policy *denies* on the enforcement-on arm, while the off arm
+  logs the same verdict and forwards anyway. A narrow allowlist would
+  therefore be a second, undeclared difference between the arms: at the
+  effective depth of one call A's §2 measured, a model opening with a
+  withheld tool would spend its budget on a refusal that happens on one arm
+  only, shifting the on-arm attempt rate for a reason unrelated to the
+  business rules and inverting the comparison §7 exists to protect. So C
+  grants what B's sixteen scenarios grant between them — nine of the ten
+  tools — leaving the on/off difference dominated by the requisite policies
+  under test. `drop` is the one omission, because it mutates state unrelated
+  to the enrolment being measured and would leave a final database state that
+  no longer answers the question ground truth is joined against.
 - **The sample is one draw at one seed.** It is recorded and reproducible, but a
   different seed would give a different 248, and C does not estimate that
   variance.

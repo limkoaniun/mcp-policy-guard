@@ -16,6 +16,13 @@ from enrolment.agent.sampling import SampledScenario
 
 MODELS = ["llama3.1:8b", "llama3.2"]
 
+#: Every tool the enrolment server exposes, as the other suites' tests spell it.
+UPSTREAM_TOOLS = {
+    "search_subjects", "get_subject_details", "get_student_record",
+    "check_prerequisites", "enrol", "drop", "submit_erequest",
+    "get_study_plan", "preview_major_change", "get_session_options",
+}
+
 
 def sampled(**overrides):
     base = {
@@ -74,9 +81,25 @@ def test_the_allowed_tools_let_the_model_check_before_it_acts():
     assert "enrol" in COMPLIANCE_TOOLS
 
 
-def test_the_allowed_tools_exclude_what_the_task_does_not_need():
-    for tool in ("drop", "submit_erequest", "preview_major_change"):
-        assert tool not in COMPLIANCE_TOOLS
+def test_the_allowlist_withholds_only_drop():
+    """A narrower list would confound the arms.
+
+    `allowed_tools` does not restrict what the model *sees*: the proxy
+    advertises all ten upstream tools on both arms. It decides what the
+    allowlist policy DENIES on the enforcement-on arm, while the off arm
+    computes the same verdict, logs it, and forwards anyway. So every tool
+    withheld here is refused on one arm and served on the other, for a reason
+    that has nothing to do with the requisite rules under test -- a model that
+    opens with `get_session_options` burns budget on a one-arm refusal at an
+    effective depth of one call, which shifts the attempt rate between arms.
+
+    The adversarial suite's sixteen scenarios grant nine of the ten tools
+    between them, and that near-inert allowlist is what keeps its on/off
+    difference dominated by the policies actually under test. C matches it.
+    `drop` is the single deliberate omission, for the reason B omits it: it
+    mutates state in ways unrelated to the enrolment under test.
+    """
+    assert set(COMPLIANCE_TOOLS) == UPSTREAM_TOOLS - {"drop"}
 
 
 def test_every_scenario_runs_both_arms():
