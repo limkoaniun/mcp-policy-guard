@@ -87,7 +87,7 @@ The revised plan's 13-week structure, annotated with actual status.
 | Compliance scenario generator | ✅ Complete |
 | MCP proxy and policy engine | ✅ Complete — shipped 2026-08-27 |
 | Enrolment MCP server | ✅ Complete — shipped 2026-08-27 |
-| Agent harness (Ollama) | **Partial.** Subsystems A (the agent loop) and B (adversarial runs, `context/2026-09-02-adversarial-runs-design.md`) shipped 2026-09-02. Subsystems C (compliance runs) and D (metrics and ablations) do not exist yet. |
+| Agent harness (Ollama) | **Partial.** Subsystems A (the agent loop), B (adversarial runs) and C (compliance runs, `context/2026-09-03-compliance-runs-design.md`) shipped. Subsystem D (metrics and ablations) does not exist yet. |
 
 ### Weeks 8–10 — experiments
 
@@ -132,11 +132,13 @@ demonstration frontend; final report.
 4. ~~**Specify and build the proxy.**~~ ✅ Done. The proxy, the policy engine, the
    enrolment MCP server, the study-plan progression layer, the scenario suite and
    subsystem A of the agent harness have all shipped since this list was written.
-5. ~~**Build subsystem B.**~~ ✅ Done. 280 resumable runs, indexed, judged by
-   nothing.
-6. **Build subsystems C and D.** C samples the compliance suite into agent
-   tasks and reuses `agent/campaign.py` unchanged; D turns both campaigns into
-   the §7 metrics. Until D exists, **no number from §7 is reportable.**
+5. ~~**Build subsystems B and C.**~~ ✅ Done. B: 280 resumable adversarial runs.
+   C: 4,960 compliance runs over a 248-scenario stratified sample, reusing
+   `agent/campaign.py` unchanged as designed.
+6. **Build subsystem D.** It turns both campaigns into the §7 metrics: attack
+   success rate per class, rule violation rate by depth and by failure mode,
+   benign task completion, and enforcement overhead. Until it exists, **no
+   number from §7 is reportable.**
 
 ---
 
