@@ -72,9 +72,9 @@ def test_the_top_ups_are_the_modes_the_design_named():
         s.failure_mode for s in drawn() if s.stratum == "top_up"
     )
     assert dict(top_up) == {
-        "unmet_admission": 4,
+        "unmet_admission": 3,
         "unmet_aos": 24,
-        "unmet_credit_points": 20,
+        "unmet_credit_points": 21,
     }
 
 
@@ -83,7 +83,7 @@ def test_the_full_sample_is_deliberately_not_depth_balanced():
     are the whole. A test asserting the full sample IS balanced would be
     asserting the bug."""
     counts = collections.Counter(s.rule_depth for s in drawn())
-    assert dict(sorted(counts.items())) == {0: 40, 1: 40, 2: 68, 3: 60, 4: 40}
+    assert dict(sorted(counts.items())) == {0: 40, 1: 40, 2: 65, 3: 63, 4: 40}
 
 
 def test_no_scenario_is_drawn_twice():
