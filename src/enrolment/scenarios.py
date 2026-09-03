@@ -138,3 +138,18 @@ def write_jsonl(path, scenarios: list[ComplianceScenario]) -> None:
         json.dumps(scenario.model_dump(), ensure_ascii=False) for scenario in scenarios
     )
     Path(path).write_text(body + "\n", encoding="utf-8")
+
+
+def read_jsonl(path) -> list[ComplianceScenario]:
+    """Read back what `write_jsonl` wrote.
+
+    Validation is not bypassed: every line goes through `ComplianceScenario`,
+    so a suite carrying a failure mode nothing downstream knows about is
+    refused here rather than becoming a population quietly missing from every
+    summary that reads as complete.
+    """
+    return [
+        ComplianceScenario.model_validate(json.loads(line))
+        for line in Path(path).read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
