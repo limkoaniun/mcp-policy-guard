@@ -249,7 +249,15 @@ def parse_args(argv=None) -> argparse.Namespace:
              "about 1.3 unmet_aos out of 200, and a rate computed on one "
              "scenario is not a rate.",
     )
-    parser.add_argument("--sample-seed", type=int, default=20260903)
+    parser.add_argument(
+        "--sample-seed", type=int, default=20260903,
+        help="the SAMPLE seed: which 248 scenarios are drawn. Unlike --seed "
+             "this one is genuinely reproducible -- the sampler sorts its "
+             "pools by scenario_id, so the same seed draws the same sample "
+             "whatever order the suite sits in on disk. Changing it draws a "
+             "different sample, which a campaign already underway refuses to "
+             "be resumed under.",
+    )
     parser.add_argument("--pack", default=DEFAULT_PACK)
     parser.add_argument("--suite", default=DEFAULT_SUITE)
     parser.add_argument("--catalogue", default=DEFAULT_CATALOGUE)

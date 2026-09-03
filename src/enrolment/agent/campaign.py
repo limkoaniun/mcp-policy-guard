@@ -2,7 +2,11 @@
 
 Domain-neutral by construction -- nothing here imports `scenarios_spec` or
 anything else from the enrolment case study, so subsystem C (compliance runs)
-reuses it unchanged. `run_campaign` is written against `RunSpec`, defined
+reuses it without a domain-specific change. Section citations here name the
+document they resolve against: this module is shared, and the two suites'
+designs number their sections differently.
+
+`run_campaign` is written against `RunSpec`, defined
 below, but the contract it actually relies on is structural: anything
 carrying `run_id`, `attempt` and a `replacement()` method, plus the fields an
 `IndexRecord` needs, works -- so another subsystem may pass its own rather
@@ -28,8 +32,9 @@ MANIFEST = "campaign.json"
 
 #: The fields that define the method. Two halves of a campaign run under
 #: different values of any of these are not one campaign, so resume refuses
-#: (design §10). `fingerprints` is excluded because it is observed rather than
-#: chosen -- re-reading a digest from a daemon must not invalidate a resume.
+#: (adversarial design §10). `fingerprints` is excluded because it is observed
+#: rather than chosen -- re-reading a digest from a daemon must not invalidate
+#: a resume.
 METHOD_FIELDS = (
     "models", "repeats", "system_prompt", "nudge",
     "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
@@ -69,7 +74,7 @@ def run_status(transcript: Transcript) -> str:
     A provider error also sets `truncated`, so it is checked first. The two
     are not interchangeable: a bound being reached is a fact about the model's
     behaviour and a result in its own right, while a dropped connection is
-    infrastructure. Only the second is ever replaced (design §8).
+    infrastructure. Only the second is ever replaced (adversarial design §8).
     """
     if transcript.turns and transcript.turns[-1].outcome is ResponseOutcome.PROVIDER_ERROR:
         return "provider_error"
@@ -107,12 +112,14 @@ def clear_run_dir(run_dir: Path) -> None:
     """Make way for a fresh run, or refuse to.
 
     A run directory that already exists is one of two things, and conflating
-    them cost design §9's promise that resume "continues where it stopped".
+    them cost adversarial design §9's promise that resume "continues where it
+    stopped".
 
     **No readable transcript.** `run_one` creates the directory first and
     writes `transcript.jsonl` last, after the proxy has shut down, so this is
-    exactly what killing a 280-run campaign mid-run leaves behind -- the
-    commonest way this campaign stops. It is an ordinary interrupted run, and
+    exactly what killing a long campaign mid-run leaves behind -- 280 runs for
+    the adversarial suite, 4,960 for the compliance one, and the commonest way
+    either of them stops. It is an ordinary interrupted run, and
     `campaign.existing_status` already reads it as "not run" and asks for it
     again; refusing to make it would leave resume unable to do the one thing
     it exists for. The directory is moved aside rather than deleted: its
@@ -144,8 +151,8 @@ def clear_run_dir(run_dir: Path) -> None:
 
 
 #: Replacement attempts get a letter, so `...-r1` is followed by `...-r1a`.
-#: Two is the bound design §8 sets; beyond it the cell is left short and D
-#: reports the reduced N rather than B trying harder.
+#: Two is the bound adversarial design §8 sets; beyond it the cell is left
+#: short and D reports the reduced N rather than the harness trying harder.
 _ATTEMPT_SUFFIXES = ("", "a", "b")
 
 
@@ -177,8 +184,8 @@ class RunSpec(BaseModel):
 
         Run directories are single-use -- `RunState.load` raises
         `RunDirectoryInUseError` on a second load -- so a replacement can
-        never be a re-entry into the failed one, and B does not try to make it
-        one.
+        never be a re-entry into the failed one, and no subsystem tries to
+        make it one.
         """
         return self.model_copy(update={"attempt": self.attempt + 1})
 
@@ -304,13 +311,13 @@ async def run_campaign(
 
     Two rules decide what actually runs.
 
-    **Resume** (design §9): a spec whose run directory already holds a
+    **Resume** (adversarial design §9): a spec whose run directory already holds a
     readable transcript is not re-run -- unless its status is
     `provider_error`, which is not a completed run but the trigger below. The
     check reads the transcript, never the proxy's `complete` marker, which is
     written on clean shutdown regardless of truncation.
 
-    **Replacement** (design §8): a `provider_error` is infrastructure, not
+    **Replacement** (adversarial design §8): a `provider_error` is infrastructure, not
     model behaviour, and left alone it shrinks a repeat group for a reason
     unrelated to the experiment. So a fresh run is made in a new directory,
     bounded at `max_replacements`, with the failure kept on disk and the
@@ -324,8 +331,8 @@ async def run_campaign(
     since been capped. The run directories survive, but the index is what the
     scoring subsystem reads. Merging is also what lets an adopted run keep the
     duration that was actually measured for it: re-deriving that row at zero
-    would put a wall clock that never elapsed into D's input, and design §9
-    says this campaign *will* be resumed.
+    would put a wall clock that never elapsed into D's input, and adversarial
+    design §9 says a campaign this long *will* be resumed.
 
     Exceptions from `runner` are not caught. A run directory that already
     exists and holds a readable transcript means the resume logic believed it

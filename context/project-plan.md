@@ -134,7 +134,10 @@ demonstration frontend; final report.
    subsystem A of the agent harness have all shipped since this list was written.
 5. ~~**Build subsystems B and C.**~~ ✅ Done. B: 280 resumable adversarial runs.
    C: 4,960 compliance runs over a 248-scenario stratified sample, reusing
-   `agent/campaign.py` unchanged as designed.
+   `agent/campaign.py` without a single domain-specific change, as designed —
+   it gained the manifest's sample digest and took in `RunSpec`/`model_slug`
+   from the adversarial module, both moves the design sanctioned, and no
+   knowledge of either suite's domain.
 6. **Build subsystem D.** It turns both campaigns into the §7 metrics: attack
    success rate per class, rule violation rate by depth and by failure mode,
    benign task completion, and enforcement overhead. Until it exists, **no

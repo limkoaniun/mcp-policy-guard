@@ -81,8 +81,24 @@ def stratified_sample(
     that sort, regenerating the suite in a different order would silently
     produce a different sample under the same seed -- reproducibility that
     reads as reproducible and is not.
+
+    A request larger than the pool draws the whole pool and says so. Design
+    §10 offers both numbers as flags for widening the sample, and both have a
+    ceiling: depth 4 holds 350 scenarios and `unmet_aos` 50, so
+    `--per-depth 400` would quietly produce a "core" that is not equally
+    allocated -- the one property §4 says the core has -- and `--mode-floor 60`
+    a mode that never reaches its floor. Either costs power rather than
+    introducing bias, which is why this is a printed note and not an error.
     """
     rng = random.Random(seed)
+
+    def note(stratum: str, asked: int, got: int) -> None:
+        """Say, once, that a stratum could not be given what was asked for."""
+        print(
+            f"  -- {stratum}: {asked} asked for, {got} drawn -- the suite has "
+            f"no more. The stratum is short, so it carries less power than the "
+            f"others; which scenarios it holds is unchanged."
+        )
 
     by_depth: dict[int, list[ComplianceScenario]] = defaultdict(list)
     for scenario in scenarios:
@@ -91,6 +107,8 @@ def stratified_sample(
     core: list[ComplianceScenario] = []
     for depth in sorted(by_depth):
         pool = sorted(by_depth[depth], key=lambda s: s.scenario_id)
+        if per_depth > len(pool):
+            note(f"depth {depth}", per_depth, len(pool))
         core.extend(rng.sample(pool, min(per_depth, len(pool))))
 
     counts = Counter(scenario.failure_mode for scenario in core)
@@ -110,6 +128,8 @@ def stratified_sample(
             key=lambda s: s.scenario_id,
         )
         drawn = rng.sample(pool, min(shortfall, len(pool)))
+        if len(drawn) < shortfall:
+            note(mode, mode_floor, counts.get(mode, 0) + len(drawn))
         top_up.extend(drawn)
         chosen.update(scenario.scenario_id for scenario in drawn)
 

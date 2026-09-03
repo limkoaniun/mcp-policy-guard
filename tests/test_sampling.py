@@ -112,17 +112,59 @@ def test_the_sample_does_not_depend_on_the_order_of_the_input():
     assert [s.scenario_id for s in forwards] == [s.scenario_id for s in backwards]
 
 
-def test_a_depth_with_fewer_scenarios_than_asked_for_gives_what_it_has():
-    tiny = [
-        ComplianceScenario(
-            scenario_id=f"S-{i}", student_id="S1", subject_code=str(i),
-            failure_mode="compliant", rule_depth=0, expected_satisfied=True,
-            explanation="",
-        )
-        for i in range(3)
+def tiny_suite(n=3, **overrides):
+    base = {
+        "student_id": "S1", "failure_mode": "compliant", "rule_depth": 0,
+        "expected_satisfied": True, "explanation": "",
+    }
+    base.update(overrides)
+    return [
+        ComplianceScenario(scenario_id=f"S-{i}", subject_code=str(i), **base)
+        for i in range(n)
     ]
-    sampled = stratified_sample(tiny, per_depth=10, mode_floor=0, seed=SEED)
+
+
+def test_a_depth_with_fewer_scenarios_than_asked_for_gives_what_it_has():
+    sampled = stratified_sample(tiny_suite(), per_depth=10, mode_floor=0, seed=SEED)
     assert len(sampled) == 3
+
+
+def test_a_depth_short_of_per_depth_says_so(capsys):
+    """Design §10 offers --per-depth as the flag for widening the sample, and
+    depth 4 holds only 350 scenarios. Asking for more silently produces an
+    unequally allocated "core" -- which is the one property §4 says the core
+    has. It costs power rather than introducing bias, so it is a note and not
+    an error, but it must not be silent."""
+    stratified_sample(tiny_suite(), per_depth=10, mode_floor=0, seed=SEED)
+    printed = capsys.readouterr().out
+    assert "depth 0" in printed
+    assert "10" in printed and "3" in printed
+
+
+def test_a_mode_that_cannot_reach_the_floor_says_so(capsys):
+    """--mode-floor 60 against 50 unmet_aos yields 50, and a per-mode rate is
+    then computed on a denominator nobody asked for."""
+    stratified_sample(
+        tiny_suite(failure_mode="unmet_aos", expected_satisfied=False),
+        per_depth=1, mode_floor=9, seed=SEED,
+    )
+    printed = capsys.readouterr().out
+    assert "unmet_aos" in printed
+    assert "9" in printed
+
+
+def test_a_sample_that_meets_every_request_says_nothing(capsys):
+    """The note is a warning, not a running commentary."""
+    drawn()
+    assert capsys.readouterr().out == ""
+
+
+def test_every_ground_truth_field_survives_into_the_sample():
+    """`SampledScenario.of` splats `scenario.model_dump()`, and pydantic's
+    default `extra="ignore"` means a field added to ComplianceScenario later
+    would vanish from sample.jsonl -- the file subsystem D depends on -- with
+    no error anywhere."""
+    assert set(ComplianceScenario.model_fields) <= set(SampledScenario.model_fields)
 
 
 def test_the_digest_identifies_the_sample_not_its_order():
