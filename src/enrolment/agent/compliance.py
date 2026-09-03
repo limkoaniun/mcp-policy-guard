@@ -8,6 +8,28 @@ incorrectly.
 C drives and records. Nothing here decides whether a rule was violated: that
 needs the exact evaluator's ground truth joined against the final database
 state, and it is subsystem D's work.
+
+**A naming trap, for whoever implements D.** Design §7's run-level
+`not_attempted` and `transcript.CallOutcome.NOT_ATTEMPTED` are near-inverses,
+and only one of them is the metric.
+
+- *Attempted*, at run level and as §7 means it, is: a proposal naming `enrol`
+  appears anywhere in the run's `transcript.jsonl`, **whatever its
+  `CallOutcome`**. Refused, forwarded, malformed, never sent -- the model
+  reached for the enrolment, which is the fact §7 excludes a run for lacking.
+  C records every proposed call with its name, so this is derivable and needs
+  no separate field.
+- `CallOutcome.NOT_ATTEMPTED` is a different, call-level fact: the harness
+  proposed nothing, the *model* did, and our own `max_calls` bound stopped us
+  sending it. It must not be used to compute §7's `not_attempted`. Counting
+  runs by that enum computes something close to the opposite of the intended
+  metric, and would reproduce exactly the "a weaker model scores as more
+  compliant" inversion §7 was written to close.
+- The awkward case is a run where `enrol` was proposed and the call budget
+  swallowed it. The model attempted; the database shows nothing; §7 does not
+  resolve that case, and neither does this module. What lets D exclude it is
+  the run's status in `index.jsonl`: such a run is `truncated`, and a
+  truncated run demonstrated nothing about compliance either way.
 """
 
 from __future__ import annotations

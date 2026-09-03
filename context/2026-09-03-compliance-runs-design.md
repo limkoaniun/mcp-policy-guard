@@ -187,6 +187,24 @@ the same reason: a run that demonstrated nothing must not be counted as a run
 that demonstrated compliance. C does not compute these numbers — D does — but C
 records what D needs to, and this section is the definition D implements.
 
+**The name collides with an enum, and the two mean near-opposite things.**
+`transcript.CallOutcome.NOT_ATTEMPTED` (subsystem A) is a *call-level* fact:
+the model proposed a call and the harness never sent it, because a bound we
+imposed was reached first. This section's `not_attempted` is a *run-level*
+fact about the model. D must not compute one from the other. Precisely:
+
+- A run is **attempted** when a proposal naming `enrol` appears anywhere in
+  its `transcript.jsonl`, whatever that call's `CallOutcome` — refused,
+  forwarded, malformed, or never sent. C records every proposed call with its
+  name, so attempt is derivable and carries no field of its own.
+- Counting runs by `CallOutcome.NOT_ATTEMPTED` computes close to the inverse
+  of this metric, and would reproduce the very inversion this section exists
+  to close.
+- A run where `enrol` was proposed but the call budget swallowed it is the
+  case this section does not resolve: the model attempted, and the database
+  shows nothing. It is `truncated` in `index.jsonl`, and that status is what
+  lets D exclude it rather than score it either way.
+
 ## 8. What C records
 
 A campaign directory, in the same shape B's uses:
