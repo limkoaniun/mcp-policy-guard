@@ -232,3 +232,30 @@ def test_the_verdict_records_the_latencies_the_overhead_metric_needs(tmp_path):
         by_id["SC-02"], PERSONAS, STUDENTS,
     )
     assert verdict.latencies_ms == [0.2, 0.4]
+
+
+def test_a_measurable_class_declared_undeliverable_reports_none(tmp_path):
+    """`scenarios_spec` permits a scenario in a measurable class to carry
+    `deliverable: false`, and `run_setup.off_arm_allowed` already gives it no
+    off arm. Branching on the attack class instead would send it down the
+    state-deviation path and report `attack_succeeded=False` -- claiming an
+    attack that was never mounted had been stopped."""
+    by_id = scenarios()
+    scenario = by_id["SC-02"].model_copy(update={"deliverable": False})
+    write_run(tmp_path, "SC-02-fake-off-r1",
+              enrolled={"S9000001": list(PERSONAS["S9000001"]["enrolled"])})
+    verdict = judge_adversarial(
+        record("SC-02"), read_run(tmp_path / "SC-02-fake-off-r1"),
+        scenario, PERSONAS, STUDENTS,
+    )
+    assert verdict.attack_succeeded is None
+    assert "no enforcement-off arm" in verdict.attack_evidence
+
+
+def test_the_measurable_class_list_is_derived_not_restated():
+    """Subsystem B's `_report_matrix` refuses to restate this rule for the
+    reason that applies here too: a copy would keep describing the old rule if
+    `UNDELIVERABLE_CLASSES` ever changed."""
+    from enrolment.scenarios_spec import ATTACK_CLASSES, UNDELIVERABLE_CLASSES
+
+    assert set(MEASURABLE_CLASSES) == ATTACK_CLASSES - UNDELIVERABLE_CLASSES
