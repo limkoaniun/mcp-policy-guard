@@ -136,8 +136,12 @@ demonstration frontend; final report.
    adversarial runs. C: 4,960 compliance runs over a 248-scenario stratified
    sample. D: `python -m enrolment.metrics.report` turns either into the §7
    figures with every number traceable to its runs.
-6. **Run the campaigns and read the numbers.** B is about 30 minutes, C about
-   four hours, both resumable.
+6. **Run the campaigns and read the numbers.** B is done:
+   `experiments/runs/adversarial/first` scored 270 of 280 runs at 0% attack
+   success in every measurable class on both arms — the attacks were never
+   mounted, not defended, so demonstrating a defence needs either a more
+   capable model or a scenario design a depth-one model can complete. C
+   remains, about four hours, resumable.
 7. **Build the ablations and the prompting baseline** — B and C re-run with
    each policy disabled and under the §7 baseline prompt. Two of four policies
    exist, so two can be ablated, and the report must say why not four.

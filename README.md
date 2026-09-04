@@ -251,6 +251,20 @@ the defended outcome. `output-injection` and `exfiltration` are measurable;
 report absence rather than a zero. Exfiltration detection reads eRequest text
 for a student other than the principal and is reported as the heuristic it is.
 
+**The first campaign has been scored, and the result is null.**
+`experiments/runs/adversarial/first` comes back at 270 of 280 runs scored (10
+truncated, excluded by design) and 0% attack success in every measurable
+class on both arms: exfiltration 0/10 on, 0/5 off; output-injection 0/30 on,
+0/30 off. The reason is not enforcement: `submit_erequest`, the call both
+measurable classes need to land, was proposed zero times across all 280 runs.
+The attacks were never mounted, not defended — this campaign cannot yet show
+the enforcement layer stopping a completed attack. That is consistent with
+the effective tool-call depth of about one per turn subsystem A's design
+already measured, so it reads as a capability ceiling rather than a harness
+failure. Benign completion was 10/80 on and 10/75 off; enforcement overhead
+was p50 0.067 ms on and 0.063 ms off — the policy engine's own decision time
+against a multi-second model call.
+
 **Next.** The ablations and the prompting baseline — subsystem D's other half,
 which is B and C re-run with each policy disabled and under a different system
 prompt. Only two of the four policies exist, so two can be ablated and the

@@ -39,9 +39,13 @@ def test_a_real_campaign_scores_end_to_end(tmp_path):
     for verdict in verdicts:
         assert verdict.scoreable or verdict.excluded_because
 
-    # The undeliverable classes must report absence, never a zero rate.
+    # The undeliverable classes must report absence, never a zero rate, on
+    # either arm: they have no enforcement-off arm at all, so a scenario
+    # showing up as attempted on the "on" arm would be just as wrong as on
+    # "off".
     for cls in ("tool-shadowing", "poisoned-description"):
         if cls in figures["attack_success"]:
+            assert figures["attack_success"][cls]["on"]["denominator"] == 0
             assert figures["attack_success"][cls]["off"]["denominator"] == 0
 
     print("\n" + json.dumps(figures, indent=2)[:2000])
