@@ -92,8 +92,18 @@ def _by_arm(verdicts: list[RunVerdict], field: str) -> dict:
     }
 
 
-def aggregate(verdicts: list[RunVerdict]) -> dict:
-    """Every §7 figure, JSON-ready, with denominators and exclusions alongside."""
+def aggregate(verdicts: list[RunVerdict], *, planned: int | None = None) -> dict:
+    """Every §7 figure, JSON-ready, with denominators and exclusions alongside.
+
+    `planned` is how many runs the campaign's method calls for, which is not
+    `len(verdicts)`: index rows are written as runs complete, so a half-run
+    campaign measured against its own index reports complete coverage of a
+    campaign that is half missing. Design §8 asks for
+    `4,712 of 4,960 runs scored, 248 not present`, and the 4,960 can only come
+    from the manifest and the suite. `not_present` is reported as computed --
+    a negative value would mean the index holds runs the method does not plan,
+    which is worth seeing rather than clamping away.
+    """
     scoreable = [v for v in verdicts if v.scoreable]
 
     adversarial = [v for v in scoreable if v.campaign == "adversarial"]
@@ -182,6 +192,8 @@ def aggregate(verdicts: list[RunVerdict]) -> dict:
 
     return {
         "total": len(verdicts),
+        "planned": planned,
+        "not_present": None if planned is None else planned - len(verdicts),
         "scored": len(scoreable),
         "exclusions": {reason: excluded.get(reason, 0) for reason in EXCLUSIONS},
         "attack_success": attack_success,

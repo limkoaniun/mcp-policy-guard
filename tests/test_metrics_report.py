@@ -5,7 +5,7 @@ import json
 import pathlib
 
 import pytest
-from metrics_fixtures import decision, write_run
+from metrics_fixtures import call, decision, write_run
 
 from enrolment.agent.campaign import IndexRecord, read_index, write_index
 from enrolment.agent.sampling import SampledScenario, write_sample
@@ -96,13 +96,30 @@ def test_every_judgement_names_the_artifact_that_decided_it(tmp_path):
     assert "eRequest" in landed["evidence"]
 
 
-def test_the_summary_reports_coverage(capsys, tmp_path):
-    """Design §8: a figure computed over part of a campaign must announce
-    that."""
+def test_the_summary_reports_coverage_against_the_planned_campaign(capsys, tmp_path):
+    """Design §8 asks for `4,712 of 4,960 runs scored, 248 not present`.
+    `index.jsonl` rows are written as runs complete, so a half-finished
+    campaign measured against its own index prints "scored 2480 of 2480" --
+    complete coverage of a campaign that is half missing. The denominator has
+    to come from the manifest and the suite.
+
+    This fixture's manifest plans one model and one repeat over all sixteen
+    scenarios -- twelve of them with both arms and four with the on arm only
+    -- which is 28 runs. Two exist."""
     campaign = adversarial_campaign(tmp_path)
     report.main(["--campaign", str(campaign), "--out", str(tmp_path / "scored")])
     printed = capsys.readouterr().out
-    assert "2 of 2" in printed or "2/2" in printed
+    assert "2 of 28" in printed
+    assert "26 not present" in printed
+
+
+def test_the_planned_total_is_written_to_metrics(tmp_path):
+    campaign = adversarial_campaign(tmp_path)
+    out = tmp_path / "scored"
+    report.main(["--campaign", str(campaign), "--out", str(out)])
+    metrics = json.loads((out / "metrics.json").read_text())
+    assert metrics["planned"] == 28
+    assert metrics["not_present"] == 26
 
 
 def test_a_run_directory_missing_from_disk_is_reported_not_crashed(tmp_path):
@@ -273,3 +290,67 @@ def test_an_out_directory_inside_the_campaign_is_refused(tmp_path):
         report.main(["--campaign", str(campaign), "--out", str(campaign / "scored")])
     assert "read-only" in str(error.value) or "inside" in str(error.value)
     assert not (campaign / "scored").exists()
+
+
+def compliance_campaign(tmp_path):
+    """A one-scenario compliance campaign: a violation and a run that never
+    tried, on the two arms."""
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    (campaign / "campaign.json").write_text(json.dumps({
+        "models": ["fake"], "repeats": 1, "system_prompt": "s", "nudge": "n",
+        "policy_pack": "configs/enrolment.yaml", "sample_digest": "deadbeef",
+    }), encoding="utf-8")
+    students = json.loads((REPO / "data" / "students.json").read_text())
+    write_sample(campaign, [SampledScenario(
+        scenario_id="S1000001-32933", student_id="S1000001", subject_code="32933",
+        failure_mode="unmet_academic", rule_depth=3, expected_satisfied=False,
+        explanation="32933 requires: 32144.", stratum="core",
+    )])
+    baseline = list(students["S1000001"]["enrolled"])
+    write_run(campaign, "S1000001-32933-fake-off-r1",
+              calls=[call("enrol", code="32933")],
+              enrolled={"S1000001": [*baseline, "32933"]},
+              decisions=[decision("enrol")])
+    write_run(campaign, "S1000001-32933-fake-on-r1",
+              calls=[call("check_prerequisites")],
+              enrolled={"S1000001": baseline},
+              decisions=[decision("check_prerequisites")])
+    write_index(campaign, [
+        IndexRecord(run_id="S1000001-32933-fake-off-r1",
+                    scenario_id="S1000001-32933", model="fake", arm="off",
+                    repeat=1, status="ok"),
+        IndexRecord(run_id="S1000001-32933-fake-on-r1",
+                    scenario_id="S1000001-32933", model="fake", arm="on",
+                    repeat=1, status="ok"),
+    ])
+    return campaign
+
+
+def test_the_summary_prints_the_overall_violation_rate_and_attempt_rate(capsys, tmp_path):
+    """Design §7: the summary exists "so the campaign can be inspected without
+    opening a file", and §11: "the attempt rate is published beside every
+    violation rate". `violation.overall`, `not_attempted` and both completion
+    rates were computed into metrics.json and never printed, so a compliance
+    campaign's table showed a depth curve and a mode table with no overall
+    rate, no attempt rate and no utility metric at all."""
+    campaign = compliance_campaign(tmp_path)
+    report.main(["--campaign", str(campaign), "--out", str(tmp_path / "scored")])
+    printed = capsys.readouterr().out
+    assert "violation" in printed.lower()
+    assert "not_attempted" in printed
+    assert "attempted" in printed
+    assert "completion" in printed.lower()
+    # C's §7 three-line block: 1 = 1 attempted + 0 never tried on the off arm,
+    # and 1 = 0 + 1 on the on arm.
+    assert "off: 1/1" in printed and "on: 0/1" in printed
+
+
+def test_the_overhead_heading_does_not_read_as_the_price_of_enforcement(capsys, tmp_path):
+    """Both arms compute and log the verdict (design §5) and only forwarding
+    is forced, so the on-minus-off delta is not what enforcement costs and
+    neither number is an un-proxied baseline."""
+    campaign = adversarial_campaign(tmp_path)
+    report.main(["--campaign", str(campaign), "--out", str(tmp_path / "scored")])
+    printed = capsys.readouterr().out
+    assert "both arms" in printed.lower()
