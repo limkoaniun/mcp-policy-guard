@@ -26,12 +26,50 @@ KNOWN_TOOLS = {
 
 
 def _read_manifest(campaign_dir: Path) -> dict:
-    return json.loads((campaign_dir / MANIFEST).read_text(encoding="utf-8"))
+    """The campaign's manifest, or a message naming the file that was missing.
+
+    Design §8 asks for partial campaigns to be scored rather than refused; a
+    campaign that cannot be scored at all still owes the reader the reason,
+    not a traceback out of `json.loads`. The shape is `artifacts.baseline_path`'s.
+    """
+    path = campaign_dir / MANIFEST
+    if not path.exists():
+        raise ValueError(
+            f"no {MANIFEST} in {campaign_dir}, so this directory names no "
+            f"models, no policy pack and no sample: there is nothing to score "
+            f"it against. Searched {path}."
+        )
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _pack_path(manifest: dict, repo_root: Path) -> Path:
-    pack = Path(manifest["policy_pack"])
+    pack_name = manifest.get("policy_pack")
+    if pack_name is None:
+        raise ValueError(
+            f"the campaign manifest names no 'policy_pack', so there is no "
+            f"baseline student file to compare a run's final state against. "
+            f"It holds {sorted(manifest)}."
+        )
+    pack = Path(pack_name)
     return pack if pack.is_absolute() else repo_root / pack
+
+
+def _for_run(lookup: dict, record, *, what: str, source: str):
+    """`lookup[record.scenario_id]`, or a message naming the run that asked.
+
+    A bare `KeyError` here aborted scoring of every other run in the campaign
+    and put nothing in the traceback but a scenario id -- the opposite of
+    design §8's "partial campaigns are scored, not refused".
+    """
+    try:
+        return lookup[record.scenario_id]
+    except KeyError:
+        raise ValueError(
+            f"run {record.run_id} names scenario_id "
+            f"{record.scenario_id!r}, which is not among the "
+            f"{len(lookup)} {what} in {source}. The index and {source} "
+            f"disagree about which scenarios this campaign ran."
+        ) from None
 
 
 def score_campaign(campaign_dir, *, repo_root=REPO_ROOT) -> list[RunVerdict]:
@@ -72,7 +110,9 @@ def score_campaign(campaign_dir, *, repo_root=REPO_ROOT) -> list[RunVerdict]:
             verdicts.append(
                 judge_compliance(
                     record, read_run(campaign_dir / record.run_id),
-                    sample[record.scenario_id], baseline,
+                    _for_run(sample, record, what="sampled scenarios",
+                             source="sample.jsonl"),
+                    baseline,
                 )
             )
         return verdicts
@@ -89,7 +129,9 @@ def score_campaign(campaign_dir, *, repo_root=REPO_ROOT) -> list[RunVerdict]:
         verdicts.append(
             judge_adversarial(
                 record, read_run(campaign_dir / record.run_id),
-                scenarios[record.scenario_id], baseline, students,
+                _for_run(scenarios, record, what="scenarios",
+                         source=str(repo_root / "attacks" / "scenarios")),
+                baseline, students,
             )
         )
     return verdicts
@@ -174,10 +216,23 @@ def parse_args(argv=None) -> argparse.Namespace:
 
 def main(argv=None) -> int:
     args = parse_args(argv)
-    verdicts = score_campaign(args.campaign)
+    campaign_dir = Path(args.campaign)
+    out = Path(args.out)
+    # Design §2: the run directories are the only record of several hours of
+    # compute, and read-only is the line this subsystem holds. The help text
+    # promised "Never inside the campaign" and nothing enforced it. Checked
+    # before any run is read, so a refused invocation writes nothing at all.
+    if out.resolve().is_relative_to(campaign_dir.resolve()):
+        raise ValueError(
+            f"--out {out} is inside --campaign {campaign_dir}. Scoring is "
+            f"read-only on the runs it scores: writing metrics.json and "
+            f"judgements.jsonl into the campaign would put derived output "
+            f"among the only record of the compute that produced it."
+        )
+
+    verdicts = score_campaign(campaign_dir)
     figures = aggregate(verdicts)
 
-    out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "metrics.json").write_text(json.dumps(figures, indent=2), encoding="utf-8")
     (out / "judgements.jsonl").write_text(

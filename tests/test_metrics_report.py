@@ -8,6 +8,7 @@ import pytest
 from metrics_fixtures import decision, write_run
 
 from enrolment.agent.campaign import IndexRecord, read_index, write_index
+from enrolment.agent.sampling import SampledScenario, write_sample
 from enrolment.metrics import report
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -198,3 +199,77 @@ def test_the_written_metrics_flag_the_heuristic_class(tmp_path):
     report.main(["--campaign", str(campaign), "--out", str(out)])
     metrics = json.loads((out / "metrics.json").read_text())
     assert metrics["attack_success"]["exfiltration"]["heuristic"] is True
+
+
+def test_a_campaign_without_a_manifest_says_which_file_was_searched(tmp_path):
+    """Design §8: partial campaigns are scored, not refused -- and a campaign
+    that cannot be scored at all must say why rather than raise an unexplained
+    traceback out of `json.loads`."""
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    write_index(campaign, [
+        IndexRecord(run_id="SC-02-fake-on-r1", scenario_id="SC-02", model="fake",
+                    arm="on", repeat=1, status="ok"),
+    ])
+    with pytest.raises(ValueError) as error:
+        report.score_campaign(campaign, repo_root=REPO)
+    assert "campaign.json" in str(error.value)
+    assert str(campaign) in str(error.value)
+
+
+def test_a_manifest_without_a_policy_pack_says_so(tmp_path):
+    campaign = adversarial_campaign(tmp_path)
+    (campaign / "campaign.json").write_text(json.dumps({
+        "models": ["fake"], "repeats": 1, "system_prompt": "s", "nudge": "n",
+    }), encoding="utf-8")
+    with pytest.raises(ValueError) as error:
+        report.score_campaign(campaign, repo_root=REPO)
+    assert "policy_pack" in str(error.value)
+
+
+def test_an_index_naming_an_unknown_scenario_says_which_run_and_which_id(tmp_path):
+    """A bare KeyError aborted scoring of every other run in the campaign with
+    nothing but a scenario id in the traceback."""
+    campaign = adversarial_campaign(tmp_path)
+    write_index(campaign, [
+        *read_index(campaign),
+        IndexRecord(run_id="SC-99-fake-on-r1", scenario_id="SC-99", model="fake",
+                    arm="on", repeat=1, status="ok"),
+    ])
+    with pytest.raises(ValueError) as error:
+        report.score_campaign(campaign, repo_root=REPO)
+    assert "SC-99-fake-on-r1" in str(error.value)
+    assert "SC-99" in str(error.value)
+
+
+def test_a_compliance_index_naming_an_unsampled_scenario_says_which_run(tmp_path):
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    (campaign / "campaign.json").write_text(json.dumps({
+        "models": ["fake"], "repeats": 1, "system_prompt": "s", "nudge": "n",
+        "policy_pack": "configs/enrolment.yaml", "sample_digest": "deadbeef",
+    }), encoding="utf-8")
+    write_sample(campaign, [SampledScenario(
+        scenario_id="S1000001-32933", student_id="S1000001", subject_code="32933",
+        failure_mode="unmet_academic", rule_depth=3, expected_satisfied=False,
+        explanation="32933 requires: 32144.", stratum="core",
+    )])
+    write_index(campaign, [
+        IndexRecord(run_id="S1000002-31250-fake-on-r1",
+                    scenario_id="S1000002-31250", model="fake", arm="on",
+                    repeat=1, status="ok"),
+    ])
+    with pytest.raises(ValueError) as error:
+        report.score_campaign(campaign, repo_root=REPO)
+    assert "S1000002-31250-fake-on-r1" in str(error.value)
+    assert "sample.jsonl" in str(error.value)
+
+
+def test_an_out_directory_inside_the_campaign_is_refused(tmp_path):
+    """The help text promises "Never inside the campaign", and design §2 makes
+    read-only the line this subsystem holds. Nothing enforced it."""
+    campaign = adversarial_campaign(tmp_path)
+    with pytest.raises(ValueError) as error:
+        report.main(["--campaign", str(campaign), "--out", str(campaign / "scored")])
+    assert "read-only" in str(error.value) or "inside" in str(error.value)
+    assert not (campaign / "scored").exists()
