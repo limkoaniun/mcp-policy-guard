@@ -191,7 +191,7 @@ drives a model through an MCP conversation against the real proxy and records
 every response and attempted call, without repairing the model's mistakes;
 `src/enrolment/agent/ollama.py` is the only module that knows Ollama's HTTP API
 exists, and the model is otherwise an injected callable, so the loop is
-exhaustively testable with no daemon running. 650 tests pass in total.
+exhaustively testable with no daemon running. 681 tests pass in total.
 
 Measured against both candidate models, effective depth is one tool call per
 user turn — neither recovers from an error within a turn. Benign task
@@ -261,9 +261,16 @@ The attacks were never mounted, not defended — this campaign cannot yet show
 the enforcement layer stopping a completed attack. That is consistent with
 the effective tool-call depth of about one per turn subsystem A's design
 already measured, so it reads as a capability ceiling rather than a harness
-failure. Benign completion was 10/80 on and 10/75 off; enforcement overhead
-was p50 0.067 ms on and 0.063 ms off — the policy engine's own decision time
-against a multi-second model call.
+failure. The two exfiltration cells are not composed of the same models: all
+ten truncated runs were `llama3.2` on the off arm, so the off-arm 0/5 is
+`llama3.1:8b` alone against a two-model on-arm 0/10, and every rate in
+`metrics.json` now carries the `{model: n}` map of its own denominator so
+that cannot go unnoticed again. Benign completion was 10/80 on and 10/75 off;
+enforcement overhead was p50 0.067 ms on and 0.063 ms off — the policy
+engine's own decision time against a multi-second model call. That pair is
+not an on-versus-off cost: both arms compute and log the verdict and only the
+forwarding decision is forced, so the 0.004 ms delta is not the price of
+enforcement and neither number is an un-proxied baseline.
 
 **Next.** The ablations and the prompting baseline — subsystem D's other half,
 which is B and C re-run with each policy disabled and under a different system

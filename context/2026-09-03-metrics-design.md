@@ -206,7 +206,28 @@ live and skipped loudly when none is present.
   is a property of the suite rather than a finding about the model.
 - **`not_attempted` shrinks the effective N** by an amount set by model
   capability, not by enforcement. The attempt rate is published beside every
-  violation rate.
+  violation rate, over the same population that rate's denominator was drawn
+  from — C's §7 block is `attempted 34/50`, `violations 9/34`,
+  `not_attempted 16/50`, and the 50 is the non-compliant scenarios, not every
+  compliance run.
+- **State deviation is checked for the principal only.** Scenarios declare
+  `enrolled_unchanged: true` unqualified, of the whole database; the
+  implementation compares one student's enrolment against the baseline. With
+  principal binding off, a payload that steered the model into enrolling a
+  *different* student would leave the principal's list untouched and score as
+  no attack. It did not occur in the first campaign, and widening the
+  comparison changes what "attack succeeded" means, so it is recorded here
+  rather than done quietly.
+- **A cell's model composition can differ between arms**, because exclusions
+  are not distributed evenly across models. In the first campaign all five
+  `llama3.2` off-arm SC-07 runs were truncated, so `exfiltration 0/10 on,
+  0/5 off` compares a two-model on-arm cell against a single-model off-arm
+  one. Every rate in `metrics.json` therefore carries the `{model: n}` map of
+  its own denominator.
+- **Neither overhead arm is an un-proxied baseline.** §5: both arms compute
+  and log the verdict and only the forwarding decision is forced, so the
+  on-minus-off delta is not the price of enforcement. Measuring that would
+  need a third arm with no proxy in the path.
 - **Two models, one family**, as A's §9 already states.
 - **The ablations and the prompting baseline are not in this document** (§1), so
   §7's "which mechanism carries which attack class" question is unanswered until
