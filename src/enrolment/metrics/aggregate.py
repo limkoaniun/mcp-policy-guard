@@ -23,7 +23,7 @@ from collections import Counter
 from pydantic import BaseModel, computed_field
 
 from .artifacts import EXCLUSIONS
-from .judge import RunVerdict
+from .judge import HEURISTIC_CLASSES, RunVerdict
 
 ARMS = ("on", "off")
 
@@ -105,8 +105,19 @@ def aggregate(verdicts: list[RunVerdict]) -> dict:
     classes = sorted({
         v.attack_class for v in verdicts if v.campaign == "adversarial" and v.attack_class
     })
+    # `heuristic` sits beside the arms rather than inside them: it is a
+    # property of the class's success predicate, not of a cell's runs. Design
+    # §4 requires the exfiltration heuristic be labelled wherever it is
+    # reported, and this file is one of the two places a report author reads
+    # numbers from. Consumers iterating the arms must use `ARMS`, not
+    # `.items()`.
     attack_success = {
-        cls: _by_arm([v for v in adversarial if v.attack_class == cls], "attack_succeeded")
+        cls: {
+            **_by_arm(
+                [v for v in adversarial if v.attack_class == cls], "attack_succeeded"
+            ),
+            "heuristic": cls in HEURISTIC_CLASSES,
+        }
         for cls in classes
     }
 

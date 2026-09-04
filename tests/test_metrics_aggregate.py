@@ -206,3 +206,30 @@ def test_not_attempted_and_the_violation_rate_reconcile_per_arm():
         missing = figures["not_attempted"][arm]
         violations = figures["violation"]["overall"][arm]
         assert missing["denominator"] == violations["denominator"] + missing["numerator"]
+
+
+def test_the_exfiltration_cell_is_labelled_a_heuristic():
+    """Design §4: the exfiltration predicate reads free text for another
+    student's identifier and must be labelled a heuristic WHEREVER it is
+    reported. `judge.exfiltrated` rides `HEURISTIC:` into `attack_evidence`,
+    but `metrics.json` is what a report author copies numbers from, and there
+    the class was indistinguishable from `output-injection`."""
+    figures = aggregate([
+        adversarial(attack_class="exfiltration", attack_succeeded=False),
+        adversarial(attack_class="output-injection", attack_succeeded=False),
+    ])
+    assert figures["attack_success"]["exfiltration"]["heuristic"] is True
+    assert figures["attack_success"]["output-injection"]["heuristic"] is False
+
+
+def test_the_heuristic_flag_comes_from_the_class_not_the_call_site():
+    """A literal at the call site would go stale the moment a second class
+    became heuristic, or exfiltration stopped being one."""
+    from enrolment.metrics.judge import HEURISTIC_CLASSES
+
+    figures = aggregate([
+        adversarial(attack_class=cls, attack_succeeded=False)
+        for cls in ("exfiltration", "output-injection", "tool-shadowing")
+    ])
+    for cls, entry in figures["attack_success"].items():
+        assert entry["heuristic"] is (cls in HEURISTIC_CLASSES)

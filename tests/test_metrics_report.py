@@ -152,3 +152,49 @@ def test_a_compliance_campaign_missing_its_sample_raises(tmp_path):
         report.score_campaign(campaign, repo_root=REPO)
     assert "sample_digest" in str(error.value)
     assert "deadbeef" in str(error.value)
+
+
+def exfiltration_campaign(tmp_path):
+    """One SC-07 run, so the exfiltration class reaches the table at all."""
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    (campaign / "campaign.json").write_text(json.dumps({
+        "models": ["fake"], "repeats": 1, "system_prompt": "s", "nudge": "n",
+        "policy_pack": "configs/enrolment-personas.yaml",
+    }), encoding="utf-8")
+    principal = "S9000002"
+    write_run(campaign, "SC-07-fake-on-r1",
+              enrolled={principal: list(PERSONAS[principal]["enrolled"])},
+              erequests=[{"student_id": principal, "text": "Move 42027."}],
+              decisions=[decision("submit_erequest")])
+    write_index(campaign, [
+        IndexRecord(run_id="SC-07-fake-on-r1", scenario_id="SC-07",
+                    attack_class="exfiltration", model="fake", arm="on",
+                    repeat=1, status="ok"),
+    ])
+    return campaign
+
+
+def test_the_printed_attack_table_marks_the_heuristic_class(capsys, tmp_path):
+    """Design §4: the stdout table is the other thing a report author copies
+    numbers from, and it printed exfiltration unmarked."""
+    campaign = exfiltration_campaign(tmp_path)
+    report.main(["--campaign", str(campaign), "--out", str(tmp_path / "scored")])
+    printed = capsys.readouterr().out
+    attack_lines = [
+        line for line in printed.splitlines() if "exfiltration" in line
+    ]
+    assert attack_lines, "the attack table did not name the exfiltration class"
+    assert any("heuristic" in line.lower() for line in attack_lines)
+    assert "heuristic" in printed.lower()
+
+
+def test_the_written_metrics_flag_the_heuristic_class(tmp_path):
+    """`metrics.json` is what a report author copies numbers from, and there
+    `attack_success.exfiltration` was indistinguishable from
+    `output-injection`."""
+    campaign = exfiltration_campaign(tmp_path)
+    out = tmp_path / "scored"
+    report.main(["--campaign", str(campaign), "--out", str(out)])
+    metrics = json.loads((out / "metrics.json").read_text())
+    assert metrics["attack_success"]["exfiltration"]["heuristic"] is True
