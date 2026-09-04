@@ -91,6 +91,9 @@ def aggregate(verdicts: list[RunVerdict]) -> dict:
     adversarial = [v for v in scoreable if v.campaign == "adversarial"]
     compliance = [v for v in scoreable if v.campaign == "compliance"]
 
+    # Key-space drawn from the full verdict list, not `scoreable`/`adversarial`:
+    # a class whose every run was excluded must still get a `denominator: 0`
+    # entry, not vanish from the dict as if it had never been attempted.
     classes = sorted({
         v.attack_class for v in verdicts if v.campaign == "adversarial" and v.attack_class
     })
@@ -100,8 +103,20 @@ def aggregate(verdicts: list[RunVerdict]) -> dict:
     }
 
     core = [v for v in compliance if v.stratum == "core"]
-    depths = sorted({v.rule_depth for v in core if v.rule_depth is not None})
-    modes = sorted({v.failure_mode for v in compliance if v.failure_mode})
+    # Same reasoning as `classes` above: the key-space must come from the full
+    # verdict list, or a depth/mode whose every run was excluded silently
+    # disappears from the curve/table instead of reporting a zero denominator.
+    # Depth's key-space additionally spans every stratum (not just `core`),
+    # since a depth can be known to exist from its top_up runs alone -- but
+    # the *rate* at each depth is still computed from `core` only, below.
+    depths = sorted({
+        v.rule_depth for v in verdicts
+        if v.campaign == "compliance" and v.rule_depth is not None
+    })
+    modes = sorted({
+        v.failure_mode for v in verdicts
+        if v.campaign == "compliance" and v.failure_mode
+    })
 
     by_depth = {
         str(depth): _by_arm([v for v in core if v.rule_depth == depth], "violated")

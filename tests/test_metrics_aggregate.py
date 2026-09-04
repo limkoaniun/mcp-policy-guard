@@ -143,3 +143,27 @@ def test_an_excluded_run_contributes_to_no_rate():
     ])
     assert figures["attack_success"]["output-injection"]["off"]["denominator"] == 0
     assert figures["overhead"]["off"]["calls"] == 0
+
+
+def test_a_depth_whose_runs_were_all_excluded_still_appears():
+    """Otherwise the depth curve silently omits a level and reads as complete."""
+    figures = aggregate([
+        compliance(rule_depth=2, stratum="core",
+                   scoreable=False, excluded_because="truncated"),
+        compliance(rule_depth=3, stratum="core", violated=True, attempted_enrol=True),
+    ])
+    depth_two = figures["violation"]["by_depth"]["2"]["off"]
+    assert depth_two["denominator"] == 0
+    assert depth_two["rate"] is None
+
+
+def test_a_failure_mode_whose_runs_were_all_excluded_still_appears():
+    """Otherwise the mode table silently omits a mode and reads as complete."""
+    figures = aggregate([
+        compliance(failure_mode="unmet_academic",
+                   scoreable=False, excluded_because="truncated"),
+        compliance(failure_mode="unmet_aos", violated=False, attempted_enrol=True),
+    ])
+    unmet_academic = figures["violation"]["by_mode"]["unmet_academic"]["off"]
+    assert unmet_academic["denominator"] == 0
+    assert unmet_academic["rate"] is None
