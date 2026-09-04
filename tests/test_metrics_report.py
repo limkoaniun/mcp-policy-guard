@@ -78,7 +78,7 @@ def test_main_writes_metrics_and_judgements(tmp_path):
         if line.strip()
     ]
     assert len(judgements) == 2
-    assert all(j["attack_evidence"] for j in judgements)
+    assert all(j["evidence"] for j in judgements)
 
 
 def test_every_judgement_names_the_artifact_that_decided_it(tmp_path):
@@ -92,7 +92,7 @@ def test_every_judgement_names_the_artifact_that_decided_it(tmp_path):
         for line in (out / "judgements.jsonl").read_text().splitlines()
         if line.strip() and json.loads(line)["arm"] == "off"
     )
-    assert "eRequest" in landed["attack_evidence"]
+    assert "eRequest" in landed["evidence"]
 
 
 def test_the_summary_reports_coverage(capsys, tmp_path):

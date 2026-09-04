@@ -211,7 +211,7 @@ def test_not_attempted_and_the_violation_rate_reconcile_per_arm():
 def test_the_exfiltration_cell_is_labelled_a_heuristic():
     """Design §4: the exfiltration predicate reads free text for another
     student's identifier and must be labelled a heuristic WHEREVER it is
-    reported. `judge.exfiltrated` rides `HEURISTIC:` into `attack_evidence`,
+    reported. `judge.exfiltrated` rides `HEURISTIC:` into `evidence`,
     but `metrics.json` is what a report author copies numbers from, and there
     the class was indistinguishable from `output-injection`."""
     figures = aggregate([
