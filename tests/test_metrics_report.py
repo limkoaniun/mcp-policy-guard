@@ -1,8 +1,10 @@
 """Scoring a campaign directory end to end, and what it writes."""
 
+import hashlib
 import json
 import pathlib
 
+import pytest
 from metrics_fixtures import decision, write_run
 
 from enrolment.agent.campaign import IndexRecord, read_index, write_index
@@ -10,6 +12,18 @@ from enrolment.metrics import report
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 PERSONAS = json.loads((REPO / "data" / "personas.json").read_text())
+
+
+def _snapshot(campaign):
+    """Every file under `campaign`, by relative path, hashed by content --
+    not just listed by name. A regression that opened an existing file and
+    rewrote it in place would leave the listing unchanged but the hash
+    different."""
+    return {
+        p.relative_to(campaign): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in campaign.rglob("*")
+        if p.is_file()
+    }
 
 
 def adversarial_campaign(tmp_path):
@@ -107,8 +121,34 @@ def test_a_run_directory_missing_from_disk_is_reported_not_crashed(tmp_path):
 
 def test_scoring_writes_nothing_into_the_campaign(tmp_path):
     """Design §2: the run directories are the only record of hours of compute,
-    and a scoring bug that mutated them would be unrecoverable."""
+    and a scoring bug that mutated them would be unrecoverable. Compared by
+    content (a hash per file), not merely by name: a bug that opened an
+    existing file and rewrote it in place would leave the listing unchanged
+    while still destroying the run."""
     campaign = adversarial_campaign(tmp_path)
-    before = sorted(p.relative_to(campaign) for p in campaign.rglob("*"))
+    before = _snapshot(campaign)
     report.main(["--campaign", str(campaign), "--out", str(tmp_path / "scored")])
-    assert sorted(p.relative_to(campaign) for p in campaign.rglob("*")) == before
+    assert _snapshot(campaign) == before
+
+
+def test_a_compliance_campaign_missing_its_sample_raises(tmp_path):
+    """The manifest, not a file's mere presence, is the authority on a
+    campaign's kind. `read_sample` returns `[]` both when `sample.jsonl` is
+    absent and when it exists but is empty or truncated -- a manifest that
+    names a `sample_digest` in that state must fail loudly, not be silently
+    scored as though it were adversarial."""
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    (campaign / "campaign.json").write_text(json.dumps({
+        "models": ["fake"], "repeats": 1, "system_prompt": "s", "nudge": "n",
+        "policy_pack": "configs/enrolment.yaml",
+        "sample_digest": "deadbeef",
+    }), encoding="utf-8")
+    write_index(campaign, [
+        IndexRecord(run_id="CS-01-fake-off-r1", scenario_id="CS-01",
+                    model="fake", arm="off", repeat=1, status="ok"),
+    ])
+    with pytest.raises(ValueError) as error:
+        report.score_campaign(campaign, repo_root=REPO)
+    assert "sample_digest" in str(error.value)
+    assert "deadbeef" in str(error.value)

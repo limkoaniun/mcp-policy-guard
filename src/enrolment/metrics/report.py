@@ -25,8 +25,11 @@ KNOWN_TOOLS = {
 }
 
 
-def _pack_path(campaign_dir: Path, repo_root: Path) -> Path:
-    manifest = json.loads((campaign_dir / MANIFEST).read_text(encoding="utf-8"))
+def _read_manifest(campaign_dir: Path) -> dict:
+    return json.loads((campaign_dir / MANIFEST).read_text(encoding="utf-8"))
+
+
+def _pack_path(manifest: dict, repo_root: Path) -> Path:
     pack = Path(manifest["policy_pack"])
     return pack if pack.is_absolute() else repo_root / pack
 
@@ -34,23 +37,37 @@ def _pack_path(campaign_dir: Path, repo_root: Path) -> Path:
 def score_campaign(campaign_dir, *, repo_root=REPO_ROOT) -> list[RunVerdict]:
     """Every run in `campaign_dir`, judged.
 
-    The campaign's own kind is inferred from whether it drew a sample: only
-    the compliance campaign writes `sample.jsonl`. Inferring rather than asking
-    means a directory cannot be scored as the wrong kind by a mistyped flag.
+    The campaign's kind comes from the manifest's `sample_digest` -- set only
+    by the compliance CLI, `None` for adversarial -- not from whether
+    `sample.jsonl` happens to exist. A file's mere presence is not the
+    authority: `read_sample` returns `[]` both when the file is absent and
+    when it exists but is empty or truncated, and treating those the same as
+    "no sample was drawn" would silently score a broken compliance campaign
+    as an adversarial one.
     """
     campaign_dir = Path(campaign_dir)
     repo_root = Path(repo_root)
     records = read_index(campaign_dir)
+    manifest = _read_manifest(campaign_dir)
+    sample_digest = manifest.get("sample_digest")
+    sample = {s.scenario_id: s for s in read_sample(campaign_dir)}
+
+    if sample_digest is not None and not sample:
+        raise ValueError(
+            f"{campaign_dir} names sample_digest {sample_digest!r} in its "
+            f"manifest, but sample.jsonl is absent or empty, so there is no "
+            f"sample to score this compliance campaign against"
+        )
+
     baseline = json.loads(
-        baseline_path(_pack_path(campaign_dir, repo_root), repo_root).read_text(
+        baseline_path(_pack_path(manifest, repo_root), repo_root).read_text(
             encoding="utf-8"
         )
     )
 
-    sample = {s.scenario_id: s for s in read_sample(campaign_dir)}
     verdicts: list[RunVerdict] = []
 
-    if sample:
+    if sample_digest is not None:
         for record in records:
             verdicts.append(
                 judge_compliance(
