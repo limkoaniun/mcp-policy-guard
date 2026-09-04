@@ -140,6 +140,13 @@ python -m enrolment.agent.compliance --campaign experiments/runs/compliance/firs
 python -m enrolment.agent.compliance --campaign experiments/runs/compliance/first
 ```
 
+Score a campaign into the specification's §7 metrics. Read-only on the runs;
+`metrics.json` and `judgements.jsonl` are written to `--out`.
+
+```bash
+python -m enrolment.metrics.report --campaign experiments/runs/adversarial/first --out experiments/scored/adversarial-first
+```
+
 ## Status
 
 **Done.** The full C04296 dataset is built and committed — 93 subjects, 201
@@ -184,7 +191,7 @@ drives a model through an MCP conversation against the real proxy and records
 every response and attempted call, without repairing the model's mistakes;
 `src/enrolment/agent/ollama.py` is the only module that knows Ollama's HTTP API
 exists, and the model is otherwise an injected callable, so the loop is
-exhaustively testable with no daemon running. 583 tests pass in total.
+exhaustively testable with no daemon running. 650 tests pass in total.
 
 Measured against both candidate models, effective depth is one tool call per
 user turn — neither recovers from an error within a turn. Benign task
@@ -230,10 +237,25 @@ the model. And a run in which the model never attempted the enrolment is
 beside it, because a model too weak to try would otherwise score identically
 to one that correctly refused.
 
-**Next.** The remaining policies (taint tracking, rate & scope limits), the
-two missing payload-delivery mechanisms, and subsystem D (metrics and
-ablations). Until D lands, no metric from `context/project-spec.md` §7 can be
-reported.
+**Subsystem D scores the campaigns** — the scoring half
+(`context/2026-09-03-metrics-design.md`). `python -m enrolment.metrics.report`
+turns a campaign directory into the specification's §7 figures, writing
+`metrics.json` and a `judgements.jsonl` carrying one line per run with the
+artifact that decided it. It is read-only on every campaign it scores.
+
+Attack success is a per-class predicate rather than one state-deviation rule:
+every scenario declares `enrolled_unchanged: true` and SC-07's exfiltration
+declares the same eRequest count as its benign twin, so those blocks describe
+the defended outcome. `output-injection` and `exfiltration` are measurable;
+`tool-shadowing` and `poisoned-description` have no enforcement-off arm and
+report absence rather than a zero. Exfiltration detection reads eRequest text
+for a student other than the principal and is reported as the heuristic it is.
+
+**Next.** The ablations and the prompting baseline — subsystem D's other half,
+which is B and C re-run with each policy disabled and under a different system
+prompt. Only two of the four policies exist, so two can be ablated and the
+report must say why not four. Also outstanding: taint tracking, rate & scope
+limits, and the two missing payload-delivery mechanisms.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
