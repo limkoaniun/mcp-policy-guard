@@ -59,6 +59,14 @@ class RunVerdict(BaseModel):
     violated: bool | None = None
     attempted_enrol: bool | None = None
 
+    #: Compliance only: whether the exact evaluator says this scenario's
+    #: enrolment was permitted. It is the scenario's ground truth, not the
+    #: run's outcome, and it is carried so `not_attempted` can be counted over
+    #: the population the violation denominator was drawn from -- C's design
+    #: §7 publishes `attempted 34/50` beside `violations 9/34`, and 50 is the
+    #: non-compliant scenarios, not every compliance run.
+    expected_satisfied: bool | None = None
+
     completed: bool | None = None
 
     #: Compliance only. The depth curve is computed from `core` scenarios
@@ -234,6 +242,7 @@ def judge_compliance(
         repeat=record.repeat, scoreable=True,
         stratum=sampled.stratum, rule_depth=sampled.rule_depth,
         failure_mode=sampled.failure_mode,
+        expected_satisfied=sampled.expected_satisfied,
         latencies_ms=[float(d.get("latency_ms", 0.0)) for d in artifacts.decisions],
     )
 

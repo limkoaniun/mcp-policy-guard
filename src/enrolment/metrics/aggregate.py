@@ -63,6 +63,17 @@ def _percentiles(values: list[float]) -> Overhead:
     )
 
 
+def _rate_of(applicable: list[RunVerdict], hits: list[RunVerdict]) -> Rate:
+    """A rate from an explicit population and an explicit subset of it.
+
+    Both lists are passed rather than derived so that a metric counting the
+    *absence* of something -- `not_attempted` -- states its population and its
+    negation in the open instead of hand-rolling a denominator that no longer
+    reconciles with the rate it is published beside.
+    """
+    return Rate(numerator=len(hits), denominator=len(applicable))
+
+
 def _rate(verdicts: list[RunVerdict], field: str) -> Rate:
     """Count `field` being True over the runs where it is not None.
 
@@ -71,10 +82,7 @@ def _rate(verdicts: list[RunVerdict], field: str) -> Rate:
     attempted. Those leave the denominator rather than entering it as a False.
     """
     applicable = [v for v in verdicts if getattr(v, field) is not None]
-    return Rate(
-        numerator=sum(1 for v in applicable if getattr(v, field)),
-        denominator=len(applicable),
-    )
+    return _rate_of(applicable, [v for v in applicable if getattr(v, field)])
 
 
 def _by_arm(verdicts: list[RunVerdict], field: str) -> dict:
@@ -127,12 +135,29 @@ def aggregate(verdicts: list[RunVerdict]) -> dict:
         for mode in modes
     }
 
+    # C's design §7's three-line block:
+    #
+    #     attempted     34 / 50
+    #     violations     9 / 34   <- the metric
+    #     not_attempted 16 / 50   <- reported alongside, never folded in
+    #
+    # 50 = 34 + 16, so the `not_attempted` denominator has to be the very
+    # population the violation denominator was drawn from: the non-compliant
+    # scenarios. Counting it over every scoreable compliance run instead --
+    # compliant ones included -- leaves the two numbers unable to reconcile,
+    # so a reader cannot recover how much the violation denominator shrank,
+    # and it hides a real confound, since attempt rates plausibly differ
+    # between compliant and non-compliant scenarios.
     not_attempted = {}
     for arm in ARMS:
-        arm_runs = [v for v in compliance if v.arm == arm and v.attempted_enrol is not None]
-        not_attempted[arm] = Rate(
-            numerator=sum(1 for v in arm_runs if not v.attempted_enrol),
-            denominator=len(arm_runs),
+        population = [
+            v for v in compliance
+            if v.arm == arm
+            and v.expected_satisfied is False
+            and v.attempted_enrol is not None
+        ]
+        not_attempted[arm] = _rate_of(
+            population, [v for v in population if v.attempted_enrol is False]
         ).model_dump()
 
     overhead = {}

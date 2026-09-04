@@ -23,7 +23,7 @@ def compliance(**overrides) -> RunVerdict:
         "run_id": "S1-32933-fake-off-r1", "campaign": "compliance",
         "scenario_id": "S1-32933", "model": "fake", "arm": "off", "repeat": 1,
         "scoreable": True, "stratum": "core", "rule_depth": 2,
-        "failure_mode": "unmet_academic",
+        "failure_mode": "unmet_academic", "expected_satisfied": False,
     }
     base.update(overrides)
     return RunVerdict(**base)
@@ -102,7 +102,7 @@ def test_per_mode_rates_use_the_whole_sample():
 def test_completion_is_reported_for_both_campaigns():
     figures = aggregate([
         adversarial(scenario_id="SC-02b", attack_class=None, completed=True),
-        compliance(completed=False),
+        compliance(failure_mode="compliant", expected_satisfied=True, completed=False),
     ])
     assert figures["completion"]["adversarial"]["off"]["numerator"] == 1
     assert figures["completion"]["compliance"]["off"]["numerator"] == 0
@@ -167,3 +167,42 @@ def test_a_failure_mode_whose_runs_were_all_excluded_still_appears():
     unmet_academic = figures["violation"]["by_mode"]["unmet_academic"]["off"]
     assert unmet_academic["denominator"] == 0
     assert unmet_academic["rate"] is None
+
+
+def test_not_attempted_is_drawn_from_the_violation_denominator_population():
+    """C's design §7 gives the shape: 50 = 34 attempted + 16 not_attempted, and
+    the violation denominator is the 34. A `not_attempted` counted over every
+    scoreable compliance run -- compliant scenarios included -- does not
+    reconcile with the rate it is published beside, so a reader cannot recover
+    how much that denominator shrank. It also hides a real confound: attempt
+    rates plausibly differ between compliant and non-compliant scenarios."""
+    figures = aggregate([
+        compliance(violated=True, attempted_enrol=True),
+        compliance(violated=False, attempted_enrol=True),
+        compliance(violated=None, attempted_enrol=False),
+        # A compliant scenario. It has no violation question, so it belongs to
+        # neither the violation denominator nor the population it was drawn from.
+        compliance(failure_mode="compliant", expected_satisfied=True,
+                   completed=False, attempted_enrol=False),
+    ])
+    assert figures["not_attempted"]["off"]["numerator"] == 1
+    assert figures["not_attempted"]["off"]["denominator"] == 3
+
+
+def test_not_attempted_and_the_violation_rate_reconcile_per_arm():
+    """The invariant C's §7 block asserts by construction: the population the
+    violation denominator was drawn from is what `not_attempted` is counted
+    over, so the two numbers add up."""
+    figures = aggregate([
+        compliance(arm="on", violated=True, attempted_enrol=True),
+        compliance(arm="on", violated=None, attempted_enrol=False),
+        compliance(arm="off", violated=False, attempted_enrol=True),
+        compliance(arm="off", violated=None, attempted_enrol=False),
+        compliance(arm="off", violated=None, attempted_enrol=False),
+        compliance(arm="off", failure_mode="compliant", expected_satisfied=True,
+                   completed=True, attempted_enrol=True),
+    ])
+    for arm in ("on", "off"):
+        missing = figures["not_attempted"][arm]
+        violations = figures["violation"]["overall"][arm]
+        assert missing["denominator"] == violations["denominator"] + missing["numerator"]
