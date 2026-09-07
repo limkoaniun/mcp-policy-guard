@@ -140,6 +140,13 @@ python -m enrolment.agent.compliance --campaign experiments/runs/compliance/firs
 python -m enrolment.agent.compliance --campaign experiments/runs/compliance/first
 ```
 
+Score a campaign into the specification's §7 metrics. Read-only on the runs;
+`metrics.json` and `judgements.jsonl` are written to `--out`.
+
+```bash
+python -m enrolment.metrics.report --campaign experiments/runs/adversarial/first --out experiments/scored/adversarial-first
+```
+
 ## Status
 
 **Done.** The full C04296 dataset is built and committed — 93 subjects, 201
@@ -184,7 +191,7 @@ drives a model through an MCP conversation against the real proxy and records
 every response and attempted call, without repairing the model's mistakes;
 `src/enrolment/agent/ollama.py` is the only module that knows Ollama's HTTP API
 exists, and the model is otherwise an injected callable, so the loop is
-exhaustively testable with no daemon running. 583 tests pass in total.
+exhaustively testable with no daemon running. 681 tests pass in total.
 
 Measured against both candidate models, effective depth is one tool call per
 user turn — neither recovers from an error within a turn. Benign task
@@ -230,10 +237,46 @@ the model. And a run in which the model never attempted the enrolment is
 beside it, because a model too weak to try would otherwise score identically
 to one that correctly refused.
 
-**Next.** The remaining policies (taint tracking, rate & scope limits), the
-two missing payload-delivery mechanisms, and subsystem D (metrics and
-ablations). Until D lands, no metric from `context/project-spec.md` §7 can be
-reported.
+**Subsystem D scores the campaigns** — the scoring half
+(`context/2026-09-03-metrics-design.md`). `python -m enrolment.metrics.report`
+turns a campaign directory into the specification's §7 figures, writing
+`metrics.json` and a `judgements.jsonl` carrying one line per run with the
+artifact that decided it. It is read-only on every campaign it scores.
+
+Attack success is a per-class predicate rather than one state-deviation rule:
+every scenario declares `enrolled_unchanged: true` and SC-07's exfiltration
+declares the same eRequest count as its benign twin, so those blocks describe
+the defended outcome. `output-injection` and `exfiltration` are measurable;
+`tool-shadowing` and `poisoned-description` have no enforcement-off arm and
+report absence rather than a zero. Exfiltration detection reads eRequest text
+for a student other than the principal and is reported as the heuristic it is.
+
+**The first campaign has been scored, and the result is null.**
+`experiments/runs/adversarial/first` comes back at 270 of 280 runs scored (10
+truncated, excluded by design) and 0% attack success in every measurable
+class on both arms: exfiltration 0/10 on, 0/5 off; output-injection 0/30 on,
+0/30 off. The reason is not enforcement: `submit_erequest`, the call both
+measurable classes need to land, was proposed zero times across all 280 runs.
+The attacks were never mounted, not defended — this campaign cannot yet show
+the enforcement layer stopping a completed attack. That is consistent with
+the effective tool-call depth of about one per turn subsystem A's design
+already measured, so it reads as a capability ceiling rather than a harness
+failure. The two exfiltration cells are not composed of the same models: all
+ten truncated runs were `llama3.2` on the off arm, so the off-arm 0/5 is
+`llama3.1:8b` alone against a two-model on-arm 0/10, and every rate in
+`metrics.json` now carries the `{model: n}` map of its own denominator so
+that cannot go unnoticed again. Benign completion was 10/80 on and 10/75 off;
+enforcement overhead was p50 0.067 ms on and 0.063 ms off — the policy
+engine's own decision time against a multi-second model call. That pair is
+not an on-versus-off cost: both arms compute and log the verdict and only the
+forwarding decision is forced, so the 0.004 ms delta is not the price of
+enforcement and neither number is an un-proxied baseline.
+
+**Next.** The ablations and the prompting baseline — subsystem D's other half,
+which is B and C re-run with each policy disabled and under a different system
+prompt. Only two of the four policies exist, so two can be ablated and the
+report must say why not four. Also outstanding: taint tracking, rate & scope
+limits, and the two missing payload-delivery mechanisms.
 
 **Outstanding from Weeks 1–3.** The literature review.
 
