@@ -20,6 +20,12 @@ dependencies = [
     "anyio>=4.0",
     "pydantic>=2.0",
     "pyyaml>=6.0",
+    # The demonstration frontend (spec §8). FastAPI serves one static page and
+    # three JSON endpoints; uvicorn runs it. Declared as ordinary dependencies
+    # rather than an extra because the frontend is a listed deliverable, and an
+    # extra nobody installs is a deliverable nobody can run.
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
 ]
 
 [project.optional-dependencies]

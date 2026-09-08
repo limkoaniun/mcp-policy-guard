@@ -40,6 +40,7 @@ class DemoCall(BaseModel):
     policy: str
     reason: str
     blocked: bool
+    result: str
 
 
 class DemoRun(BaseModel):
@@ -54,6 +55,10 @@ class DemoRun(BaseModel):
     scenario_id: str
     enforcement: str
     driver: str
+    persona: str
+    task: str
+    payload_target: str | None
+    payload_text: str | None
     calls: list[DemoCall]
     enrolled_before: list[str]
     enrolled_after: list[str]
@@ -76,6 +81,15 @@ class PersonaNotInPackError(ValueError):
     misconfiguration renders as a clean enforcement result. See the brief's
     §6.2 -- this is how the Phase 0 probe first "passed".
     """
+
+
+def _bounded(text: str, limit: int) -> str:
+    """Cut `text` to `limit`, marking the cut. Follows the `[truncated]`
+    convention `agent/loop.py` and `requisites.py` already use, rather than
+    inventing a second one."""
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip() + " [truncated]"
 
 
 def _students(path: Path) -> dict:
@@ -150,11 +164,18 @@ async def run_demo(
         "--enforcement", enforcement,
     ]
 
-    seen: list[bool] = []
+    #: What the agent received for each replayed call, in order: whether the
+    #: call came back as an error, and the body it carried. Bounded because a
+    #: study plan is long and the page shows it inline; `enforcement.refusal()`
+    #: puts the whole deny reason first, so a block is never the thing clipped.
+    seen: list[tuple[bool, str]] = []
     async with connect_subprocess(sys.executable, arguments, cwd=str(repo_root)) as client:
         for call in scenario.replay:
             result = await client.call_tool(call.tool, call.arguments)
-            seen.append(bool(result.is_error))
+            body = "".join(
+                part.text for part in result.content if hasattr(part, "text")
+            )
+            seen.append((bool(result.is_error), _bounded(body, 1500)))
 
     decisions = _read_decisions(run_dir)
     calls = [
@@ -165,13 +186,18 @@ async def run_demo(
             policy=decision["policy"],
             reason=decision["reason"],
             blocked=blocked,
+            result=body,
         )
-        for decision, blocked in zip(decisions, seen, strict=True)
+        for decision, (blocked, body) in zip(decisions, seen, strict=True)
     ]
     return DemoRun(
         scenario_id=scenario.id,
         enforcement=enforcement,
         driver=SCRIPTED,
+        persona=scenario.persona,
+        task=scenario.task.description,
+        payload_target=scenario.payload.target if scenario.payload else None,
+        payload_text=scenario.payload.text if scenario.payload else None,
         calls=calls,
         enrolled_before=_enrolled(before, scenario.persona),
         enrolled_after=_enrolled(_students(run_dir / "state.json"), scenario.persona),

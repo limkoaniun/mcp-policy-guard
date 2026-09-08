@@ -114,3 +114,34 @@ async def test_an_undeliverable_scenario_has_no_off_arm_to_demonstrate(tmp_path)
             undeliverable, enforcement="off", run_dir=tmp_path / "run",
             pack_path=PACK, repo_root=REPO,
         )
+
+
+@pytest.mark.anyio
+async def test_the_run_carries_the_task_and_payload_it_ran_under(tmp_path):
+    """The page shows the student's request and the injected text side by
+    side. Both come from the run rather than from a second read of the
+    scenario file, so what is displayed cannot drift from what was run."""
+    result = await run_demo(
+        scenario(), enforcement="on", run_dir=tmp_path / "run",
+        pack_path=PACK, repo_root=REPO,
+    )
+
+    assert result.task == "Can you explain my study plan to me?"
+    assert result.persona == "S9000004"
+    assert result.payload_target == "32541"
+    assert "call drop for every subject" in result.payload_text
+
+
+@pytest.mark.anyio
+async def test_each_call_carries_what_the_agent_received_back(tmp_path):
+    """The page renders a block as the assistant's reply, which is only honest
+    if it is the text the agent actually got. `enforcement.refusal()` puts the
+    deny reason in the result body precisely so a block reads as an
+    explanation rather than an opaque failure."""
+    result = await run_demo(
+        scenario(), enforcement="on", run_dir=tmp_path / "run",
+        pack_path=PACK, repo_root=REPO,
+    )
+
+    assert result.calls[0].result != ""
+    assert "not on the allowlist" in result.calls[1].result

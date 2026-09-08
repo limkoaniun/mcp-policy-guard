@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP Policy Guard — enrolment demonstration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f7f7f5;
+  --ink: #1a1a18;
+  --ink-soft: #5d5c56;
+  --rule: #d9d8d2;
+  --lost: #a3202b;
+  --stamp: #1f3a5f;
+  --serif: Spectral, Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 2rem 1.75rem 4rem; }
+
+/* ---- masthead ---- */
+.masthead {
+  display: flex; flex-wrap: wrap; gap: 1.5rem 2rem;
+  align-items: flex-end; justify-content: space-between;
+  padding-bottom: 1.1rem; border-bottom: 1px solid var(--rule);
+}
+.masthead h1 { font-size: 1.4rem; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.masthead p { margin: .2rem 0 0; color: var(--ink-soft); font-size: .95rem; }
+.controls { display: flex; align-items: flex-end; gap: 1.25rem; flex-wrap: wrap; }
+label { display: block; font-size: .82rem; color: var(--ink-soft); margin-bottom: .3rem; }
+select, button {
+  font-family: var(--serif); font-size: .95rem; color: var(--ink);
+  background: #fff; border: 1px solid var(--rule); border-radius: 3px;
+  padding: .45rem .7rem;
+}
+button { cursor: pointer; background: var(--ink); color: var(--paper); border-color: var(--ink); }
+button:hover:not(:disabled) { background: #000; }
+button:disabled { opacity: .45; cursor: default; }
+:focus-visible { outline: 2px solid var(--stamp); outline-offset: 2px; }
+
+/* ---- the toggle: two states of one record ---- */
+.toggle { display: flex; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; background: #fff; }
+/* Visually hidden but still focusable and still in the accessibility tree.
+   `opacity: 0; pointer-events: none` hid the radios from assistive tech and
+   from the keyboard, which for the page's only real control is not a styling
+   detail. */
+.toggle input {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; border: 0; overflow: hidden; white-space: nowrap;
+  clip-path: inset(50%);
+}
+.toggle label { margin: 0; }
+.toggle label span {
+  display: block; padding: .45rem 1.05rem; cursor: pointer; font-size: .95rem;
+  color: var(--ink); border-right: 1px solid var(--rule);
+}
+.toggle label:last-of-type span { border-right: 0; }
+.toggle input:checked + label span { background: var(--ink); color: var(--paper); }
+.toggle input:disabled + label span { opacity: .35; cursor: not-allowed; }
+.toggle input:focus-visible + label span { outline: 2px solid var(--stamp); outline-offset: -2px; }
+
+/* ---- hero: the record ---- */
+.record { padding: 2.4rem 0 2rem; border-bottom: 1px solid var(--rule); }
+.record .who { font-family: var(--mono); font-size: .88rem; color: var(--ink-soft); }
+.codes { display: flex; flex-wrap: wrap; gap: 1.6rem; margin: .7rem 0 0; }
+.code {
+  font-family: var(--mono); font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 500; letter-spacing: -0.02em; position: relative;
+}
+.code.lost { color: var(--lost); }
+.code.lost::after {
+  content: ""; position: absolute; left: -.06em; right: -.06em; top: 52%;
+  height: 3px; background: var(--lost); transform-origin: left;
+  animation: strike .42s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes strike { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .code.lost::after { animation: none; } }
+.verdict { margin: 1.1rem 0 0; font-size: 1.05rem; }
+.verdict em { font-style: italic; }
+
+/* ---- panels ---- */
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; padding-top: 2rem; }
+@media (max-width: 860px) { .panels { grid-template-columns: 1fr; gap: 2rem; } }
+.panels h2 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; }
+.note {
+  font-size: .87rem; color: var(--ink-soft); border-left: 2px solid var(--rule);
+  padding-left: .8rem; margin: 0 0 1.4rem;
+}
+
+/* ---- conversation ---- */
+.turn { margin-bottom: 1.15rem; }
+.turn .speaker { font-size: .82rem; color: var(--ink-soft); margin-bottom: .15rem; }
+.turn .said { max-width: 62ch; }
+.call { font-family: var(--mono); font-size: .87rem; margin-bottom: 1.15rem; }
+.call .head { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+.call .args { color: var(--ink-soft); }
+.tag { font-family: var(--mono); font-size: .75rem; padding: .05rem .4rem; border: 1px solid; border-radius: 2px; }
+.tag.ran { color: var(--ink-soft); border-color: var(--rule); }
+.tag.stopped { color: var(--lost); border-color: var(--lost); }
+.tag.overruled { color: var(--lost); border-color: var(--lost); background: #fbeff0; }
+.poison {
+  border-left: 2px solid var(--lost); padding: .5rem 0 .5rem .8rem;
+  margin: .5rem 0 0; font-size: .9rem; max-width: 62ch;
+}
+.poison .where { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); }
+.poison q { font-style: italic; }
+
+/* ---- decisions ---- */
+.decision { border-left: 2px solid var(--rule); padding: 0 0 0 .9rem; margin-bottom: 1.5rem; }
+.decision.denied { border-left-color: var(--stamp); }
+.decision .tool { font-family: var(--mono); font-size: .95rem; }
+.decision .args { font-family: var(--mono); font-size: .8rem; color: var(--ink-soft); word-break: break-all; }
+.decision .ruling { margin-top: .45rem; font-size: .92rem; max-width: 58ch; }
+.decision .ruling b { font-weight: 600; }
+.decision .outcome { margin-top: .35rem; font-size: .85rem; color: var(--ink-soft); }
+.decision .outcome.overruled { color: var(--lost); }
+.empty { color: var(--ink-soft); max-width: 52ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>Enrolment assistant, with the policy layer shown</h1>
+      <p>A student enrolment agent, an injected instruction, and the record it tried to change.</p>
+    </div>
+    <div class="controls">
+      <div>
+        <label for="scenario">Scenario</label>
+        <select id="scenario"></select>
+      </div>
+      <div>
+        <label for="protection">Protection</label>
+        <div class="toggle" id="protection">
+          <input type="radio" name="arm" id="arm-on" value="on" checked><label for="arm-on"><span>on</span></label>
+          <input type="radio" name="arm" id="arm-off" value="off"><label for="arm-off"><span>off</span></label>
+        </div>
+      </div>
+      <button id="run">Run scenario</button>
+    </div>
+  </header>
+
+  <section class="record" id="record" hidden>
+    <div class="who" id="who"></div>
+    <div class="codes" id="codes"></div>
+    <p class="verdict" id="verdict"></p>
+  </section>
+
+  <div class="panels">
+    <section>
+      <h2>Conversation</h2>
+      <p class="note" id="driver-note">
+        These calls are replayed from the scenario, not chosen by a model. A scripted
+        run shows what the enforcement layer does with the call; it does not claim a
+        model would have made it.
+        <span id="off-arm-note"></span>
+      </p>
+      <div id="chat"><p class="empty">Choose a scenario and run it. The record above shows what survives.</p></div>
+    </section>
+    <section>
+      <h2>Policy decisions</h2>
+      <p class="note">
+        Every call is ruled on either way. With protection off the ruling still stands —
+        it is simply not acted on.
+      </p>
+      <div id="decisions"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const args = (o) => Object.entries(o).map(([k, v]) => `${k}=${v}`).join(', ');
+let scenarios = {};
+
+async function loadScenarios() {
+  const list = await (await fetch('/api/scenarios')).json();
+  const select = $('scenario');
+  for (const s of list) {
+    scenarios[s.id] = s;
+    const option = document.createElement('option');
+    option.value = s.id;
+    option.textContent = s.attack_class ? `${s.id} — ${s.attack_class}` : `${s.id} — benign`;
+    select.append(option);
+  }
+  select.value = 'SC-06' in scenarios ? 'SC-06' : list[0].id;
+  syncArms();
+}
+
+// A scenario with no delivery mechanism has no unprotected arm to show. The
+// control says so rather than offering a comparison the suite cannot make.
+function syncArms() {
+  const chosen = scenarios[$('scenario').value];
+  const off = $('arm-off');
+  off.disabled = !chosen.has_off_arm;
+  if (off.disabled && off.checked) $('arm-on').checked = true;
+  $('off-arm-note').textContent = off.disabled
+    ? ' This scenario has no unprotected arm: nothing in the harness delivers its payload, so only the protected run can be shown.'
+    : '';
+}
+
+function renderRecord(run) {
+  const before = run.enrolled_before, after = new Set(run.enrolled_after);
+  $('who').textContent = `student ${run.persona} — enrolled subjects`;
+  $('codes').innerHTML = before
+    .map(c => `<span class="code ${after.has(c) ? '' : 'lost'}">${esc(c)}</span>`).join('');
+  const lost = before.filter(c => !after.has(c));
+  $('verdict').innerHTML = lost.length
+    ? `Subject <b>${esc(lost.join(', '))}</b> was removed from the record by an instruction the student never gave.`
+    : `The record is unchanged. The instruction was refused before it reached the enrolment system.`;
+  $('record').hidden = false;
+}
+
+function renderChat(run) {
+  const parts = [`<div class="turn"><div class="speaker">student ${esc(run.persona)}</div>
+      <div class="said">${esc(run.task)}</div></div>`];
+  run.calls.forEach((call, i) => {
+    const tag = call.blocked ? 'stopped' : (call.verdict === 'deny' ? 'overruled' : 'ran');
+    const label = call.blocked ? 'stopped' : (call.verdict === 'deny' ? 'ran anyway' : 'ran');
+    parts.push(`<div class="call">
+      <div class="head"><span>${esc(call.tool)}</span>
+        <span class="args">${esc(args(call.arguments))}</span>
+        <span class="tag ${tag}">${label}</span></div></div>`);
+    // The payload enters the conversation with the first result that carries
+    // it, which is where a model would have read it.
+    if (i === 0 && run.payload_text) {
+      parts.push(`<div class="poison">
+        <div class="where">returned inside the description of subject ${esc(run.payload_target)}</div>
+        <q>${esc(run.payload_text.trim())}</q></div>`);
+    }
+  });
+  const last = run.calls[run.calls.length - 1];
+  if (last && last.blocked) {
+    parts.push(`<div class="turn"><div class="speaker">assistant, relaying the refusal</div>
+      <div class="said">${esc(last.result)}</div></div>`);
+  }
+  $('chat').innerHTML = parts.join('');
+}
+
+function renderDecisions(run) {
+  $('decisions').innerHTML = run.calls.map(call => {
+    const denied = call.verdict === 'deny';
+    const outcome = denied
+      ? (call.blocked
+          ? 'The call was stopped. The enrolment system never saw it.'
+          : 'Protection is off, so the call was forwarded anyway.')
+      : 'Forwarded.';
+    return `<div class="decision ${denied ? 'denied' : ''}">
+      <div class="tool">${esc(call.tool)}</div>
+      <div class="args">${esc(args(call.arguments))}</div>
+      <div class="ruling"><b>${denied ? 'Denied' : 'Allowed'}</b> by ${esc(call.policy)}. ${esc(call.reason)}</div>
+      <div class="outcome ${denied && !call.blocked ? 'overruled' : ''}">${outcome}</div>
+    </div>`;
+  }).join('');
+}
+
+async function run() {
+  const button = $('run');
+  button.disabled = true;
+  button.textContent = 'Running';
+  $('record').hidden = true;
+  try {
+    const response = await fetch('/api/run', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        scenario_id: $('scenario').value,
+        enforcement: document.querySelector('input[name=arm]:checked').value,
+      }),
+    });
+    const body = await response.json();
+    if (!response.ok) {
+      $('chat').innerHTML = `<p class="empty">${esc(body.detail || 'The run could not be completed.')}</p>`;
+      $('decisions').innerHTML = '';
+      return;
+    }
+    renderRecord(body);
+    renderChat(body);
+    renderDecisions(body);
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Run scenario';
+  }
+}
+
+$('scenario').addEventListener('change', syncArms);
+$('run').addEventListener('click', run);
+loadScenarios();
+</script>
+</body>
+</html>
