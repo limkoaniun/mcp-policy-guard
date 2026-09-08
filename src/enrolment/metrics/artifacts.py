@@ -160,7 +160,7 @@ def baseline_path(pack_path, repo_root) -> Path:
     hardcoded: the adversarial pack points at `data/personas.json` and the
     compliance pack at `data/students.json`, and comparing a run against the
     wrong one would silently misjudge every final state. This mirrors
-    `scenario_runner._students_baseline_path`, which exists for the same
+    `run_setup.students_baseline_path`, which exists for the same
     reason.
     """
     pack = load_policy_pack(Path(pack_path))
