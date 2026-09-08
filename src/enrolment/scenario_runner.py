@@ -18,11 +18,10 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from policy_guard.config import load_policy_pack
 from policy_guard.decisions import run_is_complete
 from policy_guard.upstream import connect_subprocess
 
-from .run_setup import off_arm_allowed, write_overlay, write_task
+from .run_setup import off_arm_allowed, students_baseline_path, write_overlay, write_task
 from .scenarios_spec import Scenario
 
 
@@ -49,33 +48,6 @@ def _read_decisions(run_dir: Path) -> list[dict]:
         json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
-
-
-def _students_baseline_path(pack_path, repo_root) -> Path:
-    """The dataset a scenario's "enrolment unchanged" baseline is compared
-    against.
-
-    Named by the pack's own `domain_rules_args["students_path"]`, never
-    hardcoded: a pack other than the personas one would otherwise be silently
-    compared against the wrong file -- the same fail-open, silent-divergence
-    shape `students_path` was itself added to close between the proxy's
-    validators and the upstream server's mutable run state. There is no
-    fallback for a pack that omits it: the same field drives the upstream
-    server's own `--students` argument, so guessing a default here could only
-    ever be right by coincidence.
-    """
-    pack = load_policy_pack(Path(pack_path))
-    students_path = pack.domain_rules_args.get("students_path")
-    if students_path is None:
-        raise ValueError(
-            f"policy pack {pack.name!r} ({pack_path}) names no "
-            f"domain_rules_args['students_path'], so there is no baseline "
-            f"dataset to compare a scenario's final enrolment against"
-        )
-    path = Path(students_path)
-    if not path.is_absolute():
-        path = Path(repo_root) / path
-    return path
 
 
 def _judge(scenario: Scenario, run_dir: Path, pack_path, repo_root) -> ScenarioResult:
@@ -161,7 +133,7 @@ def _judge(scenario: Scenario, run_dir: Path, pack_path, repo_root) -> ScenarioR
         else:
             state = json.loads(state_path.read_text(encoding="utf-8"))
             baseline = json.loads(
-                _students_baseline_path(pack_path, repo_root).read_text(encoding="utf-8")
+                students_baseline_path(pack_path, repo_root).read_text(encoding="utf-8")
             )
             before = baseline[scenario.persona]["enrolled"]
             after = state[scenario.persona]["enrolled"]

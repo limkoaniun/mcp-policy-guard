@@ -7,7 +7,8 @@ the directory must be built the same way by each -- two arms writing
 had to close between the proxy's validators and the upstream server's own
 `--students` argument.
 
-The off-arm eligibility rule lives here for the same reason: it is consulted
+The baseline-dataset lookup and the off-arm eligibility rule live here for
+the same reason: it is consulted
 by the replay arm (which refuses the off arm outright) and by the model arm
 (which runs it for the scenarios that can mount an attack), and the two must
 not be able to disagree about which those are.
@@ -18,6 +19,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
+
+from policy_guard.config import load_policy_pack
 
 from .scenarios_spec import Scenario
 
@@ -100,3 +103,30 @@ def write_overlay(scenario: Scenario, run_dir) -> Path | None:
         f"by the loader as deliverable, but run_setup implements no delivery "
         f"mechanism for it"
     )
+
+
+def students_baseline_path(pack_path, repo_root) -> Path:
+    """The dataset a scenario's "enrolment unchanged" baseline is compared
+    against.
+
+    Named by the pack's own `domain_rules_args["students_path"]`, never
+    hardcoded: a pack other than the personas one would otherwise be silently
+    compared against the wrong file -- the same fail-open, silent-divergence
+    shape `students_path` was itself added to close between the proxy's
+    validators and the upstream server's mutable run state. There is no
+    fallback for a pack that omits it: the same field drives the upstream
+    server's own `--students` argument, so guessing a default here could only
+    ever be right by coincidence.
+    """
+    pack = load_policy_pack(Path(pack_path))
+    students_path = pack.domain_rules_args.get("students_path")
+    if students_path is None:
+        raise ValueError(
+            f"policy pack {pack.name!r} ({pack_path}) names no "
+            f"domain_rules_args['students_path'], so there is no baseline "
+            f"dataset to compare a scenario's final enrolment against"
+        )
+    path = Path(students_path)
+    if not path.is_absolute():
+        path = Path(repo_root) / path
+    return path
