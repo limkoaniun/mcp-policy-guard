@@ -2,7 +2,7 @@
 
 **32933 Research Project (Type I) · UTS · Spring 2026**
 **Specification:** `context/project-spec.md`
-**Last updated:** 2026-09-07
+**Last updated:** 2026-09-08
 
 ---
 
@@ -95,6 +95,15 @@ Adversarial scenarios and compliance scenarios (generated, hundreds); runs with
 enforcement on and off; attack success rate, rule violation rate, task
 completion, overhead.
 
+**Both campaigns are run and scored.** B returned a null result — 0% attack
+success on both arms, because `submit_erequest` was proposed zero times in 280
+runs and the attacks were never mounted. C returned the headline: 0/1700
+violations enforced against 1670/1700 (98%) unenforced, with benign completion
+at 100% on both arms. The asymmetry is instructive and belongs in the report:
+the adversarial claim needs a model capable enough to attack, and the
+compliance claim does not, because a model that misreads a prerequisite is
+wrong whether or not it is clever.
+
 **Adversarial scenarios — half done.** The definitions and the replay half
 exist: sixteen scenarios (eight injected across the four attack classes, eight
 benign twins), a validating schema and loader
@@ -160,9 +169,14 @@ current piece of work. Spec §8 already describes it; brief in
    and every phase after it is premature. Then the headless demo API, then the
    page, then live-model mode. Detail in
    `context/2026-09-07-demo-chatbot-brief.md`.
-8. **Run campaign C** — the compliance suite, about four hours, resumable. Its
-   numbers do not depend on an attack landing, so it produces findings
-   whatever the adversarial arm does.
+8. ~~**Run campaign C.**~~ ✅ Done 2026-09-08. 4,960 runs in 339 minutes
+   (5.7 hours, not the four estimated), all scored, none excluded. Rule
+   violations 0/1700 enforced against 1670/1700 (98%) unenforced; benign
+   completion 100% on both arms. This is the project's headline result, and
+   the one campaign B could not produce. Three caveats it must carry are
+   recorded in the README: the enforced 0% is partly true by construction, the
+   30 unenforced non-violations are a sampler defect rather than good
+   behaviour, and depth 0 has no rate to report.
 9. **The ablations and the prompting baseline**, if time allows — B and C
    re-run with each policy disabled and under the §7 baseline prompt. Two of
    four policies exist, so two can be ablated, and the report must say why not
@@ -214,6 +228,7 @@ Each gets its own spec → plan → implementation cycle, in this order:
 | Grammar edge cases beyond the 30-subject sample | Coverage report gates the widening step; unparsed items are never dropped | Mitigated |
 | Requisite semantics misread | Open questions raised with supervisor; assumptions stated in the report | Open |
 | Domain work crowding out the proxy | The data layer is done and timeboxed; the proxy is the next thing built | Contained |
+| Model too weak to mount an attack at all | Realised in B: 0 `submit_erequest` proposals in 280 runs. C sidesteps it entirely -- a rule violation needs no capability -- and the demo is driven by scripted replay | **Realised; contained** |
 | Frontend eating implementation time | **Changed 2026-09-07:** no longer scheduled late — it is now the current work at the supervisor's direction. The containment is §8's rule alone: it may only read artifacts the proxy already writes. | **Live risk** |
 | Demo has nothing to show because the model never attacks | Built on the scenarios' scripted `replay` blocks first, live model second; scripted runs labelled as such on screen | Handled by design |
 | Literature review slipping | Was the only outstanding Weeks 1–3 item | **Closed** 2026-09-02 |
