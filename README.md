@@ -272,13 +272,27 @@ not an on-versus-off cost: both arms compute and log the verdict and only the
 forwarding decision is forced, so the 0.004 ms delta is not the price of
 enforcement and neither number is an un-proxied baseline.
 
-**Next.** The ablations and the prompting baseline — subsystem D's other half,
-which is B and C re-run with each policy disabled and under a different system
-prompt. Only two of the four policies exist, so two can be ablated and the
-report must say why not four. Also outstanding: taint tracking, rate & scope
-limits, and the two missing payload-delivery mechanisms.
+**Next: the demonstration frontend** (`context/project-spec.md` §8, brief in
+`context/2026-09-07-demo-chatbot-brief.md`). The supervisor has named it the
+project's final demonstration, which promotes it from the last item on the
+schedule to the current one. A chat page with an enforcement on/off toggle,
+the policy decision trace beside it, and the same scenario run on both arms.
+§8's bounding rule still holds: the frontend may only read artifacts the
+proxy already writes.
 
-**Outstanding from Weeks 1–3.** The literature review.
+It is built on the scenarios' scripted `replay` blocks first, with a live
+model added afterwards — the first campaign's models never mounted the
+attacks, so a demo that depends on one choosing to misbehave can fail in
+front of the audience it exists for. Only four scenarios (SC-02, SC-04,
+SC-06, SC-07) have an enforcement-off arm at all; the other four are
+ON-arm illustrations and must be labelled as such.
+
+**Deferred, not dropped.** The ablations and the prompting baseline —
+subsystem D's other half, which is B and C re-run with each policy disabled
+and under a different system prompt. Only two of the four policies exist, so
+two can be ablated and the report must say why not four. Also outstanding:
+taint tracking, rate & scope limits, the two missing payload-delivery
+mechanisms, and campaign C, which has not been run.
 
 Current direction lives in `context/project-spec.md`; schedule and build order in
 `context/project-plan.md`.

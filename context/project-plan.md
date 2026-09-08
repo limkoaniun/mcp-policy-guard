@@ -2,7 +2,7 @@
 
 **32933 Research Project (Type I) · UTS · Spring 2026**
 **Specification:** `context/project-spec.md`
-**Last updated:** 2026-08-26
+**Last updated:** 2026-09-07
 
 ---
 
@@ -69,7 +69,7 @@ The revised plan's 13-week structure, annotated with actual status.
 
 | Item | Status |
 |---|---|
-| Literature review | **Outstanding** — `context/literature-notes.md` is still an empty template |
+| Literature review | ✅ Complete — `context/literature-notes.md` populated 2026-09-02, sixteen entries across six areas, every citation verified against a primary source |
 | Threat model | Drafted; extended 2026-08-26 to cover the benign non-compliance axis |
 | Attack taxonomy | Four classes fixed; enrolment instantiation drafted in `attacks/README.md` |
 | Business rule set | Established from real data: requisites, anti-requisites, credit-point thresholds, admission requisites |
@@ -114,8 +114,18 @@ arm even once the harness lands.
 
 ### Weeks 11–13 — analysis and write-up
 
-Ablations of individual policies; the prompting baseline comparison;
-demonstration frontend; final report.
+**Re-ordered 2026-09-07.** The supervisor has named the demonstration frontend
+the project's final demonstration, so it moves from the last item here to the
+current piece of work. Spec §8 already describes it; brief in
+`context/2026-09-07-demo-chatbot-brief.md`.
+
+1. **Demonstration frontend** — chat page, enforcement on/off toggle, live
+   policy decision trace, scenario picker, reset-state button. Bounded by §8's
+   rule: it may only read artifacts the proxy already writes.
+2. Final report.
+3. Ablations of individual policies and the prompting baseline comparison, if
+   time allows. Deferred rather than dropped: the report can state why two of
+   four policies were ablatable, but it cannot excuse a missing demonstration.
 
 ---
 
@@ -127,8 +137,9 @@ demonstration frontend; final report.
    completed with zero unparsed items. 4,650 compliance scenarios generated.
 2. **Email the supervisor.** One message covers the five open questions in §10 of
    the spec, and the data-access confirmation. Any answer unblocks work.
-3. **Start the literature review.** It is the one Weeks 1–3 deliverable still
-   outstanding, and it is on the critical path for the report rather than the code.
+3. ~~**Start the literature review.**~~ ✅ Done 2026-09-02.
+   `context/literature-notes.md` holds sixteen entries across six areas, each
+   verified against a primary source.
 4. ~~**Specify and build the proxy.**~~ ✅ Done. The proxy, the policy engine, the
    enrolment MCP server, the study-plan progression layer, the scenario suite and
    subsystem A of the agent harness have all shipped since this list was written.
@@ -140,11 +151,22 @@ demonstration frontend; final report.
    `experiments/runs/adversarial/first` scored 270 of 280 runs at 0% attack
    success in every measurable class on both arms — the attacks were never
    mounted, not defended, so demonstrating a defence needs either a more
-   capable model or a scenario design a depth-one model can complete. C
-   remains, about four hours, resumable.
-7. **Build the ablations and the prompting baseline** — B and C re-run with
-   each policy disabled and under the §7 baseline prompt. Two of four policies
-   exist, so two can be ablated, and the report must say why not four.
+   capable model or a scenario design a depth-one model can complete. This is
+   the finding that decides how the demonstration frontend is driven — see
+   step 7. C remains; it is step 8.
+7. **Build the demonstration frontend.** Promoted 2026-09-07 to the current
+   piece of work. Phase 0 first: run SC-06 on both arms from the CLI and diff
+   `state.json`. If the arms do not differ there is no story to demonstrate,
+   and every phase after it is premature. Then the headless demo API, then the
+   page, then live-model mode. Detail in
+   `context/2026-09-07-demo-chatbot-brief.md`.
+8. **Run campaign C** — the compliance suite, about four hours, resumable. Its
+   numbers do not depend on an attack landing, so it produces findings
+   whatever the adversarial arm does.
+9. **The ablations and the prompting baseline**, if time allows — B and C
+   re-run with each policy disabled and under the §7 baseline prompt. Two of
+   four policies exist, so two can be ablated, and the report must say why not
+   four.
 
 ---
 
@@ -170,8 +192,10 @@ Each gets its own spec → plan → implementation cycle, in this order:
    loaded by import path so `src/policy_guard/` never imports `enrolment`
 4. **Adversarial attack suite**
 5. **Evaluation harness and metrics**
-6. **Demonstration frontend** — note the dependency: the chat panel needs the
-   agent harness, so it cannot be built before that lands. The *viewer* half
+6. **Demonstration frontend** — brief in
+   `context/2026-09-07-demo-chatbot-brief.md`; promoted to current work
+   2026-09-07. Note the dependency: the chat panel needs the agent harness,
+   which has since landed. The *viewer* half
    (decision trace, enforcement on/off side by side, state diff) reads only
    artifacts that already exist and could be built at any time; a static
    generator producing one self-contained HTML file is the shape that survives
@@ -190,8 +214,9 @@ Each gets its own spec → plan → implementation cycle, in this order:
 | Grammar edge cases beyond the 30-subject sample | Coverage report gates the widening step; unparsed items are never dropped | Mitigated |
 | Requisite semantics misread | Open questions raised with supervisor; assumptions stated in the report | Open |
 | Domain work crowding out the proxy | The data layer is done and timeboxed; the proxy is the next thing built | Contained |
-| Frontend eating implementation time | Scheduled Weeks 11–13; may only read existing artifacts | Not yet live |
-| Literature review slipping | Currently the only outstanding Weeks 1–3 item | **Live risk** |
+| Frontend eating implementation time | **Changed 2026-09-07:** no longer scheduled late — it is now the current work at the supervisor's direction. The containment is §8's rule alone: it may only read artifacts the proxy already writes. | **Live risk** |
+| Demo has nothing to show because the model never attacks | Built on the scenarios' scripted `replay` blocks first, live model second; scripted runs labelled as such on screen | Handled by design |
+| Literature review slipping | Was the only outstanding Weeks 1–3 item | **Closed** 2026-09-02 |
 
 ---
 
