@@ -272,6 +272,19 @@ not an on-versus-off cost: both arms compute and log the verdict and only the
 forwarding decision is forced, so the 0.004 ms delta is not the price of
 enforcement and neither number is an un-proxied baseline.
 
+**The demonstration frontend runs** (phase 2 of
+`context/2026-09-07-demo-chatbot-brief.md`):
+
+```bash
+uvicorn enrolment.demo.app:create_app --factory --port 8765
+```
+
+A scenario picker, a protection on/off toggle, the student's enrolment record
+with the lost subject struck through, the conversation on the left and the
+policy decisions on the right. Headless equivalent:
+`python -m enrolment.demo --scenario <path> --run-dir <dir>` prints both arms
+as JSON.
+
 **Next: the demonstration frontend** (`context/project-spec.md` §8, brief in
 `context/2026-09-07-demo-chatbot-brief.md`). The supervisor has named it the
 project's final demonstration, which promotes it from the last item on the
