@@ -233,8 +233,14 @@ the descriptor-variance limitation in §9.
 
 ## 8. Demonstration frontend
 
-Scoped as a demo and observability tool, not a product UI, and scheduled late so
-it cannot eat implementation time.
+Scoped as a demo and observability tool, not a product UI.
+
+**Promoted 2026-09-07.** This section was written to be built last, "scheduled
+late so it cannot eat implementation time". The supervisor has since named it
+the project's final demonstration, so it is now the current piece of work. The
+schedule changed; the scope below did not, and the bounding rule at the end of
+this section is now the only thing holding it. Working brief:
+`context/2026-09-07-demo-chatbot-brief.md`.
 
 **Shape.** Split view: chat on the left, live policy decision trace on the right —
 each tool call with its verdict, the policy that fired, its reason, and taint
@@ -261,6 +267,29 @@ work, since it reads artifacts that already exist.
 
 **The rule that keeps it bounded:** the frontend may only read existing audit-log
 and evaluation artifacts. If it starts needing new backend features, stop.
+
+**Three limits this section promises past.** Written before the harness ran, it
+describes a frontend richer than the current engine can supply, and the demo
+must show what exists rather than what was hoped for:
+
+- **Inline approval cards** need `REQUIRE_APPROVAL`, which only taint tracking
+  produces. `taint.py` is a stub, so the third verdict stays an enum value
+  until that policy is built. The trust labels it would consume already exist
+  in `configs/enrolment.yaml`; the policy does not.
+- **"Watch the agent wipe the record with enforcement off"** is not guaranteed.
+  The first campaign's models proposed `submit_erequest` zero times in 280
+  runs. The demo is therefore driven by each scenario's scripted `replay`
+  block first and a live model second, and a scripted run is labelled as
+  scripted on screen — a replayed call is what the scenario says an attack
+  would induce, not what a model decided.
+- **Not every scenario can be toggled.** Only SC-02, SC-04, SC-06 and SC-07 are
+  `deliverable: true` and so have an enforcement-off arm. The other four are
+  ON-arm illustrations and must be presented as such, never as a comparison.
+
+One thing the engine gives past what this section asked for: with enforcement
+off the verdict is still computed and logged, so the OFF arm can display
+*"this call would have been blocked, and here is why"* beside the damage it
+was allowed to do.
 
 ## 9. Status and known limitations
 
