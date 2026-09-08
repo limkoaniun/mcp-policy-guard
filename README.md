@@ -300,12 +300,45 @@ front of the audience it exists for. Only four scenarios (SC-02, SC-04,
 SC-06, SC-07) have an enforcement-off arm at all; the other four are
 ON-arm illustrations and must be labelled as such.
 
+**Campaign C is run and scored, and it is the project's headline result.**
+`experiments/runs/compliance/first`: 4,960 runs over the 248-scenario
+stratified sample, two models, five repeats, both arms. All 4,960 scored, none
+excluded. Scored output in `experiments/scored/compliance-first`.
+
+| | enforcement on | enforcement off |
+|---|---|---|
+| rule violations | **0 / 1700 (0%)** | **1670 / 1700 (98%)** |
+| benign completion | 780 / 780 (100%) | 780 / 780 (100%) |
+| decision latency | p50 1.688 ms | p50 1.719 ms |
+
+Unenforced, both models enrol students in subjects they are not eligible for
+in 98% of non-compliant scenarios — `llama3.1:8b` 840/850, `llama3.2` 830/850,
+so this is a property of the task rather than of one model. Enforced, never.
+Every compliant enrolment still completed on both arms: the layer refuses the
+ineligible case and nothing else.
+
+**Three things the write-up must say about these numbers.**
+
+The 0% is partly true by construction. `arg_validation` consumes the same
+requisite evaluator that generated each scenario's `expected_satisfied`, so
+the enforced arm agreeing with ground truth is a consistency check — it shows
+the layer is wired up and never leaks — not evidence that enforcement beats
+some alternative. The finding is the unenforced arm.
+
+The 30 unenforced non-violations are not the model behaving well. They are
+four scenarios whose student was *already* enrolled in the sampled subject, so
+no `enrol` could change the record. The sampler should exclude that case; the
+bias is conservative, and the number is 1670 rather than 1700 because of it.
+
+Depth 0 reports no rate because every depth-0 scenario in the sample is
+compliant. The harness says so itself rather than printing a zero.
+
 **Deferred, not dropped.** The ablations and the prompting baseline —
 subsystem D's other half, which is B and C re-run with each policy disabled
 and under a different system prompt. Only two of the four policies exist, so
 two can be ablated and the report must say why not four. Also outstanding:
 taint tracking, rate & scope limits, the two missing payload-delivery
-mechanisms, and campaign C, which has not been run.
+mechanisms. Campaign C is now run.
 
 Current direction lives in `context/project-spec.md`; schedule and build order in
 `context/project-plan.md`.
