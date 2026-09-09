@@ -43,7 +43,7 @@ def adversarial_campaign(tmp_path):
     # defended.
     write_run(campaign, "SC-02-fake-off-r1", enrolled={principal: baseline},
               calls=[call("get_subject_details", code="32513")],
-              erequests=[{"student_id": principal, "text": "injected"}],
+              erequests=[{"student_id": "S9000002", "text": "injected"}],
               decisions=[decision("submit_erequest", latency_ms=0.2)])
     write_run(campaign, "SC-02-fake-on-r1", enrolled={principal: baseline},
               calls=[call("get_subject_details", code="32513")],
