@@ -1,0 +1,275 @@
+{
+  "total": 496,
+  "planned": 496,
+  "not_present": 0,
+  "scored": 496,
+  "exclusions": {
+    "provider_error": 0,
+    "truncated": 0,
+    "not_complete": 0,
+    "no_transcript": 0,
+    "no_state": 0,
+    "unreadable_jsonl": 0
+  },
+  "attack_success": {},
+  "violation": {
+    "overall": {
+      "on": {
+        "numerator": 168,
+        "denominator": 170,
+        "models": {
+          "llama3.1:8b": 170
+        },
+        "rate": 0.9882352941176471
+      },
+      "off": {
+        "numerator": 168,
+        "denominator": 170,
+        "models": {
+          "llama3.1:8b": 170
+        },
+        "rate": 0.9882352941176471
+      }
+    },
+    "by_depth": {
+      "0": {
+        "on": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        },
+        "off": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        }
+      },
+      "1": {
+        "on": {
+          "numerator": 38,
+          "denominator": 39,
+          "models": {
+            "llama3.1:8b": 39
+          },
+          "rate": 0.9743589743589743
+        },
+        "off": {
+          "numerator": 38,
+          "denominator": 39,
+          "models": {
+            "llama3.1:8b": 39
+          },
+          "rate": 0.9743589743589743
+        }
+      },
+      "2": {
+        "on": {
+          "numerator": 22,
+          "denominator": 22,
+          "models": {
+            "llama3.1:8b": 22
+          },
+          "rate": 1.0
+        },
+        "off": {
+          "numerator": 22,
+          "denominator": 22,
+          "models": {
+            "llama3.1:8b": 22
+          },
+          "rate": 1.0
+        }
+      },
+      "3": {
+        "on": {
+          "numerator": 35,
+          "denominator": 36,
+          "models": {
+            "llama3.1:8b": 36
+          },
+          "rate": 0.9722222222222222
+        },
+        "off": {
+          "numerator": 35,
+          "denominator": 36,
+          "models": {
+            "llama3.1:8b": 36
+          },
+          "rate": 0.9722222222222222
+        }
+      },
+      "4": {
+        "on": {
+          "numerator": 25,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 1.0
+        },
+        "off": {
+          "numerator": 25,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 1.0
+        }
+      }
+    },
+    "by_mode": {
+      "compliant": {
+        "on": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        },
+        "off": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        }
+      },
+      "unmet_academic": {
+        "on": {
+          "numerator": 94,
+          "denominator": 95,
+          "models": {
+            "llama3.1:8b": 95
+          },
+          "rate": 0.9894736842105263
+        },
+        "off": {
+          "numerator": 94,
+          "denominator": 95,
+          "models": {
+            "llama3.1:8b": 95
+          },
+          "rate": 0.9894736842105263
+        }
+      },
+      "unmet_admission": {
+        "on": {
+          "numerator": 25,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 1.0
+        },
+        "off": {
+          "numerator": 25,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 1.0
+        }
+      },
+      "unmet_aos": {
+        "on": {
+          "numerator": 25,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 1.0
+        },
+        "off": {
+          "numerator": 25,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 1.0
+        }
+      },
+      "unmet_credit_points": {
+        "on": {
+          "numerator": 24,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 0.96
+        },
+        "off": {
+          "numerator": 24,
+          "denominator": 25,
+          "models": {
+            "llama3.1:8b": 25
+          },
+          "rate": 0.96
+        }
+      }
+    }
+  },
+  "not_attempted": {
+    "on": {
+      "numerator": 0,
+      "denominator": 170,
+      "models": {
+        "llama3.1:8b": 170
+      },
+      "rate": 0.0
+    },
+    "off": {
+      "numerator": 0,
+      "denominator": 170,
+      "models": {
+        "llama3.1:8b": 170
+      },
+      "rate": 0.0
+    }
+  },
+  "completion": {
+    "adversarial": {
+      "on": {
+        "numerator": 0,
+        "denominator": 0,
+        "models": {},
+        "rate": null
+      },
+      "off": {
+        "numerator": 0,
+        "denominator": 0,
+        "models": {},
+        "rate": null
+      }
+    },
+    "compliance": {
+      "on": {
+        "numerator": 78,
+        "denominator": 78,
+        "models": {
+          "llama3.1:8b": 78
+        },
+        "rate": 1.0
+      },
+      "off": {
+        "numerator": 78,
+        "denominator": 78,
+        "models": {
+          "llama3.1:8b": 78
+        },
+        "rate": 1.0
+      }
+    }
+  },
+  "overhead": {
+    "on": {
+      "p50_ms": 0.04702049773186445,
+      "p95_ms": 0.08337502367794514,
+      "calls": 496
+    },
+    "off": {
+      "p50_ms": 0.04770851228386164,
+      "p95_ms": 0.08516700472682714,
+      "calls": 496
+    }
+  }
+}

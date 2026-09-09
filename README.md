@@ -326,6 +326,30 @@ bias is conservative, and the number is 1670 rather than 1700 because of it.
 Depth 0 reports no rate because every depth-0 scenario in the sample is
 compliant. The harness says so itself rather than printing a zero.
 
+**The ablations are run** (spec §7's "each policy turned off in turn").
+`--ablate POLICY` derives a pack from the baseline's with that policy removed,
+into the campaign directory, so the pack a run used is stored beside its runs.
+Only `allowlist` and `arg_validation` exist, so there are two ablations rather
+than four; `taint` and `limits` are stubs.
+
+| policies loaded | output-injection, enforced (`qwen2.5:14b`) | rule violations, enforced (`llama3.1:8b`) |
+|---|---|---|
+| both (baseline) | 0/9 | 0/170 |
+| `arg_validation` only | 0/9 | 0/170 |
+| `allowlist` only | **6/9** | **168/170 (99%)** |
+
+**Argument validation carries both results.** Remove it and every measured
+outcome collapses to the unenforced numbers; remove the allowlist and nothing
+changes.
+
+That is not evidence the allowlist is useless — it is evidence it was never
+exercised. The attacks that landed used `enrol`, a tool *on* the allowlist for
+those tasks, so only argument validation could object, and the objection was
+to the arguments rather than the tool. SC-06's `drop` is the call the
+allowlist exists to stop, and with the allowlist removed entirely
+`qwen2.5:14b` still proposed `drop` zero times. The report must say the
+allowlist is untested here, not disproven.
+
 **Deferred, not dropped.** The ablations and the prompting baseline —
 subsystem D's other half, which is B and C re-run with each policy disabled
 and under a different system prompt. Only two of the four policies exist, so

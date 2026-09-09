@@ -52,3 +52,52 @@ def test_the_page_carries_the_toggle_and_names_its_driver():
     assert 'id="protection"' in page
     assert "/api/run" in page
     assert "scripted" in page.lower()
+
+
+def scripted_model(*replies):
+    from enrolment.agent.transcript import ChatReply
+    queue = list(replies)
+
+    def chat(messages, tools):
+        return queue.pop(0) if queue else ChatReply(content="Done.")
+
+    return chat
+
+
+def proposes(tool, **arguments):
+    from enrolment.agent.transcript import ChatReply, ProposedCall
+    return ChatReply(content="", calls=[ProposedCall(
+        name=tool, arguments=arguments, raw={"function": {"name": tool}})])
+
+
+def test_running_with_a_model_lets_it_choose_the_calls():
+    """`chat_factory` is injectable for the same reason the campaign runners
+    make it so: the app is testable with no daemon running."""
+    app = create_app(chat_factory=lambda model: scripted_model(
+        proposes("get_study_plan", student_id="S9000004"),
+        proposes("drop", student_id="S9000004", code="32541"),
+    ))
+    body = TestClient(app).post("/api/run", json={
+        "scenario_id": "SC-06", "enforcement": "on", "model": "fake-model",
+    }).json()
+
+    assert body["driver"] == "fake-model"
+    assert [c["tool"] for c in body["calls"]] == ["get_study_plan", "drop"]
+    assert body["calls"][1]["blocked"] is True
+
+
+def test_omitting_the_model_still_replays_the_script():
+    body = client().post(
+        "/api/run", json={"scenario_id": "SC-06", "enforcement": "on"}
+    ).json()
+
+    assert body["driver"] == "scripted"
+
+
+def test_the_page_offers_the_models_that_are_actually_installed():
+    """A picker listing a model Ollama does not have produces a run that fails
+    for a reason the audience cannot see."""
+    app = create_app(available_models=lambda: ["llama3.2", "qwen2.5:14b"])
+    body = TestClient(app).get("/api/models").json()
+
+    assert body == ["llama3.2", "qwen2.5:14b"]

@@ -145,3 +145,75 @@ async def test_each_call_carries_what_the_agent_received_back(tmp_path):
 
     assert result.calls[0].result != ""
     assert "not on the allowlist" in result.calls[1].result
+
+
+def scripted_model(*replies):
+    """A chat callable returning each reply in turn, then plain text.
+
+    The demo's live driver is tested against a fake rather than Ollama for the
+    reason `agent/loop.py` gives for taking the model as a callable: every
+    outcome is then reachable with no daemon running, and the test asserts on
+    what the harness did rather than on what a model happened to say.
+    """
+    from enrolment.agent.transcript import ChatReply
+    queue = list(replies)
+
+    def chat(messages, tools):
+        return queue.pop(0) if queue else ChatReply(content="That's everything.")
+
+    return chat
+
+
+def proposes(tool, **arguments):
+    from enrolment.agent.transcript import ChatReply, ProposedCall
+    return ChatReply(
+        content="",
+        calls=[ProposedCall(name=tool, arguments=arguments,
+                            raw={"function": {"name": tool}})],
+    )
+
+
+@pytest.mark.anyio
+async def test_a_live_run_reports_the_model_that_drove_it(tmp_path):
+    """`driver` is the field the page renders as its honesty label, so a live
+    run must not be indistinguishable from a replayed one."""
+    result = await run_demo(
+        scenario(), enforcement="on", run_dir=tmp_path / "run",
+        pack_path=PACK, repo_root=REPO,
+        chat=scripted_model(proposes("get_study_plan", student_id="S9000004")),
+        model="fake-model",
+    )
+
+    assert result.driver == "fake-model"
+
+
+@pytest.mark.anyio
+async def test_a_live_run_is_judged_on_the_calls_the_model_chose(tmp_path):
+    """The whole point of the live driver: these calls are the model's own, so
+    a block is enforcement acting on a decision nobody scripted."""
+    result = await run_demo(
+        scenario(), enforcement="on", run_dir=tmp_path / "run",
+        pack_path=PACK, repo_root=REPO,
+        chat=scripted_model(
+            proposes("get_study_plan", student_id="S9000004"),
+            proposes("drop", student_id="S9000004", code="32541"),
+        ),
+        model="fake-model",
+    )
+
+    assert [c.tool for c in result.calls] == ["get_study_plan", "drop"]
+    assert result.calls[1].blocked is True
+    assert result.calls[1].policy == "allowlist"
+
+
+@pytest.mark.anyio
+async def test_a_live_run_carries_what_the_model_said(tmp_path):
+    """The chat panel renders the model's prose. A scripted replay has none,
+    so this is the field that only a live run fills."""
+    result = await run_demo(
+        scenario(), enforcement="on", run_dir=tmp_path / "run",
+        pack_path=PACK, repo_root=REPO,
+        chat=scripted_model(), model="fake-model",
+    )
+
+    assert any(turn.text == "That's everything." for turn in result.turns)

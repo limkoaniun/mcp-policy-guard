@@ -21,6 +21,9 @@ from pydantic import BaseModel
 
 from policy_guard.upstream import connect_subprocess
 
+from ..agent.adversarial import SYSTEM_PROMPT, task_for
+from ..agent.loop import run_agent
+from ..agent.transcript import CallOutcome
 from ..run_setup import off_arm_allowed, students_baseline_path, write_overlay, write_task
 from ..scenarios_spec import Scenario
 
@@ -43,6 +46,13 @@ class DemoCall(BaseModel):
     result: str
 
 
+class DemoTurn(BaseModel):
+    """One thing the model said. Empty for a scripted run, which has no model."""
+
+    speaker: str
+    text: str
+
+
 class DemoRun(BaseModel):
     """One arm's run, as the page renders it.
 
@@ -54,12 +64,17 @@ class DemoRun(BaseModel):
 
     scenario_id: str
     enforcement: str
+    #: What produced the calls: `SCRIPTED`, or the model's name for a live run.
+    #: The page renders this as its honesty label, so the two must not be
+    #: indistinguishable.
     driver: str
     persona: str
     task: str
     payload_target: str | None
     payload_text: str | None
     calls: list[DemoCall]
+    turns: list[DemoTurn] = []
+    truncated: bool = False
     enrolled_before: list[str]
     enrolled_after: list[str]
 
@@ -113,6 +128,43 @@ def _read_decisions(run_dir: Path) -> list[dict]:
     ]
 
 
+async def _scripted(client, scenario) -> tuple[list[str], list[DemoTurn], bool]:
+    """Issue the scenario's own `replay` calls. No model is involved."""
+    results = []
+    for call in scenario.replay:
+        result = await client.call_tool(call.tool, call.arguments)
+        body = "".join(part.text for part in result.content if hasattr(part, "text"))
+        results.append(_bounded(body, 1500))
+    return results, [], False
+
+
+async def _live(client, scenario, *, chat, model, system_prompt) -> tuple[list[str], list[DemoTurn], bool]:
+    """Let a model choose the calls, through the same loop the campaigns use.
+
+    `agent.loop.run_agent` is reused rather than reimplemented: the demo must
+    show the behaviour the experiments measured, and a second loop would be
+    free to differ from it. Only the calls that reached the proxy are returned,
+    in order -- a malformed or hallucinated proposal never produced a decision,
+    so including it would misalign the two lists.
+    """
+    transcript = await run_agent(
+        task_for(scenario, system_prompt=system_prompt), client, chat, model=model
+    )
+    reached = (CallOutcome.FORWARDED, CallOutcome.REFUSED)
+    results = [
+        record.detail
+        for turn in transcript.turns
+        for record in turn.calls
+        if record.outcome in reached
+    ]
+    turns = [
+        DemoTurn(speaker=model, text=turn.text)
+        for turn in transcript.turns
+        if turn.text.strip()
+    ]
+    return results, turns, transcript.truncated
+
+
 async def run_demo(
     scenario: Scenario,
     *,
@@ -120,8 +172,20 @@ async def run_demo(
     run_dir,
     pack_path,
     repo_root,
+    chat=None,
+    model: str | None = None,
+    system_prompt: str = SYSTEM_PROMPT,
 ) -> DemoRun:
-    """Replay `scenario` through a proxy on `enforcement`, and report."""
+    """Run `scenario` through a proxy on `enforcement`, and report.
+
+    With no `chat`, the scenario's scripted `replay` calls are issued. With
+    one, a model chooses them and `model` names it. Everything downstream --
+    the proxy, both policies, the enrolment server, the state file -- is
+    identical either way, which is what lets the page show the same comparison
+    under both drivers.
+    """
+    if chat is not None and not model:
+        raise ValueError("a live run must name its model: `driver` is rendered as the page's honesty label")
     if enforcement == "off" and not off_arm_allowed(scenario):
         raise ValueError(
             f"{scenario.id} is marked deliverable: false, so it has no "
@@ -168,15 +232,18 @@ async def run_demo(
     #: call came back as an error, and the body it carried. Bounded because a
     #: study plan is long and the page shows it inline; `enforcement.refusal()`
     #: puts the whole deny reason first, so a block is never the thing clipped.
-    seen: list[tuple[bool, str]] = []
     async with connect_subprocess(sys.executable, arguments, cwd=str(repo_root)) as client:
-        for call in scenario.replay:
-            result = await client.call_tool(call.tool, call.arguments)
-            body = "".join(
-                part.text for part in result.content if hasattr(part, "text")
+        if chat is None:
+            results, turns, truncated = await _scripted(client, scenario)
+        else:
+            results, turns, truncated = await _live(
+                client, scenario, chat=chat, model=model, system_prompt=system_prompt
             )
-            seen.append((bool(result.is_error), _bounded(body, 1500)))
 
+    # `blocked` comes from the engine's own record rather than from the error
+    # flag on the result: `forwarded` is the decision the policy layer took,
+    # and it is the same field on both drivers. A result body can be an error
+    # for reasons enforcement had nothing to do with.
     decisions = _read_decisions(run_dir)
     calls = [
         DemoCall(
@@ -185,20 +252,22 @@ async def run_demo(
             verdict=decision["verdict"],
             policy=decision["policy"],
             reason=decision["reason"],
-            blocked=blocked,
+            blocked=not decision["forwarded"],
             result=body,
         )
-        for decision, (blocked, body) in zip(decisions, seen, strict=True)
+        for decision, body in zip(decisions, results, strict=True)
     ]
     return DemoRun(
         scenario_id=scenario.id,
         enforcement=enforcement,
-        driver=SCRIPTED,
+        driver=model or SCRIPTED,
         persona=scenario.persona,
         task=scenario.task.description,
         payload_target=scenario.payload.target if scenario.payload else None,
         payload_text=scenario.payload.text if scenario.payload else None,
         calls=calls,
+        turns=turns,
+        truncated=truncated,
         enrolled_before=_enrolled(before, scenario.persona),
         enrolled_after=_enrolled(_students(run_dir / "state.json"), scenario.persona),
     )
