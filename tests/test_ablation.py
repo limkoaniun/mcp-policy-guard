@@ -90,3 +90,32 @@ def test_the_compliance_cli_runs_against_the_ablated_pack(tmp_path, capsys):
     derived = tmp_path / "camp" / "enrolment-no-arg_validation.yaml"
     assert derived.exists()
     assert yaml.safe_load(derived.read_text())["policies"] == ["allowlist"]
+
+
+def test_a_real_adversarial_run_uses_the_ablated_pack(tmp_path, monkeypatch):
+    """The dry-run path is not the path that matters.
+
+    `--ablate` was wired into `--dry-run` and not into `main`'s real branch,
+    so the sweep accepted the flag, wrote no derived pack, and ran four
+    campaigns under the baseline. Every run's manifest said
+    `['allowlist', 'arg_validation']`. This asserts on the pack actually
+    handed to `run_one`.
+    """
+    from enrolment.agent import adversarial
+    from enrolment.agent.transcript import Transcript
+
+    seen = {}
+
+    async def fake_run_one(scenario, spec, *, campaign_dir, pack_path, **kwargs):
+        seen["pack"] = pack_path
+        return Transcript(task_id=scenario.id, model=spec.model), 0.1
+
+    monkeypatch.setattr(adversarial, "run_one", fake_run_one)
+    monkeypatch.setattr(adversarial, "preflight", lambda models: {m: {} for m in models})
+
+    adversarial.main([
+        "--campaign", str(tmp_path / "camp"), "--models", "fake",
+        "--repeats", "1", "--limit", "1", "--ablate", "allowlist",
+    ])
+
+    assert seen["pack"].name == "enrolment-personas-no-allowlist.yaml"

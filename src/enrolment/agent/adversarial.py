@@ -287,7 +287,7 @@ def main(argv=None) -> int:
     warn_on_digest_drift(manifest.fingerprints, fingerprints)
     by_id = {s.id: s for s in scenarios}
     campaign_dir = Path(args.campaign)
-    pack_path = REPO_ROOT / args.pack
+    pack_path = resolve_pack(args)
 
     def chat_factory(model):
         return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed)

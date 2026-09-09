@@ -428,7 +428,7 @@ def main(argv=None) -> int:
     campaign_dir = Path(args.campaign)
     write_sample(campaign_dir, sampled)
     by_id = {s.scenario_id: s for s in sampled}
-    pack_path = REPO_ROOT / args.pack
+    pack_path = resolve_pack(args)
 
     def chat_factory(model):
         return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed)
