@@ -45,6 +45,7 @@ import anyio
 
 from policy_guard.upstream import connect_subprocess
 
+from ..ablation import ablated_pack
 from ..run_setup import write_task
 from ..scenarios import read_jsonl
 from .campaign import (
@@ -279,6 +280,13 @@ def parse_args(argv=None) -> argparse.Namespace:
              "time -- repeating the same --limit re-confirms the same runs and "
              "does nothing.",
     )
+    parser.add_argument(
+        "--ablate", default=None, metavar="POLICY",
+        help="run against a pack with POLICY removed (spec §7's 'each policy "
+             "turned off in turn'). The pack is derived from --pack into the "
+             "campaign directory, so the pack a run used is stored beside the "
+             "runs it produced and cannot drift from the baseline's.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args(argv)
 
@@ -378,6 +386,22 @@ def _report_catalogue(sampled, names: dict) -> None:
         )
 
 
+def resolve_pack(args) -> Path:
+    """The pack this campaign runs under, ablated if `--ablate` asks.
+
+    Derived into the campaign directory rather than into `configs/`: an
+    ablation pack is an artifact of one campaign, and a generated file sitting
+    in `configs/` beside the hand-written packs invites being edited as if it
+    were one.
+    """
+    pack_path = REPO_ROOT / args.pack
+    if args.ablate is None:
+        return pack_path
+    derived = ablated_pack(pack_path, args.ablate, Path(args.campaign))
+    print(f"ablation: {args.ablate!r} removed; running against {derived}")
+    return derived
+
+
 def main(argv=None) -> int:
     args = parse_args(argv)
     sampled = load_sample(args)
@@ -387,6 +411,7 @@ def main(argv=None) -> int:
     _report_sample(sampled, specs)
     _report_catalogue(sampled, names)
     if args.dry_run:
+        resolve_pack(args)
         return 0
 
     if args.limit is not None:
