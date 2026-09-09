@@ -128,6 +128,17 @@ def parse_reply(payload: dict) -> ChatReply:
     )
 
 
+def installed_models(*, url: str = OLLAMA_URL, timeout: int = 30) -> list[str]:
+    """Model names Ollama currently holds, sorted.
+
+    The demo's picker reads this rather than a hardcoded list: offering a model
+    the daemon does not have produces a run that fails in front of an audience
+    for a reason they cannot see.
+    """
+    tags = _get(f"{url}/api/tags", timeout).get("models") or []
+    return sorted(tag["name"] for tag in tags if tag.get("name"))
+
+
 def model_fingerprint(model: str, *, url: str = OLLAMA_URL, timeout: int = 30) -> dict:
     """What produced a number: the daemon version and the model's digest.
 

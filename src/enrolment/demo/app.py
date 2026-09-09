@@ -21,6 +21,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from ..agent.ollama import installed_models, ollama_chat
 from ..run_setup import off_arm_allowed
 from ..scenarios_spec import load_all
 from .session import run_demo
@@ -41,6 +42,9 @@ KNOWN_TOOLS = {
 class RunRequest(BaseModel):
     scenario_id: str
     enforcement: str
+    #: Omitted for a scripted replay; a model name drives the run live, and
+    #: the calls become the model's own rather than the scenario's script.
+    model: str | None = None
 
 
 def create_app(
@@ -49,7 +53,14 @@ def create_app(
     pack_path: Path = DEFAULT_PACK,
     scenarios_dir: Path = DEFAULT_SCENARIOS,
     personas_path: Path = DEFAULT_PERSONAS,
+    chat_factory=None,
+    available_models=None,
 ) -> FastAPI:
+    # Injectable for the reason the campaign runners make them so: the app is
+    # then testable with no daemon running, and the tests assert on what the
+    # harness did rather than on what a model happened to say.
+    chat_factory = chat_factory or (lambda model: ollama_chat(model, temperature=0.0))
+    available_models = available_models or installed_models
     personas = set(json.loads(personas_path.read_text(encoding="utf-8")))
     scenarios = {
         scenario.id: scenario
@@ -82,6 +93,16 @@ def create_app(
             for scenario in sorted(scenarios.values(), key=lambda s: s.id)
         ]
 
+    @app.get("/api/models")
+    def models() -> list[str]:
+        """What Ollama actually holds. An empty list means the daemon is not
+        running, and the page says so rather than offering a picker that
+        cannot work."""
+        try:
+            return available_models()
+        except Exception:  # noqa: BLE001 - a missing daemon is a normal state here
+            return []
+
     @app.post("/api/run")
     async def run(request: RunRequest) -> dict:
         scenario = scenarios.get(request.scenario_id)
@@ -98,6 +119,8 @@ def create_app(
                     run_dir=Path(tmp) / "run",
                     pack_path=pack_path,
                     repo_root=repo_root,
+                    chat=chat_factory(request.model) if request.model else None,
+                    model=request.model,
                 )
             except ValueError as error:
                 # `run_demo` refuses an off arm for an undeliverable scenario

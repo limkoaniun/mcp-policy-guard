@@ -142,6 +142,10 @@ button:disabled { opacity: .45; cursor: default; }
         <select id="scenario"></select>
       </div>
       <div>
+        <label for="model">Driven by</label>
+        <select id="model"></select>
+      </div>
+      <div>
         <label for="protection">Protection</label>
         <div class="toggle" id="protection">
           <input type="radio" name="arm" id="arm-on" value="on" checked><label for="arm-on"><span>on</span></label>
@@ -162,9 +166,9 @@ button:disabled { opacity: .45; cursor: default; }
     <section>
       <h2>Conversation</h2>
       <p class="note" id="driver-note">
-        These calls are replayed from the scenario, not chosen by a model. A scripted
-        run shows what the enforcement layer does with the call; it does not claim a
-        model would have made it.
+        <span id="driver-text">These calls are replayed from the scenario, not chosen
+        by a model. A scripted run shows what the enforcement layer does with the
+        call; it does not claim a model would have made it.</span>
         <span id="off-arm-note"></span>
       </p>
       <div id="chat"><p class="empty">Choose a scenario and run it. The record above shows what survives.</p></div>
@@ -185,6 +189,28 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const args = (o) => Object.entries(o).map(([k, v]) => `${k}=${v}`).join(', ');
 let scenarios = {};
+
+const SCRIPTED_NOTE = "These calls are replayed from the scenario, not chosen by a model. " +
+  "A scripted run shows what the enforcement layer does with the call; it does not " +
+  "claim a model would have made it.";
+const LIVE_NOTE = "The calls below are the model's own. Nothing about the attack is " +
+  "scripted: the injected text is in the subject description, and whether the model " +
+  "acts on it is its decision.";
+
+async function loadModels() {
+  const models = await (await fetch('/api/models')).json();
+  const select = $('model');
+  select.innerHTML = '<option value="">scripted replay</option>' +
+    models.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join('');
+  if (!models.length) {
+    select.title = 'Ollama is not running, so only scripted replay is available.';
+  }
+  select.addEventListener('change', syncDriverNote);
+}
+
+function syncDriverNote() {
+  $('driver-text').textContent = $('model').value ? LIVE_NOTE : SCRIPTED_NOTE;
+}
 
 async function loadScenarios() {
   const list = await (await fetch('/api/scenarios')).json();
@@ -242,10 +268,23 @@ function renderChat(run) {
         <q>${esc(run.payload_text.trim())}</q></div>`);
     }
   });
-  const last = run.calls[run.calls.length - 1];
-  if (last && last.blocked) {
-    parts.push(`<div class="turn"><div class="speaker">assistant, relaying the refusal</div>
-      <div class="said">${esc(last.result)}</div></div>`);
+  // A live run has the model's own words; a scripted one has none, and falls
+  // back to the refusal the agent would have relayed.
+  if (run.turns.length) {
+    for (const turn of run.turns) {
+      parts.push(`<div class="turn"><div class="speaker">${esc(turn.speaker)}</div>
+        <div class="said">${esc(turn.text)}</div></div>`);
+    }
+  } else {
+    const last = run.calls[run.calls.length - 1];
+    if (last && last.blocked) {
+      parts.push(`<div class="turn"><div class="speaker">assistant, relaying the refusal</div>
+        <div class="said">${esc(last.result)}</div></div>`);
+    }
+  }
+  if (run.truncated) {
+    parts.push(`<p class="note">The run hit the harness's turn or call bound and
+      stopped here. What the model would have done next is unknown.</p>`);
   }
   $('chat').innerHTML = parts.join('');
 }
@@ -270,7 +309,7 @@ function renderDecisions(run) {
 async function run() {
   const button = $('run');
   button.disabled = true;
-  button.textContent = 'Running';
+  button.textContent = $('model').value ? 'Running the model' : 'Running';
   $('record').hidden = true;
   try {
     const response = await fetch('/api/run', {
@@ -278,6 +317,7 @@ async function run() {
       body: JSON.stringify({
         scenario_id: $('scenario').value,
         enforcement: document.querySelector('input[name=arm]:checked').value,
+        model: $('model').value || null,
       }),
     });
     const body = await response.json();
@@ -297,6 +337,7 @@ async function run() {
 
 $('scenario').addEventListener('change', syncArms);
 $('run').addEventListener('click', run);
+loadModels().then(syncDriverNote);
 loadScenarios();
 </script>
 </body>
