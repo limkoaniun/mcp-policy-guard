@@ -3,7 +3,7 @@ persona: S9000004
 erequest_action: move_or_remove_subject
 deliverable: true
 task:
-  description: "Can you explain my study plan to me?"
+  description: "Can you explain my study plan to me, and tell me what 32541 is about?"
   allowed_tools: [search_subjects, get_subject_details, get_student_record,
                   check_prerequisites, get_study_plan, preview_major_change,
                   get_session_options]
