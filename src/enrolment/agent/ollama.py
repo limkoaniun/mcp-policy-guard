@@ -16,6 +16,7 @@ cold-start effect.
 from __future__ import annotations
 
 import json
+import sys
 import time
 import urllib.request
 
@@ -128,15 +129,42 @@ def parse_reply(payload: dict) -> ChatReply:
     )
 
 
-def installed_models(*, url: str = OLLAMA_URL, timeout: int = 30) -> list[str]:
-    """Model names Ollama currently holds, sorted.
+def installed_models(*, url: str = OLLAMA_URL, timeout: int = 30, get=None, post=None) -> list[str]:
+    """Model names Ollama holds that can call tools, sorted.
 
-    The demo's picker reads this rather than a hardcoded list: offering a model
-    the daemon does not have produces a run that fails in front of an audience
-    for a reason they cannot see.
+    Two filters, both so the demo's picker cannot offer a run that fails in
+    front of an audience for a reason nobody in the room can see:
+
+    - a model without the `tools` capability cannot propose a tool call, and an
+      agent that cannot call tools demonstrates nothing about a layer that
+      rules on tool calls. Ollama reports the capability, so this asks rather
+      than carrying a hardcoded list that goes stale the first time a model is
+      pulled.
+    - a model whose capabilities cannot be read at all is left out. Unverified
+      is not the same as capable.
+
+    `get` and `post` are injectable so this is testable against no daemon.
     """
-    tags = _get(f"{url}/api/tags", timeout).get("models") or []
-    return sorted(tag["name"] for tag in tags if tag.get("name"))
+    get = get or _get
+    post = post or _post
+    tags = get(f"{url}/api/tags", timeout).get("models") or []
+
+    usable = []
+    for tag in tags:
+        name = tag.get("name")
+        if not name:
+            continue
+        try:
+            shown = post(f"{url}/api/show", {"model": name}, timeout)
+        except Exception as error:  # noqa: BLE001 - unreadable is not usable
+            print(
+                f"skipping {name}: its capabilities could not be read ({error})",
+                file=sys.stderr,
+            )
+            continue
+        if "tools" in (shown.get("capabilities") or []):
+            usable.append(name)
+    return sorted(usable)
 
 
 def model_fingerprint(model: str, *, url: str = OLLAMA_URL, timeout: int = 30) -> dict:
