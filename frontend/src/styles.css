@@ -83,6 +83,26 @@ button, input, select { font: inherit; color: inherit; }
 .thread { flex: 1; padding: 1.35rem; overflow-y: auto; max-height: 60vh; }
 .bubble { max-width: 48ch; padding: .75rem 1rem; margin-bottom: .9rem; }
 .bubble.assistant { background: #f2f2f2; border-left: 3px solid var(--uts-blue); }
+/* The assistant's markdown. Tight vertical rhythm so a bubble of subject
+   codes does not become a page of its own. */
+.bubble.assistant > :first-child { margin-top: 0; }
+.bubble.assistant > :last-child { margin-bottom: 0; }
+.bubble.assistant p { margin: 0 0 .6rem; }
+.bubble.assistant ul, .bubble.assistant ol { margin: .35rem 0 .7rem; padding-left: 1.35rem; }
+.bubble.assistant li { margin-bottom: .15rem; }
+.bubble.assistant li::marker { color: var(--ink-soft); }
+.bubble.assistant strong { font-weight: 700; }
+.bubble.assistant code {
+  font-family: var(--mono); font-size: .88em; background: #e4e4e4; padding: .05rem .3rem;
+}
+.bubble.assistant pre {
+  background: #e4e4e4; padding: .6rem .75rem; overflow-x: auto; margin: .5rem 0;
+}
+.bubble.assistant pre code { background: none; padding: 0; }
+.bubble.assistant h1, .bubble.assistant h2, .bubble.assistant h3 {
+  font-size: 1rem; margin: .7rem 0 .35rem;
+}
+.bubble.assistant a { color: var(--uts-blue); }
 .bubble.student { background: var(--black); color: #fff; margin-left: auto; }
 .bubble.system { background: #fff; border: 1px dashed var(--line); color: var(--ink-soft); font-size: .89rem; max-width: 58ch; }
 

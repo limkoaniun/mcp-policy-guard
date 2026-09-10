@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import Markdown from 'react-markdown'
 import * as api from './api.js'
 import { Bell, Social, SOCIAL_NAMES, UtsLogo } from './brand.jsx'
 
@@ -187,6 +188,18 @@ export default function App() {
                   <div key={i} className="poison">
                     <div className="where">returned inside the description of subject {injected.subject}</div>
                     <q>{injected.text}</q>
+                  </div>
+                )
+              }
+              // The assistant writes markdown -- lists of subject codes, bold
+              // headings -- so it is rendered rather than shown as literal
+              // asterisks. `react-markdown` does not render raw HTML, which
+              // matters here: an assistant reply can contain text an attacker
+              // planted in a subject description, and it must stay inert.
+              if (m.role === 'assistant') {
+                return (
+                  <div key={i} className="bubble assistant">
+                    <Markdown>{m.text}</Markdown>
                   </div>
                 )
               }
