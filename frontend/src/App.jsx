@@ -222,7 +222,14 @@ export default function App() {
               </label>
             </h2>
 
-            <div className="presets">
+            {enforcement === 'off' && (
+              <p className="unenforced-note">
+                Enforcement is off. These rules are still evaluated and still appear in
+                the decision log — they are simply not acted on.
+              </p>
+            )}
+
+            <div className={`presets${enforcement === 'off' ? ' unenforced' : ''}`}>
               {Object.keys(presets).map((key) => (
                 <button key={key} disabled={busy} onClick={() => applyPreset(key)}
                         aria-pressed={JSON.stringify([...allowed].sort()) ===
@@ -232,7 +239,7 @@ export default function App() {
               ))}
             </div>
 
-            <div className="tools">
+            <div className={`tools${enforcement === 'off' ? ' unenforced' : ''}`}>
               {tools.map((t) => (
                 <label key={t.name} className="tool">
                   <input type="checkbox" checked={allowed.includes(t.name)}

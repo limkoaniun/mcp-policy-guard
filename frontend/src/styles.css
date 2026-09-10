@@ -148,6 +148,21 @@ button, input, select { font: inherit; color: inherit; }
   border: 1px solid var(--accent); padding: .05rem .4rem; margin-left: auto;
 }
 
+/* Enforcement off: the allowlist is still evaluated and still logged, it is
+   simply not acted on. So the console is dimmed rather than disabled -- and
+   stays clickable, because setting the tools up before switching enforcement
+   on is the obvious way to use it. Anything that read as "disabled" would
+   contradict the decision log sitting directly beneath it. */
+.tools.unenforced .tool span:first-of-type { color: var(--ink-soft); }
+.tools.unenforced input { accent-color: #9a9a9a; }
+.tools.unenforced .badge { color: #9a9a9a; border-color: #9a9a9a; }
+.presets.unenforced button { color: var(--ink-soft); }
+.presets.unenforced button[aria-pressed="true"] { background: #7c7c7c; border-color: #7c7c7c; color: #fff; }
+.unenforced-note {
+  margin: 0; padding: .8rem 1.25rem; background: #f6f6f6;
+  border-bottom: 1px solid var(--line-soft); font-size: .87rem; color: var(--ink-soft);
+}
+
 .log { padding: 1.1rem 1.25rem; min-height: 200px; max-height: 34vh; overflow-y: auto; }
 .log .caption {
   font-family: var(--mono); font-size: .84rem; color: var(--ink-soft);
