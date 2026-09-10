@@ -3,6 +3,15 @@ import * as api from './api.js'
 
 const args = (o) => Object.entries(o || {}).map(([k, v]) => `${k}=${v}`).join(', ')
 
+// The portal's primary navigation, for context. Only the assistant is real:
+// this is a research prototype, not a UTS system, and the demo marker in the
+// masthead says so.
+const NAV = [
+  'Home', 'UTS Handbook', 'Enrolment assistant', 'Update Personal Details',
+  'My Financial Assistance Programs', 'Complaints and Grievances',
+]
+const CURRENT = 'Enrolment assistant'
+
 const SUGGESTIONS = [
   'What can I take next session?',
   'Tell me about 32513',
@@ -117,22 +126,41 @@ export default function App() {
 
   return (
     <>
-      <header className="masthead">
-        <h1>Student enrolment assistant</h1>
-        <span className="pill">mcp-policy-guard demo</span>
+      <div className="topbar">
+        <span className="wordmark">
+          UTS <span className="demo">mcp-policy-guard demo</span>
+        </span>
+        <span className="who">
+          <span className="bell" aria-hidden="true">&#128276;</span>
+          <span>{record?.student_id || 'Student'}</span>
+        </span>
+      </div>
+
+      <nav className="mainnav" aria-label="Student portal">
+        <ul>
+          {NAV.map((item) => (
+            <li key={item}>
+              <a href="#main" aria-current={item === CURRENT ? 'page' : undefined}>{item}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="intro" id="main">
+        <h1>Enrolment assistant</h1>
         <p>
           An LLM agent with ten enrolment tools. Every tool call is intercepted by the
           policy layer before it executes.{' '}
           {injected && <>Subject <code>{injected.subject}</code>'s description contains a
           planted prompt injection.</>}
         </p>
-      </header>
+      </div>
 
       <div className="layout">
         <section className="card chat">
           <h2>
-            <span>Assistant · student {record?.student_id || '…'}</span>
-            <span className="muted" style={{ textTransform: 'none', letterSpacing: 0 }}>
+            <span>Assistant &middot; student {record?.student_id || '\u2026'}</span>
+            <span className="sub">
               <label htmlFor="model">driven by </label>
               <select id="model" value={model} onChange={(e) => setModel(e.target.value)}
                       disabled={busy}>
@@ -264,6 +292,29 @@ export default function App() {
           </section>
         </div>
       </div>
+
+      <footer>
+        <div className="footcols">
+          <div>
+            <h3>About UTS</h3>
+            <ul>
+              {['The University', 'Campus maps', 'UTS governance', 'Faculties',
+                'Privacy', 'Accessibility', 'Disclaimer'].map((item) => (
+                <li key={item}><a href="#main">{item}</a></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Contact us</h3>
+            <p className="strong">Student and public enquiries</p>
+          </div>
+        </div>
+        <p className="colophon">
+          Research prototype — mcp-policy-guard. Not a UTS system and not connected to
+          one. Student records shown here are synthetic; the subject catalogue and
+          requisite rules are the published UTS ones for C04296.
+        </p>
+      </footer>
     </>
   )
 }
