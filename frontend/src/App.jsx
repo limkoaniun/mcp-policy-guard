@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import * as api from './api.js'
-import { Bell, Social, SOCIAL_NAMES, UtsMark } from './brand.jsx'
+import { Bell, Social, SOCIAL_NAMES, UtsLogo } from './brand.jsx'
 
 const args = (o) => Object.entries(o || {}).map(([k, v]) => `${k}=${v}`).join(', ')
 
-// The portal's primary navigation, for context. Only the assistant is real:
-// this is a research prototype, not a UTS system, and the demo marker in the
-// masthead says so.
-const NAV = [
-  'Home', 'UTS Handbook', 'Enrolment assistant', 'Update Personal Details',
-  'My Financial Assistance Programs', 'Complaints and Grievances',
-]
+// One nav item, because one is all that exists. The portal's other headings
+// were decoration: links that went nowhere, in a prototype whose argument is
+// that a system should not present itself as more than it is.
+const NAV = ['Enrolment assistant']
 const CURRENT = 'Enrolment assistant'
 
 const SUGGESTIONS = [
@@ -129,8 +126,7 @@ export default function App() {
     <>
       <div className="topbar">
         <span className="wordmark">
-          <UtsMark />
-          <span className="letters">UTS</span>
+          <UtsLogo />
           <span className="demo">demo</span>
         </span>
         <span className="who">

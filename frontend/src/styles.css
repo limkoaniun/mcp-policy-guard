@@ -34,10 +34,8 @@ button, input, select { font: inherit; color: inherit; }
   background: var(--topbar); display: flex; align-items: center;
   justify-content: space-between; padding: 1.1rem 2.5rem; gap: 2rem;
 }
-.wordmark { display: inline-flex; align-items: center; gap: .55rem; color: var(--black); }
-.wordmark .letters {
-  font-weight: 800; font-size: 2.5rem; letter-spacing: -0.045em; line-height: 1;
-}
+.wordmark { display: inline-flex; align-items: center; gap: .7rem; color: var(--black); }
+.uts-logo { display: block; width: auto; }
 .wordmark .demo {
   font-family: var(--mono); font-size: .66rem; color: var(--ink-soft);
   border: 1px solid var(--line); padding: .05rem .4rem; align-self: flex-start;
@@ -49,8 +47,10 @@ button, input, select { font: inherit; color: inherit; }
 .mainnav { background: var(--black); }
 .mainnav ul {
   list-style: none; margin: 0 auto; padding: 0 2.5rem; display: flex;
-  gap: 2.4rem; flex-wrap: wrap; max-width: 1560px;
+  column-gap: 2.4rem; row-gap: 0; flex-wrap: wrap; max-width: 1560px;
 }
+/* `gap` alone applied between wrapped rows too, leaving a band of empty
+   black when the nav wrapped at narrow widths. */
 .mainnav a {
   display: block; padding: .95rem 0; color: #fff; text-decoration: none; font-size: .95rem;
 }

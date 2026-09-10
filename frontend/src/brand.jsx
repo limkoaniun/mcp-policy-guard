@@ -1,4 +1,5 @@
 import React from 'react'
+import logo from './uts-logo.png'
 
 /* The UTS marks, drawn as SVG so they scale and need no asset pipeline.
    These are the university's trademarks, reproduced here for a student
@@ -6,42 +7,19 @@ import React from 'react'
    `demo` marker and the footer says plainly what this is: the resemblance is
    the point, being mistaken for the live portal is not. */
 
-// The device: a cross above a tapering lattice of squares.
-export function UtsMark({ size = 44 }) {
-  const u = 8            // one square
-  const g = 1.4          // gap between squares
-  const s = u + g
-  const sq = (col, row, key) => (
-    <rect key={key} x={col * s} y={row * s} width={u} height={u} />
-  )
-  // rows of column offsets, centred on column 3
-  // A cross above a checkerboard diamond that widens then tapers to a point.
-  const rows = [
-    [3],
-    [2, 3, 4],
-    [3],
-    [1, 3, 5],
-    [0, 2, 4, 6],
-    [1, 3, 5],
-    [2, 4],
-    [3],
-  ]
-  return (
-    <svg
-      width={size} height={size * 1.18} viewBox={`0 0 ${7 * s} ${8 * s}`}
-      role="img" aria-label="UTS" fill="currentColor"
-    >
-      {rows.flatMap((cols, row) => cols.map((col, i) => sq(col, row, `${row}-${i}`)))}
-    </svg>
-  )
+// The supplied UTS logo, imported so Vite emits it into `assets/` -- the
+// directory FastAPI already mounts. A file in `public/` would land at the
+// output root, which the app does not serve.
+export function UtsLogo({ height = 54 }) {
+  return <img src={logo} alt="UTS" height={height} className="uts-logo" />
 }
 
-export function Bell({ size = 20 }) {
+// The portal's own bell path, on its 512 viewBox.
+export function Bell({ size = 19 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"
+    <svg width={size} height={size} viewBox="0 0 512 512" fill="currentColor"
          role="img" aria-label="Notifications">
-      <path d="M12 2a1.6 1.6 0 0 1 1.6 1.6v.7a6 6 0 0 1 4.4 5.8v3.4l1.6 2.4v1.2H4.4v-1.2L6 13.5v-3.4a6 6 0 0 1 4.4-5.8v-.7A1.6 1.6 0 0 1 12 2z" />
-      <path d="M9.8 19.2h4.4a2.2 2.2 0 0 1-4.4 0z" />
+      <path d="M460 330h-5a35 35 0 01-35-35V180A160 160 0 00252 20c-86 4-152 78-152 165v111c0 19-16 34-35 34h-5c-22 0-40 19-40 41v15c0 7 7 14 15 14h450c8 0 15-7 15-15v-15a40 40 0 00-40-40M309 440h-98a10 10 0 00-10 12c5 28 30 48 59 48s54-21 59-48a10 10 0 00-10-12" />
     </svg>
   )
 }
