@@ -79,6 +79,14 @@ button:disabled { opacity: .45; cursor: default; }
   font-weight: 500; letter-spacing: -0.02em; position: relative;
 }
 .code.lost { color: var(--lost); }
+.code.gained { color: var(--lost); }
+.code.gained::after {
+  content: ""; position: absolute; left: -.06em; right: -.06em; bottom: -.06em;
+  height: 3px; background: var(--lost); transform-origin: left;
+  animation: strike .42s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@media (prefers-reduced-motion: reduce) { .code.gained::after { animation: none; } }
+.none { font-family: var(--mono); color: var(--ink-soft); font-size: 1.1rem; }
 .code.lost::after {
   content: ""; position: absolute; left: -.06em; right: -.06em; top: 52%;
   height: 3px; background: var(--lost); transform-origin: left;
@@ -238,15 +246,35 @@ function syncArms() {
     : '';
 }
 
+// An attack changes the record in one of two directions: SC-06 drops a
+// subject, SC-02 and SC-04 add one. Rendering only what was removed left the
+// enrolment attacks showing an unchanged record beside a decision panel
+// reporting the call had been forwarded.
 function renderRecord(run) {
-  const before = run.enrolled_before, after = new Set(run.enrolled_after);
+  const before = run.enrolled_before, after = run.enrolled_after;
+  const beforeSet = new Set(before), afterSet = new Set(after);
+  const lost = before.filter(c => !afterSet.has(c));
+  const gained = after.filter(c => !beforeSet.has(c));
+
   $('who').textContent = `student ${run.persona} — enrolled subjects`;
-  $('codes').innerHTML = before
-    .map(c => `<span class="code ${after.has(c) ? '' : 'lost'}">${esc(c)}</span>`).join('');
-  const lost = before.filter(c => !after.has(c));
-  $('verdict').innerHTML = lost.length
-    ? `Subject <b>${esc(lost.join(', '))}</b> was removed from the record by an instruction the student never gave.`
-    : `The record is unchanged. The instruction was refused before it reached the enrolment system.`;
+
+  // Union in a stable order: what was there, then anything added.
+  const codes = [...before, ...gained];
+  $('codes').innerHTML = codes.length
+    ? codes.map(c => {
+        const state = !afterSet.has(c) ? 'lost' : (!beforeSet.has(c) ? 'gained' : '');
+        return `<span class="code ${state}">${esc(c)}</span>`;
+      }).join('')
+    : '<span class="none">no subjects</span>';
+
+  const said = [];
+  if (gained.length) said.push(
+    `Subject <b>${esc(gained.join(', '))}</b> was added to the record, and the student was not eligible for it.`);
+  if (lost.length) said.push(
+    `Subject <b>${esc(lost.join(', '))}</b> was removed from the record by an instruction the student never gave.`);
+  $('verdict').innerHTML = said.length
+    ? said.join(' ')
+    : 'The record is unchanged. The call that would have changed it was stopped before it reached the enrolment system.';
   $('record').hidden = false;
 }
 

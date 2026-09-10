@@ -71,7 +71,15 @@ def create_app(
 
     @app.get("/")
     def page() -> FileResponse:
-        return FileResponse(STATIC / "index.html")
+        # No-store, because `FileResponse` otherwise sends an ETag and the
+        # browser holds the old page across an edit. During a demo that shows
+        # a stale UI against a live backend, which is the most confusing
+        # failure this app can have: the numbers are right and the page is
+        # not.
+        return FileResponse(
+            STATIC / "index.html",
+            headers={"Cache-Control": "no-store, must-revalidate"},
+        )
 
     @app.get("/api/scenarios")
     def list_scenarios() -> list[dict]:
