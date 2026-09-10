@@ -41,17 +41,27 @@ def test_asking_for_an_off_arm_that_does_not_exist_is_refused_not_faked():
     assert "deliverable" in response.json()["detail"]
 
 
-def test_the_page_carries_the_toggle_and_names_its_driver():
-    """Two things the page must not be able to ship without: the control the
-    demonstration turns on, and the statement that these calls were scripted
-    rather than a model's own (brief §6.1)."""
+def test_the_built_frontend_is_served():
+    """The page is a built React bundle whose output is committed. Serving a
+    stale or missing build is the failure this catches: the API can be
+    entirely correct while the page is not there at all."""
     response = client().get("/")
-    page = response.text
 
     assert response.status_code == 200
-    assert 'id="protection"' in page
-    assert "/api/run" in page
-    assert "scripted" in page.lower()
+    assert 'id="root"' in response.text
+    assert "/assets/" in response.text
+    assert response.headers["cache-control"] == "no-store, must-revalidate"
+
+
+def test_the_console_declares_the_tools_and_the_planted_injection():
+    """The page draws its checkboxes from this rather than a list of its own,
+    so a tool added upstream cannot go missing from the console."""
+    body = client().get("/api/tools").json()
+
+    names = [t["name"] for t in body["tools"]]
+    assert "drop" in names
+    assert all(t["side_effect"] for t in body["tools"] if t["name"] in {"enrol", "drop"})
+    assert body["injected"]["subject"] == "32513"
 
 
 def scripted_model(*replies):

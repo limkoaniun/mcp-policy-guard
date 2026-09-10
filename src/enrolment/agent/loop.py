@@ -171,6 +171,8 @@ async def run_agent(
     model: str,
     max_model_turns: int = 4,
     max_calls: int = 12,
+    history: list[dict] | None = None,
+    on_event: Callable[[dict], None] | None = None,
 ) -> Transcript:
     """Run `task` to completion or to a bound, and return what happened.
 
@@ -186,14 +188,19 @@ async def run_agent(
     payload = _tools_payload(tools)
 
     transcript = Transcript(task_id=task.task_id, model=model)
-    messages: list[dict] = []
-    if task.system:
+    messages: list[dict] = history if history is not None else []
+    if task.system and not any(m.get("role") == "system" for m in messages):
         messages.append({"role": "system", "content": task.system})
+
+    def emit(**event) -> None:
+        if on_event is not None:
+            on_event(event)
 
     calls_made = 0
 
     for user_turn, text in enumerate(task.turns):
         messages.append({"role": "user", "content": text})
+        emit(kind="user", text=text)
 
         for model_turn in range(max_model_turns):
             try:
@@ -231,6 +238,7 @@ async def run_agent(
 
             if outcome is not ResponseOutcome.TOOL_CALLS:
                 transcript.turns.append(record)
+                emit(kind="said", text=reply.content, outcome=outcome.value)
                 break
 
             messages.append(reply.raw_message or {"role": "assistant", "content": reply.content})
@@ -319,6 +327,13 @@ async def run_agent(
                         outcome=CallOutcome.REFUSED if result.is_error else CallOutcome.FORWARDED,
                         detail=_bounded(body, 500),
                     )
+                )
+                emit(
+                    kind="call",
+                    tool=proposed.name,
+                    arguments=proposed.arguments,
+                    refused=bool(result.is_error),
+                    detail=_bounded(body, 500),
                 )
                 messages.append(_tool_message(_bounded(body, 2000), proposed.call_id))
 
