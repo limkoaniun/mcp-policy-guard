@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import * as api from './api.js'
+import { Bell, Social, SOCIAL_NAMES, UtsMark } from './brand.jsx'
 
 const args = (o) => Object.entries(o || {}).map(([k, v]) => `${k}=${v}`).join(', ')
 
@@ -128,10 +129,12 @@ export default function App() {
     <>
       <div className="topbar">
         <span className="wordmark">
-          UTS <span className="demo">mcp-policy-guard demo</span>
+          <UtsMark />
+          <span className="letters">UTS</span>
+          <span className="demo">demo</span>
         </span>
         <span className="who">
-          <span className="bell" aria-hidden="true">&#128276;</span>
+          <Bell />
           <span>{record?.student_id || 'Student'}</span>
         </span>
       </div>
@@ -307,12 +310,19 @@ export default function App() {
           <div>
             <h3>Contact us</h3>
             <p className="strong">Student and public enquiries</p>
+            <div className="socials">
+              {SOCIAL_NAMES.map((name) => <Social key={name} name={name} />)}
+            </div>
           </div>
         </div>
         <p className="colophon">
-          Research prototype — mcp-policy-guard. Not a UTS system and not connected to
-          one. Student records shown here are synthetic; the subject catalogue and
-          requisite rules are the published UTS ones for C04296.
+          © Copyright UTS - CRICOS Provider No: 00099F - 27 August 2022 01:00 PM.
+          The page is authorised by Director, Student Admin Unit &amp; Planning Quality Unit.
+        </p>
+        <p className="colophon prototype">
+          Research prototype (mcp-policy-guard). Not a UTS system and not connected to one.
+          Student records are synthetic; the catalogue and requisite rules are the
+          published UTS ones for C04296.
         </p>
       </footer>
     </>

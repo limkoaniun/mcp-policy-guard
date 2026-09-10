@@ -34,17 +34,17 @@ button, input, select { font: inherit; color: inherit; }
   background: var(--topbar); display: flex; align-items: center;
   justify-content: space-between; padding: 1.1rem 2.5rem; gap: 2rem;
 }
-.wordmark {
-  font-weight: 700; font-size: 2rem; letter-spacing: -0.03em; color: var(--black);
-  display: inline-flex; align-items: baseline; gap: .5rem;
+.wordmark { display: inline-flex; align-items: center; gap: .55rem; color: var(--black); }
+.wordmark .letters {
+  font-weight: 800; font-size: 2.5rem; letter-spacing: -0.045em; line-height: 1;
 }
 .wordmark .demo {
-  font-family: var(--mono); font-size: .7rem; font-weight: 400; letter-spacing: 0;
-  color: var(--ink-soft); border: 1px solid var(--line); border-radius: 4px;
-  padding: .1rem .45rem; align-self: center;
+  font-family: var(--mono); font-size: .66rem; color: var(--ink-soft);
+  border: 1px solid var(--line); padding: .05rem .4rem; align-self: flex-start;
+  margin-top: .35rem;
 }
 .who { display: flex; align-items: center; gap: .9rem; font-size: .98rem; }
-.who .bell { font-size: 1.05rem; }
+.who svg { display: block; }
 
 .mainnav { background: var(--black); }
 .mainnav ul {
@@ -175,13 +175,19 @@ footer { background: var(--black); color: #fff; padding: 3rem 2.5rem 1.5rem; }
   grid-template-columns: 1fr 1fr; gap: 2rem;
 }
 @media (max-width: 760px) { .footcols { grid-template-columns: 1fr; } }
-footer h3 { margin: 0 0 1.1rem; font-size: 1.35rem; font-weight: 400; }
+footer h3 { margin: 0 0 1.4rem; font-size: 1.65rem; font-weight: 400; color: #b3b3b3; }
 footer ul { list-style: none; margin: 0; padding: 0; }
-footer li { margin-bottom: .35rem; }
-footer a { color: var(--footer-link); text-decoration: none; font-size: .95rem; }
+footer li { margin-bottom: .45rem; }
+footer a { color: var(--footer-link); text-decoration: none; font-size: 1rem; }
 footer a:hover { text-decoration: underline; color: #fff; }
-footer .strong { color: #fff; font-weight: 700; }
+footer .strong { color: #cfcfcf; font-weight: 700; font-size: 1.05rem; margin: 0 0 1.4rem; }
+.socials { display: flex; gap: .75rem; }
+.social { color: #8c8c8c; display: inline-flex; }
+.social:hover { color: #d8d8d8; }
 .colophon {
-  max-width: 1560px; margin: 2.5rem auto 0; text-align: center;
-  color: var(--footer-link); font-size: .88rem; line-height: 1.7;
+  max-width: 1560px; margin: 3rem auto 0; text-align: center;
+  color: var(--footer-link); font-size: .95rem; line-height: 1.7;
+}
+.colophon.prototype {
+  margin-top: .6rem; font-size: .82rem; color: #6f6f6f; font-family: var(--mono);
 }
