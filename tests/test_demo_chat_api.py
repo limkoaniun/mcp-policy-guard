@@ -79,3 +79,20 @@ def test_the_enforcement_switch_takes_effect_on_the_next_message():
     assert done["calls"][0]["verdict"] == "deny", "the engine still rules on it"
     assert done["calls"][0]["blocked"] is False, "but it is not acted on"
     assert "32541" not in done["record"]["enrolled"]
+
+
+def test_reset_puts_the_record_back_and_keeps_the_console():
+    client = TestClient(app_with(
+        ChatReply(content="", calls=[call("drop", {"student_id": "S9000004", "code": "32541"})]),
+        ChatReply(content="Done."),
+    ))
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+    client.put(f"/api/chat/{session}/tools", json={"allowed_tools": ["get_study_plan", "drop"]})
+    client.put(f"/api/chat/{session}/enforcement", json={"enforcement": "off"})
+    events_from(client.post(f"/api/chat/{session}/message", json={"text": "drop 32541"}))
+
+    body = client.post(f"/api/chat/{session}/reset").json()
+
+    assert "32541" in body["record"]["enrolled"], "the record is back to baseline"
+    assert body["allowed_tools"] == ["get_study_plan", "drop"]
+    assert body["enforcement"] == "off"

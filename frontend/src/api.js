@@ -31,6 +31,9 @@ export const setEnforcement = (id, enforcement) =>
     body: JSON.stringify({ enforcement }),
   }).then(json)
 
+export const resetSession = (id) =>
+  fetch(`/api/chat/${id}/reset`, { method: 'POST' }).then(json)
+
 // The message endpoint streams `text/event-stream`. `EventSource` cannot POST,
 // so the body is read from the fetch stream directly and split on the blank
 // line SSE uses as a record separator.

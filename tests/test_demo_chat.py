@@ -105,3 +105,36 @@ def test_the_record_reports_completed_subjects_as_codes(tmp_path):
     assert all(isinstance(code, str) for code in held["completed"])
     assert "32524" in held["completed"]
     assert held["credit_cap"] == 24
+
+
+@pytest.mark.anyio
+async def test_reset_restores_the_record_and_clears_the_conversation(tmp_path):
+    """Spec §8 calls a reset "non-negotiable, since every interesting demo
+    mutates the record". Clearing the thread alone would leave the next run
+    starting from the record the last one damaged, and showing something
+    different for a reason nobody in the room can see."""
+    live = session(tmp_path, enforcement="off")
+    before = live.record()["enrolled"]
+
+    await live.send("drop it", chat=scripted(ChatReply(content="", calls=[
+        call("drop", {"student_id": "S9000004", "code": "32541"})])), model="fake")
+    assert "32541" not in live.record()["enrolled"]
+
+    live.reset()
+
+    assert live.record()["enrolled"] == before
+    assert live.history == []
+
+
+@pytest.mark.anyio
+async def test_reset_keeps_the_console_as_it_was_set(tmp_path):
+    """The allowlist and the switch are how a demo is staged. Losing them on
+    every reset would make the button hostile to the thing it exists for."""
+    live = session(tmp_path)
+    live.allowed_tools = ["get_study_plan"]
+    live.enforcement = "off"
+
+    live.reset()
+
+    assert live.allowed_tools == ["get_study_plan"]
+    assert live.enforcement == "off"

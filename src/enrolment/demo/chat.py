@@ -77,7 +77,11 @@ class ChatSession:
         # from the pack's baseline so the conversation begins where a campaign
         # run would.
         self.students_path = self.root / "students.json"
-        shutil.copyfile(students_baseline_path(pack_path, repo_root), self.students_path)
+        # Kept so `reset` can put the record back. The session's own students
+        # file is written over as the conversation mutates it, so the baseline
+        # has to be remembered rather than re-derived from it.
+        self.baseline_path = students_baseline_path(pack_path, repo_root)
+        shutil.copyfile(self.baseline_path, self.students_path)
 
         # The session's own pack, pointing at that file. Derived from the real
         # pack rather than hand-written, for the reason `ablation` gives: a
@@ -93,6 +97,24 @@ class ChatSession:
             + yaml.safe_dump(body, sort_keys=False, allow_unicode=True),
             encoding="utf-8",
         )
+
+    # ------------------------------------------------------------------ reset
+    def reset(self) -> None:
+        """Put the record back and forget the conversation.
+
+        Spec §8 calls this non-negotiable: every interesting demonstration
+        mutates the record, and a second run starting from the damage the
+        first one did shows something different for a reason nobody watching
+        can see.
+
+        The allowlist and the enforcement switch survive. They are how a
+        demonstration is staged, and losing them on every reset would make the
+        button hostile to the thing it exists for. Turn directories from
+        before the reset are left on disk -- they are the evidence of what
+        happened, and this module does not delete evidence.
+        """
+        shutil.copyfile(self.baseline_path, self.students_path)
+        self.history = []
 
     # ------------------------------------------------------------------ state
     def record(self) -> dict:

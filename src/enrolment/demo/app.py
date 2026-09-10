@@ -218,6 +218,14 @@ def create_app(
         live.enforcement = update.enforcement
         return state_of(live)
 
+    @app.post("/api/chat/{session_id}/reset")
+    def reset(session_id: str) -> dict:
+        """Put the record back and forget the conversation, keeping the
+        console as it was staged. See `ChatSession.reset`."""
+        live = get(session_id)
+        live.reset()
+        return state_of(live)
+
     @app.post("/api/chat/{session_id}/message")
     async def message(session_id: str, body: Message) -> StreamingResponse:
         """Stream the run as it happens.

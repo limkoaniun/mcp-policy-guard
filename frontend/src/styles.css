@@ -77,6 +77,13 @@ button, input, select { font: inherit; color: inherit; }
 }
 .card > h2 .sub { font-weight: 400; font-size: .88rem; color: #cfcfcf; }
 .card > h2 select { background: #fff; color: var(--ink); border: 0; padding: .2rem .4rem; }
+.card > h2 .sub { display: inline-flex; align-items: center; gap: .8rem; }
+.startover {
+  background: none; border: 1px solid #6a6a6a; color: #fff;
+  padding: .22rem .7rem; cursor: pointer; font-size: .85rem;
+}
+.startover:hover:not(:disabled) { background: #fff; color: var(--black); border-color: #fff; }
+.startover:disabled { opacity: .4; cursor: default; }
 
 /* ---------- chat ---------- */
 .chat { display: flex; flex-direction: column; min-height: 660px; }

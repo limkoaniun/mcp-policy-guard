@@ -11,6 +11,10 @@ const args = (o) => Object.entries(o || {}).map(([k, v]) => `${k}=${v}`).join(',
 const NAV = ['Enrolment assistant']
 const CURRENT = 'Enrolment assistant'
 
+const GREETING =
+  "Hi! I'm the enrolment assistant. I can search subjects, check prerequisites, " +
+  'and manage your enrolment. What do you need?'
+
 const SUGGESTIONS = [
   'What can I take next session?',
   'Tell me about 32513',
@@ -53,9 +57,7 @@ export default function App() {
       setEnforcement(s.enforcement)
       setRecord(s.record)
       setBaseline(s.record)
-      setThread([{ role: 'assistant', text:
-        "Hi! I'm the enrolment assistant. I can search subjects, check prerequisites, " +
-        'and manage your enrolment. What do you need?' }])
+      setThread([{ role: 'assistant', text: GREETING }])
     }).catch((e) => setError(e.message))
   }, [])
 
@@ -75,6 +77,23 @@ export default function App() {
     const next = enforcement === 'on' ? 'off' : 'on'
     setEnforcement(next)
     if (session) await api.setEnforcement(session, next).catch((e) => setError(e.message))
+  }
+
+  // Clearing the thread alone would leave the next run starting from the
+  // record the last one mutated -- so this resets both, and says so in the
+  // thread rather than changing the record panel silently.
+  const startOver = async () => {
+    if (!session || busy) return
+    const state = await api.resetSession(session).catch((e) => { setError(e.message); return null })
+    if (!state) return
+    setRecord(state.record)
+    setBaseline(state.record)
+    setDecisions([])
+    setError(null)
+    setThread([
+      { role: 'system', text: `Conversation cleared and the record restored for ${state.record.student_id}.` },
+      { role: 'assistant', text: GREETING },
+    ])
   }
 
   const send = async (text) => {
@@ -161,6 +180,10 @@ export default function App() {
           <h2>
             <span>Assistant &middot; student {record?.student_id || '\u2026'}</span>
             <span className="sub">
+              <button className="startover" onClick={startOver} disabled={busy}
+                      title="Clear the conversation and restore the student record">
+                Start over
+              </button>
               <label htmlFor="model">driven by </label>
               <select id="model" value={model} onChange={(e) => setModel(e.target.value)}
                       disabled={busy}>
