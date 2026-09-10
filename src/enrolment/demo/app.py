@@ -21,6 +21,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from ..agent.ollama import installed_models, ollama_chat
@@ -125,6 +126,13 @@ def create_app(
     }
 
     app = FastAPI(title="MCP Policy Guard — demonstration")
+
+    # The built React bundle. `frontend/` is the source; its output is
+    # committed here so the demo runs from a clone with no node toolchain --
+    # a viva is not the place to discover `npm install` is a prerequisite.
+    assets = STATIC / "assets"
+    if assets.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets), name="assets")
 
     @app.get("/")
     def page() -> FileResponse:

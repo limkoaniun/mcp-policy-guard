@@ -263,7 +263,17 @@ allowlist stops being an abstraction; and a model selector.
 Plus a results dashboard rendered from the evaluation output — near-zero extra
 work, since it reads artifacts that already exist.
 
-**Implementation:** FastAPI + SSE + a single HTML page. Not React.
+**Implementation:** FastAPI + SSE + React (Vite), built to static files that
+FastAPI serves.
+
+*Revised 2026-09-10.* This section originally said "a single HTML page. Not
+React", and that was right for what it described: a scenario picker and two
+read-only panels. The demonstration the supervisor asked for is a
+conversation -- many messages against one accumulating record, an allowlist
+the viewer edits between them, events streaming as they arrive -- which is
+state a single script tag manages badly. The build output is committed so the
+demo runs from a clone with no node toolchain; a viva is not the place to
+discover `npm install` is a prerequisite.
 
 **The rule that keeps it bounded:** the frontend may only read existing audit-log
 and evaluation artifacts. If it starts needing new backend features, stop.

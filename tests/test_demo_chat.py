@@ -93,3 +93,15 @@ async def test_the_record_accumulates_across_messages(tmp_path):
     assert "32541" in before
     assert "32541" not in after_one
     assert after_two == after_one, "the second message must not reset the record"
+
+
+def test_the_record_reports_completed_subjects_as_codes(tmp_path):
+    """`completed` holds {code, session, credit_points} records because the
+    requisite evaluator needs all three. The panel wants codes, and a renderer
+    left to guess at a domain model is how `[object Object]` reaches a
+    demonstration."""
+    held = session(tmp_path, persona="S9000001").record()
+
+    assert all(isinstance(code, str) for code in held["completed"])
+    assert "32524" in held["completed"]
+    assert held["credit_cap"] == 24

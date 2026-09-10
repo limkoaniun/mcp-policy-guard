@@ -99,12 +99,22 @@ class ChatSession:
         """The student's record as it stands, for the live panel."""
         students = json.loads(self.students_path.read_text(encoding="utf-8"))
         held = students.get(self.persona) or {}
+        # `completed` holds `{code, session, credit_points}` records, not bare
+        # codes -- the requisite evaluator needs the session and the points.
+        # The panel wants codes, so the shape is flattened here rather than in
+        # the page: a renderer guessing at a domain model is how
+        # `[object Object]` reaches a demonstration.
+        completed = [
+            entry.get("code") if isinstance(entry, dict) else entry
+            for entry in (held.get("completed") or [])
+        ]
         return {
             "student_id": self.persona,
-            "completed": list(held.get("completed") or []),
+            "completed": completed,
             "enrolled": list(held.get("enrolled") or []),
-            "credit_cap": held.get("credit_cap"),
+            "credit_cap": held.get("credit_point_cap_per_session"),
             "course": held.get("course"),
+            "major": held.get("major"),
         }
 
     # ------------------------------------------------------------------- send
