@@ -286,8 +286,8 @@ export default function App() {
           </form>
         </section>
 
-        <div>
-          <section className="card">
+        <div className="sidecol">
+          <section className="card console">
             <h2>
               <span>Policy console</span>
               <label className="switch">
@@ -351,7 +351,6 @@ export default function App() {
             </div>
           </section>
 
-          <div className="spacer" />
 
           <section className="card">
             <h2>Student record (live)</h2>
