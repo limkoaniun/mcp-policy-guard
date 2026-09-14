@@ -43,6 +43,11 @@ button, input, select { font: inherit; color: inherit; }
 }
 .who { display: flex; align-items: center; gap: .9rem; font-size: .98rem; }
 .who svg { display: block; }
+.whopicker {
+  border: none; background: transparent; font: inherit; color: inherit;
+  cursor: pointer; padding: .15rem .1rem; max-width: 21rem;
+}
+.whopicker:focus-visible { outline: 2px solid #0f4beb; outline-offset: 2px; }
 
 .mainnav { background: var(--black); }
 .mainnav ul {

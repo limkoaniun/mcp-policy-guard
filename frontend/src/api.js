@@ -8,6 +8,7 @@ const json = async (response) => {
 }
 
 export const getTools = () => fetch('/api/tools').then(json)
+export const getPersonas = () => fetch('/api/personas').then(json)
 export const getModels = () => fetch('/api/models').then(json)
 
 export const newSession = (persona, preset) =>

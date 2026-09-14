@@ -111,3 +111,30 @@ def test_the_page_offers_the_models_that_are_actually_installed():
     body = TestClient(app).get("/api/models").json()
 
     assert body == ["llama3.2", "qwen2.5:14b"]
+
+
+def test_the_page_offers_the_personas_with_a_short_description():
+    body = client().get("/api/personas").json()
+    by_id = {p["id"]: p for p in body}
+
+    assert set(by_id) == {"S9000001", "S9000002", "S9000003", "S9000004"}
+    # The description is built from the real record: major title from the
+    # catalogue, not the raw MAJ code, plus the record's shape.
+    assert by_id["S9000001"]["major"] == "Cybersecurity"
+    assert by_id["S9000002"]["major"] == "Internetworking"
+    assert by_id["S9000001"]["completed"] == 4
+    assert by_id["S9000004"]["enrolled"] == 4
+
+
+def test_a_session_for_an_unknown_persona_is_refused_not_broken():
+    response = client().post("/api/chat", json={"persona": "S9999999"})
+
+    assert response.status_code == 400
+    assert "S9999999" in response.json()["detail"]
+
+
+def test_a_session_for_a_known_persona_starts_on_that_record():
+    body = client().post("/api/chat", json={"persona": "S9000004"}).json()
+
+    assert body["record"]["student_id"] == "S9000004"
+    assert body["record"]["enrolled"] == ["32541", "43030", "32548", "32547"]
