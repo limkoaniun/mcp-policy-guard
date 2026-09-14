@@ -40,7 +40,7 @@ export default function App() {
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
-  const bottom = useRef(null)
+  const threadBox = useRef(null)
 
   useEffect(() => {
     api.getTools().then((t) => {
@@ -63,7 +63,13 @@ export default function App() {
     }).catch((e) => setError(e.message))
   }, [])
 
-  useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth' }) }, [thread])
+  // Scroll the thread's own box, never the page: scrollIntoView walks every
+  // scrollable ancestor, so it yanked the whole document down to the chat on
+  // load and after each message.
+  useEffect(() => {
+    const box = threadBox.current
+    if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' })
+  }, [thread])
 
   const applyTools = async (next) => {
     setAllowed(next)
@@ -228,7 +234,7 @@ export default function App() {
             </span>
           </h2>
 
-          <div className="thread">
+          <div className="thread" ref={threadBox}>
             {thread.map((m, i) => {
               if (m.role === 'call') {
                 return (
@@ -265,7 +271,6 @@ export default function App() {
             })}
             {busy && <div className="bubble system">Running the model…</div>}
             {error && <div className="bubble system">{error}</div>}
-            <div ref={bottom} />
           </div>
 
           <div className="chips">
