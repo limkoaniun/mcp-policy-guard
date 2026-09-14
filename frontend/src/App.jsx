@@ -183,9 +183,7 @@ export default function App() {
           >
             {(personas.length ? personas : [{ id: record?.student_id || 'Student' }]).map((p) => (
               <option key={p.id} value={p.id}>
-                {p.major
-                  ? `${p.id} · ${p.major} · ${p.completed} done${p.enrolled ? ` · ${p.enrolled} enrolled` : ''}`
-                  : p.id}
+                {p.major ? `${p.id} · ${p.major}` : p.id}
               </option>
             ))}
           </select>
