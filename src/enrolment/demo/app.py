@@ -119,7 +119,11 @@ def create_app(
     # harness did rather than on what a model happened to say.
     chat_factory = chat_factory or (lambda model: ollama_chat(model, temperature=0.0))
     available_models = available_models or installed_models
-    personas = set(json.loads(personas_path.read_text(encoding="utf-8")))
+    persona_records = json.loads(personas_path.read_text(encoding="utf-8"))
+    personas = set(persona_records)
+    # Major titles from the built catalogue, so the picker shows "Cybersecurity"
+    # rather than a MAJ code nobody watching can decode.
+    aos = json.loads((repo_root / "data" / "aos.json").read_text(encoding="utf-8"))
     scenarios = {
         scenario.id: scenario
         for scenario in load_all(scenarios_dir, personas=personas, known_tools=KNOWN_TOOLS)
@@ -145,6 +149,23 @@ def create_app(
             STATIC / "index.html",
             headers={"Cache-Control": "no-store, must-revalidate"},
         )
+
+    @app.get("/api/personas")
+    def list_personas() -> list[dict]:
+        """The students the picker offers, each with the record's shape.
+
+        Built from the same personas file the sessions run on, so a student
+        offered here is by construction one a session can start as.
+        """
+        return [
+            {
+                "id": student_id,
+                "major": aos.get(record.get("major"), {}).get("title", record.get("major")),
+                "completed": len(record.get("completed", [])),
+                "enrolled": len(record.get("enrolled", [])),
+            }
+            for student_id, record in sorted(persona_records.items())
+        ]
 
     @app.get("/api/scenarios")
     def list_scenarios() -> list[dict]:
@@ -189,6 +210,11 @@ def create_app(
 
     @app.post("/api/chat")
     def new_session(request: NewSession) -> dict:
+        if request.persona not in personas:
+            # A session for an unknown student would not fail here; it would
+            # fail later, mid-demonstration, when the record lookup misses.
+            # Refusing now keeps the failure at the caller with a reason.
+            raise HTTPException(400, f"no persona {request.persona!r}")
         session_id = uuid.uuid4().hex[:12]
         sessions[session_id] = ChatSession(
             persona=request.persona,

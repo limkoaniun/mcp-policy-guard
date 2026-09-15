@@ -32,6 +32,7 @@ export default function App() {
   const [allowed, setAllowed] = useState([])
   const [enforcement, setEnforcement] = useState('on')
   const [record, setRecord] = useState(null)
+  const [personas, setPersonas] = useState([])
   const [baseline, setBaseline] = useState(null)
 
   const [thread, setThread] = useState([])
@@ -39,7 +40,7 @@ export default function App() {
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
-  const bottom = useRef(null)
+  const threadBox = useRef(null)
 
   useEffect(() => {
     api.getTools().then((t) => {
@@ -47,6 +48,7 @@ export default function App() {
       setPresets(t.presets)
       setInjected(t.injected)
     })
+    api.getPersonas().then(setPersonas).catch(() => setPersonas([]))
     api.getModels().then((m) => {
       setModels(m)
       setModel(m.includes('qwen2.5:14b') ? 'qwen2.5:14b' : (m[0] || ''))
@@ -61,7 +63,13 @@ export default function App() {
     }).catch((e) => setError(e.message))
   }, [])
 
-  useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth' }) }, [thread])
+  // Scroll the thread's own box, never the page: scrollIntoView walks every
+  // scrollable ancestor, so it yanked the whole document down to the chat on
+  // load and after each message.
+  useEffect(() => {
+    const box = threadBox.current
+    if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' })
+  }, [thread])
 
   const applyTools = async (next) => {
     setAllowed(next)
@@ -92,6 +100,27 @@ export default function App() {
     setError(null)
     setThread([
       { role: 'system', text: `Conversation cleared and the record restored for ${state.record.student_id}.` },
+      { role: 'assistant', text: GREETING },
+    ])
+  }
+
+  const switchPersona = async (persona) => {
+    if (busy || !persona || persona === record?.student_id) return
+    const s = await api.newSession(persona, 'enrolment').catch((e) => { setError(e.message); return null })
+    if (!s) return
+    // The console's settings are the presenter's, not the student's: carry
+    // the allowlist and the enforcement switch into the new session.
+    if (JSON.stringify(s.allowed_tools) !== JSON.stringify(allowed))
+      await api.setTools(s.id, allowed).catch(() => {})
+    if (s.enforcement !== enforcement)
+      await api.setEnforcement(s.id, enforcement).catch(() => {})
+    setSession(s.id)
+    setRecord(s.record)
+    setBaseline(s.record)
+    setDecisions([])
+    setError(null)
+    setThread([
+      { role: 'system', text: `Now assisting ${persona}. New conversation, fresh record.` },
       { role: 'assistant', text: GREETING },
     ])
   }
@@ -151,7 +180,19 @@ export default function App() {
         </span>
         <span className="who">
           <Bell />
-          <span>{record?.student_id || 'Student'}</span>
+          <select
+            className="whopicker"
+            aria-label="Switch student"
+            value={record?.student_id || ''}
+            onChange={(e) => switchPersona(e.target.value)}
+            disabled={busy}
+          >
+            {(personas.length ? personas : [{ id: record?.student_id || 'Student' }]).map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.major ? `${p.id} · ${p.major}` : p.id}
+              </option>
+            ))}
+          </select>
         </span>
       </div>
 
@@ -193,7 +234,7 @@ export default function App() {
             </span>
           </h2>
 
-          <div className="thread">
+          <div className="thread" ref={threadBox}>
             {thread.map((m, i) => {
               if (m.role === 'call') {
                 return (
@@ -230,7 +271,6 @@ export default function App() {
             })}
             {busy && <div className="bubble system">Running the model…</div>}
             {error && <div className="bubble system">{error}</div>}
-            <div ref={bottom} />
           </div>
 
           <div className="chips">
@@ -246,8 +286,8 @@ export default function App() {
           </form>
         </section>
 
-        <div>
-          <section className="card">
+        <div className="sidecol">
+          <section className="card console">
             <h2>
               <span>Policy console</span>
               <label className="switch">
@@ -311,7 +351,6 @@ export default function App() {
             </div>
           </section>
 
-          <div className="spacer" />
 
           <section className="card">
             <h2>Student record (live)</h2>
