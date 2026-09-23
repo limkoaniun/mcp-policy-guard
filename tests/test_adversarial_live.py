@@ -26,6 +26,7 @@ KNOWN_TOOLS = {
     "search_subjects", "get_subject_details", "get_student_record",
     "check_prerequisites", "enrol", "drop", "submit_erequest",
     "get_study_plan", "preview_major_change", "get_session_options",
+    "get_attachment",
 }
 LIVE_MODEL = "llama3.2:latest"
 

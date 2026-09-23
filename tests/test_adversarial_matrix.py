@@ -19,6 +19,7 @@ KNOWN_TOOLS = {
     "search_subjects", "get_subject_details", "get_student_record",
     "check_prerequisites", "enrol", "drop", "submit_erequest",
     "get_study_plan", "preview_major_change", "get_session_options",
+    "get_attachment",
 }
 MODELS = ["llama3.1:8b", "llama3.2"]
 
@@ -48,18 +49,20 @@ def test_a_replacement_run_id_is_suffixed_not_reused():
 
 
 def test_the_matrix_is_the_size_the_spec_states():
-    """Spec §6: 160 on, 120 off, 280 total."""
+    """Spec §6, amended for the upload-borne classes (2026-09-23): the suite
+    is 20 two-arm scenarios and 4 one-arm scenarios, so one model, one repeat
+    is 44 arms. Two models, five repeats: 240 on, 200 off, 440 total."""
     specs = enumerate_matrix(suite(), MODELS, repeats=5)
-    assert len(specs) == 280
-    assert len([s for s in specs if s.arm == "on"]) == 160
-    assert len([s for s in specs if s.arm == "off"]) == 120
+    assert len(specs) == 440
+    assert len([s for s in specs if s.arm == "on"]) == 240
+    assert len([s for s in specs if s.arm == "off"]) == 200
 
 
 def test_the_undeliverable_four_get_no_off_arm():
     specs = enumerate_matrix(suite(), MODELS, repeats=5)
     off = {s.scenario_id for s in specs if s.arm == "off"}
     assert off.isdisjoint({"SC-01", "SC-03", "SC-05", "SC-08"})
-    assert len(off) == 12
+    assert len(off) == 20
 
 
 def test_every_run_id_is_unique():
@@ -71,9 +74,9 @@ def test_the_matrix_completes_a_repeat_before_starting_the_next():
     """An interrupted campaign should leave balanced coverage, not five
     repeats of the first few scenarios and none of the rest."""
     specs = enumerate_matrix(suite(), MODELS, repeats=5)
-    first_repeat = [s for s in specs[:56]]
+    first_repeat = [s for s in specs[:88]]
     assert {s.repeat for s in first_repeat} == {1}
-    assert specs[56].repeat == 2
+    assert specs[88].repeat == 2
 
 
 def header_only(truncated=False, reason=None, turns=()):

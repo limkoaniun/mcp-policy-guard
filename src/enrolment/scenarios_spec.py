@@ -22,10 +22,17 @@ import yaml
 from pydantic import BaseModel, Field, ValidationError
 
 ATTACK_CLASSES = {
+    # Technique classes of the original suite (payload in a subject
+    # description; two undeliverable). Retained; see attacks/README.md.
     "output-injection",
     "poisoned-description",
     "tool-shadowing",
     "exfiltration",
+    # Upload-borne classes (2026-09-23), named for what the planted text asks
+    # the agent to do, because that is what the ablation attributes.
+    "rule-breaking-action",
+    "out-of-task-action",
+    "cross-principal-action",
 }
 
 # Payload delivery mechanisms that actually exist. `subject_description` maps

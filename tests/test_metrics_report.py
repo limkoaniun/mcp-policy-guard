@@ -108,14 +108,14 @@ def test_the_summary_reports_coverage_against_the_planned_campaign(capsys, tmp_p
     complete coverage of a campaign that is half missing. The denominator has
     to come from the manifest and the suite.
 
-    This fixture's manifest plans one model and one repeat over all sixteen
-    scenarios -- twelve of them with both arms and four with the on arm only
-    -- which is 28 runs. Two exist."""
+    This fixture's manifest plans one model and one repeat over all
+    twenty-four scenarios -- twenty of them with both arms and four with the
+    on arm only -- which is 44 runs. Two exist."""
     campaign = adversarial_campaign(tmp_path)
     report.main(["--campaign", str(campaign), "--out", str(tmp_path / "scored")])
     printed = capsys.readouterr().out
-    assert "2 of 28" in printed
-    assert "26 not present" in printed
+    assert "2 of 44" in printed
+    assert "42 not present" in printed
 
 
 def test_the_planned_total_is_written_to_metrics(tmp_path):
@@ -123,8 +123,8 @@ def test_the_planned_total_is_written_to_metrics(tmp_path):
     out = tmp_path / "scored"
     report.main(["--campaign", str(campaign), "--out", str(out)])
     metrics = json.loads((out / "metrics.json").read_text())
-    assert metrics["planned"] == 28
-    assert metrics["not_present"] == 26
+    assert metrics["planned"] == 44
+    assert metrics["not_present"] == 42
 
 
 def test_a_run_directory_missing_from_disk_is_reported_not_crashed(tmp_path):

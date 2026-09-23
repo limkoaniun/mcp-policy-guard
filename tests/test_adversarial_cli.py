@@ -29,8 +29,8 @@ def test_a_dry_run_reports_the_matrix_without_running_it(capsys):
     exit_code = adversarial.main(["--campaign", "x", "--dry-run"])
     printed = capsys.readouterr().out
     assert exit_code == 0
-    assert "280" in printed
-    assert "160" in printed and "120" in printed
+    assert "440" in printed
+    assert "240" in printed and "200" in printed
 
 
 def test_a_dry_run_names_what_has_no_off_arm(capsys):
@@ -161,8 +161,11 @@ def test_main_runs_the_matrix_it_reported_and_indexes_it(tmp_path, monkeypatch, 
     assert stored["fingerprints"] == {"m": {"model": "m", "digest": "d0",
                                             "ollama_version": "0.33.2"}}
 
-    # --limit is a cap on this invocation: two runs, the first two of the matrix.
-    assert [c["run_id"] for c in calls] == ["SC-01-m-on-r1", "SC-01b-m-on-r1"]
+    # --limit is a cap on this invocation: two runs, the first two of the
+    # matrix. "A-01" sorts before every "SC-*" id, so the first scenario in
+    # the suite is now the upload-borne A-01, and being a two-arm scenario
+    # its own on and off runs fill the cap.
+    assert [c["run_id"] for c in calls] == ["A-01-m-on-r1", "A-01-m-off-r1"]
 
     # chat_factory carries the manifest's decoding settings, not the daemon's.
     assert {c["chat"] for c in calls} == {"chat(m, 0.0, None)"}
@@ -172,12 +175,12 @@ def test_main_runs_the_matrix_it_reported_and_indexes_it(tmp_path, monkeypatch, 
 
     # describe supplied the domain fields; run_status supplied the status.
     index = {r.run_id: r for r in read_index(tmp_path)}
-    assert set(index) == {"SC-01-m-on-r1", "SC-01b-m-on-r1"}
-    assert index["SC-01-m-on-r1"].attack_class == "tool-shadowing"
-    assert index["SC-01b-m-on-r1"].attack_class is None
-    assert index["SC-01b-m-on-r1"].status == "ok"
-    assert index["SC-01b-m-on-r1"].duration_s == 2.0
-    assert index["SC-01b-m-on-r1"].arm == "on"
+    assert set(index) == {"A-01-m-on-r1", "A-01-m-off-r1"}
+    assert index["A-01-m-on-r1"].attack_class == "rule-breaking-action"
+    assert index["A-01-m-off-r1"].attack_class == "rule-breaking-action"
+    assert index["A-01-m-off-r1"].status == "ok"
+    assert index["A-01-m-off-r1"].duration_s == 2.0
+    assert index["A-01-m-off-r1"].arm == "off"
 
     assert "2 runs indexed" in printed
     assert "2 timed runs" in printed
@@ -222,7 +225,7 @@ def test_main_says_how_many_runs_it_could_not_time(tmp_path, monkeypatch, capsys
 
     argv = ["--campaign", str(tmp_path), "--models", "m", "--repeats", "1", "--limit", "2"]
     adversarial.main(argv)
-    for run_id in ("SC-01-m-on-r1", "SC-01b-m-on-r1"):
+    for run_id in ("A-01-m-on-r1", "A-01-m-off-r1"):
         Transcript(task_id=run_id, model="m").write_jsonl(
             tmp_path / run_id / "transcript.jsonl"
         )
