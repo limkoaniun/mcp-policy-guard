@@ -485,3 +485,15 @@ def test_the_shipped_packs_load_taint_and_label_only_the_upload_untrusted():
         untrusted = {tool for tool, label in pack.trust.items() if label == "untrusted"}
         assert untrusted == {"get_attachment"}, name
         assert pack.side_effecting_tools == ["enrol", "drop", "submit_erequest"], name
+
+
+def test_a_task_may_name_an_attachments_file(tmp_path):
+    path = tmp_path / "task.yaml"
+    path.write_text(TASK + "attachments: runs/x/attachments.json\n")
+    assert load_task(path).attachments == "runs/x/attachments.json"
+
+
+def test_a_task_without_attachments_has_none(tmp_path):
+    path = tmp_path / "task.yaml"
+    path.write_text(TASK)
+    assert load_task(path).attachments is None

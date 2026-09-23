@@ -29,6 +29,10 @@ class TaskDefinition(BaseModel):
     allowed_tools: list[str] = Field(default_factory=list)
     principal_id: str | None = None
     overlay: str | None = None
+    # Path of this run's uploaded-documents file, passed to the upstream as
+    # `--attachments`. Recorded in the manifest so a run with documents is
+    # distinguishable from one without, exactly as `overlay` is.
+    attachments: str | None = None
 
 
 class PolicyPack(BaseModel):

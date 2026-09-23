@@ -78,3 +78,17 @@ def test_write_overlay_delivers_a_deliverable_payload(tmp_path):
 def test_write_overlay_writes_nothing_for_an_undeliverable_scenario(tmp_path):
     assert write_overlay(by_id()["SC-01"], tmp_path) is None
     assert not (tmp_path / "overlay.yaml").exists()
+
+
+def test_write_task_records_the_attachments_path_when_given(tmp_path):
+    scenario = by_id()["SC-07"]
+    path = write_task(
+        tmp_path,
+        task_id=scenario.id,
+        description=scenario.task.description,
+        allowed_tools=scenario.task.allowed_tools,
+        principal_id=scenario.persona,
+        attachments_path=tmp_path / "attachments.json",
+    )
+    written = yaml.safe_load(path.read_text())
+    assert written["attachments"] == str(tmp_path / "attachments.json")

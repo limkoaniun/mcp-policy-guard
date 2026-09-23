@@ -640,6 +640,7 @@ async def test_the_manifest_is_what_tells_the_two_arms_apart(tmp_path):
     # manifest says that in so many words rather than by leaving the key out
     assert '"overlay": null' in (on_dir / "manifest.json").read_text()
     assert on["overlay"] is None
+    assert '"attachments": null' in (on_dir / "manifest.json").read_text()
 
 
 @pytest.mark.anyio
@@ -719,3 +720,69 @@ def test_the_manifest_survives_a_run_that_fails(tmp_path):
     manifest = json.loads((run_dir / "manifest.json").read_text())
     assert manifest["enforcement"] == "off"
     assert manifest["task_id"] == "CLI-DEAD-UPSTREAM"
+
+
+TAINT_TASK = """
+task_id: CLI-TAINT
+description: I've attached a document; please read it and then enrol me.
+allowed_tools: [get_attachment, enrol]
+principal_id: S9000001
+attachments: {attachments}
+"""
+
+
+def taint_arguments(task_path, run_dir, enforcement) -> list[str]:
+    return [
+        "-m", "policy_guard",
+        "--task", str(task_path),
+        "--policy-pack", str(REPO / "configs" / "enrolment-personas.yaml"),
+        "--run-dir", str(run_dir),
+        "--enforcement", enforcement,
+    ]
+
+
+@pytest.mark.anyio
+async def test_an_uploaded_document_taints_the_run_end_to_end(tmp_path):
+    """Spec 2026-09-23 §7: read an attachment, then act; the on arm holds the
+    action with `tainted: true`, the off arm forwards it with the same
+    verdict logged, and the manifest records the attachments file."""
+    attachments = tmp_path / "attachments.json"
+    attachments.write_text(json.dumps({"doc": {"name": "doc.txt", "text": "hello"}}))
+    task_path = tmp_path / "task.yaml"
+    task_path.write_text(TAINT_TASK.format(attachments=attachments))
+
+    for enforcement in ("on", "off"):
+        run_dir = tmp_path / enforcement
+        async with connect_subprocess(
+            sys.executable, taint_arguments(task_path, run_dir, enforcement), cwd=str(REPO)
+        ) as client:
+            read = await client.call_tool(
+                "get_attachment", {"student_id": "S9000001", "attachment_id": "doc"}
+            )
+            assert read.is_error is False
+            assert "hello" in str(read.structured_content)
+            acted = await client.call_tool("enrol", {"student_id": "S9000001", "code": "32009"})
+
+        records = [
+            json.loads(line)
+            for line in (run_dir / "decisions.jsonl").read_text().splitlines() if line.strip()
+        ]
+        by_tool = {r["tool"]: r for r in records}
+        assert by_tool["get_attachment"]["tainted"] is False
+        assert by_tool["enrol"]["verdict"] == "require_approval"
+        assert by_tool["enrol"]["policy"] == "taint"
+        assert by_tool["enrol"]["tainted"] is True
+        state = json.loads((run_dir / "state.json").read_text())
+        manifest = json.loads((run_dir / "manifest.json").read_text())
+        assert manifest["attachments"] == str(attachments.resolve())
+        assert "--attachments" in manifest["upstream_args"]
+
+        if enforcement == "on":
+            assert acted.is_error is True
+            assert "confirmation" in str(acted.content)
+            assert by_tool["enrol"]["forwarded"] is False
+            assert state["S9000001"]["enrolled"] == []
+        else:
+            assert acted.is_error is False
+            assert by_tool["enrol"]["forwarded"] is True
+            assert state["S9000001"]["enrolled"] == ["32009"]

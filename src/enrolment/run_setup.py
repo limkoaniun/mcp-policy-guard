@@ -51,6 +51,7 @@ def write_task(
     allowed_tools: list[str],
     principal_id: str,
     overlay_path=None,
+    attachments_path=None,
 ) -> Path:
     """The `task.yaml` the proxy is launched against.
 
@@ -68,6 +69,8 @@ def write_task(
     }
     if overlay_path is not None:
         task["overlay"] = str(overlay_path)
+    if attachments_path is not None:
+        task["attachments"] = str(attachments_path)
     path = run_dir / "task.yaml"
     path.write_text(yaml.safe_dump(task), encoding="utf-8")
     return path

@@ -205,6 +205,9 @@ def main(argv: list[str] | None = None) -> int:
     overlay = task.overlay or None
     if overlay:
         upstream_args += ["--overlay", overlay]
+    attachments = task.attachments or None
+    if attachments:
+        upstream_args += ["--attachments", attachments]
 
     upstream_command = resolve_upstream_command(pack.upstream_command)
 
@@ -227,6 +230,7 @@ def main(argv: list[str] | None = None) -> int:
         enforcement="on" if enforcement.enforcement else "off",
         approval_mode=enforcement.approval_mode,
         overlay=str(Path(overlay).resolve()) if overlay else None,
+        attachments=str(Path(attachments).resolve()) if attachments else None,
         upstream_command=upstream_command,
         upstream_args=list(upstream_args),
     )
