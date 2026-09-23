@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from enrolment.advice import AdviceTask, write_tasks
 from enrolment.agent.campaign import IndexRecord, write_index
 from enrolment.agent.transcript import ResponseOutcome, Transcript, TurnRecord
@@ -157,3 +159,13 @@ def test_main_excludes_an_index_row_whose_scenario_id_has_no_task_rather_than_ra
     assert metrics["exclusions"]["no_task"] == 1
     printed = capsys.readouterr().out
     assert "1" in printed and "no_task" in printed
+
+
+def test_main_refuses_an_out_directory_inside_the_campaign_directory(tmp_path):
+    """Scoring is read-only on runs; writing output back into the campaign
+    directory could clobber the very runs being scored."""
+    campaign = tmp_path / "c"
+    campaign.mkdir()
+    write_tasks(campaign, [task()])
+    with pytest.raises(SystemExit):
+        scorer.main(["--campaign", str(campaign), "--out", str(campaign / "scored")])

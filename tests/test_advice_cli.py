@@ -81,6 +81,15 @@ def test_kinds_narrow_the_task_set(capsys):
     assert "248" in printed and "2976" in printed
 
 
+def test_dry_run_with_limit_prints_the_limited_run_count(capsys):
+    """--limit must be applied before the --dry-run return -- otherwise
+    --dry-run --limit 20 still reports the full, unlimited run count."""
+    assert cli.main(["--campaign", "x", "--dry-run", "--limit", "20"]) == 0
+    printed = capsys.readouterr().out
+    assert "20 runs" in printed
+    assert "4176" not in printed
+
+
 def test_the_agent_task_is_one_turn_with_no_nudge():
     task = cli.task_for(elig(), "Help {principal}.")
     assert task.turns == [elig().question]
@@ -90,6 +99,10 @@ def test_the_agent_task_is_one_turn_with_no_nudge():
 def test_the_read_only_allowlist_excludes_every_acting_tool():
     assert set(cli.ADVICE_TOOLS) & {"enrol", "drop", "submit_erequest"} == set()
     assert {"check_prerequisites", "get_session_options", "get_student_record"} <= set(cli.ADVICE_TOOLS)
+
+
+def test_the_allowlist_excludes_get_attachment_since_advice_runs_write_no_attachments():
+    assert "get_attachment" not in cli.ADVICE_TOOLS
 
 
 @pytest.mark.anyio

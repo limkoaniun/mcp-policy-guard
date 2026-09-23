@@ -23,7 +23,7 @@ TEXT_OUTCOMES = {ResponseOutcome.TEXT, ResponseOutcome.TEXT_RESEMBLING_A_CALL}
 
 
 def final_text(transcript: Transcript) -> str:
-    """The model's closing words: the last text turn, or "" if it never closed."""
+    """The model's closing words: the last turn, if it is text, or "" if it never closed."""
     if not transcript.turns:
         return ""
     last = transcript.turns[-1]

@@ -52,7 +52,7 @@ ARMS = ("rag", "agent")
 #: The guarded agent's allowlist on advice tasks: everything that reads or
 #: plans, nothing that acts. A question is not a request to change anything.
 ADVICE_TOOLS = [
-    "search_subjects", "get_subject_details", "get_attachment", "get_student_record",
+    "search_subjects", "get_subject_details", "get_student_record",
     "check_prerequisites", "get_study_plan", "get_session_options", "preview_major_change",
 ]
 
@@ -230,14 +230,15 @@ def main(argv=None) -> int:
     world = load_world(REPO_ROOT, _students_path(args))
     tasks, digest = build_tasks(args, world)
     specs = enumerate_matrix(tasks, args.models, args.repeats, args.arms)
+    if args.limit is not None:
+        specs = specs[: args.limit]
     by_kind = {k: sum(1 for t in tasks if t.kind == k) for k in KINDS}
     print(f"{len(tasks)} tasks ({by_kind['eligibility']} eligibility, {by_kind['session']} session)")
     print(f"{len(specs)} runs: " + ", ".join(f"{sum(1 for s in specs if s.arm == a)} {a}" for a in args.arms))
+    if args.limit is not None:
+        print(f"--limit {args.limit}: running the first {len(specs)} of them")
     if args.dry_run:
         return 0
-    if args.limit is not None:
-        specs = specs[: args.limit]
-        print(f"--limit {args.limit}: running the first {len(specs)} of them")
 
     fingerprints = preflight(args.models)
     manifest = load_or_create_manifest(args.campaign, build_manifest(args, fingerprints, digest))

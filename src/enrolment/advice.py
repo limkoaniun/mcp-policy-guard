@@ -111,6 +111,12 @@ def score(task: AdviceTask, text: str) -> AdviceVerdict:
         )
     codes = list(dict.fromkeys(CODE.findall(text)))
     expected = set(task.expected_codes or [])
+    # `not codes and expected` is "no answer": a reply with no codes when some
+    # were due. When `expected` is itself empty, no codes is the *correct*
+    # empty answer, not a missing one -- it falls through to the comparison
+    # below, where `got == expected` (both empty sets) scores it correct and
+    # rewards it. No current task has an empty expectation, but the scorer
+    # must still get this right rather than by accident.
     if not codes and expected:
         return AdviceVerdict(task_id=task.task_id, kind=task.kind, answered=False, extracted=[])
     got = set(codes)
