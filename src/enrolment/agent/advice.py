@@ -38,7 +38,7 @@ from .campaign import (
 from .cli_common import preflight, warn_on_digest_drift
 from .loop import AgentTask, run_agent
 from .ollama import ollama_chat
-from .prompts import NUDGE, PROMPTS, RAG_SYSTEM_PROMPT
+from .prompts import PROMPTS, RAG_SYSTEM_PROMPT
 from .sampling import sample_digest, stratified_sample
 from .transcript import ResponseOutcome, Transcript, TurnRecord
 
@@ -208,7 +208,12 @@ def build_manifest(args, fingerprints: dict, digest: str) -> CampaignManifest:
     return CampaignManifest(
         models=list(args.models), repeats=args.repeats, system_prompt=PROMPTS[args.prompt],
         rag_system_prompt=RAG_SYSTEM_PROMPT,
-        nudge=NUDGE, policy_pack=args.pack, max_model_turns=args.max_model_turns,
+        # Advice tasks are one turn -- a question, not a request to act -- so
+        # there is no second turn for the compliance/adversarial nudge to
+        # occupy. "" (rather than NUDGE) records that plainly, and a
+        # campaign resumed under the shared NUDGE would rightly be refused
+        # as a different method.
+        nudge="", policy_pack=args.pack, max_model_turns=args.max_model_turns,
         max_calls=args.max_calls, temperature=args.temperature, seed=args.seed,
         fingerprints=fingerprints, sample_digest=digest or None, num_ctx=args.num_ctx,
     )

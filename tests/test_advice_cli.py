@@ -116,6 +116,12 @@ def test_build_manifest_records_the_rag_system_prompt():
     assert manifest.rag_system_prompt == RAG_SYSTEM_PROMPT
 
 
+def test_build_manifest_records_no_nudge_since_advice_tasks_are_one_turn():
+    args = cli.parse_args(["--campaign", "x"])
+    manifest = cli.build_manifest(args, {}, "")
+    assert manifest.nudge == ""
+
+
 @pytest.mark.anyio
 async def test_the_rag_arm_uses_the_rag_system_prompt(tmp_path):
     world = cli.load_world(REPO, REPO / "data" / "students.json")
