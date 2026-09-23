@@ -37,6 +37,7 @@ def judge_run(record: IndexRecord, run_dir, task: AdviceTask) -> dict:
         "run_id": record.run_id, "task_id": task.task_id, "kind": task.kind,
         "model": record.model, "arm": record.arm, "repeat": record.repeat,
         "rule_depth": task.rule_depth, "stratum": task.stratum,
+        "duration_s": record.duration_s,
     }
     path = Path(run_dir) / "transcript.jsonl"
     if record.status == "provider_error":
@@ -58,6 +59,16 @@ def _ratio(num, den):
     return {"numerator": num, "denominator": den}
 
 
+def _mean(values) -> float | None:
+    """The mean of the non-`None` values, or `None` when there are none.
+
+    Wall-clock duration is `None` for a run adopted from disk that no
+    invocation timed (campaign.py's own reasoning); averaging with those
+    coerced to 0 would understate every cell that ever resumed."""
+    present = [v for v in values if v is not None]
+    return (sum(present) / len(present)) if present else None
+
+
 def aggregate(judgements: list[dict]) -> dict:
     scoreable = [j for j in judgements if j.get("scoreable")]
     out: dict = {"total": len(judgements), "scored": len(scoreable),
@@ -72,6 +83,7 @@ def aggregate(judgements: list[dict]) -> dict:
             "accuracy_over_answered": _ratio(sum(1 for j in answered if j["correct"]), len(answered)),
             "accuracy_over_all": _ratio(sum(1 for j in answered if j["correct"]), len(rows)),
             "mean_latency_ms": (sum(j.get("latency_ms", 0.0) for j in rows) / len(rows)) if rows else None,
+            "mean_duration_s": _mean(j.get("duration_s") for j in rows),
         }
         if kind == "session":
             js = [j["jaccard"] for j in answered if j.get("jaccard") is not None]
@@ -97,9 +109,10 @@ def _print(metrics: dict) -> None:
             for model, cell in models.items():
                 a, acc, al = cell["answered"], cell["accuracy_over_answered"], cell["accuracy_over_all"]
                 extra = f"  mean jaccard {cell['mean_jaccard']:.2f}" if cell.get("mean_jaccard") is not None else ""
+                duration = f"  mean duration {cell['mean_duration_s']:.2f}s" if cell.get("mean_duration_s") is not None else ""
                 print(f"  {arm:6} {model:14} answered {a['numerator']}/{a['denominator']}  "
                       f"correct/answered {acc['numerator']}/{acc['denominator']}  "
-                      f"correct/all {al['numerator']}/{al['denominator']}{extra}")
+                      f"correct/all {al['numerator']}/{al['denominator']}{extra}{duration}")
                 if cell.get("by_depth"):
                     print("         by depth (core): " + ", ".join(
                         f"{d}: {r['numerator']}/{r['denominator']}" for d, r in cell["by_depth"].items()))

@@ -48,6 +48,12 @@ def test_a_correct_run_is_judged_correct(tmp_path):
     assert j["scoreable"] and j["answered"] and j["correct"] is True
 
 
+def test_judge_run_includes_the_wall_clock_duration(tmp_path):
+    run_dir = write_run(tmp_path, "E-S1-32933-fake-rag-r1", "NOT ELIGIBLE, you lack 32144.")
+    j = scorer.judge_run(record("E-S1-32933-fake-rag-r1", "rag"), run_dir, task())
+    assert j["duration_s"] == 1.0
+
+
 def test_a_run_whose_last_turn_is_a_call_has_no_answer(tmp_path):
     run_dir = write_run(tmp_path, "E-S1-32933-fake-agent-r1", "", last_is_call=True)
     j = scorer.judge_run(record("E-S1-32933-fake-agent-r1", "agent"), run_dir, task())
@@ -79,6 +85,24 @@ def test_aggregate_reports_answered_and_both_accuracies_per_kind_arm_and_model()
     assert m["session"]["rag"]["fake"]["mean_jaccard"] == 0.5
     assert m["exclusions"] == {"truncated": 1}
     assert m["scored"] == 5 and m["total"] == 6
+
+
+def test_aggregate_reports_mean_duration_s_per_cell():
+    judgements = [
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": True, "correct": True, "jaccard": None, "rule_depth": 3, "stratum": "core", "duration_s": 2.0},
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": True, "correct": True, "jaccard": None, "rule_depth": 3, "stratum": "core", "duration_s": 4.0},
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": True, "correct": True, "jaccard": None, "rule_depth": 3, "stratum": "core", "duration_s": None},
+    ]
+    m = scorer.aggregate(judgements)
+    assert m["eligibility"]["rag"]["fake"]["mean_duration_s"] == 3.0
+
+
+def test_aggregate_mean_duration_s_is_none_when_nothing_was_timed():
+    judgements = [
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": True, "correct": True, "jaccard": None, "rule_depth": 3, "stratum": "core", "duration_s": None},
+    ]
+    m = scorer.aggregate(judgements)
+    assert m["eligibility"]["rag"]["fake"]["mean_duration_s"] is None
 
 
 def test_main_writes_metrics_and_judgements(tmp_path, capsys):
