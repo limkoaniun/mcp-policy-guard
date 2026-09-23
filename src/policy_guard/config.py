@@ -16,7 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .models import TaskContext
 
@@ -47,6 +47,11 @@ class PolicyPack(BaseModel):
     # left off this list stays enforced by default, where a scoped-list
     # would silently drop binding for anything an author forgot to add.
     principal_exempt_tools: list[str] = Field(default_factory=list)
+    # Tools that change state. The taint policy holds a call to any of these
+    # once the run has read an untrusted result. Named as the acting set, not
+    # the exempt set: a tool left off is treated as a read (fail-open), which
+    # is why a pack loading `taint` with an empty list is refused below.
+    side_effecting_tools: list[str] = Field(default_factory=list)
     # Import path to the domain's validator factory, "module:callable".
     # The generic layer resolves it without knowing what it builds.
     domain_rules: str | None = None
@@ -88,6 +93,16 @@ class PolicyPack(BaseModel):
                     f"expected one of {sorted(TRUST_LABELS)}"
                 )
         return value
+
+    @model_validator(mode="after")
+    def _taint_has_something_to_hold(self) -> "PolicyPack":
+        if "taint" in self.policies and not self.side_effecting_tools:
+            raise ValueError(
+                "policy pack loads `taint` but names no `side_effecting_tools`; "
+                "a taint policy with nothing to hold is inert enforcement that "
+                "still writes verdicts that look like enforcement"
+            )
+        return self
 
 
 def _read(path) -> dict:

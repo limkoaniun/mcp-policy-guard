@@ -12,13 +12,18 @@ name: enrolment
 upstream_command: python
 upstream_args: [-m, enrolment.server]
 
-policies: [allowlist, arg_validation]
+policies: [allowlist, arg_validation, taint]
 
-# Trust is per tool, not per server: this one server returns both
-# attacker-influenceable catalogue text and trustworthy computed results.
+# Trust is per tool, not per server. The catalogue tools are labelled trusted
+# on the supervisor's ruling (2026-09-23): the handbook is university-published
+# text, and planted instructions there are not a credible threat. The one
+# untrusted tool is the document the student uploaded -- written by anyone,
+# read by the agent to help fill in a request, and the realistic injection
+# channel. Reading it taints the run; see `side_effecting_tools`.
 trust:
-  search_subjects: untrusted
-  get_subject_details: untrusted
+  search_subjects: trusted
+  get_subject_details: trusted
+  get_attachment: untrusted
   get_student_record: trusted
   check_prerequisites: trusted
   enrol: trusted
@@ -27,6 +32,10 @@ trust:
   get_study_plan: trusted
   preview_major_change: trusted
   get_session_options: trusted
+
+# The tools the taint policy holds after an untrusted read. Named as the
+# acting set on purpose: a tool left off is treated as a read.
+side_effecting_tools: [enrol, drop, submit_erequest]
 
 # Which tool argument carries the principal this task is scoped to. The generic
 # layer knows a task has a bound principal; only the pack knows this domain

@@ -430,3 +430,58 @@ def test_the_personas_pack_differs_only_in_the_student_file():
     assert other == {
         k: v for k, v in personas.domain_rules_args.items() if k != "students_path"
     }
+
+
+def test_policy_pack_accepts_side_effecting_tools(tmp_path):
+    path = tmp_path / "pack.yaml"
+    path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist, taint]\n"
+        "trust:\n  read_doc: untrusted\n"
+        "side_effecting_tools: [act]\n",
+        encoding="utf-8",
+    )
+    pack = load_policy_pack(path)
+    assert pack.side_effecting_tools == ["act"]
+
+
+def test_a_pack_loading_taint_with_no_side_effecting_tools_is_rejected(tmp_path):
+    """A taint policy with nothing to hold is inert enforcement that still
+    logs verdicts -- the failure this project keeps refusing."""
+    path = tmp_path / "pack.yaml"
+    path.write_text(
+        "name: t\nupstream_command: python\npolicies: [allowlist, taint]\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="side_effecting_tools"):
+        load_policy_pack(path)
+
+
+def test_a_pack_without_taint_needs_no_side_effecting_tools(tmp_path):
+    path = tmp_path / "pack.yaml"
+    path.write_text("name: t\nupstream_command: python\npolicies: [allowlist]\n")
+    assert load_policy_pack(path).side_effecting_tools == []
+
+
+def test_the_registry_builds_taint_from_the_pack():
+    from policy_guard import __main__ as cli
+
+    pack = PolicyPack(
+        name="t", upstream_command="python", policies=["allowlist", "taint"],
+        side_effecting_tools=["act", "destroy"],
+    )
+    policy = cli.POLICIES["taint"](pack, None)
+    assert policy.name == "taint"
+    assert policy.side_effecting_tools == frozenset({"act", "destroy"})
+
+
+def test_the_shipped_packs_load_taint_and_label_only_the_upload_untrusted():
+    """The supervisor's ruling made concrete: catalogue text is university-
+    published, so reading it must not taint a run, or every enrolment that
+    followed a subject lookup would be held and the compliance campaign's
+    completion rate would collapse for a reason unrelated to the question."""
+    for name in ("enrolment.yaml", "enrolment-personas.yaml"):
+        pack = load_policy_pack(REPO / "configs" / name)
+        assert pack.policies == ["allowlist", "arg_validation", "taint"], name
+        untrusted = {tool for tool, label in pack.trust.items() if label == "untrusted"}
+        assert untrusted == {"get_attachment"}, name
+        assert pack.side_effecting_tools == ["enrol", "drop", "submit_erequest"], name
