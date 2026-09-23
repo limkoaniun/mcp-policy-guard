@@ -21,7 +21,13 @@ import anyio
 from policy_guard.upstream import connect_subprocess
 
 from ..ablation import ablated_pack
-from ..run_setup import arms_for, off_arm_allowed, write_overlay, write_task
+from ..run_setup import (
+    arms_for,
+    off_arm_allowed,
+    write_attachments,
+    write_overlay,
+    write_task,
+)
 from ..scenarios_spec import Scenario, load_all
 from .campaign import (
     CampaignManifest,
@@ -125,6 +131,7 @@ async def run_one(
     run_dir.mkdir(parents=True, exist_ok=False)
 
     overlay_path = write_overlay(scenario, run_dir)
+    attachments_path = write_attachments(scenario, run_dir)
     task_path = write_task(
         run_dir,
         task_id=scenario.id,
@@ -132,6 +139,7 @@ async def run_one(
         allowed_tools=scenario.task.allowed_tools,
         principal_id=scenario.persona,
         overlay_path=overlay_path,
+        attachments_path=attachments_path,
     )
 
     arguments = [

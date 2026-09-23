@@ -21,7 +21,13 @@ from pydantic import BaseModel, Field
 from policy_guard.decisions import run_is_complete
 from policy_guard.upstream import connect_subprocess
 
-from .run_setup import off_arm_allowed, students_baseline_path, write_overlay, write_task
+from .run_setup import (
+    off_arm_allowed,
+    students_baseline_path,
+    write_attachments,
+    write_overlay,
+    write_task,
+)
 from .scenarios_spec import Scenario
 
 
@@ -194,6 +200,7 @@ async def run_scenario(
     run_dir = Path(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
     overlay_path = write_overlay(scenario, run_dir)
+    attachments_path = write_attachments(scenario, run_dir)
     task_path = write_task(
         run_dir,
         task_id=scenario.id,
@@ -201,6 +208,7 @@ async def run_scenario(
         allowed_tools=scenario.task.allowed_tools,
         principal_id=scenario.persona,
         overlay_path=overlay_path,
+        attachments_path=attachments_path,
     )
 
     arguments = [
