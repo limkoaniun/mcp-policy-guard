@@ -1,0 +1,255 @@
+{
+  "total": 4212,
+  "scored": 4158,
+  "exclusions": {
+    "provider_error": 54
+  },
+  "eligibility": {
+    "agent": {
+      "llama3.1:8b": {
+        "answered": {
+          "numerator": 744,
+          "denominator": 744
+        },
+        "accuracy_over_answered": {
+          "numerator": 669,
+          "denominator": 744
+        },
+        "accuracy_over_all": {
+          "numerator": 669,
+          "denominator": 744
+        },
+        "mean_latency_ms": 3127.904587564552,
+        "mean_duration_s": 4.168529908387153,
+        "by_depth": {
+          "0": {
+            "numerator": 111,
+            "denominator": 120
+          },
+          "1": {
+            "numerator": 120,
+            "denominator": 120
+          },
+          "2": {
+            "numerator": 99,
+            "denominator": 120
+          },
+          "3": {
+            "numerator": 111,
+            "denominator": 120
+          },
+          "4": {
+            "numerator": 84,
+            "denominator": 120
+          }
+        },
+        "majority_baseline": {
+          "numerator": 510,
+          "denominator": 744
+        }
+      },
+      "llama3.2": {
+        "answered": {
+          "numerator": 696,
+          "denominator": 744
+        },
+        "accuracy_over_answered": {
+          "numerator": 510,
+          "denominator": 696
+        },
+        "accuracy_over_all": {
+          "numerator": 510,
+          "denominator": 744
+        },
+        "mean_latency_ms": 1348.0790580778698,
+        "mean_duration_s": 2.380091366269538,
+        "by_depth": {
+          "0": {
+            "numerator": 0,
+            "denominator": 120
+          },
+          "1": {
+            "numerator": 117,
+            "denominator": 117
+          },
+          "2": {
+            "numerator": 66,
+            "denominator": 87
+          },
+          "3": {
+            "numerator": 108,
+            "denominator": 117
+          },
+          "4": {
+            "numerator": 75,
+            "denominator": 111
+          }
+        },
+        "majority_baseline": {
+          "numerator": 510,
+          "denominator": 744
+        }
+      }
+    },
+    "rag": {
+      "llama3.1:8b": {
+        "answered": {
+          "numerator": 741,
+          "denominator": 741
+        },
+        "accuracy_over_answered": {
+          "numerator": 531,
+          "denominator": 741
+        },
+        "accuracy_over_all": {
+          "numerator": 531,
+          "denominator": 741
+        },
+        "mean_latency_ms": 3134.156112412403,
+        "mean_duration_s": 3.1342761922585582,
+        "by_depth": {
+          "0": {
+            "numerator": 27,
+            "denominator": 120
+          },
+          "1": {
+            "numerator": 108,
+            "denominator": 120
+          },
+          "2": {
+            "numerator": 75,
+            "denominator": 120
+          },
+          "3": {
+            "numerator": 102,
+            "denominator": 117
+          },
+          "4": {
+            "numerator": 81,
+            "denominator": 120
+          }
+        },
+        "majority_baseline": {
+          "numerator": 507,
+          "denominator": 741
+        }
+      },
+      "llama3.2": {
+        "answered": {
+          "numerator": 744,
+          "denominator": 744
+        },
+        "accuracy_over_answered": {
+          "numerator": 558,
+          "denominator": 744
+        },
+        "accuracy_over_all": {
+          "numerator": 558,
+          "denominator": 744
+        },
+        "mean_latency_ms": 1139.5892912098857,
+        "mean_duration_s": 1.1397024733145842,
+        "by_depth": {
+          "0": {
+            "numerator": 66,
+            "denominator": 120
+          },
+          "1": {
+            "numerator": 117,
+            "denominator": 120
+          },
+          "2": {
+            "numerator": 93,
+            "denominator": 120
+          },
+          "3": {
+            "numerator": 81,
+            "denominator": 120
+          },
+          "4": {
+            "numerator": 81,
+            "denominator": 120
+          }
+        },
+        "majority_baseline": {
+          "numerator": 510,
+          "denominator": 744
+        }
+      }
+    }
+  },
+  "session": {
+    "agent": {
+      "llama3.1:8b": {
+        "answered": {
+          "numerator": 300,
+          "denominator": 300
+        },
+        "accuracy_over_answered": {
+          "numerator": 159,
+          "denominator": 300
+        },
+        "accuracy_over_all": {
+          "numerator": 159,
+          "denominator": 300
+        },
+        "mean_latency_ms": 3450.5530219393163,
+        "mean_duration_s": 4.48766225790605,
+        "mean_jaccard": 0.8983574372547414
+      },
+      "llama3.2": {
+        "answered": {
+          "numerator": 300,
+          "denominator": 300
+        },
+        "accuracy_over_answered": {
+          "numerator": 177,
+          "denominator": 300
+        },
+        "accuracy_over_all": {
+          "numerator": 177,
+          "denominator": 300
+        },
+        "mean_latency_ms": 1976.7493850955118,
+        "mean_duration_s": 2.9996042336531294,
+        "mean_jaccard": 0.9471383165343531
+      }
+    },
+    "rag": {
+      "llama3.1:8b": {
+        "answered": {
+          "numerator": 297,
+          "denominator": 297
+        },
+        "accuracy_over_answered": {
+          "numerator": 0,
+          "denominator": 297
+        },
+        "accuracy_over_all": {
+          "numerator": 0,
+          "denominator": 297
+        },
+        "mean_latency_ms": 5545.662006867347,
+        "mean_duration_s": 5.5460090090980065,
+        "mean_jaccard": 0.2692901101364648
+      },
+      "llama3.2": {
+        "answered": {
+          "numerator": 288,
+          "denominator": 288
+        },
+        "accuracy_over_answered": {
+          "numerator": 0,
+          "denominator": 288
+        },
+        "accuracy_over_all": {
+          "numerator": 0,
+          "denominator": 288
+        },
+        "mean_latency_ms": 4884.354334903441,
+        "mean_duration_s": 4.884695269680782,
+        "mean_jaccard": 0.20287705134031878
+      }
+    }
+  }
+}
