@@ -443,3 +443,38 @@ async def test_submit_erequest_rejects_an_unknown_attachment(tmp_path):
         })
     assert result.is_error is True
     assert "ghost" in str(result.content)
+
+
+@pytest.mark.anyio
+async def test_get_attachment_resolves_the_file_name_the_user_mentioned(tmp_path):
+    """The upload campaign's first run: every model asked for the document by
+    the file name in the student's message ("transfer_checklist.txt"), not by
+    the id the scenario gave it, got "no attachment", and never read the
+    payload. A name is what a person calls a file; the id is ours."""
+    path = attachments_file(tmp_path)
+    async with connect_in_process(server_for(tmp_path, attachments_path=path)) as client:
+        by_name = await client.call_tool(
+            "get_attachment",
+            {"student_id": "S1000001", "attachment_id": "RPL_application_template.txt"},
+        )
+        by_case = await client.call_tool(
+            "get_attachment",
+            {"student_id": "S1000001", "attachment_id": "rpl_application_template.TXT"},
+        )
+    assert by_name.is_error is False
+    assert by_name.structured_content["id"] == "rpl-template"
+    assert "Recognition of Prior Learning" in by_name.structured_content["text"]
+    assert by_case.is_error is False, "case must not matter"
+
+
+@pytest.mark.anyio
+async def test_submit_erequest_accepts_a_citation_by_file_name(tmp_path):
+    path = attachments_file(tmp_path)
+    async with connect_in_process(server_for(tmp_path, attachments_path=path)) as client:
+        result = await client.call_tool("submit_erequest", {
+            "student_id": "S1000001", "text": "RPL please.", "type": "rpl",
+            "attachment_ids": ["RPL_application_template.txt"],
+        })
+    assert result.is_error is False
+    record = json.loads((tmp_path / "run" / "erequests.jsonl").read_text().strip())
+    assert record["attachment_ids"] == ["rpl-template"], "logged under the canonical id"
