@@ -11,7 +11,7 @@ import pytest
 
 from enrolment.agent import cli_common
 from enrolment.agent.campaign import RunSpec, model_slug
-from enrolment.agent.prompts import NUDGE, SYSTEM_PROMPT
+from enrolment.agent.prompts import NUDGE, RAG_SYSTEM_PROMPT, SYSTEM_PROMPT
 from enrolment.run_setup import write_task
 
 
@@ -27,6 +27,13 @@ def test_the_nudge_has_one_home():
 
 def test_the_system_prompt_still_takes_a_principal():
     assert "{principal}" in SYSTEM_PROMPT
+
+
+def test_the_rag_system_prompt_does_not_tell_the_tool_less_arm_to_use_tools():
+    """SYSTEM_PROMPT tells the model to use tools it does not have when the
+    RAG arm is given it -- the rag chatbot has no tools at all."""
+    assert "{principal}" in RAG_SYSTEM_PROMPT
+    assert "tools to help" not in RAG_SYSTEM_PROMPT
 
 
 def test_run_spec_moved_without_changing_its_run_id():

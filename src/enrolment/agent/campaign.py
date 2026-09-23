@@ -36,7 +36,7 @@ MANIFEST = "campaign.json"
 #: rather than chosen -- re-reading a digest from a daemon must not invalidate
 #: a resume.
 METHOD_FIELDS = (
-    "models", "repeats", "system_prompt", "nudge",
+    "models", "repeats", "system_prompt", "rag_system_prompt", "nudge",
     "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
     "sample_digest", "num_ctx",
 )
@@ -54,6 +54,11 @@ class CampaignManifest(BaseModel):
     models: list[str]
     repeats: int
     system_prompt: str
+    #: The RAG arm's system prompt, when this campaign runs one. `None` for a
+    #: manifest that predates the field (a compliance/adversarial campaign
+    #: has no RAG arm and never sets it) or a caller that does not set one --
+    #: Pydantic fills that in on load, the same way `num_ctx` does.
+    rag_system_prompt: str | None = None
     nudge: str
     policy_pack: str
     max_model_turns: int = 4

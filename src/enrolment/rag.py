@@ -23,7 +23,7 @@ from collections.abc import Callable
 
 from pydantic import BaseModel, Field
 
-from .agent.prompts import SYSTEM_PROMPT
+from .agent.prompts import RAG_SYSTEM_PROMPT
 from .agent.transcript import ChatReply
 from .models import Course, Student, Subject, SubjectRequisites
 from .progression import expand_structure
@@ -174,14 +174,16 @@ def answer(
     aos: dict[str, Course],
     chat: Chat,
     model: str,
-    system_prompt: str = SYSTEM_PROMPT,
+    system_prompt: str = RAG_SYSTEM_PROMPT,
     attachments: dict[str, dict] | None = None,
     session: str | None = None,
 ) -> RagReply:
     """Retrieve, stuff, answer. One completion; no tools are offered.
 
-    The system prompt is the agent's own with the principal filled, so the
-    two arms differ in what they can do, not in how they are addressed.
+    The default system prompt (`RAG_SYSTEM_PROMPT`) says plainly that this
+    model has no tools -- the agent's own `SYSTEM_PROMPT` tells the model to
+    use tools to help the student, which is false here and would invite a
+    tool-less model to narrate or hallucinate a call as text.
     `model` is recorded by the caller; it is accepted here so the signature
     matches the agent arm's and a runner can treat the two alike.
     """

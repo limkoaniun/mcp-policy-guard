@@ -38,7 +38,7 @@ from .campaign import (
 from .cli_common import preflight, warn_on_digest_drift
 from .loop import AgentTask, run_agent
 from .ollama import ollama_chat
-from .prompts import NUDGE, PROMPTS
+from .prompts import NUDGE, PROMPTS, RAG_SYSTEM_PROMPT
 from .sampling import sample_digest, stratified_sample
 from .transcript import ResponseOutcome, Transcript, TurnRecord
 
@@ -110,7 +110,7 @@ async def run_rag_one(task, spec, *, campaign_dir, chat_factory, manifest, world
             task.question, student=world.students[task.student_id], catalogue=world.catalogue,
             requisites=world.requisites, course=world.course, aos=world.aos,
             chat=chat_factory(spec.model), model=spec.model,
-            system_prompt=manifest.system_prompt, session=task.session,
+            system_prompt=manifest.rag_system_prompt, session=task.session,
         )
     except Exception as exc:  # noqa: BLE001 - mirrors loop.py: any provider failure ends this run, recorded, replaceable
         duration = time.perf_counter() - started
@@ -207,6 +207,7 @@ def build_tasks(args, world: World) -> tuple[list[AdviceTask], str]:
 def build_manifest(args, fingerprints: dict, digest: str) -> CampaignManifest:
     return CampaignManifest(
         models=list(args.models), repeats=args.repeats, system_prompt=PROMPTS[args.prompt],
+        rag_system_prompt=RAG_SYSTEM_PROMPT,
         nudge=NUDGE, policy_pack=args.pack, max_model_turns=args.max_model_turns,
         max_calls=args.max_calls, temperature=args.temperature, seed=args.seed,
         fingerprints=fingerprints, sample_digest=digest or None, num_ctx=args.num_ctx,

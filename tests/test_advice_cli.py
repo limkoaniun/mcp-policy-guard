@@ -9,6 +9,7 @@ import yaml
 from enrolment.advice import AdviceTask
 from enrolment.agent import advice as cli
 from enrolment.agent.campaign import CampaignManifest, RunSpec, existing_status, run_status
+from enrolment.agent.prompts import RAG_SYSTEM_PROMPT
 from enrolment.agent.transcript import ChatReply, ProposedCall, ResponseOutcome, Transcript
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -26,6 +27,7 @@ def elig():
 def manifest():
     return CampaignManifest(
         models=["fake"], repeats=1, system_prompt="You help {principal}.",
+        rag_system_prompt=RAG_SYSTEM_PROMPT,
         nudge="Thanks. Please proceed.", policy_pack=str(PACK),
         fingerprints={"fake": {"model": "fake"}}, sample_digest="abc",
     )
@@ -106,6 +108,31 @@ async def test_the_rag_arm_writes_rag_json_and_a_readable_one_turn_transcript(tm
     assert len(read.turns) == 1 and read.turns[0].outcome is ResponseOutcome.TEXT
     assert read.turns[0].text.startswith("NOT ELIGIBLE")
     assert duration >= 0
+
+
+def test_build_manifest_records_the_rag_system_prompt():
+    args = cli.parse_args(["--campaign", "x"])
+    manifest = cli.build_manifest(args, {}, "")
+    assert manifest.rag_system_prompt == RAG_SYSTEM_PROMPT
+
+
+@pytest.mark.anyio
+async def test_the_rag_arm_uses_the_rag_system_prompt(tmp_path):
+    world = cli.load_world(REPO, REPO / "data" / "students.json")
+    spec = RunSpec(scenario_id="E-S1000001-32933", model="fake", arm="rag", repeat=1)
+    seen = {}
+
+    def chat_factory(model):
+        def chat(messages, tools):
+            seen["messages"] = messages
+            return ChatReply(content="NOT ELIGIBLE. Missing 32144.")
+
+        return chat
+
+    await cli.run_rag_one(
+        elig(), spec, campaign_dir=tmp_path, chat_factory=chat_factory, manifest=manifest(), world=world,
+    )
+    assert seen["messages"][0]["content"] == RAG_SYSTEM_PROMPT.replace("{principal}", "S1000001")
 
 
 @pytest.mark.anyio
