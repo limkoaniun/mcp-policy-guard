@@ -88,7 +88,11 @@ adversarial number is reported.
   SC-03, SC-05, SC-08); rate/scope limits; census dates; documents beyond
   plain text (PDF extraction as its own attack surface).
 
-## 5. Code work that follows (not started), in the order that unblocks the report
+## 5. Code work that follows
+
+Job 5's code is built (`context/2026-09-23-rag-advice-design.md`); its campaign is pending. Jobs 6–8 are open.
+
+In the order that unblocks the report:
 
 1. **Attachments.** `src/enrolment/attachments.py`: a per-session store of
    named text documents. New tool `get_attachment(student_id, attachment_id)`
