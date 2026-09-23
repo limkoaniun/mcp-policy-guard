@@ -12,7 +12,7 @@ from enrolment.advice import (
     session_tasks,
     write_tasks,
 )
-from enrolment.agent.sampling import SampledScenario, stratified_sample
+from enrolment.agent.sampling import stratified_sample
 from enrolment.models import Course, Student, Subject
 from enrolment.progression import session_options
 from enrolment.scenarios import read_jsonl
