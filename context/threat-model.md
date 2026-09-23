@@ -16,8 +16,8 @@ agent's actions.
   `submit_erequest`)
 
 ### Attacker capabilities
-- Controls content returned by one or more untrusted tools — subject descriptions,
-  handbook content, web pages, emails, files
+- Controls content the student will upload — templates, letters, transcripts —
+  and, in the retired original suite, subject descriptions
 - May publish a malicious MCP server, with poisoned tool descriptions or shadowed
   tool names
 - Cannot modify the agent, the proxy, or the model weights
@@ -64,6 +64,12 @@ concern would leave the more probable failure unaddressed.
 - **Tool results from untrusted servers:** always tainted
 - **The model's reasoning:** never trusted to enforce a rule that can be checked
   deterministically
+- **Uploaded documents:** the one untrusted tool result in the enrolment pack;
+  reading one taints the run and holds later side-effecting calls for
+  confirmation. Taint lives for one proxy process — one campaign run, one
+  demo message — while the model's conversation history outlives it, so an
+  instruction planted in message 1 that asks for an action in message 2 meets
+  an untainted proxy; the turn boundary is the mechanism's largest residual.
 
 That last boundary is the project's thesis stated as a trust assumption.
 

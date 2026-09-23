@@ -100,7 +100,8 @@ class RunManifest(BaseModel):
     is delivered, nothing objects, the agent does the benign thing, and
     afterwards there is no artifact that distinguishes that run from one that
     was attacked and defended. Hence `overlay` is recorded explicitly as
-    `null` rather than left out.
+    `null` rather than left out. The same applies to attachments: a task that
+    uploaded no documents records attachments as null.
 
     Every field is required and extras are rejected. A manifest whose whole job
     is to say what the run was must not be able to record a quietly defaulted
@@ -117,6 +118,7 @@ class RunManifest(BaseModel):
     enforcement: str
     approval_mode: str
     overlay: str | None
+    attachments: str | None
     upstream_command: str
     upstream_args: list[str]
 

@@ -395,3 +395,32 @@ def test_enrolment_validators_deny_an_unknown_enrolled_code_rather_than_price_it
 
     assert reason is not None
     assert "NOTACODE" in reason
+
+
+def test_observing_a_forwarded_untrusted_call_taints_the_context_once():
+    engine = PolicyEngine([AllowlistPolicy()])
+    context = TaskContext(task_id="T", allowed_tools=frozenset({"read_doc", "read_thing"}))
+    extension = EnforcementExtension(
+        engine, context, DecisionLog(None), untrusted_tools={"read_doc"}
+    )
+    assert context.tainted is False
+
+    extension.observe_forwarded(ToolCall(tool="read_thing"))
+    assert context.tainted is False, "a trusted tool does not taint"
+
+    extension.observe_forwarded(ToolCall(tool="read_doc"))
+    extension.observe_forwarded(ToolCall(tool="read_doc"))
+    assert context.tainted is True
+    assert context.taint_sources == ["read_doc"], "recorded once, in first-read order"
+
+
+def test_the_tainted_flag_is_logged_on_calls_after_the_read():
+    engine = PolicyEngine([AllowlistPolicy()])
+    context = TaskContext(task_id="T", allowed_tools=frozenset({"read_doc", "act"}))
+    extension = EnforcementExtension(
+        engine, context, DecisionLog(None), untrusted_tools={"read_doc"}
+    )
+    extension.decide(ToolCall(tool="act"))
+    extension.observe_forwarded(ToolCall(tool="read_doc"))
+    extension.decide(ToolCall(tool="act"))
+    assert [r.tainted for r in extension.log.records] == [False, True]

@@ -9,8 +9,8 @@ from the pack the baseline ran under -- a different upstream, a different
 students file -- and then the two campaigns differ by more than the policy
 under test, which is the one thing an ablation may not do.
 
-Only two of the four policies exist. `taint` and `limits` are stubs, so a
-sweep produces two ablations and the report must say why not four.
+Three of the four policies exist. `limits` is a stub, so a sweep produces
+three ablations and the report must say why not four.
 """
 
 from __future__ import annotations

@@ -40,6 +40,7 @@ KNOWN_TOOLS = {
     "search_subjects", "get_subject_details", "get_student_record",
     "check_prerequisites", "enrol", "drop", "submit_erequest",
     "get_study_plan", "preview_major_change", "get_session_options",
+    "get_attachment",
 }
 
 
@@ -47,6 +48,11 @@ KNOWN_TOOLS = {
 #: with the side-effectful ones marked. The page draws its checkboxes from
 #: this rather than from a list of its own, so a tool added upstream cannot
 #: go missing from the console.
+#:
+#: `get_attachment` is deliberately absent here until the demo gains an
+#: attach control (the UI job) -- there is nothing yet for the console to let
+#: a user upload, so the "cannot go missing" invariant above is suspended for
+#: that one tool.
 TOOLS = [
     {"name": "search_subjects", "side_effect": False},
     {"name": "get_subject_details", "side_effect": False},

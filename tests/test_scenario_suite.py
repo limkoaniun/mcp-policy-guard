@@ -17,6 +17,7 @@ KNOWN_TOOLS = {
     "search_subjects", "get_subject_details", "get_student_record",
     "check_prerequisites", "enrol", "drop", "submit_erequest",
     "get_study_plan", "preview_major_change", "get_session_options",
+    "get_attachment",
 }
 
 
@@ -25,7 +26,7 @@ def suite():
 
 
 def test_every_scenario_file_loads():
-    assert len(suite()) == 16
+    assert len(suite()) == 24
 
 
 def test_every_attack_class_is_instantiated():
@@ -66,6 +67,18 @@ def test_each_benign_twin_matches_its_injected_counterpart():
         assert set(twin.task.allowed_tools) == set(scenario.task.allowed_tools)
         assert twin.attack_class is None
         assert twin.payload is None
+        assert twin.attachments == scenario.attachments
+        assert twin.task.description == scenario.task.description
+
+
+def test_every_upload_borne_scenario_delivers_through_an_attachment():
+    """The new classes exist to put the payload where a student would: in a
+    document they uploaded. A scenario in one of them that delivered any
+    other way would be measuring the old channel under a new name."""
+    for scenario in suite():
+        if scenario.injected and scenario.id.startswith("A-"):
+            assert scenario.payload.location == "attachment", scenario.id
+            assert scenario.deliverable, scenario.id
 
 
 @pytest.mark.anyio

@@ -22,7 +22,7 @@ def test_it_removes_only_the_named_policy(tmp_path):
     derived = ablated_pack(PACK, "allowlist", tmp_path)
     body = yaml.safe_load(derived.read_text(encoding="utf-8"))
 
-    assert body["policies"] == ["arg_validation"]
+    assert body["policies"] == ["arg_validation", "taint"]
 
 
 def test_it_keeps_everything_else_the_pack_declares(tmp_path):
@@ -32,7 +32,8 @@ def test_it_keeps_everything_else_the_pack_declares(tmp_path):
     derived = yaml.safe_load(ablated_pack(PACK, "allowlist", tmp_path).read_text())
 
     for key in ("upstream_command", "upstream_args", "trust", "domain_rules",
-                "domain_rules_args", "principal_argument", "principal_exempt_tools"):
+                "domain_rules_args", "principal_argument", "principal_exempt_tools",
+                "side_effecting_tools"):
         assert derived[key] == original[key], key
 
 
@@ -50,8 +51,8 @@ def test_the_derived_pack_names_the_ablation(tmp_path):
 def test_ablating_a_policy_the_pack_does_not_load_is_refused(tmp_path):
     """Silently producing an identical pack would report a baseline as an
     ablation."""
-    with pytest.raises(ValueError, match="taint"):
-        ablated_pack(PACK, "taint", tmp_path)
+    with pytest.raises(ValueError, match="limits"):
+        ablated_pack(PACK, "limits", tmp_path)
 
 
 def test_ablating_the_last_policy_is_refused(tmp_path):
@@ -59,8 +60,9 @@ def test_ablating_the_last_policy_is_refused(tmp_path):
     empty engine, because it allows every call while logging verdicts that
     look like enforcement. Catching it here names the ablation that caused it."""
     once = ablated_pack(PACK, "allowlist", tmp_path)
+    twice = ablated_pack(once, "arg_validation", tmp_path / "again")
     with pytest.raises(ValueError, match="no policies"):
-        ablated_pack(once, "arg_validation", tmp_path / "again")
+        ablated_pack(twice, "taint", tmp_path / "again-again")
 
 
 def test_the_adversarial_cli_runs_against_the_ablated_pack(tmp_path, capsys):
@@ -75,7 +77,7 @@ def test_the_adversarial_cli_runs_against_the_ablated_pack(tmp_path, capsys):
 
     derived = tmp_path / "camp" / "enrolment-personas-no-allowlist.yaml"
     assert derived.exists()
-    assert yaml.safe_load(derived.read_text())["policies"] == ["arg_validation"]
+    assert yaml.safe_load(derived.read_text())["policies"] == ["arg_validation", "taint"]
     assert "allowlist" in capsys.readouterr().out
 
 
@@ -89,7 +91,7 @@ def test_the_compliance_cli_runs_against_the_ablated_pack(tmp_path, capsys):
 
     derived = tmp_path / "camp" / "enrolment-no-arg_validation.yaml"
     assert derived.exists()
-    assert yaml.safe_load(derived.read_text())["policies"] == ["allowlist"]
+    assert yaml.safe_load(derived.read_text())["policies"] == ["allowlist", "taint"]
 
 
 def test_a_real_adversarial_run_uses_the_ablated_pack(tmp_path, monkeypatch):

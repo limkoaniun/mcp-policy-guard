@@ -20,6 +20,7 @@ from .enforcement import EnforcementExtension
 from .engine import PolicyEngine
 from .policies.allowlist import AllowlistPolicy
 from .policies.arg_validation import ArgumentValidationPolicy
+from .policies.taint import TaintPolicy
 
 
 def _load_domain_rules(pack, run_dir=None) -> dict:
@@ -91,6 +92,7 @@ POLICIES = {
         validators=_load_domain_rules(pack, run_dir=run_dir),
         exempt_tools=pack.principal_exempt_tools,
     ),
+    "taint": lambda pack, run_dir: TaintPolicy(pack.side_effecting_tools),
 }
 
 # Distinct from 1 so a run that failed *inside* the proxy is tellable from a
@@ -165,6 +167,11 @@ def main(argv: list[str] | None = None) -> int:
         DecisionLog(f"{args.run_dir}/decisions.jsonl"),
         enforcement=args.enforcement == "on",
         approval_mode=args.approval_mode,
+        # The pack's trust labels are per tool. Only the untrusted set matters
+        # to taint, and it is derived here so the pack stays the one source.
+        untrusted_tools=frozenset(
+            tool for tool, label in pack.trust.items() if label == "untrusted"
+        ),
     )
 
     import anyio
@@ -198,6 +205,9 @@ def main(argv: list[str] | None = None) -> int:
     overlay = task.overlay or None
     if overlay:
         upstream_args += ["--overlay", overlay]
+    attachments = task.attachments or None
+    if attachments:
+        upstream_args += ["--attachments", attachments]
 
     upstream_command = resolve_upstream_command(pack.upstream_command)
 
@@ -220,6 +230,7 @@ def main(argv: list[str] | None = None) -> int:
         enforcement="on" if enforcement.enforcement else "off",
         approval_mode=enforcement.approval_mode,
         overlay=str(Path(overlay).resolve()) if overlay else None,
+        attachments=str(Path(attachments).resolve()) if attachments else None,
         upstream_command=upstream_command,
         upstream_args=list(upstream_args),
     )

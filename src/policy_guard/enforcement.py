@@ -27,6 +27,7 @@ Three behaviours are load-bearing:
 from __future__ import annotations
 
 import time
+from collections.abc import Iterable
 
 from mcp.types import CallToolResult, TextContent
 
@@ -44,12 +45,17 @@ class EnforcementExtension:
         *,
         enforcement: bool = True,
         approval_mode: str = "deny",
+        untrusted_tools: Iterable[str] = (),
     ):
         self.engine = engine
         self.context = context
         self.log = log
         self.enforcement = enforcement
         self.approval_mode = approval_mode
+        # The pack's trust labels, reduced to the set that matters here. A
+        # forwarded call to any of these marks the run tainted; see
+        # `observe_forwarded`.
+        self.untrusted_tools = frozenset(untrusted_tools)
 
     def decide(self, call: ToolCall) -> tuple[Decision, bool]:
         """Rule on one call. Returns the decision and whether to forward it."""
@@ -90,6 +96,26 @@ class EnforcementExtension:
             approval_mode=approval_mode,
         )
         return decision, forward
+
+    def observe_forwarded(self, call: ToolCall) -> None:
+        """Record that `call` was forwarded to the upstream and answered.
+
+        Called by `PolicyProxy.call` after the upstream returns, whether the
+        result was an error or not: a forwarded call to an untrusted tool
+        taints the run even if the document was empty, because fail-closed is
+        the direction this layer errs in. A *refused* call is never observed
+        -- nothing was read. Taint is sticky for the life of this extension,
+        which is one proxy process: one campaign run, or one demo message.
+
+        Taint is set after the upstream returns, which assumes sequential
+        dispatch -- true of the agent loop today. Concurrent tool calls would
+        need the flag set before forwarding.
+        """
+        if call.tool not in self.untrusted_tools:
+            return
+        if call.tool not in self.context.taint_sources:
+            self.context.taint_sources.append(call.tool)
+        self.context.tainted = True
 
     @staticmethod
     def refusal(decision: Decision) -> CallToolResult:

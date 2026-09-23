@@ -3,7 +3,7 @@
 **32933 Research Project (Type I) · UTS · Spring 2026**
 **Supervisor:** David Milne
 **Status:** living document — supersedes `RevisedPlan.docx` as the working specification
-**Last updated:** 2026-08-26
+**Last updated:** 2026-09-23 (§1–§3 rewritten for the pivot; later sections predate it and still describe the 2×2 adversarial/benign design — read them with `context/2026-09-23-pivot-upload-injection-vs-rag.md` beside them)
 
 This document consolidates the revised plan (which incorporated the supervisor's
 enrolment-domain proposal) with the design decisions taken since, and with what
@@ -18,45 +18,78 @@ LLM agents act through tools, and MCP is becoming the standard interface between
 agents and those tools. Two distinct failure modes follow from that, and the
 project's central argument is that one mechanism addresses both.
 
-**The hijacked agent.** Tool results — web pages, emails, subject descriptions —
-are untrusted data, yet the agent processes them in the same context as trusted
-instructions. Injected text in a tool output, or a poisoned tool description, can
-redirect the agent into exfiltrating data or taking unauthorised action.
+**The hijacked agent.** Tool results are untrusted data, yet the agent processes
+them in the same context as trusted instructions. In an enrolment assistant the
+credible untrusted result is not the university's own handbook — text planted
+there is not a realistic threat — but the documents a student hands over:
+Recognition of Prior Learning transcripts, Special Consideration letters,
+templates downloaded from a forum. A student uploads one so the assistant can
+help; the assistant reads it; text a third party put there can redirect the
+agent into enrolling past a rule, dropping subjects, acting on another
+student, or copying the student's record into a request field it can later
+read.
 
-**The honestly mistaken agent.** Even with no adversary present, an agent asked to
-help with a task governed by deterministic business rules will sometimes get those
-rules wrong. Prerequisites, anti-requisites, credit-point caps and census dates are
-exactly this kind of rule: checkable with certainty, and beyond what a language
-model can be relied on to apply correctly every time.
+**The honestly mistaken agent.** Even with no adversary present, an agent asked
+to help with a task governed by deterministic business rules will sometimes get
+those rules wrong. Prerequisites, anti-requisites, credit-point caps and census
+dates are exactly this kind of rule: checkable with certainty, and beyond what
+a language model can be relied on to apply correctly every time. A student who
+edits their own document to talk the assistant past a rule is this failure mode
+with intent added; the guard treats both the same.
+
+The obvious safe alternative is to give the model no tools at all: a
+retrieval-augmented (RAG) chatbot that can answer questions about enrolment but
+cannot enrol anyone. Planted text can make it say anything and do nothing. It
+cannot break a rule, and it cannot do the job.
 
 Defences that operate inside the model — better prompts, self-checking, refusal
 training — are probabilistic, and therefore address neither failure mode with
-certainty. The claim under test is that a deterministic layer outside the model
-does.
+certainty. The claim under test is that a deterministic layer *outside* the
+model does, and that it does so without giving up the usefulness the tool-less
+chatbot gives up.
+
+*Revised 2026-09-23.* The earlier version of this statement used a
+subject-description injection as its example; the supervisor ruled that
+channel implausible and directed the project to student uploads. See
+`context/2026-09-23-pivot-upload-injection-vs-rag.md`.
 
 ## 2. Research question
 
 > To what extent can a rule-based policy enforcement layer, interposed between an
-> LLM agent and its MCP tool servers, prevent (a) adversarial prompt-injection
-> attacks and (b) benign violations of enrolment business rules, while preserving
+> LLM agent and its MCP tool servers, prevent (a) prompt-injection attacks carried
+> in documents students upload and (b) benign violations of enrolment business
+> rules — compared with a retrieval-augmented (RAG) chatbot — while preserving
 > the agent's ability to complete legitimate tasks?
 
-The second clause matters as much as the first. A layer that blocks everything
-scores perfectly on both attack success and rule violation, and is useless. Utility
-is a first-class metric, not a caveat.
+The last clause matters as much as the first two. A layer that blocks everything
+scores perfectly on attack success and rule violation, and is useless; so does a
+chatbot with no tools. Utility is a first-class metric, not a caveat, and the RAG
+arm exists to make that concrete: it is the point on the safety/utility plane
+that the guarded agent must beat on utility while matching on safety.
+
+**Superseded (2026-09-23):** the previous question read "(a) adversarial
+prompt-injection attacks" with no channel named, and had no comparison arm.
 
 ## 3. Scope
 
 **In scope.** A domain-agnostic MCP proxy and policy engine; an enrolment MCP
 server built on real UTS catalogue and requisite data with synthetic student
-records; four policy families (tool allowlists, argument validation, taint
-tracking, rate and scope limits); an adversarial attack suite and a generated
-business-rule compliance suite; an experimental evaluation; a demonstration
-frontend.
+records; per-session uploaded documents exposed through an untrusted
+`get_attachment` tool; three policy families the evaluation exercises (tool
+allowlists with principal binding, argument validation, taint tracking); an
+upload-borne attack suite in four classes with benign twins, and a generated
+business-rule compliance suite; eRequests with a type and attachments
+(requisite waiver, Special Consideration, Recognition of Prior Learning); a RAG
+chatbot baseline over the same data; an experimental evaluation across three
+arms — RAG, agent without guard, agent with guard; and a demonstration frontend
+with named personas.
 
-**Out of scope for this semester,** noted as future work: broader eRequest
-workflows (leave of absence, credit recognition, special permission); model-level
-jailbreaks in the user's own prompt; compromise of the host machine.
+**Out of scope for this semester,** noted as future work: injection through
+tool metadata and tool shadowing (scenarios exist; no delivery mechanism);
+rate and scope limits (designed; stub); document formats beyond extracted
+plain text; broader eRequest workflows beyond recording a typed request (leave
+of absence, special permission); model-level jailbreaks in the user's own
+prompt; compromise of the host machine.
 
 **A structural commitment.** `src/policy_guard/` must contain no enrolment-specific
 symbol. The enrolment domain ships as a loadable policy pack. This makes the

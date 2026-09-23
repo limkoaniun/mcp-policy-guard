@@ -181,6 +181,7 @@ MANIFEST_FIELDS = {
     "enforcement": "on",
     "approval_mode": "deny",
     "overlay": "/attacks/oi-001.yaml",
+    "attachments": None,
     "upstream_command": "/usr/bin/python3",
     "upstream_args": ["-m", "enrolment.server", "--run-dir", "/runs/1"],
 }

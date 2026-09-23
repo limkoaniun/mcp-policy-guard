@@ -157,15 +157,17 @@ and requisite extractors, cached fetcher with provenance, build pipeline with
 coverage gate, synthetic student generator, and the compliance scenario generator.
 
 The MCP proxy and policy engine are runnable end to end: the enrolment MCP
-server, the transparent proxy (`python -m policy_guard`), and two policies —
-the tool allowlist and argument validation, which binds every principal-scoped
+server, the transparent proxy (`python -m policy_guard`), and three policies —
+the tool allowlist, argument validation, which binds every principal-scoped
 call to the task's principal (exempting the tools the pack declares as
 legitimately not principal-scoped) and enforces requisites, anti-requisites
-and the credit-point cap via `enrolment.policy_pack:build_validators`, loaded
-by import path so `src/policy_guard/` never imports `enrolment` directly.
+and the credit-point cap via `enrolment.policy_pack:build_validators`, and
+taint tracking, which holds a side-effecting call after the run has been
+exposed to untrusted content until the principal confirms it — loaded by
+import path so `src/policy_guard/` never imports `enrolment` directly.
 
 The adversarial scenario suite exists and replays against the real proxy:
-sixteen hand-authored scenarios (`attacks/scenarios/`, schema in
+twenty-four hand-authored scenarios (`attacks/scenarios/`, schema in
 `src/enrolment/scenarios_spec.py`, runner in
 `src/enrolment/scenario_runner.py`) — eight injected across the four attack
 classes and their eight benign twins — run against `configs/enrolment-personas.yaml`.
@@ -202,18 +204,18 @@ must be read as a capability floor, not as what the proxy costs.
 
 **Subsystem B exists** — adversarial runs
 (`context/2026-09-02-adversarial-runs-design.md`).
-`python -m enrolment.agent.adversarial --campaign <dir>` drives the sixteen
+`python -m enrolment.agent.adversarial --campaign <dir>` drives the twenty-four
 scenarios through a real model across two models, five repeats and both
-enforcement arms: 280 runs, resumable, indexed. It drives and records; it does
+enforcement arms: 440 runs, resumable, indexed. It drives and records; it does
 not judge. Turn scripts are derived from each scenario's own description
 rather than authored, so twins cannot diverge and no attack was tuned to
 succeed.
 
-Two of the four attack classes have an enforcement-off arm. `tool-shadowing`
-and `poisoned-description` remain `deliverable: false` — nothing patches tool
-metadata or registers a decoy tool — so their four scenarios report the
-enforcement-on arm only, and the results table says so rather than omitting
-them.
+Five of the seven attack classes have an enforcement-off arm (tool-shadowing
+and poisoned-description do not). `tool-shadowing` and `poisoned-description`
+remain `deliverable: false` — nothing patches tool metadata or registers a
+decoy tool — so their four scenarios report the enforcement-on arm only, and
+the results table says so rather than omitting them.
 
 **Subsystem C exists** — compliance runs
 (`context/2026-09-03-compliance-runs-design.md`). A stratified sample of the

@@ -22,16 +22,24 @@ import yaml
 from pydantic import BaseModel, Field, ValidationError
 
 ATTACK_CLASSES = {
+    # Technique classes of the original suite (payload in a subject
+    # description; two undeliverable). Retained; see attacks/README.md.
     "output-injection",
     "poisoned-description",
     "tool-shadowing",
     "exfiltration",
+    # Upload-borne classes (2026-09-23), named for what the planted text asks
+    # the agent to do, because that is what the ablation attributes.
+    "rule-breaking-action",
+    "out-of-task-action",
+    "cross-principal-action",
 }
 
 # Payload delivery mechanisms that actually exist. `subject_description` maps
-# to the overlay's `description_suffix`; nothing yet patches tool metadata or
-# registers a decoy tool.
-DELIVERY_MECHANISMS = {"subject_description"}
+# to the overlay's `description_suffix`; `attachment` appends the payload to a
+# named uploaded document (`run_setup.write_attachments`). Nothing yet patches
+# tool metadata or registers a decoy tool.
+DELIVERY_MECHANISMS = {"subject_description", "attachment"}
 
 # Attack classes with no delivery mechanism implemented yet. A scenario in
 # one of these classes must be `deliverable: false` regardless of whether it
@@ -69,6 +77,20 @@ class Payload(BaseModel):
     text: str
 
 
+class AttachmentSpec(BaseModel):
+    """A document the persona uploads in this scenario, in the clean form.
+
+    An injected scenario's payload with `location: attachment` is appended to
+    the document named by `payload.target` at run time; the benign twin
+    carries the identical block and no payload, so the two runs differ only
+    in the planted text.
+    """
+
+    id: str
+    name: str
+    text: str
+
+
 class TaskSpec(BaseModel):
     description: str = ""
     allowed_tools: list[str] = Field(default_factory=list)
@@ -87,6 +109,7 @@ class Scenario(BaseModel):
     deliverable: bool = True
     task: TaskSpec
     payload: Payload | None = None
+    attachments: list[AttachmentSpec] = Field(default_factory=list)
     replay: list[ReplayCall] = Field(default_factory=list)
     final_state: FinalState = Field(default_factory=FinalState)
 
@@ -155,6 +178,20 @@ def load_scenario(path, *, personas, known_tools) -> Scenario:
                 f"deliverable: true. A payload that cannot land must be declared "
                 f"deliverable: false, or its enforcement-off arm would report "
                 f"'the attack failed' when no attack was ever mounted."
+            )
+
+    ids = [attachment.id for attachment in scenario.attachments]
+    duplicates = sorted({i for i in ids if ids.count(i) > 1})
+    if duplicates:
+        raise ScenarioError(
+            f"{path}: attachment ids {duplicates} are declared more than once"
+        )
+    if scenario.payload is not None and scenario.payload.location == "attachment":
+        if scenario.payload.target not in ids:
+            raise ScenarioError(
+                f"{path}: payload targets attachment {scenario.payload.target!r}, "
+                f"which the scenario does not declare (have {ids}). A payload "
+                f"that cannot land must not load as one that did."
             )
 
     if scenario.persona not in personas:

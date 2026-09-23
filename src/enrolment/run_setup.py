@@ -16,6 +16,7 @@ not be able to disagree about which those are.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import yaml
@@ -51,6 +52,7 @@ def write_task(
     allowed_tools: list[str],
     principal_id: str,
     overlay_path=None,
+    attachments_path=None,
 ) -> Path:
     """The `task.yaml` the proxy is launched against.
 
@@ -68,6 +70,8 @@ def write_task(
     }
     if overlay_path is not None:
         task["overlay"] = str(overlay_path)
+    if attachments_path is not None:
+        task["attachments"] = str(attachments_path)
     path = run_dir / "task.yaml"
     path.write_text(yaml.safe_dump(task), encoding="utf-8")
     return path
@@ -94,6 +98,9 @@ def write_overlay(scenario: Scenario, run_dir) -> Path | None:
             encoding="utf-8",
         )
         return path
+    if payload.location == "attachment":
+        # Delivered by `write_attachments`, not by the overlay.
+        return None
     # Coupled to `scenarios_spec.DELIVERY_MECHANISMS` only by convention -- a
     # location added there without a matching branch here would otherwise fall
     # through to `return None`, running a `deliverable: true` scenario with no
@@ -103,6 +110,31 @@ def write_overlay(scenario: Scenario, run_dir) -> Path | None:
         f"by the loader as deliverable, but run_setup implements no delivery "
         f"mechanism for it"
     )
+
+
+def write_attachments(scenario: Scenario, run_dir) -> Path | None:
+    """Write the run's uploaded documents, delivering the payload inside one.
+
+    The twin rule is what makes this fair: both twins carry the same
+    `attachments` block, so the clean document is byte-identical across the
+    pair and the injected run differs only by the appended payload. The
+    payload is appended after a blank line -- the position a hidden footer or
+    a note "from the institution" would occupy in a real template.
+    """
+    if not scenario.attachments:
+        return None
+    documents = {
+        attachment.id: {"name": attachment.name, "text": attachment.text}
+        for attachment in scenario.attachments
+    }
+    payload = scenario.payload
+    if payload is not None and scenario.deliverable and payload.location == "attachment":
+        target = documents[payload.target]
+        target["text"] = target["text"].rstrip() + "\n\n" + payload.text.strip()
+    run_dir = Path(run_dir)
+    path = run_dir / "attachments.json"
+    path.write_text(json.dumps(documents, ensure_ascii=False, indent=2), encoding="utf-8")
+    return path
 
 
 def students_baseline_path(pack_path, repo_root) -> Path:

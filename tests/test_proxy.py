@@ -178,3 +178,60 @@ async def test_the_proxy_server_does_not_swallow_a_failing_handler():
     async with Client(server, raise_exceptions=True) as client:
         with pytest.raises(Exception, match="gone"):
             await client.call_tool("read_thing", {"code": "X"})
+
+
+def enforcement_with_taint(allowed, untrusted, log=None, enforcement=True):
+    from policy_guard.policies.taint import TaintPolicy
+
+    return EnforcementExtension(
+        PolicyEngine([AllowlistPolicy(), TaintPolicy({"destroy_thing"})]),
+        TaskContext(task_id="T", allowed_tools=frozenset(allowed)),
+        log or DecisionLog(None),
+        enforcement=enforcement,
+        untrusted_tools=untrusted,
+    )
+
+
+@pytest.mark.anyio
+async def test_a_forwarded_untrusted_read_taints_later_actions():
+    up = RecordingUpstream()
+    log = DecisionLog(None)
+    async with connect_in_process(up.server) as client:
+        proxy = PolicyProxy(client, enforcement_with_taint(
+            {"read_thing", "destroy_thing"}, {"read_thing"}, log))
+        await proxy.call("read_thing", {"code": "X"})
+        result = await proxy.call("destroy_thing", {"code": "X"})
+    assert up.received == [("read_thing", {"code": "X"})], "the held call never ran"
+    assert result.is_error is True
+    assert "confirmation" in str(result.content)
+    assert [r.verdict for r in log.records] == ["allow", "require_approval"]
+    assert [r.tainted for r in log.records] == [False, True]
+
+
+@pytest.mark.anyio
+async def test_a_refused_untrusted_read_does_not_taint():
+    """Nothing was read, so nothing can have influenced the next call."""
+    up = RecordingUpstream()
+    log = DecisionLog(None)
+    async with connect_in_process(up.server) as client:
+        # read_thing is untrusted but NOT on the allowlist: refused, never forwarded
+        proxy = PolicyProxy(client, enforcement_with_taint({"destroy_thing"}, {"read_thing"}, log))
+        await proxy.call("read_thing", {"code": "X"})
+        await proxy.call("destroy_thing", {"code": "X"})
+    assert up.received == [("destroy_thing", {"code": "X"})]
+    assert [r.verdict for r in log.records] == ["deny", "allow"]
+
+
+@pytest.mark.anyio
+async def test_with_enforcement_off_the_read_still_taints_and_the_verdict_is_logged():
+    up = RecordingUpstream()
+    log = DecisionLog(None)
+    async with connect_in_process(up.server) as client:
+        proxy = PolicyProxy(client, enforcement_with_taint(
+            {"read_thing", "destroy_thing"}, {"read_thing"}, log, enforcement=False))
+        await proxy.call("read_thing", {"code": "X"})
+        await proxy.call("destroy_thing", {"code": "X"})
+    assert up.received == [("read_thing", {"code": "X"}), ("destroy_thing", {"code": "X"})]
+    assert log.records[1].verdict == "require_approval"
+    assert log.records[1].forwarded is True
+    assert log.records[1].tainted is True

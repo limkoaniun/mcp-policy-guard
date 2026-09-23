@@ -45,11 +45,12 @@ class PolicyProxy:
 
     async def call(self, name: str, arguments: dict) -> object:
         """Enforce, then forward or refuse. A refused call never reaches upstream."""
-        decision, forward = self.enforcement.decide(ToolCall(tool=name, arguments=arguments))
+        call = ToolCall(tool=name, arguments=arguments)
+        decision, forward = self.enforcement.decide(call)
         if not forward:
             return self.enforcement.refusal(decision)
         try:
-            return await self.client.call_tool(name, arguments)
+            result = await self.client.call_tool(name, arguments)
         except Exception as error:
             # A tool that *fails* returns a `CallToolResult` with `is_error`
             # set; it does not raise. So an exception here is not a tool
@@ -69,6 +70,10 @@ class PolicyProxy:
             raise UpstreamError(
                 f"upstream call to {name!r} failed, so this run is not a result: {error}"
             ) from error
+        # After the upstream answered, not before: a call the upstream never
+        # saw must not taint the run.
+        self.enforcement.observe_forwarded(call)
+        return result
 
 
 async def build_proxy_server(client, enforcement: EnforcementExtension) -> Server:

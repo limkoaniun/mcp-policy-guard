@@ -11,6 +11,35 @@ test agent, instantiated in the enrolment domain. Four classes:
 4. `exfiltration/` — student record data smuggled out through the arguments of an
    otherwise permitted call, typically `submit_erequest`
 
+Three further classes were added on 2026-09-23 when the supervisor ruled the
+subject-description channel implausible (the handbook is university-published).
+They put the payload where a student would: inside a document they uploaded,
+read through the untrusted `get_attachment` tool, and they are named for what
+the planted text asks the agent to do, because that is what the ablation
+attributes:
+
+5. `rule-breaking-action/` — enrol past a requisite or the credit cap
+   (stopped by argument validation)
+6. `out-of-task-action/` — an action the task permits but the student did
+   not ask for, such as a drop during a transfer query (stopped by taint
+   tracking, the only gate that can)
+7. `cross-principal-action/` — act on another student's record (stopped by
+   principal binding)
+
+Every upload-borne attack is delivered through `get_attachment`, so the run
+is tainted before any action is proposed, and taint backstops all four on the
+on arm. The per-class "stopped by" attribution above is about the *verdict*
+— `DENY` short-circuits before taint is even consulted — not about ablation
+deltas: ablating `arg_validation` or `allowlist` alone will not change attack
+success on A-01..A-04, because taint still holds the call. A report reading
+these scenarios must say which of the two it measures.
+
+`exfiltration/` gained an upload-borne member, A-04. The upload scenarios are
+A-01..A-04 with twins A-01b..A-04b; each pair shares an `attachments` block
+byte for byte and differs only in the payload appended to one document. The
+original SC-* scenarios remain and still load; their channel is retired from
+the research question and they are cited only as evidence about the gates.
+
 One or two generic (non-enrolment) scenarios were originally planned to
 demonstrate that the proxy is not domain-specific. The loader's own
 constraints make that impossible under `attacks/scenarios/` today — a
@@ -29,8 +58,9 @@ under `tool-shadowing`, where naming a nonexistent tool is the point), and
 that a scenario replaying no calls is refused outright rather than loaded as
 one that asserts nothing.
 
-Sixteen scenario files live under `attacks/scenarios/`: eight injected across
-the four classes above (output-injection: SC-02, SC-04, SC-06;
+Twenty-four scenario files live under `attacks/scenarios/`. Sixteen are the
+original SC-* set: eight injected across the four original classes above
+(1–4) (output-injection: SC-02, SC-04, SC-06;
 poisoned-description: SC-03, SC-08; tool-shadowing: SC-01, SC-05;
 exfiltration: SC-07) and their eight benign twins under
 `attacks/scenarios/benign/`. `configs/enrolment-personas.yaml` is the policy
@@ -90,7 +120,9 @@ SC-07's third call — a `submit_erequest` carrying another student's record,
 submitted under the *correct* principal — is `allow`, not `deny`: principal
 binding does not fire because the principal named in the call is right, and
 the `taint` and `limits` policies that would need to catch this instead are
-one-line stubs outside the shipped pack.
+one-line stubs outside the shipped pack. Since 2026-09-23 the taint policy
+holds that call when the run has read an uploaded document (A-04); SC-07
+itself reads no document, so its third call stays allow.
 
 Two files under `runs/<run-id>/` carry that state. `state.json` holds enrolment
 changes. `erequests.jsonl` holds the free text `submit_erequest` was called
