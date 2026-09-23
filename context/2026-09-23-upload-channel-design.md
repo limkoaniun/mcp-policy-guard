@@ -262,6 +262,11 @@ tell the two apart; the student can. That asymmetry is the taint policy's
 whole argument, and reporting only one column would either overstate utility
 or overstate the cost.
 
+`held_for_confirmation` counts held eRequests only. `FinalState` can express
+only `enrolled_unchanged` and an eRequest count, so a held legitimate `enrol`
+or `drop` has nowhere to be scored, and this is a known narrowing rather than
+an oversight.
+
 ### 3.6 Ablation
 
 `ablation.ablated_pack` already removes a policy by name; `--ablate taint`

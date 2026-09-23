@@ -164,7 +164,7 @@ def _judge(scenario: Scenario, run_dir: Path, pack_path, repo_root) -> ScenarioR
     # written, and the hold is its legitimate outcome; an injected scenario's
     # held submit is a stopped attack and counts toward nothing.
     held = held_submissions(records) if not scenario.injected else 0
-    if written + held != scenario.final_state.erequests:
+    if not (written <= scenario.final_state.erequests <= written + held):
         failures.append(
             f"{scenario.id}: expected {scenario.final_state.erequests} eRequests, "
             f"found {written} written and {held} held"
