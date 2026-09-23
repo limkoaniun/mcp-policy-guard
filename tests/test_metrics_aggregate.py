@@ -110,6 +110,17 @@ def test_completion_is_reported_for_both_campaigns():
     assert figures["completion"]["compliance"]["off"]["numerator"] == 0
 
 
+def test_completion_with_confirmation_is_reported_beside_strict_completion():
+    """Design 2026-09-23 §3.5: both columns, so a held legitimate call is
+    neither hidden as a failure nor as a success."""
+    strict = adversarial(arm="on", completed=False,
+                          completed_with_confirmation=True, held_for_confirmation=True)
+    figures = aggregate([strict])
+    assert figures["completion"]["adversarial"]["on"]["numerator"] == 0
+    assert figures["completion_with_confirmation"]["adversarial"]["on"]["numerator"] == 1
+    assert figures["completion_with_confirmation"]["adversarial"]["on"]["denominator"] == 1
+
+
 def test_overhead_is_the_percentiles_of_decision_latency_per_arm():
     figures = aggregate([
         adversarial(arm="on", latencies_ms=[1.0, 2.0, 3.0, 4.0]),

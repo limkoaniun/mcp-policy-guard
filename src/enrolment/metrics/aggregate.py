@@ -242,5 +242,9 @@ def aggregate(verdicts: list[RunVerdict], *, planned: int | None = None) -> dict
             "adversarial": _by_arm(adversarial, "completed"),
             "compliance": _by_arm(compliance, "completed"),
         },
+        "completion_with_confirmation": {
+            "adversarial": _by_arm(adversarial, "completed_with_confirmation"),
+            "compliance": _by_arm(compliance, "completed_with_confirmation"),
+        },
         "overhead": overhead,
     }

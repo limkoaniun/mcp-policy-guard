@@ -293,6 +293,16 @@ def _print_summary(figures: dict) -> None:
     for kind in ("adversarial", "compliance"):
         print(f"  {kind:24} {_cells(completion[kind], percent=True)}")
 
+    # Design 2026-09-23 §3.5: a tainted legitimate call is held for the
+    # principal's confirmation. Strict counts it as not done; this column
+    # counts it as done, on the stated bet that a person confirms what they
+    # asked for. Both are printed because neither alone is the utility number.
+    confirmed = figures.get("completion_with_confirmation")
+    if confirmed:
+        print("\nbenign task completion, counting a held call as confirmed:")
+        for kind in ("adversarial", "compliance"):
+            print(f"  {kind:24} {_cells(confirmed[kind], percent=True)}")
+
     # Design §5: both arms compute and log the verdict, and only the
     # forwarding decision is forced. So the on-minus-off delta is not the
     # price of enforcement, and neither arm is an un-proxied baseline.
