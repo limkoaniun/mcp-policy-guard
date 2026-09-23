@@ -2,10 +2,14 @@
 
 The comparison arm the research question names. It sees the raw material a
 student would -- the handbook entry, the published requisite rule and item
-texts, the student's own record, the course structure for a session
-question, and any uploaded document -- and must reason to an answer. It never
-sees the exact evaluator's verdict or its list of options: that would make it
-an agent with one tool and a different name.
+texts, the student's own record, the published course structure for a
+session question, and any uploaded document -- and must reason to an answer.
+It never sees the exact evaluator's verdict or its list of options: that
+would make it an agent with one tool and a different name. The course
+structure in particular is rendered unfiltered -- every block, every subject
+it accepts, whether or not the student has completed it, whether or not the
+block is already full, whether or not the subject runs this session. The
+model must apply those three conditions itself; none is pre-applied.
 
 Retrieval is keyword and code matching, not embeddings. The report describes
 it as "retrieval-augmented generation with a deterministic keyword retriever"
@@ -22,7 +26,7 @@ from pydantic import BaseModel, Field
 from .agent.prompts import SYSTEM_PROMPT
 from .agent.transcript import ChatReply
 from .models import Course, Student, Subject, SubjectRequisites
-from .progression import expand_structure, offered_in, summarise_plan
+from .progression import expand_structure
 
 Chat = Callable[[list[dict], list[dict]], ChatReply]
 
@@ -103,30 +107,33 @@ def render_structure(
     requisites: dict[str, SubjectRequisites],
     session: str,
 ) -> str:
-    """The course structure as the handbook shows it, filtered to the session.
+    """The published course structure, unfiltered.
 
-    For each block the student has not filled: the subjects it accepts that
-    the student has not completed and that run in `session`, each with its
-    requisite rule. The evaluator's own answer is never included; the model
-    must apply the rules to the record itself.
+    Every block `expand_structure` returns, and every code it accepts that is
+    in the catalogue -- whether or not the student has completed it, whether
+    or not the block is already full, whether or not the subject is offered
+    in `session`. This is the handbook itself, not the evaluator's answer:
+    the three conditions `session_options` applies (unfilled block, not
+    completed, offered in the session) are what the model must apply to this
+    text itself; none of them is pre-applied here.
+
+    `requisites` and `session` are accepted for signature stability with the
+    caller and are not otherwise used here: requisites are already rendered
+    per subject by `render_subject`, and `session` is not used to filter --
+    it names the session so the model knows which "offered" column to read.
     """
     blocks = expand_structure(course, aos, student.major, student.sub_major)
-    summary = summarise_plan(student, course, aos)
-    done = student.completed_codes()
-    lines = [f"Course structure for {student.course}, subjects offered in {session}:"]
+    lines = [f"Course structure for {student.course}:"]
     for block in blocks:
-        remaining = summary.remaining_by_block.get(block.path, 0)
-        if remaining <= 0:
-            continue
-        lines.append(f"Block {block.path} ({remaining} credit points still required)")
+        lines.append(f"Block {block.path} (quota {block.quota} credit points)")
         for code in sorted(block.eligible):
-            if code in done or code not in catalogue or not offered_in(catalogue[code], session):
+            if code not in catalogue:
                 continue
             subject = catalogue[code]
-            rule = requisites.get(code)
-            rule_text = rule.requisite_rule if rule and rule.requisite_rule else "no requisites"
-            anti = f"; anti-requisite {rule.antirequisite_rule}" if rule and rule.antirequisite_rule else ""
-            lines.append(f"  {code} {subject.name} ({subject.credit_points}cp) — requisites: {rule_text}{anti}")
+            lines.append(
+                f"  {code} {subject.name} ({subject.credit_points}cp; "
+                f"offered: {', '.join(subject.sessions) or 'not published'})"
+            )
     return "\n".join(lines)
 
 

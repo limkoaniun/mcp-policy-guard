@@ -2,10 +2,14 @@
 
 import json
 import pathlib
+import re
 
+from enrolment.agent.transcript import ChatReply
 from enrolment.models import Course, Student, Subject, SubjectRequisites
 from enrolment.progression import session_options
 from enrolment.rag import (
+    RagReply,
+    answer,
     find_subjects,
     render_attachments,
     render_record,
@@ -82,19 +86,28 @@ def test_render_record_lists_completed_codes_enrolments_and_the_cap():
     assert "S9000004" in text
 
 
-def test_render_structure_lists_only_uncompleted_offered_subjects_and_no_answer():
+def test_render_structure_is_the_published_structure_unfiltered():
     student = STUDENTS["S9000001"]
     text = render_structure(student, COURSE, AOS, CATALOGUE, REQUISITES, "Autumn")
-    assert "32524" not in text, "a completed subject is not an option"
     for code in {c for block in session_options(student, COURSE, AOS, CATALOGUE, "Autumn").values() for c in block}:
         assert code in text, "every subject the evaluator would list must be present as handbook text"
-    assert "Options:" not in text and "you could take" not in text.lower(), "never the evaluator's answer"
+    assert "32524" in text, "a completed subject is still shown -- the model must filter it itself"
+    assert "quota" in text, "a block header carries the published quota"
+    assert "still required" not in text and "Options:" not in text, "never the evaluator's answer"
 
 
-def test_render_structure_names_each_block_and_the_session():
+def test_render_structure_names_each_block():
     text = render_structure(STUDENTS["S9000002"], COURSE, AOS, CATALOGUE, REQUISITES, "Spring")
-    assert "Spring" in text
     assert "Major:" in text or "Elective:" in text or "Core" in text
+
+
+def test_render_structure_is_a_strict_superset_of_session_options():
+    student = STUDENTS["S9000001"]
+    text = render_structure(student, COURSE, AOS, CATALOGUE, REQUISITES, "Autumn")
+    evaluator_codes = {c for block in session_options(student, COURSE, AOS, CATALOGUE, "Autumn").values() for c in block}
+    rendered_codes = {code for code in re.findall(r"\b\d{5}\b", text) if code in CATALOGUE}
+    assert evaluator_codes <= rendered_codes
+    assert evaluator_codes != rendered_codes, "the rendered structure must show more than the evaluator's answer"
 
 
 def test_render_attachments_is_verbatim():
@@ -105,10 +118,6 @@ def test_render_attachments_is_verbatim():
 def test_render_attachments_empty_is_empty():
     assert render_attachments({}) == ""
     assert render_attachments(None) == ""
-
-
-from enrolment.agent.transcript import ChatReply
-from enrolment.rag import RagReply, answer
 
 
 def scripted(reply_text="NOT ELIGIBLE. You lack 32130."):
