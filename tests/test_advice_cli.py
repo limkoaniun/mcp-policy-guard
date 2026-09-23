@@ -4,6 +4,7 @@ import json
 import pathlib
 
 import pytest
+import yaml
 
 from enrolment.advice import AdviceTask
 from enrolment.agent import advice as cli
@@ -117,8 +118,9 @@ async def test_the_agent_arm_runs_through_the_real_proxy_read_only(tmp_path):
     )
     run_dir = tmp_path / spec.run_id
     assert run_status(transcript) == "ok"
-    task = (run_dir / "task.yaml").read_text()
-    assert "enrol" not in task.replace("enrolment", "")
+    declared = yaml.safe_load((run_dir / "task.yaml").read_text())
+    assert "enrol" not in declared["allowed_tools"]
+    assert declared["description"] == elig().question
     decisions = [json.loads(l) for l in (run_dir / "decisions.jsonl").read_text().splitlines() if l.strip()]
     assert decisions[0]["tool"] == "check_prerequisites" and decisions[0]["verdict"] == "allow"
     assert transcript.turns[-1].text.startswith("NOT ELIGIBLE")

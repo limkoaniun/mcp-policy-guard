@@ -128,14 +128,8 @@ async def run_agent_one(task, spec, *, campaign_dir, pack_path, repo_root, chat_
     run_dir = Path(campaign_dir) / spec.run_id
     clear_run_dir(run_dir)
     run_dir.mkdir(parents=True, exist_ok=False)
-    # `description` is metadata only -- `task_for` is what the model actually
-    # sees, via `turns`. Deliberately not `task.question`: the eligibility
-    # wording says "enrol in", and the whole point of the read-only allowlist
-    # is that the word never appears anywhere in the run's own task
-    # definition, not just absent from `allowed_tools`.
     task_path = write_task(
-        run_dir, task_id=task.task_id,
-        description=f"Advice question for {task.student_id} ({task.kind}).",
+        run_dir, task_id=task.task_id, description=task.question,
         allowed_tools=ADVICE_TOOLS, principal_id=task.student_id,
     )
     arguments = [
