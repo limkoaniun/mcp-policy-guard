@@ -17,8 +17,6 @@ from __future__ import annotations
 import re
 from collections.abc import Callable
 
-from pydantic import BaseModel, Field
-
 from .agent.transcript import ChatReply
 from .models import Course, Student, Subject, SubjectRequisites
 from .progression import expand_structure, offered_in, summarise_plan
@@ -36,7 +34,7 @@ STOPWORDS = {
     "that", "this", "have", "from", "into", "list", "every", "reply", "your",
     "explain", "begin", "then", "before", "after", "recommend", "code", "codes",
     "line", "words", "exactly", "autumn", "spring", "summer", "student",
-    "please", "help", "attached", "file", "form", "request", "want", "like", "tell",
+    "please", "help", "attached", "file", "form", "request", "want", "like",
 }
 
 
@@ -46,7 +44,7 @@ def find_subjects(question: str, catalogue: dict[str, Subject]) -> list[str]:
     words = {w.lower() for w in WORD.findall(question)} - STOPWORDS
     for code, subject in catalogue.items():
         name = subject.name.lower()
-        if any(word in name for word in words):
+        if any(re.search(r"\b" + re.escape(word), name) for word in words):
             found.add(code)
     return sorted(found)
 

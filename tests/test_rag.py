@@ -44,6 +44,16 @@ def test_find_subjects_ignores_codes_not_in_the_catalogue():
     assert find_subjects("tell me about 99999", CATALOGUE) == []
 
 
+def test_find_subjects_no_false_positives_with_substring():
+    found = find_subjects("what is the gram about?", CATALOGUE)
+    assert found == [], "substring 'gram' must not match 'Programming'"
+
+
+def test_find_subjects_word_boundary_matching():
+    found = find_subjects("is the research preparation subject offered?", CATALOGUE)
+    assert "32144" in found, "Research Preparation must match 'preparation' at word boundary"
+
+
 def test_render_subject_includes_the_rule_and_every_item_text():
     text = render_subject(CATALOGUE["32513"], REQUISITES["32513"])
     assert "32513" in text and "Advanced Data Analytics Algorithms" in text
