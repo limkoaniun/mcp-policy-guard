@@ -75,20 +75,26 @@ exactly what the model was given.
 - *The record.* `render_record(student)`: course, admission descriptors,
   major and sub-major, completed subjects with sessions and points, current
   enrolments, credit-point cap.
-- *Course structure, session questions only.* `render_structure(...)`: for
-  each unfilled block of the student's major (from `expand_structure` and
-  `summarise_plan`, the same functions the tool uses), the subjects it
-  accepts that the student has not completed and that are published as
-  running in the asked session, each with its requisite rule. The evaluator's
-  answer (`session_options`) is *not* included; the model must apply the
-  rules to the record itself.
+- *Course structure, session questions only.* `render_structure(...)`: every
+  block `expand_structure` returns (the student's major and sub-major, chosen
+  or not), and every code each block accepts that is in the catalogue --
+  quota, credit points, and published sessions, unfiltered. Not which blocks
+  are still open, not which subjects the student has completed, not which
+  subjects run in the asked session: the evaluator's three conditions
+  (unfilled block, not completed, offered in the session) are what the model
+  must apply; none is pre-applied. Rendering `session_options`' answer
+  instead, filtered exactly as the evaluator filters it, would hand the
+  model the verdict rather than the material to reason to one.
 - *Attachments.* Every document's name and text, verbatim, when the session
   holds any. This is what keeps the attack surface identical to the agent's.
 
-The prompt is the default system prompt with `{principal}` filled, followed
-by one user message: the retrieved blocks under a heading "Documents", then
-the question. No tool definitions are offered. One completion; the text is
-the answer.
+The prompt is `RAG_SYSTEM_PROMPT` (`src/enrolment/agent/prompts.py`) with
+`{principal}` filled -- "Answer from the documents provided; you have no
+tools", not the agent's own `SYSTEM_PROMPT`, which tells the model to use
+tools it does not have and, on this arm, provoked the model narrating or
+hallucinating a call as text -- followed by one user message: the retrieved
+blocks under a heading "Documents", then the question. No tool definitions
+are offered. One completion; the text is the answer.
 
 `chat` is injected as everywhere else in the repo, so the module is testable
 with a scripted callable and no daemon.
@@ -151,7 +157,11 @@ tasks × models × repeats × arms, where the arms are:
   `rag.json` `{question, context, text, latency_ms}` and a one-turn
   `transcript.jsonl` written through the same `Transcript` model (the reply
   as a `TEXT` turn, no calls), so `read_index`/`existing_status` and the
-  resume rule work unchanged.
+  resume rule work unchanged. A provider failure (the chat callable raising)
+  is caught around the `rag_answer` call and recorded as a one-turn
+  `PROVIDER_ERROR` transcript, the same shape `loop.py` writes for the agent
+  arm, rather than propagating and killing the runner -- `run_campaign`'s
+  replacement rule then applies to it exactly as it does to the agent arm.
 - `agent` — the guarded agent through the real proxy, enforcement on, with
   the read-only tool allowlist (`search_subjects`, `get_subject_details`,
   `get_attachment`, `get_student_record`, `check_prerequisites`,
@@ -163,8 +173,12 @@ Flags: `--campaign`, `--models` (default `llama3.1:8b,llama3.2`, the
 compliance pair), `--repeats` (default 3), `--kinds`
 (`eligibility,session`), `--per-depth`/`--mode-floor`/`--sample-seed` (passed
 to the sampler; same defaults as the compliance runner), `--pack`,
-`--prompt`, `--limit`, `--dry-run`. The manifest records `system_prompt` and
-`sample_digest` as the compliance runner does.
+`--prompt`, `--num-ctx` (default `8192`), `--limit`, `--dry-run`. The
+manifest records `system_prompt` and `sample_digest` as the compliance
+runner does. `--num-ctx` sets Ollama's context window explicitly on every
+call the runner makes: left unset, Ollama silently truncates to its own
+default rather than erroring, which on the RAG arm's long, document-stuffed
+prompt quietly drops material the model was supposed to reason over.
 
 Size: 348 tasks × 2 models × 3 repeats × 2 arms = 4,176 runs. The RAG arm is
 one model call per run (~5 s); the agent arm is the compliance shape (~6 s).
@@ -189,9 +203,17 @@ with §3, and writes `judgements.jsonl`. Exclusions are `provider_error`,
 | accuracy over all | correct / N | exact / N |
 | mean Jaccard over answered | — | mean |
 | by rule depth (core stratum only) | accuracy | — |
+| majority-class baseline | always the cell's more common of ELIGIBLE/NOT ELIGIBLE, over all scoreable rows | — |
 
 plus RAG's mean `latency_ms` beside the agent arm's per-run wall clock, so
-the report can say what the tools cost in time.
+the report can say what the tools cost in time, and `mean_duration_s` per
+cell -- the same wall clock the index already records, carried through
+`judge_run` and averaged over the rows a duration was actually measured
+for -- so total time cost sits beside per-call latency rather than needing
+a second pass over the index. The majority-class baseline is what always
+guessing the more common answer would score, without reading anything;
+reported so a model's accuracy has a floor to be compared against, not just
+a bare percentage.
 
 ## 6. What this slice does not do
 
