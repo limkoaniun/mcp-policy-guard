@@ -32,7 +32,8 @@ def test_it_keeps_everything_else_the_pack_declares(tmp_path):
     derived = yaml.safe_load(ablated_pack(PACK, "allowlist", tmp_path).read_text())
 
     for key in ("upstream_command", "upstream_args", "trust", "domain_rules",
-                "domain_rules_args", "principal_argument", "principal_exempt_tools"):
+                "domain_rules_args", "principal_argument", "principal_exempt_tools",
+                "side_effecting_tools"):
         assert derived[key] == original[key], key
 
 

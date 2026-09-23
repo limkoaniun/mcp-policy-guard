@@ -487,6 +487,29 @@ def test_the_shipped_packs_load_taint_and_label_only_the_upload_untrusted():
         assert pack.side_effecting_tools == ["enrol", "drop", "submit_erequest"], name
 
 
+def test_the_shipped_packs_label_every_tool_the_server_exposes():
+    """A twelfth tool the server grows must not go silently unlabelled: an
+    untrusted tool this pack forgets to name would be served without taint,
+    and a trusted one forgotten would be served without an allowlist label
+    either way -- the trust map has to cover the server's whole surface."""
+    served_tools = {
+        "search_subjects",
+        "get_subject_details",
+        "get_student_record",
+        "check_prerequisites",
+        "enrol",
+        "drop",
+        "submit_erequest",
+        "get_study_plan",
+        "preview_major_change",
+        "get_session_options",
+        "get_attachment",
+    }
+    for name in ("enrolment.yaml", "enrolment-personas.yaml"):
+        pack = load_policy_pack(REPO / "configs" / name)
+        assert set(pack.trust) == served_tools, name
+
+
 def test_a_task_may_name_an_attachments_file(tmp_path):
     path = tmp_path / "task.yaml"
     path.write_text(TASK + "attachments: runs/x/attachments.json\n")

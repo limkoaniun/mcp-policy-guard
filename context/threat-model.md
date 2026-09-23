@@ -66,7 +66,10 @@ concern would leave the more probable failure unaddressed.
   deterministically
 - **Uploaded documents:** the one untrusted tool result in the enrolment pack;
   reading one taints the run and holds later side-effecting calls for
-  confirmation
+  confirmation. Taint lives for one proxy process — one campaign run, one
+  demo message — while the model's conversation history outlives it, so an
+  instruction planted in message 1 that asks for an action in message 2 meets
+  an untainted proxy; the turn boundary is the mechanism's largest residual.
 
 That last boundary is the project's thesis stated as a trust assumption.
 

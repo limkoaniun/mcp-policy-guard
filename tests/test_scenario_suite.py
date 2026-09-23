@@ -76,8 +76,7 @@ def test_every_upload_borne_scenario_delivers_through_an_attachment():
     document they uploaded. A scenario in one of them that delivered any
     other way would be measuring the old channel under a new name."""
     for scenario in suite():
-        if scenario.attack_class in {"rule-breaking-action", "out-of-task-action",
-                                     "cross-principal-action"} or scenario.id == "A-04":
+        if scenario.injected and scenario.id.startswith("A-"):
             assert scenario.payload.location == "attachment", scenario.id
             assert scenario.deliverable, scenario.id
 

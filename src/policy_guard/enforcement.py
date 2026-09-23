@@ -106,6 +106,10 @@ class EnforcementExtension:
         the direction this layer errs in. A *refused* call is never observed
         -- nothing was read. Taint is sticky for the life of this extension,
         which is one proxy process: one campaign run, or one demo message.
+
+        Taint is set after the upstream returns, which assumes sequential
+        dispatch -- true of the agent loop today. Concurrent tool calls would
+        need the flag set before forwarding.
         """
         if call.tool not in self.untrusted_tools:
             return
