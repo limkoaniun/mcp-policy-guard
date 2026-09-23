@@ -163,8 +163,7 @@ tasks × models × repeats × arms, where the arms are:
   arm, rather than propagating and killing the runner -- `run_campaign`'s
   replacement rule then applies to it exactly as it does to the agent arm.
 - `agent` — the guarded agent through the real proxy, enforcement on, with
-  the read-only tool allowlist (`search_subjects`, `get_subject_details`,
-  `get_attachment`, `get_student_record`, `check_prerequisites`,
+  the read-only tool allowlist (`search_subjects`, `get_subject_details`, `get_student_record`, `check_prerequisites`,
   `get_study_plan`, `get_session_options`, `preview_major_change`) and a
   one-turn task (the question; no nudge, since nothing is being asked to
   act). Identical to the compliance `run_one` otherwise.
@@ -191,8 +190,7 @@ run has no `state.json` and no `decisions.jsonl` on the RAG arm, and "no
 answer" is a verdict, not an exclusion. Per run it reads the index row, the
 transcript (RAG: the single turn; agent: the last assistant text turn — a run
 whose last turn is a tool call with no closing text is `no_answer`), scores
-with §3, and writes `judgements.jsonl`. Exclusions are `provider_error`,
-`truncated` and `no_transcript` only.
+with §3, and writes `judgements.jsonl`. Exclusions are `provider_error`, `truncated`, `no_transcript` and `no_task` (an index row whose task is missing from the tasks file, as after a resume under narrower `--kinds`).
 
 `metrics.json` reports, per kind and arm and model:
 
