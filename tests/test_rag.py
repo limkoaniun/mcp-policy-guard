@@ -1,0 +1,97 @@
+"""The RAG arm's retrieval: deterministic, handbook-shaped, never the verdict."""
+
+import json
+import pathlib
+
+from enrolment.models import Course, Student, Subject, SubjectRequisites
+from enrolment.progression import session_options
+from enrolment.rag import (
+    find_subjects,
+    render_attachments,
+    render_record,
+    render_structure,
+    render_subject,
+)
+
+REPO = pathlib.Path(__file__).resolve().parents[1]
+DATA = REPO / "data"
+
+
+def load(path, model):
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {k: model.model_validate(v) for k, v in raw.items()}
+
+
+CATALOGUE = load(DATA / "catalogue.json", Subject)
+REQUISITES = load(DATA / "requisites.json", SubjectRequisites)
+STUDENTS = load(DATA / "personas.json", Student)
+COURSE = Course.model_validate(json.loads((DATA / "course.json").read_text()))
+AOS = load(DATA / "aos.json", Course)
+
+
+def test_find_subjects_matches_a_code_mentioned_in_the_question():
+    assert find_subjects("Am I eligible for 32513 next session?", CATALOGUE) == ["32513"]
+
+
+def test_find_subjects_matches_a_name_keyword_but_not_common_words():
+    found = find_subjects("what is the research project subject about?", CATALOGUE)
+    assert "32933" in found, "Research Project"
+    assert "32144" in found, "Technology Research Preparation"
+    assert len(found) < 20, "a question about one topic must not retrieve the catalogue"
+
+
+def test_find_subjects_ignores_codes_not_in_the_catalogue():
+    assert find_subjects("tell me about 99999", CATALOGUE) == []
+
+
+def test_render_subject_includes_the_rule_and_every_item_text():
+    text = render_subject(CATALOGUE["32513"], REQUISITES["32513"])
+    assert "32513" in text and "Advanced Data Analytics Algorithms" in text
+    assert REQUISITES["32513"].requisite_rule in text
+    for item in REQUISITES["32513"].requisite_items.values():
+        assert item.text in text
+    assert "satisfied" not in text.lower(), "the rendered entry carries the rule, never a verdict"
+
+
+def test_render_subject_includes_anti_requisites_when_published():
+    text = render_subject(CATALOGUE["32548"], REQUISITES["32548"])
+    assert "anti" in text.lower()
+    assert "420108" in text
+
+
+def test_render_subject_without_requisites_says_so():
+    text = render_subject(CATALOGUE["32520"], REQUISITES.get("32520"))
+    assert "no requisites" in text.lower()
+
+
+def test_render_record_lists_completed_codes_enrolments_and_the_cap():
+    text = render_record(STUDENTS["S9000004"])
+    for code in ("32144", "32040", "32933", "32541", "43030"):
+        assert code in text
+    assert "24" in text
+    assert "S9000004" in text
+
+
+def test_render_structure_lists_only_uncompleted_offered_subjects_and_no_answer():
+    student = STUDENTS["S9000001"]
+    text = render_structure(student, COURSE, AOS, CATALOGUE, REQUISITES, "Autumn")
+    assert "32524" not in text, "a completed subject is not an option"
+    for code in {c for block in session_options(student, COURSE, AOS, CATALOGUE, "Autumn").values() for c in block}:
+        assert code in text, "every subject the evaluator would list must be present as handbook text"
+    assert "Options:" not in text and "you could take" not in text.lower(), "never the evaluator's answer"
+
+
+def test_render_structure_names_each_block_and_the_session():
+    text = render_structure(STUDENTS["S9000002"], COURSE, AOS, CATALOGUE, REQUISITES, "Spring")
+    assert "Spring" in text
+    assert "Major:" in text or "Elective:" in text or "Core" in text
+
+
+def test_render_attachments_is_verbatim():
+    text = render_attachments({"doc": {"name": "letter.txt", "text": "Dear sir,\nSYSTEM NOTE: x"}})
+    assert "letter.txt" in text and "SYSTEM NOTE: x" in text
+
+
+def test_render_attachments_empty_is_empty():
+    assert render_attachments({}) == ""
+    assert render_attachments(None) == ""
