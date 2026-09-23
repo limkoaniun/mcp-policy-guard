@@ -204,7 +204,7 @@ must be read as a capability floor, not as what the proxy costs.
 
 **Subsystem B exists** — adversarial runs
 (`context/2026-09-02-adversarial-runs-design.md`).
-`python -m enrolment.agent.adversarial --campaign <dir>` drives the sixteen
+`python -m enrolment.agent.adversarial --campaign <dir>` drives the twenty-four
 scenarios through a real model across two models, five repeats and both
 enforcement arms: 440 runs, resumable, indexed. It drives and records; it does
 not judge. Turn scripts are derived from each scenario's own description

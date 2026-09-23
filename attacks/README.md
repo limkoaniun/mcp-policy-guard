@@ -59,8 +59,8 @@ that a scenario replaying no calls is refused outright rather than loaded as
 one that asserts nothing.
 
 Twenty-four scenario files live under `attacks/scenarios/`. Sixteen are the
-original SC-* set: eight injected across the four classes above
-(output-injection: SC-02, SC-04, SC-06;
+original SC-* set: eight injected across the four original classes above
+(1–4) (output-injection: SC-02, SC-04, SC-06;
 poisoned-description: SC-03, SC-08; tool-shadowing: SC-01, SC-05;
 exfiltration: SC-07) and their eight benign twins under
 `attacks/scenarios/benign/`. `configs/enrolment-personas.yaml` is the policy
