@@ -1,5 +1,7 @@
 """Scoring advice runs: no answer is a column, exclusions are few."""
 
+import json
+
 from enrolment.advice import AdviceTask, write_tasks
 from enrolment.agent.campaign import IndexRecord, write_index
 from enrolment.agent.transcript import ResponseOutcome, Transcript, TurnRecord
@@ -137,3 +139,21 @@ def test_main_writes_metrics_and_judgements(tmp_path, capsys):
     assert scorer.main(["--campaign", str(campaign), "--out", str(out)]) == 0
     assert (out / "metrics.json").exists() and (out / "judgements.jsonl").exists()
     assert "eligibility" in capsys.readouterr().out
+
+
+def test_main_excludes_an_index_row_whose_scenario_id_has_no_task_rather_than_raising(tmp_path, capsys):
+    campaign = tmp_path / "c"
+    campaign.mkdir()
+    write_tasks(campaign, [task()])
+    write_run(campaign, "E-S1-32933-fake-rag-r1", "NOT ELIGIBLE.")
+    write_run(campaign, "E-ghost-32933-fake-rag-r1", "NOT ELIGIBLE.")
+    write_index(campaign, [
+        record("E-S1-32933-fake-rag-r1", "rag"),
+        record("E-ghost-32933-fake-rag-r1", "rag"),
+    ])
+    out = tmp_path / "scored"
+    assert scorer.main(["--campaign", str(campaign), "--out", str(out)]) == 0
+    metrics = json.loads((out / "metrics.json").read_text())
+    assert metrics["exclusions"]["no_task"] == 1
+    printed = capsys.readouterr().out
+    assert "1" in printed and "no_task" in printed

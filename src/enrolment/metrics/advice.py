@@ -2,9 +2,9 @@
 
 Separate from `report.py` because the rules differ. An advice run has no
 state file and, on the RAG arm, no decisions; a reply that ignores the
-format is a verdict ("no answer"), not an exclusion. Exclusions are the three
+format is a verdict ("no answer"), not an exclusion. Exclusions are the four
 that say nothing about the model's answer: provider_error, truncated,
-no_transcript.
+no_transcript, no_task.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from ..advice import AdviceTask, read_tasks, score
 from ..agent.campaign import IndexRecord, read_index
 from ..agent.transcript import ResponseOutcome, Transcript
 
-EXCLUSIONS = ("provider_error", "truncated", "no_transcript")
+EXCLUSIONS = ("provider_error", "truncated", "no_transcript", "no_task")
 TEXT_OUTCOMES = {ResponseOutcome.TEXT, ResponseOutcome.TEXT_RESEMBLING_A_CALL}
 
 
@@ -125,6 +125,23 @@ def _print(metrics: dict) -> None:
                         f"{d}: {r['numerator']}/{r['denominator']}" for d, r in cell["by_depth"].items()))
 
 
+def _no_task_judgement(record: IndexRecord) -> dict:
+    """A row whose `scenario_id` names no task in the tasks file.
+
+    A campaign's tasks file and its index can drift -- `--limit` capping the
+    task set on one invocation and not another, a hand-edited index, a
+    campaign resumed against a different suite. Raising loses every other
+    run's judgement over one row that names nothing to score against; this
+    is scored `no_task`, an exclusion like the others, so the run survives.
+    """
+    return {
+        "run_id": record.run_id, "task_id": record.scenario_id, "kind": None,
+        "model": record.model, "arm": record.arm, "repeat": record.repeat,
+        "rule_depth": None, "stratum": None, "duration_s": record.duration_s, "expected": None,
+        "scoreable": False, "excluded_because": "no_task",
+    }
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Score an advice campaign.")
     parser.add_argument("--campaign", required=True)
@@ -139,7 +156,17 @@ def main(argv=None) -> int:
     if campaign in out.parents or campaign == out:
         raise SystemExit("--out must not be inside the campaign directory: scoring is read-only on runs")
     tasks = {t.task_id: t for t in read_tasks(campaign)}
-    judgements = [judge_run(r, campaign / r.run_id, tasks[r.scenario_id]) for r in read_index(campaign)]
+    judgements = []
+    no_task = 0
+    for r in read_index(campaign):
+        task = tasks.get(r.scenario_id)
+        if task is None:
+            no_task += 1
+            judgements.append(_no_task_judgement(r))
+            continue
+        judgements.append(judge_run(r, campaign / r.run_id, task))
+    if no_task:
+        print(f"warning: {no_task} run(s) named a scenario_id not in the tasks file; excluded as no_task")
     metrics = aggregate(judgements)
     out.mkdir(parents=True, exist_ok=True)
     (out / "judgements.jsonl").write_text("".join(json.dumps(j) + "\n" for j in judgements), encoding="utf-8")
