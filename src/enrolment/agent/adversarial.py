@@ -40,7 +40,7 @@ from .campaign import (
 from .cli_common import preflight, warn_on_digest_drift
 from .loop import AgentTask, run_agent
 from .ollama import ollama_chat
-from .prompts import NUDGE, SYSTEM_PROMPT
+from .prompts import NUDGE, PROMPTS, SYSTEM_PROMPT
 from .transcript import Transcript
 
 
@@ -218,6 +218,11 @@ def parse_args(argv=None) -> argparse.Namespace:
              "campaign directory, so the pack a run used is stored beside the "
              "runs it produced and cannot drift from the baseline's.",
     )
+    parser.add_argument(
+        "--prompt", default="default", choices=sorted(PROMPTS),
+        help="which system prompt the agent runs under; see the compliance "
+             "runner. Recorded in the manifest as the prompt text.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args(argv)
 
@@ -236,7 +241,7 @@ def load_suite(args):
 def build_manifest(args, fingerprints: dict) -> CampaignManifest:
     return CampaignManifest(
         models=list(args.models), repeats=args.repeats,
-        system_prompt=SYSTEM_PROMPT, nudge=NUDGE, policy_pack=args.pack,
+        system_prompt=PROMPTS[args.prompt], nudge=NUDGE, policy_pack=args.pack,
         max_model_turns=args.max_model_turns, max_calls=args.max_calls,
         temperature=args.temperature, seed=args.seed, fingerprints=fingerprints,
     )

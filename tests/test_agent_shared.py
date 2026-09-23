@@ -158,3 +158,18 @@ def test_digest_drift_warns_naming_both_digests(capsys):
 def test_no_drift_warning_when_the_digest_is_unchanged(capsys):
     cli_common.warn_on_digest_drift({"m": {"digest": "same"}}, {"m": {"digest": "same"}})
     assert capsys.readouterr().out == ""
+
+
+def test_the_told_the_rules_prompt_is_the_default_plus_the_rules():
+    """The prompting baseline (spec §7): same agent, same tools, and the
+    rules stated in the prompt with an instruction to check before enrolling.
+    It must be a strict superset of the default prompt, so the two campaigns
+    differ in exactly one thing."""
+    from enrolment.agent.prompts import PROMPTS, SYSTEM_PROMPT, TOLD_THE_RULES_PROMPT
+
+    assert PROMPTS == {"default": SYSTEM_PROMPT, "told-the-rules": TOLD_THE_RULES_PROMPT}
+    assert TOLD_THE_RULES_PROMPT.startswith(SYSTEM_PROMPT)
+    assert "{principal}" in TOLD_THE_RULES_PROMPT
+    lowered = TOLD_THE_RULES_PROMPT.lower()
+    for word in ("prerequisite", "anti-requisite", "credit-point", "check_prerequisites", "erequest"):
+        assert word in lowered, word
