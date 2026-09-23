@@ -385,6 +385,15 @@ def test_an_attachment_that_is_not_a_mapping_is_rejected_at_load(tmp_path):
         load_attachments(path)
 
 
+def test_an_attachments_file_whose_top_level_is_not_a_mapping_is_rejected_at_load(tmp_path):
+    from enrolment.server import AttachmentError, load_attachments
+
+    path = tmp_path / "attachments.json"
+    path.write_text(json.dumps(["doc"]), encoding="utf-8")
+    with pytest.raises(AttachmentError, match="list"):
+        load_attachments(path)
+
+
 def test_load_attachments_with_no_path_is_empty():
     from enrolment.server import load_attachments
 

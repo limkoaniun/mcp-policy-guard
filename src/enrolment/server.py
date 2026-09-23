@@ -4,7 +4,7 @@ Eleven tools over the committed dataset, standing in for My Student Admin and
 eRequests. The catalogue and requisites are opened read-only; only the run's
 own student state is mutable.
 
-Three of the ten -- `get_study_plan`, `preview_major_change` and
+Three of the eleven -- `get_study_plan`, `preview_major_change` and
 `get_session_options` -- are the progression layer: they report how far a
 student's completed subjects get them through their course, what changing
 major would cost, and what they could still take in a given session. Unlike
@@ -137,6 +137,11 @@ def load_attachments(path) -> dict[str, dict]:
     if path is None:
         return {}
     loaded = json.loads(Path(path).read_text(encoding="utf-8")) or {}
+    if not isinstance(loaded, dict):
+        raise AttachmentError(
+            f"attachments {path} is a {type(loaded).__name__}, not an object "
+            f"mapping attachment id to {{'name', 'text'}}"
+        )
     attachments: dict[str, dict] = {}
     for attachment_id, entry in loaded.items():
         if not isinstance(entry, dict):
@@ -283,10 +288,7 @@ def build_server(
         """
         entry = attachments.get(attachment_id)
         if entry is None:
-            raise ValueError(
-                f"no attachment {attachment_id!r} in this session"
-                + (f"; available: {sorted(attachments)}" if attachments else "")
-            )
+            raise ValueError(f"no attachment {attachment_id!r} in this session")
         return Attachment(id=attachment_id, name=entry["name"], text=entry["text"])
 
     @server.tool()
