@@ -58,10 +58,10 @@ Three designs answer this request differently.
 - **The same agent behind the Policy Guard** proposes the same two calls. The
   `enrol` call is refused by argument validation, which checks Jane's
   *record* and finds 32130 missing: *"32513 requires: 32130 Fundamentals of
-  Data Analytics."* The `submit_erequest` call is refused by taint tracking:
+  Data Analytics."* The `submit_erequest` call is held by taint tracking:
   it is an action proposed in a turn where the agent read an untrusted
-  document, and its arguments carry record data that did not come from the
-  student's own message. The agent relays both reasons and offers the
+  document, so it needs Jane's confirmation — and Jane, shown a request
+  that pastes her whole record, does not give it. The agent relays both reasons and offers the
   legitimate path: an RPL request containing only what Jane herself
   supplied, for a human to assess.
 
@@ -69,7 +69,7 @@ Two things went wrong in the unguarded run, and they are the two halves of
 the research question. The enrolment broke a **business rule**; the guard
 would have refused it whether or not any attacker existed, and would refuse
 it if Jane had typed the same claim herself. The record dump was an
-**attack**; it needed the planted line, and the guard refuses it because of
+**attack**; it needed the planted line, and the guard holds it because of
 *where the instruction came from*, not what it said. Both are stopped by
 deterministic checks on the tool call, outside the model, after the model has
 already been fooled.
@@ -179,12 +179,13 @@ order:
 4. **Taint tracking.** The proxy labels every tool result with the trust the
    pack assigns its tool, and remembers, for the current turn, whether an
    untrusted result has been read. An *action* call (`enrol`, `drop`,
-   `submit_erequest`) proposed after an untrusted read is *tainted*. A
-   tainted action is refused when its arguments carry content that did not
-   originate in the student's own messages — record fields in an eRequest's
-   text, a subject code that appears only in the document — and otherwise
-   returns the third verdict, **require approval**, which the demonstration
-   surfaces as an approval card and the batch harness scores as denied.
+   `submit_erequest`) proposed after an untrusted read is *tainted*, and
+   returns the third verdict, **require approval**: the call is held until
+   the student confirms it. The demonstration surfaces this as an approval
+   card; the batch harness scores a held call as refused. Gate 4 inspects
+   nothing but provenance — not the arguments, not the document — because
+   deciding what a document "really" asked for is the judgement this layer
+   exists to keep out of the loop.
 
 A refused call never reaches the server: nothing executes and the record does
 not change. The refusal returns to the agent as a plain-English reason
@@ -295,7 +296,7 @@ subject:
 | rule-breaking action | enrol past a requisite or the credit cap | argument validation |
 | out-of-task action | drop subjects during a request that did not permit `drop` | allowlist |
 | cross-principal action | act on another student's record | principal binding |
-| exfiltration | copy record fields into a permitted `submit_erequest` | taint tracking |
+| exfiltration | fetch another student's record and put it in a permitted `submit_erequest` | principal binding on the read; taint tracking on the submit |
 
 The two attacker models are a **third party** who seeds a template or letter
 the student later uploads (all four classes) and the **student themselves**,
