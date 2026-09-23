@@ -50,6 +50,13 @@ def test_the_defaults_match_the_compliance_pair_and_the_design():
     assert args.kinds == ["eligibility", "session"]
     assert args.arms == ["rag", "agent"]
     assert args.sample_seed == 20260903
+    assert args.num_ctx == 8192
+
+
+def test_num_ctx_reaches_the_manifest():
+    args = cli.parse_args(["--campaign", "x", "--num-ctx", "16384"])
+    manifest = cli.build_manifest(args, {}, "")
+    assert manifest.num_ctx == 16384
 
 
 def test_the_matrix_is_tasks_by_models_by_repeats_by_arms():

@@ -222,6 +222,7 @@ def ollama_chat(
     temperature: float = 0.0,
     seed: int | None = None,
     timeout: int = 180,
+    num_ctx: int | None = None,
 ):
     """A `Chat` callable bound to one model.
 
@@ -229,10 +230,17 @@ def ollama_chat(
     HTTP request here -- the "wall-clock latency of the model call" the
     design's §6 names -- not Ollama's self-reported `total_duration`, which
     excludes transport time and is kept separately as `provider_latency_ms`.
+
+    `num_ctx`, when given, sets Ollama's context window explicitly. Left
+    unset, Ollama silently truncates the context to its own default rather
+    than erroring, which on a long prompt (the RAG arm's stuffed documents)
+    quietly drops material the model was supposed to reason over.
     """
     options: dict = {"temperature": temperature}
     if seed is not None:
         options["seed"] = seed
+    if num_ctx is not None:
+        options["num_ctx"] = num_ctx
 
     def chat(messages: list[dict], tools: list[dict]) -> ChatReply:
         body = {"model": model, "messages": messages, "stream": False, "options": options}

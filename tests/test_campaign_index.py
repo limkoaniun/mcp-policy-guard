@@ -127,3 +127,21 @@ def test_a_refreshed_fingerprint_does_not_invalidate_a_resume(tmp_path):
     load_or_create_manifest(tmp_path, manifest(fingerprints={"llama3.2": {"digest": "a"}}))
     stored = load_or_create_manifest(tmp_path, manifest(fingerprints={"llama3.2": {"digest": "b"}}))
     assert stored is not None
+
+
+def test_num_ctx_is_a_method_field(tmp_path):
+    load_or_create_manifest(tmp_path, manifest(num_ctx=8192))
+    with pytest.raises(CampaignMismatchError) as error:
+        load_or_create_manifest(tmp_path, manifest(num_ctx=16384))
+    assert "num_ctx" in str(error.value)
+
+
+def test_an_old_manifest_with_no_num_ctx_key_still_resumes(tmp_path):
+    """A manifest written before this field existed has no `num_ctx` key at
+    all on disk. Resuming it under a manifest whose `num_ctx` is also None
+    (its default) must not read a missing stored key as a mismatch."""
+    (tmp_path / "campaign.json").write_text(
+        json.dumps(manifest().model_dump(exclude={"num_ctx"})), encoding="utf-8"
+    )
+    stored = load_or_create_manifest(tmp_path, manifest())
+    assert stored.num_ctx is None

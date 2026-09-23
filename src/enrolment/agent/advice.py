@@ -178,6 +178,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--max-model-turns", type=int, default=4)
     parser.add_argument("--max-calls", type=int, default=12)
+    parser.add_argument("--num-ctx", type=int, default=8192,
+                        help="Ollama's context window; long RAG prompts silently truncate without it")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--prompt", default="default", choices=sorted(PROMPTS))
     parser.add_argument("--dry-run", action="store_true")
@@ -207,7 +209,7 @@ def build_manifest(args, fingerprints: dict, digest: str) -> CampaignManifest:
         models=list(args.models), repeats=args.repeats, system_prompt=PROMPTS[args.prompt],
         nudge=NUDGE, policy_pack=args.pack, max_model_turns=args.max_model_turns,
         max_calls=args.max_calls, temperature=args.temperature, seed=args.seed,
-        fingerprints=fingerprints, sample_digest=digest or None,
+        fingerprints=fingerprints, sample_digest=digest or None, num_ctx=args.num_ctx,
     )
 
 
@@ -240,7 +242,8 @@ def main(argv=None) -> int:
     pack_path = REPO_ROOT / args.pack
 
     def chat_factory(model):
-        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed)
+        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed,
+                            num_ctx=manifest.num_ctx)
 
     async def runner(spec):
         task = by_id[spec.scenario_id]

@@ -38,7 +38,7 @@ MANIFEST = "campaign.json"
 METHOD_FIELDS = (
     "models", "repeats", "system_prompt", "nudge",
     "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
-    "sample_digest",
+    "sample_digest", "num_ctx",
 )
 
 
@@ -66,6 +66,12 @@ class CampaignManifest(BaseModel):
     #: In METHOD_FIELDS because half a campaign over one sample and half over
     #: another is not a campaign.
     sample_digest: str | None = None
+    #: Ollama's context window, when set explicitly. `None` for a manifest
+    #: written before this field existed, or for a caller that does not set
+    #: one -- Pydantic fills that in on load, so a stored manifest missing
+    #: the key on disk compares equal to one built with `num_ctx=None`,
+    #: rather than the missing key being read as a mismatch.
+    num_ctx: int | None = None
 
 
 def run_status(transcript: Transcript) -> str:
