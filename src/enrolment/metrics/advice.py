@@ -38,6 +38,7 @@ def judge_run(record: IndexRecord, run_dir, task: AdviceTask) -> dict:
         "model": record.model, "arm": record.arm, "repeat": record.repeat,
         "rule_depth": task.rule_depth, "stratum": task.stratum,
         "duration_s": record.duration_s,
+        "expected": task.expected_eligible if task.kind == "eligibility" else None,
     }
     path = Path(run_dir) / "transcript.jsonl"
     if record.status == "provider_error":
@@ -95,6 +96,12 @@ def aggregate(judgements: list[dict]) -> dict:
                 at = [j for j in core if j["rule_depth"] == depth]
                 by_depth[str(depth)] = _ratio(sum(1 for j in at if j["correct"]), len(at))
             cell["by_depth"] = by_depth
+            #: Always guessing the more common of ELIGIBLE/NOT ELIGIBLE in
+            #: this cell, without reading anything -- the floor any answer
+            #: strategy must clear to be worth reporting as skill.
+            true_count = sum(1 for j in rows if j.get("expected") is True)
+            false_count = sum(1 for j in rows if j.get("expected") is False)
+            cell["majority_baseline"] = _ratio(max(true_count, false_count), len(rows))
         out.setdefault(kind, {}).setdefault(arm, {})[model] = cell
     return out
 

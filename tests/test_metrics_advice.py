@@ -54,6 +54,18 @@ def test_judge_run_includes_the_wall_clock_duration(tmp_path):
     assert j["duration_s"] == 1.0
 
 
+def test_judge_run_includes_the_expected_eligibility_for_eligibility_tasks(tmp_path):
+    run_dir = write_run(tmp_path, "E-S1-32933-fake-rag-r1", "NOT ELIGIBLE, you lack 32144.")
+    j = scorer.judge_run(record("E-S1-32933-fake-rag-r1", "rag"), run_dir, task())
+    assert j["expected"] is False
+
+
+def test_judge_run_expected_is_none_for_session_tasks(tmp_path):
+    run_dir = write_run(tmp_path, "S-S1-autumn-fake-rag-r1", "32009")
+    j = scorer.judge_run(record("S-S1-autumn-fake-rag-r1", "rag"), run_dir, task("session"))
+    assert j["expected"] is None
+
+
 def test_a_run_whose_last_turn_is_a_call_has_no_answer(tmp_path):
     run_dir = write_run(tmp_path, "E-S1-32933-fake-agent-r1", "", last_is_call=True)
     j = scorer.judge_run(record("E-S1-32933-fake-agent-r1", "agent"), run_dir, task())
@@ -95,6 +107,16 @@ def test_aggregate_reports_mean_duration_s_per_cell():
     ]
     m = scorer.aggregate(judgements)
     assert m["eligibility"]["rag"]["fake"]["mean_duration_s"] == 3.0
+
+
+def test_aggregate_reports_the_majority_class_baseline_for_eligibility():
+    judgements = [
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": True, "correct": True, "jaccard": None, "rule_depth": 3, "stratum": "core", "expected": False},
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": False, "correct": None, "jaccard": None, "rule_depth": 1, "stratum": "core", "expected": False},
+        {"scoreable": True, "kind": "eligibility", "arm": "rag", "model": "fake", "answered": True, "correct": False, "jaccard": None, "rule_depth": 3, "stratum": "core", "expected": True},
+    ]
+    m = scorer.aggregate(judgements)
+    assert m["eligibility"]["rag"]["fake"]["majority_baseline"] == {"numerator": 2, "denominator": 3}
 
 
 def test_aggregate_mean_duration_s_is_none_when_nothing_was_timed():
