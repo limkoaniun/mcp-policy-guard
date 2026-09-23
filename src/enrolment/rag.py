@@ -17,6 +17,9 @@ from __future__ import annotations
 import re
 from collections.abc import Callable
 
+from pydantic import BaseModel, Field
+
+from .agent.prompts import SYSTEM_PROMPT
 from .agent.transcript import ChatReply
 from .models import Course, Student, Subject, SubjectRequisites
 from .progression import expand_structure, offered_in, summarise_plan
@@ -134,3 +137,50 @@ def render_attachments(attachments: dict[str, dict] | None) -> str:
         f"Uploaded document {entry.get('name', key)}:\n{entry.get('text', '')}"
         for key, entry in attachments.items()
     )
+
+
+class RagReply(BaseModel):
+    """What the chatbot said, and exactly what it was shown."""
+
+    text: str
+    context: list[str] = Field(default_factory=list)
+    latency_ms: float = 0.0
+
+
+def answer(
+    question: str,
+    *,
+    student: Student,
+    catalogue: dict[str, Subject],
+    requisites: dict[str, SubjectRequisites],
+    course: Course,
+    aos: dict[str, Course],
+    chat: Chat,
+    model: str,
+    system_prompt: str = SYSTEM_PROMPT,
+    attachments: dict[str, dict] | None = None,
+    session: str | None = None,
+) -> RagReply:
+    """Retrieve, stuff, answer. One completion; no tools are offered.
+
+    The system prompt is the agent's own with the principal filled, so the
+    two arms differ in what they can do, not in how they are addressed.
+    `model` is recorded by the caller; it is accepted here so the signature
+    matches the agent arm's and a runner can treat the two alike.
+    """
+    blocks: list[str] = []
+    for code in find_subjects(question, catalogue):
+        blocks.append(render_subject(catalogue[code], requisites.get(code)))
+    blocks.append(render_record(student))
+    if session:
+        blocks.append(render_structure(student, course, aos, catalogue, requisites, session))
+    docs = render_attachments(attachments)
+    if docs:
+        blocks.append(docs)
+    user = "Documents:\n\n" + "\n\n".join(blocks) + "\n\n" + question
+    messages = [
+        {"role": "system", "content": system_prompt.replace("{principal}", student.student_id)},
+        {"role": "user", "content": user},
+    ]
+    reply = chat(messages, [])
+    return RagReply(text=reply.content or "", context=blocks, latency_ms=reply.latency_ms)
