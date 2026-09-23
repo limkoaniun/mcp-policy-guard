@@ -102,6 +102,28 @@ async def test_the_rag_arm_writes_rag_json_and_a_readable_one_turn_transcript(tm
 
 
 @pytest.mark.anyio
+async def test_the_rag_arm_records_a_provider_error_rather_than_raising(tmp_path):
+    world = cli.load_world(REPO, REPO / "data" / "students.json")
+    spec = RunSpec(scenario_id="E-S1000001-32933", model="fake", arm="rag", repeat=1)
+
+    def chat_factory(model):
+        def chat(messages, tools):
+            raise RuntimeError("boom")
+
+        return chat
+
+    transcript, duration = await cli.run_rag_one(
+        elig(), spec, campaign_dir=tmp_path, chat_factory=chat_factory, manifest=manifest(), world=world,
+    )
+    run_dir = tmp_path / spec.run_id
+    assert run_status(transcript) == "provider_error"
+    read = Transcript.read_jsonl(run_dir / "transcript.jsonl")
+    assert run_status(read) == "provider_error"
+    assert "RuntimeError: boom" in read.turns[-1].text
+    assert duration >= 0
+
+
+@pytest.mark.anyio
 async def test_the_agent_arm_runs_through_the_real_proxy_read_only(tmp_path):
     """The one subprocess test: the guarded agent answers with tools, and the
     allowlist holds — enrol is not even declared for the task."""

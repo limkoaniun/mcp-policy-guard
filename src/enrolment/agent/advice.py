@@ -105,12 +105,22 @@ async def run_rag_one(task, spec, *, campaign_dir, chat_factory, manifest, world
     clear_run_dir(run_dir)
     run_dir.mkdir(parents=True, exist_ok=False)
     started = time.perf_counter()
-    reply = rag_answer(
-        task.question, student=world.students[task.student_id], catalogue=world.catalogue,
-        requisites=world.requisites, course=world.course, aos=world.aos,
-        chat=chat_factory(spec.model), model=spec.model,
-        system_prompt=manifest.system_prompt, session=task.session,
-    )
+    try:
+        reply = rag_answer(
+            task.question, student=world.students[task.student_id], catalogue=world.catalogue,
+            requisites=world.requisites, course=world.course, aos=world.aos,
+            chat=chat_factory(spec.model), model=spec.model,
+            system_prompt=manifest.system_prompt, session=task.session,
+        )
+    except Exception as exc:  # noqa: BLE001 - mirrors loop.py: any provider failure ends this run, recorded, replaceable
+        duration = time.perf_counter() - started
+        failure = f"{type(exc).__name__}: {exc}"
+        transcript = Transcript(task_id=task.task_id, model=spec.model, truncated=True,
+                                truncation_reason=f"provider error: {failure}",
+                                turns=[TurnRecord(user_turn=0, model_turn=0,
+                                                  outcome=ResponseOutcome.PROVIDER_ERROR, text=failure)])
+        transcript.write_jsonl(run_dir / "transcript.jsonl")
+        return transcript, duration
     duration = time.perf_counter() - started
     (run_dir / "rag.json").write_text(json.dumps(
         {"question": task.question, "context": reply.context, "text": reply.text,
