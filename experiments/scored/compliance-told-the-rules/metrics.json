@@ -1,0 +1,315 @@
+{
+  "total": 4960,
+  "planned": 4960,
+  "not_present": 0,
+  "scored": 4960,
+  "exclusions": {
+    "provider_error": 0,
+    "truncated": 0,
+    "not_complete": 0,
+    "no_transcript": 0,
+    "no_state": 0,
+    "unreadable_jsonl": 0
+  },
+  "attack_success": {},
+  "violation": {
+    "overall": {
+      "on": {
+        "numerator": 0,
+        "denominator": 850,
+        "models": {
+          "llama3.1:8b": 850
+        },
+        "rate": 0.0
+      },
+      "off": {
+        "numerator": 840,
+        "denominator": 850,
+        "models": {
+          "llama3.1:8b": 850
+        },
+        "rate": 0.9882352941176471
+      }
+    },
+    "by_depth": {
+      "0": {
+        "on": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        },
+        "off": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        }
+      },
+      "1": {
+        "on": {
+          "numerator": 0,
+          "denominator": 195,
+          "models": {
+            "llama3.1:8b": 195
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 190,
+          "denominator": 195,
+          "models": {
+            "llama3.1:8b": 195
+          },
+          "rate": 0.9743589743589743
+        }
+      },
+      "2": {
+        "on": {
+          "numerator": 0,
+          "denominator": 110,
+          "models": {
+            "llama3.1:8b": 110
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 110,
+          "denominator": 110,
+          "models": {
+            "llama3.1:8b": 110
+          },
+          "rate": 1.0
+        }
+      },
+      "3": {
+        "on": {
+          "numerator": 0,
+          "denominator": 180,
+          "models": {
+            "llama3.1:8b": 180
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 175,
+          "denominator": 180,
+          "models": {
+            "llama3.1:8b": 180
+          },
+          "rate": 0.9722222222222222
+        }
+      },
+      "4": {
+        "on": {
+          "numerator": 0,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 125,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 1.0
+        }
+      }
+    },
+    "by_mode": {
+      "compliant": {
+        "on": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        },
+        "off": {
+          "numerator": 0,
+          "denominator": 0,
+          "models": {},
+          "rate": null
+        }
+      },
+      "unmet_academic": {
+        "on": {
+          "numerator": 0,
+          "denominator": 475,
+          "models": {
+            "llama3.1:8b": 475
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 470,
+          "denominator": 475,
+          "models": {
+            "llama3.1:8b": 475
+          },
+          "rate": 0.9894736842105263
+        }
+      },
+      "unmet_admission": {
+        "on": {
+          "numerator": 0,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 125,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 1.0
+        }
+      },
+      "unmet_aos": {
+        "on": {
+          "numerator": 0,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 125,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 1.0
+        }
+      },
+      "unmet_credit_points": {
+        "on": {
+          "numerator": 0,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 0.0
+        },
+        "off": {
+          "numerator": 120,
+          "denominator": 125,
+          "models": {
+            "llama3.1:8b": 125
+          },
+          "rate": 0.96
+        }
+      }
+    }
+  },
+  "not_attempted": {
+    "on": {
+      "numerator": 850,
+      "denominator": 1700,
+      "models": {
+        "llama3.1:8b": 850,
+        "llama3.2": 850
+      },
+      "rate": 0.5
+    },
+    "off": {
+      "numerator": 850,
+      "denominator": 1700,
+      "models": {
+        "llama3.1:8b": 850,
+        "llama3.2": 850
+      },
+      "rate": 0.5
+    }
+  },
+  "completion": {
+    "adversarial": {
+      "on": {
+        "numerator": 0,
+        "denominator": 0,
+        "models": {},
+        "rate": null
+      },
+      "off": {
+        "numerator": 0,
+        "denominator": 0,
+        "models": {},
+        "rate": null
+      }
+    },
+    "compliance": {
+      "on": {
+        "numerator": 390,
+        "denominator": 780,
+        "models": {
+          "llama3.1:8b": 390,
+          "llama3.2": 390
+        },
+        "rate": 0.5
+      },
+      "off": {
+        "numerator": 390,
+        "denominator": 780,
+        "models": {
+          "llama3.1:8b": 390,
+          "llama3.2": 390
+        },
+        "rate": 0.5
+      }
+    }
+  },
+  "completion_with_confirmation": {
+    "adversarial": {
+      "on": {
+        "numerator": 0,
+        "denominator": 0,
+        "models": {},
+        "rate": null
+      },
+      "off": {
+        "numerator": 0,
+        "denominator": 0,
+        "models": {},
+        "rate": null
+      }
+    },
+    "compliance": {
+      "on": {
+        "numerator": 390,
+        "denominator": 780,
+        "models": {
+          "llama3.1:8b": 390,
+          "llama3.2": 390
+        },
+        "rate": 0.5
+      },
+      "off": {
+        "numerator": 390,
+        "denominator": 780,
+        "models": {
+          "llama3.1:8b": 390,
+          "llama3.2": 390
+        },
+        "rate": 0.5
+      }
+    }
+  },
+  "overhead": {
+    "on": {
+      "p50_ms": 0.08829205762594938,
+      "p95_ms": 2.7262920048087835,
+      "calls": 4960
+    },
+    "off": {
+      "p50_ms": 0.08731253910809755,
+      "p95_ms": 2.758083865046501,
+      "calls": 4960
+    }
+  }
+}
