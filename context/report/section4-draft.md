@@ -451,19 +451,31 @@ under test.
 
 ## Honesty notes for whoever edits this into the report (delete before submission)
 
-- **The upload channel is designed, not built.** There is no
-  `get_attachment` tool, no `attachments.py`, and `submit_erequest` takes
-  `(student_id, text)` only. Today's attack suite delivers payloads through
-  a subject-description overlay, which the supervisor has ruled implausible.
-  Until the attachment tool exists, no adversarial number in the report can
-  be attributed to the upload channel. The existing adversarial campaign
-  (`experiments/scored/adversarial-*`) measured the old channel; cite it
-  only as evidence that the *gates* work, and say which channel it used.
-- **Taint tracking is a stub** (`src/policy_guard/policies/taint.py`).
-  Gate 4 in 4.2, the taint marker, the approval card and the exfiltration
-  row of the attack-class table are design. Do not report an exfiltration
-  result until it is built. The trust labels it consumes already exist in
-  `configs/enrolment.yaml`.
+- **The upload channel and taint tracking are built** (branch
+  `feat/upload-channel`, 2026-09-23): `get_attachment`, per-run
+  `attachments.json`, `submit_erequest(type, attachment_ids)`, the `taint`
+  policy in both packs, and four upload-borne scenario pairs (A-01..A-04
+  with twins) replaying through the real proxy. Two things are still design:
+  the demo's attach control and approval card (the UI job), and the
+  model-driven re-run of the adversarial campaign on the new channel
+  (job 7). The existing adversarial campaign
+  (`experiments/scored/adversarial-*`) measured the old
+  subject-description channel; cite it only as evidence that the *gates*
+  work, and say which channel it used.
+- **Two scoring narrowings to state.** The confirmation column of the
+  utility metric counts held *eRequests* only (a held legitimate `enrol` or
+  `drop` has nowhere to be scored, because a scenario's declared final state
+  can express only "enrolment unchanged" and an eRequest count). And taint
+  lives for one proxy process — one campaign run, one demo message — while
+  the model's conversation history outlives it, so an instruction planted in
+  message 1 that asks for an action in message 2 meets an untainted proxy.
+  Both are in `context/threat-model.md` and the design's §3.5.
+- **Ablation caveat.** Every upload-borne attack is delivered through
+  `get_attachment`, so the run is tainted before any action is proposed and
+  taint backstops all four on the on arm. The per-class "stopped by"
+  attribution in 4.3 is about the *verdict* (a DENY short-circuits before
+  taint); ablating `arg_validation` or `allowlist` alone will not change
+  attack success on A-01..A-04. Say which of the two the results measure.
 - **The RAG arm is designed, not built.** `src/enrolment/rag.py` does not
   exist; the design is `context/2026-09-14-rag-baseline-design.md`. Do not
   report a RAG number; the by-construction zeros may be stated as such.
