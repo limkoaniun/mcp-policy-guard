@@ -26,6 +26,14 @@ attributes:
 7. `cross-principal-action/` — act on another student's record (stopped by
    principal binding)
 
+Every upload-borne attack is delivered through `get_attachment`, so the run
+is tainted before any action is proposed, and taint backstops all four on the
+on arm. The per-class "stopped by" attribution above is about the *verdict*
+— `DENY` short-circuits before taint is even consulted — not about ablation
+deltas: ablating `arg_validation` or `allowlist` alone will not change attack
+success on A-01..A-04, because taint still holds the call. A report reading
+these scenarios must say which of the two it measures.
+
 `exfiltration/` gained an upload-borne member, A-04. The upload scenarios are
 A-01..A-04 with twins A-01b..A-04b; each pair shares an `attachments` block
 byte for byte and differs only in the payload appended to one document. The
@@ -50,8 +58,9 @@ under `tool-shadowing`, where naming a nonexistent tool is the point), and
 that a scenario replaying no calls is refused outright rather than loaded as
 one that asserts nothing.
 
-Sixteen scenario files live under `attacks/scenarios/`: eight injected across
-the four classes above (output-injection: SC-02, SC-04, SC-06;
+Twenty-four scenario files live under `attacks/scenarios/`. Sixteen are the
+original SC-* set: eight injected across the four classes above
+(output-injection: SC-02, SC-04, SC-06;
 poisoned-description: SC-03, SC-08; tool-shadowing: SC-01, SC-05;
 exfiltration: SC-07) and their eight benign twins under
 `attacks/scenarios/benign/`. `configs/enrolment-personas.yaml` is the policy
