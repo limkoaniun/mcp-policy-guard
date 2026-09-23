@@ -37,6 +37,13 @@ def test_find_subjects_matches_a_code_mentioned_in_the_question():
     assert find_subjects("Am I eligible for 32513 next session?", CATALOGUE) == ["32513"]
 
 
+def test_find_subjects_a_mentioned_code_suppresses_keyword_expansion():
+    found = find_subjects(
+        "Am I eligible to enrol in 32513 Advanced Data Analytics Algorithms next session?", CATALOGUE
+    )
+    assert found == ["32513"]
+
+
 def test_find_subjects_matches_a_name_keyword_but_not_common_words():
     found = find_subjects("what is the research project subject about?", CATALOGUE)
     assert "32933" in found, "Research Project"

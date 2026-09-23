@@ -46,9 +46,19 @@ STOPWORDS = {
 
 
 def find_subjects(question: str, catalogue: dict[str, Subject]) -> list[str]:
-    """Codes mentioned in the question, plus subjects whose name shares a keyword."""
-    found = {code for code in CODE.findall(question) if code in catalogue}
+    """Codes mentioned in the question, plus subjects whose name shares a keyword.
+
+    A code the question names is a precise retrieval; a keyword is a guess.
+    So when the question names at least one catalogue code, that is the
+    whole answer -- a question about 32513 that happens to quote its long
+    name must not also retrieve every subject whose name shares a word with
+    it. Keyword expansion only runs when no code was mentioned.
+    """
+    named = {code for code in CODE.findall(question) if code in catalogue}
+    if named:
+        return sorted(named)
     words = {w.lower() for w in WORD.findall(question)} - STOPWORDS
+    found = set()
     for code, subject in catalogue.items():
         name = subject.name.lower()
         if any(re.search(r"\b" + re.escape(word), name) for word in words):
