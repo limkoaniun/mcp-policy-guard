@@ -36,9 +36,9 @@ MANIFEST = "campaign.json"
 #: rather than chosen -- re-reading a digest from a daemon must not invalidate
 #: a resume.
 METHOD_FIELDS = (
-    "models", "repeats", "system_prompt", "nudge",
+    "models", "repeats", "system_prompt", "rag_system_prompt", "nudge",
     "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
-    "sample_digest",
+    "sample_digest", "num_ctx",
 )
 
 
@@ -54,6 +54,11 @@ class CampaignManifest(BaseModel):
     models: list[str]
     repeats: int
     system_prompt: str
+    #: The RAG arm's system prompt, when this campaign runs one. `None` for a
+    #: manifest that predates the field (a compliance/adversarial campaign
+    #: has no RAG arm and never sets it) or a caller that does not set one --
+    #: Pydantic fills that in on load, the same way `num_ctx` does.
+    rag_system_prompt: str | None = None
     nudge: str
     policy_pack: str
     max_model_turns: int = 4
@@ -66,6 +71,12 @@ class CampaignManifest(BaseModel):
     #: In METHOD_FIELDS because half a campaign over one sample and half over
     #: another is not a campaign.
     sample_digest: str | None = None
+    #: Ollama's context window, when set explicitly. `None` for a manifest
+    #: written before this field existed, or for a caller that does not set
+    #: one -- Pydantic fills that in on load, so a stored manifest missing
+    #: the key on disk compares equal to one built with `num_ctx=None`,
+    #: rather than the missing key being read as a mismatch.
+    num_ctx: int | None = None
 
 
 def run_status(transcript: Transcript) -> str:

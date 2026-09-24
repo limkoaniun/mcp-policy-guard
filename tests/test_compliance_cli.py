@@ -177,3 +177,25 @@ def test_resuming_under_a_different_sample_is_refused(tmp_path, monkeypatch):
     with pytest.raises(CampaignMismatchError) as error:
         compliance.main([*base, "--per-depth", "2"])
     assert "sample_digest" in str(error.value)
+
+
+def test_the_prompt_flag_selects_the_named_prompt_for_the_manifest():
+    """`--prompt told-the-rules` is the prompting baseline; the manifest
+    records the prompt text, so a campaign resumed under the other prompt is
+    refused by the existing method-field check."""
+    from enrolment.agent import compliance
+    from enrolment.agent.prompts import SYSTEM_PROMPT, TOLD_THE_RULES_PROMPT
+
+    default = compliance.build_manifest(parse_args(["--campaign", "x"]), {}, "d")
+    told = compliance.build_manifest(
+        parse_args(["--campaign", "x", "--prompt", "told-the-rules"]), {}, "d"
+    )
+    assert default.system_prompt == SYSTEM_PROMPT
+    assert told.system_prompt == TOLD_THE_RULES_PROMPT
+
+
+def test_an_unknown_prompt_name_is_refused():
+    import pytest
+
+    with pytest.raises(SystemExit):
+        parse_args(["--campaign", "x", "--prompt", "be-nice"])

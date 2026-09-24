@@ -140,6 +140,21 @@ python -m enrolment.agent.compliance --campaign experiments/runs/compliance/firs
 python -m enrolment.agent.compliance --campaign experiments/runs/compliance/first
 ```
 
+### The advice comparison (RAG versus the guarded agent)
+
+```bash
+python -m enrolment.agent.advice --campaign experiments/runs/advice/first --dry-run
+python -m enrolment.agent.advice --campaign experiments/runs/advice/first
+python -m enrolment.metrics.advice --campaign experiments/runs/advice/first --out experiments/scored/advice-first
+```
+
+348 tasks (248 eligibility questions from the compliance sample, 100 session
+questions from the student file) × 2 models × 3 repeats × 2 arms (`rag`,
+`agent`). The RAG arm reads rendered handbook text and the record and never
+the evaluator's verdict; the agent arm runs through the proxy with a read-only
+allowlist. Scoring is string parsing; a reply that ignores the answer format is
+reported as "no answer", never as wrong.
+
 Score a campaign into the specification's §7 metrics. Read-only on the runs;
 `metrics.json` and `judgements.jsonl` are written to `--out`.
 

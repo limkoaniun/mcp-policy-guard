@@ -476,9 +476,7 @@ under test.
   attribution in 4.3 is about the *verdict* (a DENY short-circuits before
   taint); ablating `arg_validation` or `allowlist` alone will not change
   attack success on A-01..A-04. Say which of the two the results measure.
-- **The RAG arm is designed, not built.** `src/enrolment/rag.py` does not
-  exist; the design is `context/2026-09-14-rag-baseline-design.md`. Do not
-  report a RAG number; the by-construction zeros may be stated as such.
+- **The RAG arm is built and measured** (`src/enrolment/rag.py`, `experiments/scored/advice-first`): on advice tasks only, since on action tasks its numbers are zero by construction. Eligibility 72%/75% (majority floor 68.5%) against the guarded agent's 90%/69%; session Jaccard 0.27/0.20 against 0.90/0.95. The demo's RAG mode selector is still the UI job.
 - **Rate/scope limits are a stub** and outside the shipped pack. Census-date
   checking is not implemented. Do not draw either as active.
 - **Numbers to cite from the compliance campaign** (`experiments/scored/

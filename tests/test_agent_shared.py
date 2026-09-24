@@ -11,7 +11,7 @@ import pytest
 
 from enrolment.agent import cli_common
 from enrolment.agent.campaign import RunSpec, model_slug
-from enrolment.agent.prompts import NUDGE, SYSTEM_PROMPT
+from enrolment.agent.prompts import NUDGE, RAG_SYSTEM_PROMPT, SYSTEM_PROMPT
 from enrolment.run_setup import write_task
 
 
@@ -27,6 +27,13 @@ def test_the_nudge_has_one_home():
 
 def test_the_system_prompt_still_takes_a_principal():
     assert "{principal}" in SYSTEM_PROMPT
+
+
+def test_the_rag_system_prompt_does_not_tell_the_tool_less_arm_to_use_tools():
+    """SYSTEM_PROMPT tells the model to use tools it does not have when the
+    RAG arm is given it -- the rag chatbot has no tools at all."""
+    assert "{principal}" in RAG_SYSTEM_PROMPT
+    assert "tools to help" not in RAG_SYSTEM_PROMPT
 
 
 def test_run_spec_moved_without_changing_its_run_id():
@@ -158,3 +165,18 @@ def test_digest_drift_warns_naming_both_digests(capsys):
 def test_no_drift_warning_when_the_digest_is_unchanged(capsys):
     cli_common.warn_on_digest_drift({"m": {"digest": "same"}}, {"m": {"digest": "same"}})
     assert capsys.readouterr().out == ""
+
+
+def test_the_told_the_rules_prompt_is_the_default_plus_the_rules():
+    """The prompting baseline (spec §7): same agent, same tools, and the
+    rules stated in the prompt with an instruction to check before enrolling.
+    It must be a strict superset of the default prompt, so the two campaigns
+    differ in exactly one thing."""
+    from enrolment.agent.prompts import PROMPTS, SYSTEM_PROMPT, TOLD_THE_RULES_PROMPT
+
+    assert PROMPTS == {"default": SYSTEM_PROMPT, "told-the-rules": TOLD_THE_RULES_PROMPT}
+    assert TOLD_THE_RULES_PROMPT.startswith(SYSTEM_PROMPT)
+    assert "{principal}" in TOLD_THE_RULES_PROMPT
+    lowered = TOLD_THE_RULES_PROMPT.lower()
+    for word in ("prerequisite", "anti-requisite", "credit-point", "check_prerequisites", "erequest"):
+        assert word in lowered, word

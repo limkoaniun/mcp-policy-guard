@@ -237,6 +237,36 @@ def test_ollama_chat_measures_wall_clock_not_the_providers_own_figure(monkeypatc
     assert reply.latency_ms != reply.provider_latency_ms
 
 
+def test_ollama_chat_sets_num_ctx_when_given(monkeypatch):
+    seen = {}
+
+    def fake_post(url, body, timeout):
+        seen["body"] = body
+        return TEXT_ONLY
+
+    monkeypatch.setattr(ollama_module, "_post", fake_post)
+
+    chat = ollama_chat("llama3.2:latest", num_ctx=16384)
+    chat([{"role": "user", "content": "hi"}], [])
+
+    assert seen["body"]["options"]["num_ctx"] == 16384
+
+
+def test_ollama_chat_omits_num_ctx_when_not_given(monkeypatch):
+    seen = {}
+
+    def fake_post(url, body, timeout):
+        seen["body"] = body
+        return TEXT_ONLY
+
+    monkeypatch.setattr(ollama_module, "_post", fake_post)
+
+    chat = ollama_chat("llama3.2:latest")
+    chat([{"role": "user", "content": "hi"}], [])
+
+    assert "num_ctx" not in seen["body"]["options"]
+
+
 # Recorded verbatim from `GET /api/tags` on ollama 0.33.2 after
 # `ollama pull llama3.1:8b` and `ollama pull llama3.2`. Note what the daemon
 # does with the second one: a bare-name pull is reported under its `:latest`

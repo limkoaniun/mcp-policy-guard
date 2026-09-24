@@ -286,3 +286,14 @@ def test_a_re_pulled_model_warns_that_the_stored_digest_is_stale(
     assert json.loads((tmp_path / "campaign.json").read_text())["fingerprints"] == {
         "m": {"model": "m", "digest": "d0"}
     }
+
+
+def test_the_prompt_flag_selects_the_named_prompt_for_the_manifest():
+    from enrolment.agent.prompts import SYSTEM_PROMPT, TOLD_THE_RULES_PROMPT
+
+    default = adversarial.build_manifest(parse_args(["--campaign", "x"]), {})
+    told = adversarial.build_manifest(
+        parse_args(["--campaign", "x", "--prompt", "told-the-rules"]), {}
+    )
+    assert default.system_prompt == SYSTEM_PROMPT
+    assert told.system_prompt == TOLD_THE_RULES_PROMPT
