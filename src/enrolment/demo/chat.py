@@ -166,11 +166,15 @@ class ChatSession:
         happened, and this module does not delete evidence.
 
         The eRequest log goes back with the record; the attachments stay,
-        they are how the demonstration is staged.
+        they are how the demonstration is staged. Held decisions go with it --
+        a decision held against the record before the reset must not be
+        approvable afterwards, or Allow would mutate a record it never held
+        anything against.
         """
         shutil.copyfile(self.baseline_path, self.students_path)
         self.history = []
         self.erequests = []
+        self.turns = {}
 
     # ------------------------------------------------------------------ state
     def record(self) -> dict:
@@ -346,6 +350,9 @@ class ChatSession:
         if source.exists():
             attachments_path = run_dir / "attachments.json"
             shutil.copyfile(source, attachments_path)
+        # No overlay_path here: the app never gives a session one. A session
+        # started with `overlay=...` would need the replay to write it too,
+        # the way `_send` does, but nothing today constructs one that way.
         task_path = write_task(
             run_dir,
             task_id=f"chat-{turn:03d}-approval",
@@ -370,11 +377,27 @@ class ChatSession:
                 results.append("".join(
                     part.text for part in result.content if hasattr(part, "text")))
 
+        # Check the re-issued reads landed before anything moves. A fresh
+        # proxy re-reads each untrusted document so the taint gate sees the
+        # same history it would have live; if a re-read is itself refused
+        # (the allowlist changed since the turn, say), the held call would
+        # run untainted and the confirmation would report it as reached
+        # cleanly by the allowlist -- a record of an event that did not
+        # happen. Catching it here, before `state.json` is copied over
+        # `students.json` or eRequests are collected, keeps a failed replay
+        # a no-op: nothing was confirmed, so nothing should have moved.
+        replayed = _read_decisions(run_dir)
+        for decision in replayed[:-1]:
+            if not decision["forwarded"]:
+                raise ValueError(
+                    f"the replay could not re-read {decision['tool']!r} "
+                    f"({decision['reason']}); nothing was confirmed"
+                )
+
         state_path = run_dir / "state.json"
         if state_path.exists():
             shutil.copyfile(state_path, self.students_path)
         self._collect_erequests(run_dir, turn=turn, confirmed=True)
 
-        replayed = _read_decisions(run_dir)
         calls = _calls_from(replayed, results)
         return Confirmation(turn=turn, index=index, reread=len(reads), call=calls[-1])

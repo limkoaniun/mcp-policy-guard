@@ -33,9 +33,15 @@ const findAttached = (attached, wanted) => {
   return attached.find((a) => a.id.toLowerCase() === key || a.name.toLowerCase() === key)
 }
 
+// `refused` is an upstream error (the call returned one), not a policy
+// verdict -- `src/enrolment/agent/loop.py` says so outright. `blocked` is
+// the authoritative word, written onto the row once `done` arrives; until
+// then `refused` is the only signal there is, so it stands in.
+const stoppedBy = (m) => m.blocked ?? m.refused
+
 const tagFor = (m) => {
-  if (m.verdict === 'require_approval' && m.refused) return { cls: 'held', text: 'needs approval' }
-  if (m.refused) return { cls: 'blocked', text: 'stopped' }
+  if (m.verdict === 'require_approval' && stoppedBy(m)) return { cls: 'held', text: 'needs approval' }
+  if (stoppedBy(m)) return { cls: 'blocked', text: 'stopped' }
   return { cls: 'ok', text: 'ran' }
 }
 
@@ -94,6 +100,11 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const threadBox = useRef(null)
+  // Mirrors `session` so `allow`'s in-flight replay can tell, when the
+  // request resolves, whether the student switched persona while it was
+  // out -- `session` itself is a stale closure inside that async function.
+  const sessionRef = useRef(null)
+  const setSessionId = (id) => { sessionRef.current = id; setSession(id) }
 
   const applyState = (s) => {
     setRecord(s.record)
@@ -106,14 +117,15 @@ export default function App() {
       setTools(t.tools)
       setPresets(t.presets)
     })
-    api.getDocuments().then(setDocuments).catch(() => setDocuments([]))
+    api.getDocuments().then(setDocuments)
+      .catch((e) => { setDocuments([]); setError(`Documents could not be loaded: ${e.message}`) })
     api.getPersonas().then(setPersonas).catch(() => setPersonas([]))
     api.getModels().then((m) => {
       setModels(m)
       setModel(m.includes('qwen2.5:14b') ? 'qwen2.5:14b' : (m[0] || ''))
     })
     api.newSession('S9000001', 'enrolment').then((s) => {
-      setSession(s.id)
+      setSessionId(s.id)
       setAllowed(s.allowed_tools)
       setEnforcement(s.enforcement)
       applyState(s)
@@ -192,7 +204,7 @@ export default function App() {
       await api.setTools(s.id, allowed).catch(() => {})
     if (s.enforcement !== enforcement)
       await api.setEnforcement(s.id, enforcement).catch(() => {})
-    setSession(s.id)
+    setSessionId(s.id)
     applyState(s)
     setBaseline(s.record)
     setDecisions([])
@@ -264,19 +276,36 @@ export default function App() {
   }
 
   const allow = async (index) => {
+    if (busy || !session) return
+    const current = session
     const key = `${decisionTurn}:${index}`
+    setBusy(true)
     setApprovals((a) => ({ ...a, [key]: { status: 'pending' } }))
-    const body = await api.approve(session, decisionTurn, index)
-      .catch((e) => { setError(e.message); return null })
-    if (!body) {
-      setApprovals((a) => { const next = { ...a }; delete next[key]; return next })
-      return
+    try {
+      const body = await api.approve(session, decisionTurn, index)
+        .catch((e) => { setError(e.message); return null })
+      // The replay is a request against `current`'s session id. If the
+      // student switched persona while it was in flight, `newSession` has
+      // already replaced `session` and its record -- writing this reply in
+      // now would splice the old session's state, attachments and
+      // eRequests into the new persona's view. Drop it silently; the new
+      // session already has its own answer.
+      if (sessionRef.current !== current) {
+        setApprovals((a) => { const next = { ...a }; delete next[key]; return next })
+        return
+      }
+      if (!body) {
+        setApprovals((a) => { const next = { ...a }; delete next[key]; return next })
+        return
+      }
+      applyState(body)
+      setApprovals((a) => ({ ...a, [key]: { status: 'confirmed', confirmation: body.confirmation } }))
+      setThread((t) => [...t, { role: 'system', text:
+        `You confirmed ${body.confirmation.call.tool}. It re-read ${body.confirmation.reread} ` +
+        `document${body.confirmation.reread === 1 ? '' : 's'}, then ran.` }])
+    } finally {
+      setBusy(false)
     }
-    applyState(body)
-    setApprovals((a) => ({ ...a, [key]: { status: 'confirmed', confirmation: body.confirmation } }))
-    setThread((t) => [...t, { role: 'system', text:
-      `You confirmed ${body.confirmation.call.tool}. It re-read ${body.confirmation.reread} ` +
-      `document${body.confirmation.reread === 1 ? '' : 's'}, then ran.` }])
   }
 
   // Refuse is page-only: nothing ran, so there is nothing to log.
@@ -325,7 +354,7 @@ export default function App() {
       <div className="intro" id="main">
         <h1>Enrolment assistant</h1>
         <p>
-          An LLM agent with eleven enrolment tools. Every tool call is intercepted by the
+          An LLM agent with {tools.length || 'its'} enrolment tools. Every tool call is intercepted by the
           policy layer before it executes. Documents the student attaches are read
           through <code>get_attachment</code>, which the policy pack labels untrusted.
         </p>
@@ -355,13 +384,13 @@ export default function App() {
                 const tag = tagFor(m)
                 const doc = m.doc
                 return (
-                  <div key={i} className={`toolcall${m.refused ? ' blocked' : ''}`}>
+                  <div key={i} className={`toolcall${stoppedBy(m) ? ' blocked' : ''}`}>
                     <span>{m.tool}</span>{' '}
                     {doc
                       ? <span className="args">{doc.name}</span>
                       : <span className="args">{args(m.args)}</span>}
                     <span className={`tag ${tag.cls}`}>{tag.text}</span>
-                    {doc && !m.refused && (
+                    {doc && !stoppedBy(m) && (
                       <details className="saw-panel">
                         <summary>what the model saw</summary>
                         <Saw text={doc.text}

@@ -351,3 +351,30 @@ async def test_approve_releases_busy_even_when_it_fails(tmp_path):
         await live.approve(turn=9, index=0)
 
     assert live.busy is False
+
+
+@pytest.mark.anyio
+async def test_a_replay_whose_reread_is_refused_confirms_nothing(tmp_path):
+    """If the re-read itself is denied, the held call would run untainted and
+    the confirmation would misreport it as reached cleanly by the allowlist --
+    a record of an event that did not happen. Nothing should move."""
+    live = await held_drop(tmp_path)
+    live.turns[1]["allowed_tools"] = [
+        t for t in live.turns[1]["allowed_tools"] if t != "get_attachment"]
+
+    with pytest.raises(ValueError, match="re-read"):
+        await live.approve(turn=1, index=1)
+
+    assert "32541" in live.record()["enrolled"]
+    assert live.erequests == []
+
+
+@pytest.mark.anyio
+async def test_reset_forgets_held_decisions(tmp_path):
+    """A decision held against the pre-reset record must not be approvable
+    afterwards -- Allow would mutate a record it never held anything against."""
+    live = await held_drop(tmp_path)
+    live.reset()
+
+    with pytest.raises(LookupError):
+        await live.approve(turn=1, index=1)
