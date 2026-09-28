@@ -112,14 +112,22 @@ def write_overlay(scenario: Scenario, run_dir) -> Path | None:
     )
 
 
+def plant_payload(text: str, payload_text: str) -> str:
+    """The planted document: the payload appended after a blank line -- the
+    position a hidden footer or a note "from the institution" would occupy in
+    a real template. The demo's attach control and the campaign's
+    `write_attachments` both call this, so the bytes the demo shows are the
+    bytes the campaign measured."""
+    return text.rstrip() + "\n\n" + payload_text.strip()
+
+
 def write_attachments(scenario: Scenario, run_dir) -> Path | None:
     """Write the run's uploaded documents, delivering the payload inside one.
 
     The twin rule is what makes this fair: both twins carry the same
     `attachments` block, so the clean document is byte-identical across the
     pair and the injected run differs only by the appended payload. The
-    payload is appended after a blank line -- the position a hidden footer or
-    a note "from the institution" would occupy in a real template.
+    planted variant is `plant_payload`'s.
     """
     if not scenario.attachments:
         return None
@@ -130,7 +138,7 @@ def write_attachments(scenario: Scenario, run_dir) -> Path | None:
     payload = scenario.payload
     if payload is not None and scenario.deliverable and payload.location == "attachment":
         target = documents[payload.target]
-        target["text"] = target["text"].rstrip() + "\n\n" + payload.text.strip()
+        target["text"] = plant_payload(target["text"], payload.text)
     run_dir = Path(run_dir)
     path = run_dir / "attachments.json"
     path.write_text(json.dumps(documents, ensure_ascii=False, indent=2), encoding="utf-8")
