@@ -91,11 +91,17 @@ button, input, select { font: inherit; color: inherit; }
 .startover:disabled { opacity: .4; cursor: default; }
 
 /* ---------- chat ---------- */
-.chat, .sidecol { height: min(660px, calc(100vh - 260px)); min-height: 460px; }
-.chat { display: flex; flex-direction: column; }
-.sidecol { display: flex; flex-direction: column; gap: 1.5rem; }
-.sidecol .console { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-.sidecol .console .log { flex: 1; }
+.chat { height: min(660px, calc(100vh - 260px)); min-height: 460px; display: flex; flex-direction: column; }
+/* The side column grows with its content instead of sharing the chat's fixed
+   height -- pinning it the same as .chat let a long console (tools ticked,
+   enforcement-off note, a real decision log) get clipped, cut off mid-panel
+   with no way to reach the rest. The two panels inside it that can grow
+   without bound (the decision log, the eRequests list) scroll within a
+   capped height of their own instead, so the record card and the console's
+   own header stay in view above and below them. */
+.sidecol { height: auto; min-height: 460px; display: flex; flex-direction: column; gap: 1.5rem; }
+.sidecol .console { display: flex; flex-direction: column; }
+.sidecol .console .log { min-height: 12rem; max-height: 22rem; overflow-y: auto; }
 .thread { flex: 1; min-height: 0; padding: 1.35rem; overflow-y: auto; }
 .bubble { max-width: 48ch; padding: .75rem 1rem; margin-bottom: .9rem; }
 .bubble.assistant { background: #f2f2f2; border-left: 3px solid var(--uts-blue); }
@@ -132,12 +138,15 @@ button, input, select { font: inherit; color: inherit; }
 .tag.ok { color: var(--ink-soft); border-color: var(--line); }
 .tag.blocked { color: #fff; background: var(--deny); border-color: var(--deny); }
 
-.poison {
-  border-left: 3px solid var(--deny); padding: .15rem 0 .15rem .85rem;
-  margin: 0 0 .9rem; font-size: .89rem; max-width: 58ch; background: #fdf4f4;
+.tag.held { color: #fff; background: var(--accent); border-color: var(--accent); }
+.toolcall .saw-panel { margin-top: .35rem; font-family: var(--sans); }
+.toolcall .saw-panel summary { cursor: pointer; font-size: .8rem; color: var(--ink-soft); }
+.saw {
+  font-family: var(--mono); font-size: .8rem; white-space: pre-wrap; word-break: break-word;
+  background: #f6f6f6; border: 1px solid var(--line-soft); padding: .6rem .75rem;
+  margin: .4rem 0 0; max-height: 16rem; overflow-y: auto; max-width: 62ch;
 }
-.poison .where { font-family: var(--mono); font-size: .76rem; color: var(--ink-soft); }
-.poison q { font-style: italic; }
+.saw mark { background: #fde2e2; color: var(--deny); font-weight: 700; padding: 0 .1rem; }
 
 .chips { display: flex; flex-wrap: wrap; gap: .55rem; padding: 0 1.35rem 1.1rem; }
 .chip {
@@ -147,13 +156,48 @@ button, input, select { font: inherit; color: inherit; }
 .chip:hover:not(:disabled) { background: var(--uts-blue); border-color: var(--uts-blue); color: #fff; }
 .chip:disabled { opacity: .4; cursor: default; }
 
+/* Attached documents sit above the composer, named with their variant so the
+   room can see whether the planted footer is in play before the model reads it. */
+.attachments { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0 1.35rem .8rem; }
+.attachment {
+  display: inline-flex; align-items: center; gap: .4rem; font-size: .86rem;
+  border: 1px solid var(--line); background: #f6f6f6; padding: .3rem .6rem;
+  font-family: var(--mono);
+}
+.attachment .variant { color: var(--ink-soft); font-family: var(--sans); }
+.attachment button {
+  border: 0; background: none; cursor: pointer; font-size: 1rem; line-height: 1;
+  padding: 0 .1rem; color: var(--ink-soft);
+}
+.attachment button:hover:not(:disabled) { color: var(--deny); }
+.attach { position: relative; }
+.attach > button {
+  background: #fff; color: var(--black); border: 1px solid var(--black);
+  padding: .7rem 1rem; cursor: pointer; font-weight: 400;
+}
+.attach > button:disabled { color: #9a9a9a; border-color: var(--line); background: #fff; }
+.attachmenu {
+  position: absolute; bottom: calc(100% + .4rem); left: 0; z-index: 2; min-width: 22rem;
+  background: #fff; border: 1px solid var(--black); box-shadow: 0 6px 18px rgba(0,0,0,.12);
+  padding: .6rem;
+}
+.attachmenu .doc .name { font-family: var(--mono); font-size: .86rem; margin: .2rem 0 .4rem; }
+.attachmenu .doc button {
+  display: block; width: 100%; text-align: left; background: #fff; border: 1px solid var(--line);
+  padding: .45rem .7rem; margin-bottom: .35rem; cursor: pointer; font-size: .9rem;
+}
+.attachmenu .doc button:hover { border-color: var(--black); }
+.attachmenu .doc button[aria-pressed="true"] { background: var(--black); color: #fff; border-color: var(--black); }
+
 .composer { display: flex; gap: .75rem; padding: 1.1rem 1.35rem; border-top: 1px solid var(--line-soft); }
 .composer input { flex: 1; padding: .7rem .9rem; border: 1px solid var(--line); background: #fff; }
-.composer button {
+/* `>` so this reaches only the composer's own Send button, not the Attach
+   button or the attach menu's variant buttons nested inside `.attach`. */
+.composer > button {
   background: var(--uts-blue); color: #fff; border: 0; padding: .7rem 1.7rem;
   font-weight: 700; cursor: pointer;
 }
-.composer button:disabled { background: #9a9a9a; cursor: default; }
+.composer > button:disabled { background: #9a9a9a; cursor: default; }
 
 /* ---------- console ---------- */
 .switch { display: inline-flex; align-items: center; gap: .65rem; cursor: pointer; font-weight: 400; font-size: .9rem; }
@@ -212,10 +256,43 @@ button, input, select { font: inherit; color: inherit; }
 .decision .outcome { font-size: .83rem; color: var(--ink-soft); margin-top: .25rem; }
 .decision .outcome.overruled { color: var(--deny); font-weight: 700; }
 
+.decision.held { border-left-color: var(--accent); }
+.taint {
+  font-family: var(--sans); font-size: .71rem; color: var(--accent);
+  border: 1px solid var(--accent); padding: .05rem .4rem; margin-left: .5rem; vertical-align: middle;
+}
+.approval {
+  margin-top: .5rem; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem;
+  font-size: .86rem; background: #fbf5ef; border: 1px solid #efd9c4; padding: .5rem .7rem;
+}
+.approval button {
+  background: var(--allow); color: #fff; border: 0; padding: .35rem .9rem; cursor: pointer;
+  font-weight: 700;
+}
+.approval button.refuse { background: #fff; color: var(--black); border: 1px solid var(--black); font-weight: 400; }
+.approval button:disabled { opacity: .5; cursor: default; }
+
 .record { padding: 1.1rem 1.25rem; font-family: var(--mono); font-size: .9rem; }
 .record .row { display: flex; justify-content: space-between; gap: 1.5rem; padding: .22rem 0; }
 .record .row .value { text-align: right; }
 .record .row .value.changed { color: var(--deny); font-weight: 500; }
+
+.erequests { padding: .2rem 1.25rem 1.1rem; }
+.erequests .caption {
+  font-family: var(--mono); font-size: .84rem; color: var(--ink-soft);
+  border-top: 1px dashed var(--line); padding-top: .7rem; margin-bottom: .5rem;
+}
+.erequests .muted { margin: 0; font-size: .88rem; }
+/* Capped and scrollable so a long eRequest list cannot itself grow the
+   record card enough to squeeze the console's decision log off-screen. */
+.erequests .entries { max-height: 11rem; overflow-y: auto; }
+.erequest { margin-bottom: .7rem; border-left: 3px solid var(--line); padding-left: .8rem; }
+.erequest .meta { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); }
+.erequest .text {
+  font-family: var(--sans); font-size: .88rem; white-space: pre-wrap; word-break: break-word;
+  margin: .25rem 0; max-height: 9rem; overflow-y: auto;
+}
+.erequest .cites { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); }
 .muted { color: var(--ink-soft); }
 
 /* ---------- footer ---------- */

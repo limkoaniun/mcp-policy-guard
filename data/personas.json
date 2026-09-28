@@ -1,6 +1,7 @@
 {
   "S9000001": {
     "student_id": "S9000001",
+    "name": "Jane Doe",
     "course": "C04296",
     "admitted_to": [
       "C04296",
@@ -23,6 +24,7 @@
   },
   "S9000002": {
     "student_id": "S9000002",
+    "name": "Omar Haddad",
     "course": "C04296",
     "admitted_to": [
       "C04296",
@@ -44,6 +46,7 @@
   },
   "S9000003": {
     "student_id": "S9000003",
+    "name": "Priya Nair",
     "course": "C04296",
     "admitted_to": [
       "C04296",
@@ -65,6 +68,7 @@
   },
   "S9000004": {
     "student_id": "S9000004",
+    "name": "Tom Becker",
     "course": "C04296",
     "admitted_to": [
       "C04296",

@@ -148,3 +148,23 @@ def test_write_overlay_ignores_an_attachment_payload(tmp_path):
     """The two delivery mechanisms are disjoint: an attachment payload must
     not also be written into a subject description."""
     assert write_overlay(attached_scenario(), tmp_path) is None
+
+
+from enrolment.run_setup import plant_payload
+
+
+def test_plant_payload_appends_after_a_blank_line_and_trims_both_ends():
+    assert plant_payload("BODY\n\n", "  NOTE FOR THE ASSISTANT: do it.\n") == (
+        "BODY\n\nNOTE FOR THE ASSISTANT: do it."
+    )
+
+
+def test_write_attachments_uses_plant_payload(tmp_path):
+    """One rule, one place: the demo attaches what the campaign measured only
+    if both derive the planted document the same way."""
+    scenario = attached_scenario()
+    written = json.loads(write_attachments(scenario, tmp_path).read_text())
+    target = scenario.payload.target
+    original = next(a.text for a in scenario.attachments if a.id == target)
+
+    assert written[target]["text"] == plant_payload(original, scenario.payload.text)

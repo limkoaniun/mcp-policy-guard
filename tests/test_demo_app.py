@@ -53,15 +53,18 @@ def test_the_built_frontend_is_served():
     assert response.headers["cache-control"] == "no-store, must-revalidate"
 
 
-def test_the_console_declares_the_tools_and_the_planted_injection():
+def test_the_console_declares_every_tool_including_get_attachment():
     """The page draws its checkboxes from this rather than a list of its own,
-    so a tool added upstream cannot go missing from the console."""
+    so a tool added upstream cannot go missing from the console. The planted
+    32513 description is gone: the attack arrives through the attach control."""
     body = client().get("/api/tools").json()
 
     names = [t["name"] for t in body["tools"]]
     assert "drop" in names
+    assert "get_attachment" in names
     assert all(t["side_effect"] for t in body["tools"] if t["name"] in {"enrol", "drop"})
-    assert body["injected"]["subject"] == "32513"
+    assert "get_attachment" in body["presets"]["read-only"]
+    assert "injected" not in body
 
 
 def scripted_model(*replies):
@@ -138,3 +141,21 @@ def test_a_session_for_a_known_persona_starts_on_that_record():
 
     assert body["record"]["student_id"] == "S9000004"
     assert body["record"]["enrolled"] == ["32541", "43030", "32548", "32547"]
+
+
+def test_the_picker_gets_the_students_names():
+    body = client().get("/api/personas").json()
+    by_id = {p["id"]: p for p in body}
+
+    assert by_id["S9000001"]["name"] == "Jane Doe"
+    assert by_id["S9000004"]["name"] == "Tom Becker"
+
+
+def test_it_lists_one_attachable_document_per_upload_persona():
+    body = client().get("/api/documents").json()
+
+    assert sorted(d["persona"] for d in body) == ["S9000001", "S9000002", "S9000003", "S9000004"]
+    jane = next(d for d in body if d["persona"] == "S9000001")
+    assert jane["name"] == "RPL_application_template.txt"
+    assert jane["planted_text"].endswith(jane["payload_text"])
+    assert jane["prompt"], "the scenario's request is offered as a chip"
