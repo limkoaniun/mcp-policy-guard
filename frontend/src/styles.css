@@ -91,7 +91,7 @@ button, input, select { font: inherit; color: inherit; }
 .startover:disabled { opacity: .4; cursor: default; }
 
 /* ---------- chat ---------- */
-.chat { height: min(660px, calc(100vh - 260px)); min-height: 460px; display: flex; flex-direction: column; }
+.chat { height: min(660px, calc(100vh - 260px)); min-height: 460px; display: flex; flex-direction: column; position: relative; }
 /* The side column grows with its content instead of sharing the chat's fixed
    height -- pinning it the same as .chat let a long console (tools ticked,
    enforcement-off note, a real decision log) get clipped, cut off mid-panel
@@ -170,24 +170,21 @@ button, input, select { font: inherit; color: inherit; }
   padding: 0 .1rem; color: var(--ink-soft);
 }
 .attachment button:hover:not(:disabled) { color: var(--deny); }
-.attach { position: relative; }
 .attach > button {
   background: #fff; color: var(--black); border: 1px solid var(--black);
   padding: .7rem 1rem; cursor: pointer; font-weight: 400;
 }
 .attach > button:disabled { color: #9a9a9a; border-color: var(--line); background: #fff; }
-.attachmenu {
-  position: absolute; bottom: calc(100% + .4rem); left: 0; z-index: 2; min-width: 22rem;
-  background: #fff; border: 1px solid var(--black); box-shadow: 0 6px 18px rgba(0,0,0,.12);
-  padding: .6rem;
+
+/* The chat card is the drop zone. The outline and overlay appear only while a
+   file is over it, and never while a message runs -- the running proxy has
+   its attachments already. */
+.chat.dropping { outline: 3px dashed var(--uts-blue); outline-offset: -3px; }
+.dropzone {
+  position: absolute; inset: 0; z-index: 3; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .88); color: var(--uts-blue);
+  font-size: 1.3rem; font-weight: 700; pointer-events: none;
 }
-.attachmenu .doc .name { font-family: var(--mono); font-size: .86rem; margin: .2rem 0 .4rem; }
-.attachmenu .doc button {
-  display: block; width: 100%; text-align: left; background: #fff; border: 1px solid var(--line);
-  padding: .45rem .7rem; margin-bottom: .35rem; cursor: pointer; font-size: .9rem;
-}
-.attachmenu .doc button:hover { border-color: var(--black); }
-.attachmenu .doc button[aria-pressed="true"] { background: var(--black); color: #fff; border-color: var(--black); }
 
 .composer { display: flex; gap: .75rem; padding: 1.1rem 1.35rem; border-top: 1px solid var(--line-soft); }
 .composer input { flex: 1; padding: .7rem .9rem; border: 1px solid var(--line); background: #fff; }

@@ -21,17 +21,20 @@ const SUGGESTIONS = [
   'Enrol me in 32513',
 ]
 
-const VARIANT_LABEL = {
-  planted: 'as received (contains a planted footer)',
-  clean: 'clean copy',
-}
-
 // The server resolves `attachment_id` by id or by file name, case-insensitively.
 // The page matches the same way so the row finds the document the tool did.
 const findAttached = (attached, wanted) => {
   const key = String(wanted || '').toLowerCase()
   return attached.find((a) => a.id.toLowerCase() === key || a.name.toLowerCase() === key)
 }
+
+const hasFiles = (e) => Array.from(e.dataTransfer?.types || []).includes('Files')
+const kindLabel = (a) => (a.kind === 'pdf' ? 'PDF' : 'text')
+// The server says which shipped document an upload is, if any; the page
+// only repeats it. It never guesses from the file name.
+const knownLabel = (a) =>
+  a.known?.variant === 'planted' ? ' · as received (contains a planted footer)'
+    : a.known?.variant === 'clean' ? ' · matches the demo document' : ''
 
 // `refused` is an upstream error (the call returned one), not a policy
 // verdict -- `src/enrolment/agent/loop.py` says so outright. `blocked` is
@@ -77,7 +80,6 @@ function Saw({ text, payload }) {
 export default function App() {
   const [tools, setTools] = useState([])
   const [presets, setPresets] = useState({})
-  const [documents, setDocuments] = useState([])
   const [models, setModels] = useState([])
   const [model, setModel] = useState('')
 
@@ -96,10 +98,11 @@ export default function App() {
   // `${turn}:${index}` -> { status: 'pending' | 'confirmed' | 'refused', confirmation }
   const [approvals, setApprovals] = useState({})
   const [draft, setDraft] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [dropping, setDropping] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const threadBox = useRef(null)
+  const fileInput = useRef(null)
   // Mirrors `session` so `allow`'s in-flight replay can tell, when the
   // request resolves, whether the student switched persona while it was
   // out -- `session` itself is a stale closure inside that async function.
@@ -117,8 +120,6 @@ export default function App() {
       setTools(t.tools)
       setPresets(t.presets)
     })
-    api.getDocuments().then(setDocuments)
-      .catch((e) => { setDocuments([]); setError(`Documents could not be loaded: ${e.message}`) })
     api.getPersonas().then(setPersonas).catch(() => setPersonas([]))
     api.getModels().then((m) => {
       setModels(m)
@@ -158,22 +159,23 @@ export default function App() {
     if (session) await api.setEnforcement(session, next).catch((e) => setError(e.message))
   }
 
-  // Attachments are session state, so the same list reaches every later
-  // message until it is changed. One variant of a document at a time.
-  const applyAttachments = async (next) => {
-    if (!session) return
-    setMenuOpen(false)
-    const s = await api.setAttachments(session, next.map(({ id, variant }) => ({ id, variant })))
-      .catch((e) => { setError(e.message); return null })
+  // Each dropped file is one upload; the chip appears when the server
+  // answers. A refused file reports its reason and the rest still go up.
+  const uploadFiles = async (files) => {
+    if (!session || busy) return
+    setError(null)
+    for (const file of Array.from(files)) {
+      const s = await api.uploadFile(session, file)
+        .catch((e) => { setError(`${file.name}: ${e.message}`); return null })
+      if (s) applyState(s)
+    }
+  }
+  const detach = async (id) => {
+    if (!session || busy) return
+    const s = await api.deleteAttachment(session, id).catch((e) => { setError(e.message); return null })
     if (s) applyState(s)
   }
-  const attachDocument = (doc, variant) =>
-    applyAttachments([...attached.filter((a) => a.id !== doc.id), { id: doc.id, variant }])
-  const detach = (id) => applyAttachments(attached.filter((a) => a.id !== id))
-
-  const myDocuments = documents.filter((d) => d.persona === record?.student_id)
-  const docById = (id) => documents.find((d) => d.id === id)
-  const attachedPrompts = attached.map((a) => docById(a.id)?.prompt).filter(Boolean)
+  const attachedPrompts = attached.map((a) => a.known?.prompt).filter(Boolean)
 
   // Clearing the thread alone would leave the next run starting from the
   // record the last one mutated -- so this resets both, and says so in the
@@ -222,7 +224,6 @@ export default function App() {
     setBusy(true)
     setError(null)
     setDraft('')
-    setMenuOpen(false)
     setThread((t) => [...t, { role: 'student', text }])
 
     // Call rows are stamped with this send's token so the verdicts arriving
@@ -242,7 +243,8 @@ export default function App() {
             ? findAttached(attached, event.arguments?.attachment_id) : null
           setThread((t) => [...t, {
             role: 'call', token, tool: event.tool, args: event.arguments, refused: event.refused,
-            doc: doc ? { id: doc.id, name: doc.name, text: doc.text, variant: doc.variant } : null,
+            doc: doc ? { id: doc.id, name: doc.name, text: doc.text,
+                         payload: doc.known?.payload_text || null } : null,
           }])
         }
         if (event.kind === 'said') {
@@ -361,7 +363,14 @@ export default function App() {
       </div>
 
       <div className="layout">
-        <section className="card chat">
+        <section
+          className={`card chat${dropping ? ' dropping' : ''}`}
+          onDragEnter={(e) => { if (!busy && hasFiles(e)) { e.preventDefault(); setDropping(true) } }}
+          onDragOver={(e) => { if (!busy && hasFiles(e)) { e.preventDefault(); setDropping(true) } }}
+          onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setDropping(false) }}
+          onDrop={(e) => { e.preventDefault(); setDropping(false); if (!busy) uploadFiles(e.dataTransfer.files) }}
+        >
+          {dropping && <div className="dropzone" aria-hidden="true">Drop to attach</div>}
           <h2>
             <span>Assistant &middot; student {record?.student_id || '…'}</span>
             <span className="sub">
@@ -393,8 +402,7 @@ export default function App() {
                     {doc && !stoppedBy(m) && (
                       <details className="saw-panel">
                         <summary>what the model saw</summary>
-                        <Saw text={doc.text}
-                             payload={doc.variant === 'planted' ? docById(doc.id)?.payload_text : null} />
+                        <Saw text={doc.text} payload={doc.payload} />
                       </details>
                     )}
                   </div>
@@ -429,7 +437,7 @@ export default function App() {
               {attached.map((a) => (
                 <span key={a.id} className="attachment">
                   <span className="clip" aria-hidden="true">📎</span>
-                  {a.name} <span className="variant">· {VARIANT_LABEL[a.variant]}</span>
+                  {a.name} <span className="variant">· {kindLabel(a)}{knownLabel(a)}</span>
                   <button type="button" onClick={() => detach(a.id)} disabled={busy}
                           aria-label={`Remove ${a.name}`}>×</button>
                 </span>
@@ -439,27 +447,11 @@ export default function App() {
 
           <form className="composer" onSubmit={(e) => { e.preventDefault(); send(draft) }}>
             <div className="attach">
-              <button type="button" onClick={() => setMenuOpen((o) => !o)}
-                      disabled={busy || myDocuments.length === 0}
-                      aria-expanded={menuOpen} aria-haspopup="menu">
+              <button type="button" onClick={() => fileInput.current?.click()} disabled={busy}>
                 Attach
               </button>
-              {menuOpen && (
-                <div className="attachmenu" role="menu">
-                  {myDocuments.map((doc) => (
-                    <div key={doc.id} className="doc">
-                      <div className="name">{doc.name}</div>
-                      {['planted', 'clean'].map((variant) => (
-                        <button key={variant} type="button" role="menuitem"
-                                aria-pressed={attached.some((a) => a.id === doc.id && a.variant === variant)}
-                                onClick={() => attachDocument(doc, variant)}>
-                          {VARIANT_LABEL[variant]}
-                        </button>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
+              <input ref={fileInput} type="file" accept=".pdf,.txt" multiple hidden
+                     onChange={(e) => { uploadFiles(e.target.files); e.target.value = '' }} />
             </div>
             <input value={draft} onChange={(e) => setDraft(e.target.value)}
                    placeholder="Message the assistant" disabled={busy} />
