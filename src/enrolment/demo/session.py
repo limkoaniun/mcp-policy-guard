@@ -49,6 +49,9 @@ class DemoCall(BaseModel):
     policy: str
     reason: str
     blocked: bool
+    #: True when the engine saw the call after an untrusted read. Separate
+    #: from `verdict`: a tainted read-only call is allowed and still tainted.
+    tainted: bool = False
     result: str
 
 

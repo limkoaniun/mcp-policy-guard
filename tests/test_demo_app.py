@@ -53,15 +53,18 @@ def test_the_built_frontend_is_served():
     assert response.headers["cache-control"] == "no-store, must-revalidate"
 
 
-def test_the_console_declares_the_tools_and_the_planted_injection():
+def test_the_console_declares_every_tool_including_get_attachment():
     """The page draws its checkboxes from this rather than a list of its own,
-    so a tool added upstream cannot go missing from the console."""
+    so a tool added upstream cannot go missing from the console. The planted
+    32513 description is gone: the attack arrives through the attach control."""
     body = client().get("/api/tools").json()
 
     names = [t["name"] for t in body["tools"]]
     assert "drop" in names
+    assert "get_attachment" in names
     assert all(t["side_effect"] for t in body["tools"] if t["name"] in {"enrol", "drop"})
-    assert body["injected"]["subject"] == "32513"
+    assert "get_attachment" in body["presets"]["read-only"]
+    assert "injected" not in body
 
 
 def scripted_model(*replies):

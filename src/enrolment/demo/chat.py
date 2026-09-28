@@ -45,6 +45,7 @@ class ChatReplyOut(BaseModel):
     said: list[str] = []
     calls: list[DemoCall] = []
     truncated: bool = False
+    turn: int = 0
 
 
 class ChatSession:
@@ -68,6 +69,22 @@ class ChatSession:
         self.overlay = overlay
         self.history: list[dict] = []
         self.turn = 0
+
+        #: The attach control's documents: id -> {"name", "text", "variant"}.
+        #: Written to each turn's `attachments.json` so the upstream serves
+        #: exactly this text. Survives `reset` -- it is staging, like the
+        #: allowlist.
+        self.attachments: dict[str, dict] = {}
+        #: Every eRequest the upstream recorded, across turns. The server
+        #: appends to a per-run `erequests.jsonl`; a conversation spans runs,
+        #: so the session accumulates them here. Cleared by `reset` with the
+        #: record, because a request is record-like: it is something that
+        #: happened to the student.
+        self.erequests: list[dict] = []
+        #: What each turn was and decided, kept for `approve`: the message,
+        #: the allowlist at the time, and the decision records.
+        self.turns: dict[int, dict] = {}
+        self.busy = False
 
         self.root.mkdir(parents=True, exist_ok=True)
         self.system_prompt = system_prompt.replace("{principal}", persona)
@@ -98,6 +115,12 @@ class ChatSession:
             encoding="utf-8",
         )
 
+        # The tools whose forwarded results taint the run, by the pack's own
+        # labels -- read here so `approve` can re-issue exactly those reads.
+        self.untrusted_tools = frozenset(
+            tool for tool, label in (body.get("trust") or {}).items() if label == "untrusted"
+        )
+
     # ------------------------------------------------------------------ reset
     def reset(self) -> None:
         """Put the record back and forget the conversation.
@@ -112,9 +135,13 @@ class ChatSession:
         button hostile to the thing it exists for. Turn directories from
         before the reset are left on disk -- they are the evidence of what
         happened, and this module does not delete evidence.
+
+        The eRequest log goes back with the record; the attachments stay,
+        they are how the demonstration is staged.
         """
         shutil.copyfile(self.baseline_path, self.students_path)
         self.history = []
+        self.erequests = []
 
     # ------------------------------------------------------------------ state
     def record(self) -> dict:
@@ -139,9 +166,38 @@ class ChatSession:
             "major": held.get("major"),
         }
 
+    # ------------------------------------------------------------ attachments
+    def _write_attachments(self, run_dir: Path) -> Path | None:
+        if not self.attachments:
+            return None
+        path = run_dir / "attachments.json"
+        documents = {
+            attachment_id: {"name": entry["name"], "text": entry["text"]}
+            for attachment_id, entry in self.attachments.items()
+        }
+        path.write_text(json.dumps(documents, ensure_ascii=False, indent=2), encoding="utf-8")
+        return path
+
+    def _collect_erequests(self, run_dir: Path, *, turn: int, confirmed: bool = False) -> None:
+        path = run_dir / "erequests.jsonl"
+        if not path.exists():
+            return
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                self.erequests.append({**json.loads(line), "turn": turn, "confirmed": confirmed})
+
     # ------------------------------------------------------------------- send
     async def send(self, message: str, *, chat, model: str, on_event=None) -> ChatReplyOut:
         """Run one message through a proxy carrying the session's current settings."""
+        if self.busy:
+            raise RuntimeError("a message is still running")
+        self.busy = True
+        try:
+            return await self._send(message, chat=chat, model=model, on_event=on_event)
+        finally:
+            self.busy = False
+
+    async def _send(self, message: str, *, chat, model: str, on_event=None) -> ChatReplyOut:
         self.turn += 1
         run_dir = self.root / f"turn-{self.turn:03d}"
         run_dir.mkdir(parents=True, exist_ok=True)
@@ -161,6 +217,7 @@ class ChatSession:
             allowed_tools=self.allowed_tools,
             principal_id=self.persona,
             overlay_path=overlay_path,
+            attachments_path=self._write_attachments(run_dir),
         )
 
         arguments = [
@@ -194,16 +251,23 @@ class ChatSession:
         state_path = run_dir / "state.json"
         if state_path.exists():
             shutil.copyfile(state_path, self.students_path)
+        self._collect_erequests(run_dir, turn=self.turn)
 
         decisions = _read_decisions(run_dir)
+        self.turns[self.turn] = {
+            "message": message,
+            "allowed_tools": list(self.allowed_tools),
+            "decisions": decisions,
+        }
         calls = [
             DemoCall(
                 tool=d["tool"], arguments=d["arguments"], verdict=d["verdict"],
                 policy=d["policy"], reason=d["reason"], blocked=not d["forwarded"],
+                tainted=bool(d.get("tainted", False)),
                 result=_bounded(body, 1500),
             )
             # `results` is what the agent received; a proposal that never
             # reached the proxy produced no decision, so the two align.
             for d, body in zip(decisions, results, strict=True)
         ]
-        return ChatReplyOut(said=said, calls=calls, truncated=transcript.truncated)
+        return ChatReplyOut(said=said, calls=calls, truncated=transcript.truncated, turn=self.turn)
