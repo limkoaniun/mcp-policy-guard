@@ -28,6 +28,7 @@ from ..agent.ollama import installed_models, ollama_chat
 from ..run_setup import off_arm_allowed
 from ..scenarios_spec import load_all
 from .chat import ChatSession
+from .documents import documents_from
 from .session import run_demo
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -134,6 +135,8 @@ def create_app(
         scenario.id: scenario
         for scenario in load_all(scenarios_dir, personas=personas, known_tools=KNOWN_TOOLS)
     }
+    documents = documents_from(scenarios.values())
+    documents_by_id = {document.id: document for document in documents}  # noqa: F841 Task 3
 
     app = FastAPI(title="MCP Policy Guard — demonstration")
 
@@ -162,6 +165,8 @@ def create_app(
 
         Built from the same personas file the sessions run on, so a student
         offered here is by construction one a session can start as.
+
+        The name is display-only: `Student` drops it, so no tool ever returns it.
         """
         return [
             {
@@ -169,6 +174,7 @@ def create_app(
                 "major": aos.get(record.get("major"), {}).get("title", record.get("major")),
                 "completed": len(record.get("completed", [])),
                 "enrolled": len(record.get("enrolled", [])),
+                "name": record.get("name"),
             }
             for student_id, record in sorted(persona_records.items())
         ]
@@ -192,6 +198,15 @@ def create_app(
             }
             for scenario in sorted(scenarios.values(), key=lambda s: s.id)
         ]
+
+    @app.get("/api/documents")
+    def list_documents() -> list[dict]:
+        """The documents the attach control offers, both variants each.
+
+        Built from the upload-borne scenarios, so the planted text the page
+        can attach is the text the adversarial campaign measured.
+        """
+        return [document.model_dump() for document in documents]
 
     sessions: dict[str, ChatSession] = {}
     session_root = Path(tempfile.mkdtemp(prefix="demo-chat-"))

@@ -138,3 +138,21 @@ def test_a_session_for_a_known_persona_starts_on_that_record():
 
     assert body["record"]["student_id"] == "S9000004"
     assert body["record"]["enrolled"] == ["32541", "43030", "32548", "32547"]
+
+
+def test_the_picker_gets_the_students_names():
+    body = client().get("/api/personas").json()
+    by_id = {p["id"]: p for p in body}
+
+    assert by_id["S9000001"]["name"] == "Jane Doe"
+    assert by_id["S9000004"]["name"] == "Tom Becker"
+
+
+def test_it_lists_one_attachable_document_per_upload_persona():
+    body = client().get("/api/documents").json()
+
+    assert sorted(d["persona"] for d in body) == ["S9000001", "S9000002", "S9000003", "S9000004"]
+    jane = next(d for d in body if d["persona"] == "S9000001")
+    assert jane["name"] == "RPL_application_template.txt"
+    assert jane["planted_text"].endswith(jane["payload_text"])
+    assert jane["prompt"], "the scenario's request is offered as a chip"
