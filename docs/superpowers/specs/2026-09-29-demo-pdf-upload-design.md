@@ -1,7 +1,7 @@
 # Demo: PDF documents, dragged onto the chat
 
 **Date:** 2026-09-29
-**Status:** agreed in conversation; nothing built.
+**Status:** built 2026-09-29; see the plan of the same name under docs/superpowers/plans/.
 **Supersedes:** the attach menu of `docs/superpowers/specs/2026-09-28-demo-upload-screen-design.md`
 §2–§3 and §7 "Composer". Everything else in that spec stands.
 **Related:** `context/2026-09-23-pivot-upload-injection-vs-rag.md` (future work

@@ -86,7 +86,8 @@ adversarial number is reported.
   by-construction zeros labelled as such.
 - Future work: tool-shadowing and poisoned tool metadata (the suite's SC-01,
   SC-03, SC-05, SC-08); rate/scope limits; census dates; documents beyond
-  plain text (PDF extraction as its own attack surface).
+  PDF and plain text; OCR of scanned PDFs (the demo reads PDFs with pypdf and
+  refuses one with no text).
 
 ## 5. Code work that follows
 
