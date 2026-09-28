@@ -114,6 +114,11 @@ class AttachmentsUpdate(BaseModel):
     attached: list[Attached]
 
 
+class Approval(BaseModel):
+    turn: int
+    index: int
+
+
 def create_app(
     *,
     repo_root: Path = REPO_ROOT,
@@ -301,6 +306,17 @@ def create_app(
         live = get(session_id)
         live.reset()
         return state_of(live)
+
+    @app.post("/api/chat/{session_id}/approve")
+    async def approve(session_id: str, body: Approval) -> dict:
+        """The approval card's Allow. Refuse has no endpoint: nothing ran, so
+        there is nothing to log, and the page says so on its own."""
+        live = get(session_id)
+        try:
+            confirmation = await live.approve(turn=body.turn, index=body.index)
+        except (LookupError, ValueError) as error:
+            raise HTTPException(400, str(error)) from error
+        return {**state_of(live), "confirmation": confirmation.model_dump()}
 
     @app.post("/api/chat/{session_id}/message")
     async def message(session_id: str, body: Message) -> StreamingResponse:

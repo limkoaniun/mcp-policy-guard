@@ -48,6 +48,35 @@ class ChatReplyOut(BaseModel):
     turn: int = 0
 
 
+class Confirmation(BaseModel):
+    """What approving one held call did."""
+
+    turn: int
+    index: int
+    #: How many untrusted reads were re-issued before the held call, so the
+    #: page can say "re-read 1 document, then forwarded" rather than show one
+    #: call when two ran.
+    reread: int
+    call: DemoCall
+
+
+def _calls_from(decisions: list[dict], results: list[str]) -> list[DemoCall]:
+    """Pair decision records with what the agent received, in order.
+
+    `results` is what the agent received; a proposal that never reached the
+    proxy produced no decision, so the two align. Shared by `_send` and
+    `approve` so the pairing rule lives in one place.
+    """
+    return [
+        DemoCall(
+            tool=d["tool"], arguments=d["arguments"], verdict=d["verdict"],
+            policy=d["policy"], reason=d["reason"], blocked=not d["forwarded"],
+            tainted=bool(d.get("tainted", False)), result=_bounded(body, 1500),
+        )
+        for d, body in zip(decisions, results, strict=True)
+    ]
+
+
 class ChatSession:
     def __init__(
         self,
@@ -259,15 +288,78 @@ class ChatSession:
             "allowed_tools": list(self.allowed_tools),
             "decisions": decisions,
         }
-        calls = [
-            DemoCall(
-                tool=d["tool"], arguments=d["arguments"], verdict=d["verdict"],
-                policy=d["policy"], reason=d["reason"], blocked=not d["forwarded"],
-                tainted=bool(d.get("tainted", False)),
-                result=_bounded(body, 1500),
-            )
-            # `results` is what the agent received; a proposal that never
-            # reached the proxy produced no decision, so the two align.
-            for d, body in zip(decisions, results, strict=True)
-        ]
+        calls = _calls_from(decisions, results)
         return ChatReplyOut(said=said, calls=calls, truncated=transcript.truncated, turn=self.turn)
+
+    # ---------------------------------------------------------------- approve
+    async def approve(self, *, turn: int, index: int) -> Confirmation:
+        """Replay one held call with the student's confirmation.
+
+        Upload-channel design §3.4: confirming replays the call through a
+        fresh proxy started with `--approval-mode approve`, on the same task.
+        A fresh proxy is untainted, so the turn's forwarded reads of untrusted
+        tools are re-issued first; otherwise the taint gate would not fire and
+        the log would record an `allow` by the allowlist for an event that
+        never happened. The replay leaves the same artifacts a turn does, in
+        `turn-NNN-approval`, and its state becomes the session's.
+        """
+        if self.busy:
+            raise ValueError("a message is still running; wait for it to finish")
+        record = self.turns.get(turn)
+        if record is None:
+            raise LookupError(f"no turn {turn}")
+        decisions = record["decisions"]
+        if not 0 <= index < len(decisions):
+            raise LookupError(f"turn {turn} has no decision {index}")
+        held = decisions[index]
+        if held["verdict"] != "require_approval" or held["forwarded"]:
+            raise ValueError(
+                f"decision {index} of turn {turn} was not held: verdict {held['verdict']!r}, "
+                f"forwarded={held['forwarded']}"
+            )
+        run_dir = self.root / f"turn-{turn:03d}-approval"
+        if run_dir.exists():
+            raise ValueError(f"turn {turn} was already confirmed")
+        run_dir.mkdir(parents=True)
+
+        reads = [
+            d for d in decisions[:index]
+            if d["forwarded"] and d["tool"] in self.untrusted_tools
+        ]
+        source = self.root / f"turn-{turn:03d}" / "attachments.json"
+        attachments_path = None
+        if source.exists():
+            attachments_path = run_dir / "attachments.json"
+            shutil.copyfile(source, attachments_path)
+        task_path = write_task(
+            run_dir,
+            task_id=f"chat-{turn:03d}-approval",
+            description=record["message"],
+            allowed_tools=record["allowed_tools"],
+            principal_id=self.persona,
+            attachments_path=attachments_path,
+        )
+        arguments = [
+            "-m", "policy_guard",
+            "--task", str(task_path),
+            "--policy-pack", str(self.pack_path),
+            "--run-dir", str(run_dir),
+            "--enforcement", self.enforcement,
+            "--approval-mode", "approve",
+        ]
+
+        results: list[str] = []
+        async with connect_subprocess(sys.executable, arguments, cwd=str(self.repo_root)) as client:
+            for call in [*reads, held]:
+                result = await client.call_tool(call["tool"], call["arguments"])
+                results.append("".join(
+                    part.text for part in result.content if hasattr(part, "text")))
+
+        state_path = run_dir / "state.json"
+        if state_path.exists():
+            shutil.copyfile(state_path, self.students_path)
+        self._collect_erequests(run_dir, turn=turn, confirmed=True)
+
+        replayed = _read_decisions(run_dir)
+        calls = _calls_from(replayed, results)
+        return Confirmation(turn=turn, index=index, reread=len(reads), call=calls[-1])

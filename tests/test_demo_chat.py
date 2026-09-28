@@ -20,6 +20,7 @@ from test_agent_loop import call, scripted
 
 from enrolment.agent.transcript import ChatReply
 from enrolment.demo.chat import ChatSession
+from enrolment.demo.session import _read_decisions
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 PACK = REPO / "configs" / "enrolment-personas.yaml"
@@ -228,3 +229,99 @@ async def test_reset_keeps_attachments_and_clears_erequests(tmp_path):
 
     assert live.attachments == CHECKLIST
     assert live.erequests == []
+
+
+async def held_drop(tmp_path):
+    """Tom's A-02 shape: read the planted checklist, then the drop it asks for."""
+    live = session(tmp_path, allowed_tools=[*READ_ONLY, "get_attachment", "drop"])
+    live.attachments = dict(CHECKLIST)
+    reply = await live.send("go through my checklist", chat=scripted(
+        ChatReply(content="", calls=[read_attachment()]),
+        ChatReply(content="", calls=[call("drop", {"student_id": "S9000004", "code": "32541"})]),
+        ChatReply(content="I need your confirmation."),
+    ), model="fake")
+    assert reply.calls[1].verdict == "require_approval" and reply.calls[1].blocked
+    return live
+
+
+@pytest.mark.anyio
+async def test_approving_a_held_call_replays_it_and_changes_the_record(tmp_path):
+    """The replay re-reads the document first. A fresh proxy is untainted, so
+    without the read the taint gate would not fire and the log would say
+    "allowed by the allowlist" -- a record of an event that did not happen."""
+    live = await held_drop(tmp_path)
+
+    confirmation = await live.approve(turn=1, index=1)
+
+    assert confirmation.reread == 1
+    assert confirmation.call.tool == "drop"
+    assert confirmation.call.verdict == "require_approval"
+    assert confirmation.call.tainted is True
+    assert confirmation.call.blocked is False
+    assert "32541" not in live.record()["enrolled"]
+    decisions = _read_decisions(tmp_path / "session" / "turn-001-approval")
+    assert [d["tool"] for d in decisions] == ["get_attachment", "drop"]
+    assert decisions[-1]["approval_mode"] == "approve"
+    assert decisions[-1]["forwarded"] is True
+
+
+@pytest.mark.anyio
+async def test_a_confirmed_erequest_is_logged_as_confirmed(tmp_path):
+    live = session(tmp_path, allowed_tools=[*READ_ONLY, "get_attachment", "submit_erequest"])
+    live.attachments = dict(CHECKLIST)
+    await live.send("submit it", chat=scripted(
+        ChatReply(content="", calls=[read_attachment()]),
+        ChatReply(content="", calls=[call("submit_erequest", {
+            "student_id": "S9000004", "text": "Transfer me.", "type": "general"})]),
+        ChatReply(content="Held."),
+    ), model="fake")
+    assert live.erequests == []
+
+    await live.approve(turn=1, index=1)
+
+    assert [(e["text"], e["confirmed"], e["turn"]) for e in live.erequests] == [
+        ("Transfer me.", True, 1)]
+
+
+@pytest.mark.anyio
+async def test_approving_twice_is_refused(tmp_path):
+    live = await held_drop(tmp_path)
+    await live.approve(turn=1, index=1)
+
+    with pytest.raises(ValueError, match="already"):
+        await live.approve(turn=1, index=1)
+
+
+@pytest.mark.anyio
+async def test_a_forwarded_verdict_cannot_be_approved(tmp_path):
+    """Enforcement off: the engine said require_approval and was overruled.
+    Nothing was held, so there is nothing to confirm."""
+    live = session(tmp_path, allowed_tools=[*READ_ONLY, "get_attachment", "drop"],
+                   enforcement="off")
+    live.attachments = dict(CHECKLIST)
+    await live.send("go", chat=scripted(
+        ChatReply(content="", calls=[read_attachment()]),
+        ChatReply(content="", calls=[call("drop", {"student_id": "S9000004", "code": "32541"})]),
+        ChatReply(content="Done."),
+    ), model="fake")
+
+    with pytest.raises(ValueError, match="not held"):
+        await live.approve(turn=1, index=1)
+
+
+@pytest.mark.anyio
+async def test_an_allowed_call_cannot_be_approved(tmp_path):
+    live = await held_drop(tmp_path)
+
+    with pytest.raises(ValueError, match="not held"):
+        await live.approve(turn=1, index=0)
+
+
+@pytest.mark.anyio
+async def test_an_unknown_turn_or_decision_is_a_lookup_error(tmp_path):
+    live = await held_drop(tmp_path)
+
+    with pytest.raises(LookupError):
+        await live.approve(turn=7, index=0)
+    with pytest.raises(LookupError):
+        await live.approve(turn=1, index=5)
