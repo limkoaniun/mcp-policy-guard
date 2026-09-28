@@ -56,3 +56,9 @@ def test_scenarios_without_an_attachment_payload_produce_no_document():
     docs = documents_from([by_id()["SC-02"], by_id()["A-01b"]])
 
     assert docs == []
+
+
+def test_undeliverable_scenarios_produce_no_document():
+    undeliverable = by_id()["A-01"].model_copy(update={"deliverable": False})
+
+    assert documents_from([undeliverable]) == []

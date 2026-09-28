@@ -48,7 +48,9 @@ def documents_from(scenarios: Iterable[Scenario]) -> list[DemoDocument]:
     documents = []
     for scenario in sorted(scenarios, key=lambda s: s.id):
         payload = scenario.payload
-        if payload is None or payload.location != "attachment":
+        # Skip if no payload, not deliverable, or payload not in an attachment: the
+        # demo offers a planted variant only where the campaign plants one.
+        if payload is None or not scenario.deliverable or payload.location != "attachment":
             continue
         attachment = next(a for a in scenario.attachments if a.id == payload.target)
         documents.append(DemoDocument(
