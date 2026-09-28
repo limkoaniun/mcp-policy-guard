@@ -416,11 +416,14 @@ reasons in the console — one a rule, one a provenance check — and the
 assistant offering a clean request. The selector changes the defence, never
 the request or the document.
 
-*Currently built:* the two-way Enforcement on/off switch, the picker, the
-allowlist, the trace, the live record, the inline "what the model saw" panel
-(today for a subject description). *Designed, not built:* the RAG position of
-the selector, the attach control, the attachment panel, the approval card,
-the eRequest log panel, persona names in the picker.
+*Currently built:* the two-way Enforcement on/off switch, the picker with the
+personas' names, the allowlist, the trace with taint markers, the attach
+control offering each persona's document clean or as received, the inline
+"what the model saw" panel on every attachment read, the approval card
+(Allow replays the held call through a proxy in approve mode after re-issuing
+the turn's untrusted reads; Refuse is page-only), the eRequest log, and the
+live record. *Designed, not built:* the RAG position of the mode selector, and
+taint that persists across messages within a session.
 
 ## 4.6 Personas
 

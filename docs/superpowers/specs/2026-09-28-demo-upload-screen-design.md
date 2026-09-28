@@ -1,7 +1,7 @@
 # Demo: the upload screen (job 6, upload slice)
 
 **Date:** 2026-09-28
-**Status:** agreed in conversation; nothing built.
+**Status:** built 2026-09-28; see the plan of the same name under docs/superpowers/plans/.
 **Related:** `context/2026-09-23-pivot-upload-injection-vs-rag.md` §5 item 6
 (the job), `context/2026-09-23-upload-channel-design.md` §3.4 (what approval
 means on each arm), `context/report/section4-draft.md` §4.5 (the UI as the

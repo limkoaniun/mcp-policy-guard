@@ -90,7 +90,7 @@ adversarial number is reported.
 
 ## 5. Code work that follows
 
-Job 5 is built and measured (`context/2026-09-23-rag-advice-design.md`; `experiments/scored/advice-first`). Job 7 is measured on the upload channel (`experiments/scored/adversarial-upload-second*`) and the prompted baseline is scored (`experiments/scored/compliance-told-the-rules`). Jobs 6 (demo UI, session-long taint) and 8 (spec §7–§8 rewrite) are open.
+Job 5 is built and measured (`context/2026-09-23-rag-advice-design.md`; `experiments/scored/advice-first`). Job 7 is measured on the upload channel (`experiments/scored/adversarial-upload-second*`) and the prompted baseline is scored (`experiments/scored/compliance-told-the-rules`). Job 6 is built except the RAG position of the mode selector and session-long taint (`docs/superpowers/specs/2026-09-28-demo-upload-screen-design.md`); job 8 (spec §7–§8 rewrite) is open.
 
 In the order that unblocks the report:
 
