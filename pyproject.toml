@@ -26,12 +26,20 @@ dependencies = [
     # extra nobody installs is a deliverable nobody can run.
     "fastapi>=0.110",
     "uvicorn>=0.27",
+    # The demo reads documents the presenter drags onto the chat. pypdf pulls
+    # the text out of a PDF; python-multipart is what FastAPI needs to accept
+    # the upload at all (it was only ever installed transitively before).
+    "pypdf>=4",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",
+    # Only `python -m enrolment.build_documents` needs it: it writes the eight
+    # shipped PDFs. The server never writes a PDF.
+    "fpdf2>=2.7",
 ]
 
 [tool.ruff]
