@@ -222,6 +222,20 @@ def test_an_oversize_upload_is_refused():
     assert response.status_code == 413
 
 
+def test_an_over_long_file_name_is_refused():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    response = upload_bytes(client, session, ("x" * 300) + ".txt", b"hi")
+
+    assert response.status_code == 400
+    assert "too long" in response.json()["detail"]
+
+    accepted = upload_bytes(client, session, ("y" * 196) + ".txt", b"hi")
+
+    assert accepted.status_code == 200
+
+
 def test_a_pdf_with_no_text_is_refused():
     from fpdf import FPDF
     pdf = FPDF()

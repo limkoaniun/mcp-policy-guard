@@ -22,6 +22,14 @@ from .documents import DemoDocument
 #: two; the cap exists so a dropped video does not become a tool result.
 MAX_BYTES = 2 * 1024 * 1024
 
+#: Over this many characters the file name is refused with a 400, before it
+#: touches disk. Most filesystems cap a single path component at 255 bytes;
+#: both the attachment id and the kept-evidence file are derived from this
+#: name, and the name of a dropped file is attacker-controlled, so an
+#: oversize one must be a clean refusal rather than an `OSError` from
+#: `mkdir`/`write_bytes` down in the route.
+MAX_NAME = 200
+
 
 class UploadError(ValueError):
     """The upload cannot become an attachment; the message says why."""
