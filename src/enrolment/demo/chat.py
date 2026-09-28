@@ -201,6 +201,9 @@ class ChatSession:
 
     # ------------------------------------------------------------ attachments
     def _write_attachments(self, run_dir: Path) -> Path | None:
+        """Only `name` and `text` reach the proxy. `kind` and `known` are the
+        page's, and the tool must not see a tag saying which scenario a
+        document is."""
         if not self.attachments:
             return None
         path = run_dir / "attachments.json"
