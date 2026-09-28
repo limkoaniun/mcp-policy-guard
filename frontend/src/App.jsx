@@ -21,10 +21,57 @@ const SUGGESTIONS = [
   'Enrol me in 32513',
 ]
 
+const VARIANT_LABEL = {
+  planted: 'as received (contains a planted footer)',
+  clean: 'clean copy',
+}
+
+// The server resolves `attachment_id` by id or by file name, case-insensitively.
+// The page matches the same way so the row finds the document the tool did.
+const findAttached = (attached, wanted) => {
+  const key = String(wanted || '').toLowerCase()
+  return attached.find((a) => a.id.toLowerCase() === key || a.name.toLowerCase() === key)
+}
+
+const tagFor = (m) => {
+  if (m.verdict === 'require_approval' && m.refused) return { cls: 'held', text: 'needs approval' }
+  if (m.refused) return { cls: 'blocked', text: 'stopped' }
+  return { cls: 'ok', text: 'ran' }
+}
+
+const rulingFor = (verdict) =>
+  verdict === 'deny' ? 'Denied' : verdict === 'require_approval' ? 'Needs approval' : 'Allowed'
+
+const outcomeFor = (d) => {
+  if (d.verdict === 'deny') {
+    return d.blocked
+      ? 'The call was stopped. The enrolment system never saw it.'
+      : 'Enforcement is off, so the call was forwarded anyway.'
+  }
+  if (d.verdict === 'require_approval') {
+    return d.blocked
+      ? 'Held. The enrolment system has not seen it.'
+      : "Enforcement is off, so the call ran without the student's confirmation."
+  }
+  return 'Forwarded.'
+}
+
+// The document text with the planted footer marked. `react-markdown` is not
+// used here on purpose: the text is an attacker's, and it is shown as text.
+function Saw({ text, payload }) {
+  const at = payload ? text.indexOf(payload) : -1
+  if (at < 0) return <pre className="saw">{text}</pre>
+  return (
+    <pre className="saw">
+      {text.slice(0, at)}<mark>{text.slice(at, at + payload.length)}</mark>{text.slice(at + payload.length)}
+    </pre>
+  )
+}
+
 export default function App() {
   const [tools, setTools] = useState([])
   const [presets, setPresets] = useState({})
-  const [injected, setInjected] = useState(null)
+  const [documents, setDocuments] = useState([])
   const [models, setModels] = useState([])
   const [model, setModel] = useState('')
 
@@ -34,20 +81,32 @@ export default function App() {
   const [record, setRecord] = useState(null)
   const [personas, setPersonas] = useState([])
   const [baseline, setBaseline] = useState(null)
+  const [attached, setAttached] = useState([])
+  const [erequests, setErequests] = useState([])
 
   const [thread, setThread] = useState([])
   const [decisions, setDecisions] = useState([])
+  const [decisionTurn, setDecisionTurn] = useState(0)
+  // `${turn}:${index}` -> { status: 'pending' | 'confirmed' | 'refused', confirmation }
+  const [approvals, setApprovals] = useState({})
   const [draft, setDraft] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const threadBox = useRef(null)
+
+  const applyState = (s) => {
+    setRecord(s.record)
+    setAttached(s.attachments || [])
+    setErequests(s.erequests || [])
+  }
 
   useEffect(() => {
     api.getTools().then((t) => {
       setTools(t.tools)
       setPresets(t.presets)
-      setInjected(t.injected)
     })
+    api.getDocuments().then(setDocuments).catch(() => setDocuments([]))
     api.getPersonas().then(setPersonas).catch(() => setPersonas([]))
     api.getModels().then((m) => {
       setModels(m)
@@ -57,7 +116,7 @@ export default function App() {
       setSession(s.id)
       setAllowed(s.allowed_tools)
       setEnforcement(s.enforcement)
-      setRecord(s.record)
+      applyState(s)
       setBaseline(s.record)
       setThread([{ role: 'assistant', text: GREETING }])
     }).catch((e) => setError(e.message))
@@ -87,6 +146,23 @@ export default function App() {
     if (session) await api.setEnforcement(session, next).catch((e) => setError(e.message))
   }
 
+  // Attachments are session state, so the same list reaches every later
+  // message until it is changed. One variant of a document at a time.
+  const applyAttachments = async (next) => {
+    if (!session) return
+    setMenuOpen(false)
+    const s = await api.setAttachments(session, next.map(({ id, variant }) => ({ id, variant })))
+      .catch((e) => { setError(e.message); return null })
+    if (s) applyState(s)
+  }
+  const attachDocument = (doc, variant) =>
+    applyAttachments([...attached.filter((a) => a.id !== doc.id), { id: doc.id, variant }])
+  const detach = (id) => applyAttachments(attached.filter((a) => a.id !== id))
+
+  const myDocuments = documents.filter((d) => d.persona === record?.student_id)
+  const docById = (id) => documents.find((d) => d.id === id)
+  const attachedPrompts = attached.map((a) => docById(a.id)?.prompt).filter(Boolean)
+
   // Clearing the thread alone would leave the next run starting from the
   // record the last one mutated -- so this resets both, and says so in the
   // thread rather than changing the record panel silently.
@@ -94,9 +170,10 @@ export default function App() {
     if (!session || busy) return
     const state = await api.resetSession(session).catch((e) => { setError(e.message); return null })
     if (!state) return
-    setRecord(state.record)
+    applyState(state)
     setBaseline(state.record)
     setDecisions([])
+    setApprovals({})
     setError(null)
     setThread([
       { role: 'system', text: `Conversation cleared and the record restored for ${state.record.student_id}.` },
@@ -109,18 +186,21 @@ export default function App() {
     const s = await api.newSession(persona, 'enrolment').catch((e) => { setError(e.message); return null })
     if (!s) return
     // The console's settings are the presenter's, not the student's: carry
-    // the allowlist and the enforcement switch into the new session.
+    // the allowlist and the enforcement switch into the new session. The
+    // attachments are the student's, and are not carried.
     if (JSON.stringify(s.allowed_tools) !== JSON.stringify(allowed))
       await api.setTools(s.id, allowed).catch(() => {})
     if (s.enforcement !== enforcement)
       await api.setEnforcement(s.id, enforcement).catch(() => {})
     setSession(s.id)
-    setRecord(s.record)
+    applyState(s)
     setBaseline(s.record)
     setDecisions([])
+    setApprovals({})
     setError(null)
+    const who = personas.find((p) => p.id === persona)
     setThread([
-      { role: 'system', text: `Now assisting ${persona}. New conversation, fresh record.` },
+      { role: 'system', text: `Now assisting ${who?.name ? `${who.name} (${persona})` : persona}. New conversation, fresh record.` },
       { role: 'assistant', text: GREETING },
     ])
   }
@@ -130,29 +210,35 @@ export default function App() {
     setBusy(true)
     setError(null)
     setDraft('')
+    setMenuOpen(false)
     setThread((t) => [...t, { role: 'student', text }])
 
-    let sawPoison = false
+    // Call rows are stamped with this send's token so the verdicts arriving
+    // with `done` can be written back onto them, in order. Decisions and call
+    // events are aligned by construction (`chat.py` zips them strictly).
+    const token = `${Date.now()}-${Math.random()}`
     try {
       await api.sendMessage(session, text, model || null, (event) => {
         if (event.kind === 'call') {
           setThread((t) => [...t, {
-            role: 'call', tool: event.tool, args: event.arguments, refused: event.refused,
+            role: 'call', token, tool: event.tool, args: event.arguments, refused: event.refused,
           }])
-          // The payload enters the conversation with the first result that
-          // carries it, which is where the model read it.
-          if (!sawPoison && injected && event.tool === 'get_subject_details' &&
-              String(event.arguments?.code) === injected.subject) {
-            sawPoison = true
-            setThread((t) => [...t, { role: 'poison' }])
-          }
         }
         if (event.kind === 'said') {
           setThread((t) => [...t, { role: 'assistant', text: event.text }])
         }
         if (event.kind === 'done') {
           setDecisions(event.calls)
-          setRecord(event.record)
+          setDecisionTurn(event.turn)
+          applyState(event)
+          setThread((t) => {
+            let k = 0
+            return t.map((m) => {
+              if (m.role !== 'call' || m.token !== token) return m
+              const d = event.calls[k++]
+              return d ? { ...m, verdict: d.verdict, blocked: d.blocked } : m
+            })
+          })
           if (event.truncated) {
             setThread((t) => [...t, { role: 'system', text:
               "The run hit the harness's turn or call bound and stopped here. " +
@@ -168,8 +254,31 @@ export default function App() {
     }
   }
 
+  const allow = async (index) => {
+    const key = `${decisionTurn}:${index}`
+    setApprovals((a) => ({ ...a, [key]: { status: 'pending' } }))
+    const body = await api.approve(session, decisionTurn, index)
+      .catch((e) => { setError(e.message); return null })
+    if (!body) {
+      setApprovals((a) => { const next = { ...a }; delete next[key]; return next })
+      return
+    }
+    applyState(body)
+    setApprovals((a) => ({ ...a, [key]: { status: 'confirmed', confirmation: body.confirmation } }))
+    setThread((t) => [...t, { role: 'system', text:
+      `You confirmed ${body.confirmation.call.tool}. It re-read ${body.confirmation.reread} ` +
+      `document${body.confirmation.reread === 1 ? '' : 's'}, then ran.` }])
+  }
+
+  // Refuse is page-only: nothing ran, so there is nothing to log.
+  const refuse = (index) =>
+    setApprovals((a) => ({ ...a, [`${decisionTurn}:${index}`]: { status: 'refused' } }))
+
   const changed = (list) =>
     baseline && JSON.stringify(list) !== JSON.stringify(baseline.enrolled)
+
+  const personaLabel = (p) =>
+    [p.name, p.id, p.major].filter(Boolean).join(' · ')
 
   return (
     <>
@@ -188,9 +297,7 @@ export default function App() {
             disabled={busy}
           >
             {(personas.length ? personas : [{ id: record?.student_id || 'Student' }]).map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.major ? `${p.id} · ${p.major}` : p.id}
-              </option>
+              <option key={p.id} value={p.id}>{personaLabel(p)}</option>
             ))}
           </select>
         </span>
@@ -209,17 +316,16 @@ export default function App() {
       <div className="intro" id="main">
         <h1>Enrolment assistant</h1>
         <p>
-          An LLM agent with ten enrolment tools. Every tool call is intercepted by the
-          policy layer before it executes.{' '}
-          {injected && <>Subject <code>{injected.subject}</code>'s description contains a
-          planted prompt injection.</>}
+          An LLM agent with eleven enrolment tools. Every tool call is intercepted by the
+          policy layer before it executes. Documents the student attaches are read
+          through <code>get_attachment</code>, which the policy pack labels untrusted.
         </p>
       </div>
 
       <div className="layout">
         <section className="card chat">
           <h2>
-            <span>Assistant &middot; student {record?.student_id || '\u2026'}</span>
+            <span>Assistant &middot; student {record?.student_id || '…'}</span>
             <span className="sub">
               <button className="startover" onClick={startOver} disabled={busy}
                       title="Clear the conversation and restore the student record">
@@ -237,21 +343,23 @@ export default function App() {
           <div className="thread" ref={threadBox}>
             {thread.map((m, i) => {
               if (m.role === 'call') {
+                const tag = tagFor(m)
+                const doc = m.tool === 'get_attachment'
+                  ? findAttached(attached, m.args?.attachment_id) : null
                 return (
                   <div key={i} className={`toolcall${m.refused ? ' blocked' : ''}`}>
                     <span>{m.tool}</span>{' '}
-                    <span className="args">{args(m.args)}</span>
-                    <span className={`tag ${m.refused ? 'blocked' : 'ok'}`}>
-                      {m.refused ? 'stopped' : 'ran'}
-                    </span>
-                  </div>
-                )
-              }
-              if (m.role === 'poison') {
-                return (
-                  <div key={i} className="poison">
-                    <div className="where">returned inside the description of subject {injected.subject}</div>
-                    <q>{injected.text}</q>
+                    {doc
+                      ? <span className="args">{doc.name}</span>
+                      : <span className="args">{args(m.args)}</span>}
+                    <span className={`tag ${tag.cls}`}>{tag.text}</span>
+                    {doc && !m.refused && (
+                      <details className="saw-panel">
+                        <summary>what the model saw</summary>
+                        <Saw text={doc.text}
+                             payload={doc.variant === 'planted' ? docById(doc.id)?.payload_text : null} />
+                      </details>
+                    )}
                   </div>
                 )
               }
@@ -259,7 +367,7 @@ export default function App() {
               // headings -- so it is rendered rather than shown as literal
               // asterisks. `react-markdown` does not render raw HTML, which
               // matters here: an assistant reply can contain text an attacker
-              // planted in a subject description, and it must stay inert.
+              // planted in a document, and it must stay inert.
               if (m.role === 'assistant') {
                 return (
                   <div key={i} className="bubble assistant">
@@ -274,12 +382,48 @@ export default function App() {
           </div>
 
           <div className="chips">
-            {SUGGESTIONS.map((s) => (
+            {[...SUGGESTIONS, ...attachedPrompts].map((s) => (
               <button key={s} className="chip" disabled={busy} onClick={() => send(s)}>{s}</button>
             ))}
           </div>
 
+          {attached.length > 0 && (
+            <div className="attachments">
+              {attached.map((a) => (
+                <span key={a.id} className="attachment">
+                  <span className="clip" aria-hidden="true">📎</span>
+                  {a.name} <span className="variant">· {VARIANT_LABEL[a.variant]}</span>
+                  <button type="button" onClick={() => detach(a.id)} disabled={busy}
+                          aria-label={`Remove ${a.name}`}>×</button>
+                </span>
+              ))}
+            </div>
+          )}
+
           <form className="composer" onSubmit={(e) => { e.preventDefault(); send(draft) }}>
+            <div className="attach">
+              <button type="button" onClick={() => setMenuOpen((o) => !o)}
+                      disabled={busy || myDocuments.length === 0}
+                      aria-expanded={menuOpen} aria-haspopup="menu">
+                Attach
+              </button>
+              {menuOpen && (
+                <div className="attachmenu" role="menu">
+                  {myDocuments.map((doc) => (
+                    <div key={doc.id} className="doc">
+                      <div className="name">{doc.name}</div>
+                      {['planted', 'clean'].map((variant) => (
+                        <button key={variant} type="button" role="menuitem"
+                                aria-pressed={attached.some((a) => a.id === doc.id && a.variant === variant)}
+                                onClick={() => attachDocument(doc, variant)}>
+                          {VARIANT_LABEL[variant]}
+                        </button>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <input value={draft} onChange={(e) => setDraft(e.target.value)}
                    placeholder="Message the assistant" disabled={busy} />
             <button type="submit" disabled={busy || !draft.trim()}>Send</button>
@@ -331,26 +475,47 @@ export default function App() {
               {decisions.length === 0 && <p className="muted">Nothing yet.</p>}
               {decisions.map((d, i) => {
                 const denied = d.verdict === 'deny'
+                const held = d.verdict === 'require_approval' && d.blocked
+                const approval = approvals[`${decisionTurn}:${i}`]
                 return (
-                  <div key={i} className={`decision${denied ? ' denied' : ''}`}>
-                    <div className="tool">{d.tool}</div>
+                  <div key={i} className={`decision${denied ? ' denied' : ''}${held ? ' held' : ''}`}>
+                    <div className="tool">
+                      {d.tool}
+                      {d.tainted && <span className="taint">after untrusted read</span>}
+                    </div>
                     <div className="args">{args(d.arguments)}</div>
                     <div className="ruling">
-                      <b>{denied ? 'Denied' : 'Allowed'}</b> by {d.policy}. {d.reason}
+                      <b>{rulingFor(d.verdict)}</b> by {d.policy}. {d.reason}
                     </div>
                     <div className={`outcome${denied && !d.blocked ? ' overruled' : ''}`}>
-                      {denied
-                        ? (d.blocked
-                            ? 'The call was stopped. The enrolment system never saw it.'
-                            : 'Enforcement is off, so the call was forwarded anyway.')
-                        : 'Forwarded.'}
+                      {outcomeFor(d)}
                     </div>
+                    {held && (
+                      <div className="approval">
+                        {!approval && (
+                          <>
+                            <span>Does the student confirm this?</span>
+                            <button onClick={() => allow(i)} disabled={busy}>Allow</button>
+                            <button onClick={() => refuse(i)} disabled={busy} className="refuse">Refuse</button>
+                          </>
+                        )}
+                        {approval?.status === 'pending' && <span>Replaying…</span>}
+                        {approval?.status === 'refused' && <span>Refused by the student. Nothing ran.</span>}
+                        {approval?.status === 'confirmed' && (
+                          <span>
+                            <b>Confirmed by the student.</b> Re-read {approval.confirmation.reread}{' '}
+                            document{approval.confirmation.reread === 1 ? '' : 's'}, then forwarded
+                            ({rulingFor(approval.confirmation.call.verdict).toLowerCase()} by{' '}
+                            {approval.confirmation.call.policy}, approval mode approve).
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )
               })}
             </div>
           </section>
-
 
           <section className="card">
             <h2>Student record (live)</h2>
@@ -369,6 +534,21 @@ export default function App() {
                   {record?.enrolled?.join(', ') || 'none'}
                 </span>
               </div>
+            </div>
+            <div className="erequests">
+              <div className="caption">eRequests</div>
+              {erequests.length === 0 && <p className="muted">No eRequests submitted.</p>}
+              {erequests.map((e, i) => (
+                <div key={i} className="erequest">
+                  <div className="meta">
+                    {e.type} · turn {e.turn}{e.confirmed ? ' · confirmed by the student' : ''}
+                  </div>
+                  <pre className="text">{e.text}</pre>
+                  {e.attachment_ids?.length > 0 && (
+                    <div className="cites">cites {e.attachment_ids.join(', ')}</div>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
         </div>

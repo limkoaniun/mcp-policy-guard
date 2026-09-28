@@ -65,3 +65,19 @@ export async function sendMessage(id, text, model, onEvent) {
     }
   }
 }
+
+export const getDocuments = () => fetch('/api/documents').then(json)
+
+export const setAttachments = (id, attached) =>
+  fetch(`/api/chat/${id}/attachments`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ attached }),
+  }).then(json)
+
+export const approve = (id, turn, index) =>
+  fetch(`/api/chat/${id}/approve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ turn, index }),
+  }).then(json)
