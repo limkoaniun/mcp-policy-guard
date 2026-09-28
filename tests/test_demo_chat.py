@@ -325,3 +325,29 @@ async def test_an_unknown_turn_or_decision_is_a_lookup_error(tmp_path):
         await live.approve(turn=7, index=0)
     with pytest.raises(LookupError):
         await live.approve(turn=1, index=5)
+
+
+@pytest.mark.anyio
+async def test_approve_is_refused_while_a_message_is_running(tmp_path):
+    """`busy` is shared with `send`: both write `students.json`, so an
+    approval racing a message would leave the record showing whichever one
+    happened to finish last."""
+    live = await held_drop(tmp_path)
+    live.busy = True
+
+    with pytest.raises(ValueError, match="still running"):
+        await live.approve(turn=1, index=1)
+
+    live.busy = False
+    confirmation = await live.approve(turn=1, index=1)
+    assert confirmation.call.tool == "drop"
+
+
+@pytest.mark.anyio
+async def test_approve_releases_busy_even_when_it_fails(tmp_path):
+    live = await held_drop(tmp_path)
+
+    with pytest.raises(LookupError):
+        await live.approve(turn=9, index=0)
+
+    assert live.busy is False

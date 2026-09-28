@@ -217,9 +217,13 @@ class ChatSession:
 
     # ------------------------------------------------------------------- send
     async def send(self, message: str, *, chat, model: str, on_event=None) -> ChatReplyOut:
-        """Run one message through a proxy carrying the session's current settings."""
+        """Run one message through a proxy carrying the session's current settings.
+
+        `busy` is shared with `approve`: both write `students.json`, so a
+        message and an approval running at once would race to that file.
+        """
         if self.busy:
-            raise RuntimeError("a message is still running")
+            raise RuntimeError("the session is busy with another message or an approval")
         self.busy = True
         try:
             return await self._send(message, chat=chat, model=model, on_event=on_event)
@@ -302,9 +306,20 @@ class ChatSession:
         the log would record an `allow` by the allowlist for an event that
         never happened. The replay leaves the same artifacts a turn does, in
         `turn-NNN-approval`, and its state becomes the session's.
+
+        Holds `busy` for the same reason `send` does: both write
+        `students.json`, and a `send` and an `approve` racing on that file
+        would leave the record showing whichever one happened to finish last.
         """
         if self.busy:
             raise ValueError("a message is still running; wait for it to finish")
+        self.busy = True
+        try:
+            return await self._approve(turn=turn, index=index)
+        finally:
+            self.busy = False
+
+    async def _approve(self, *, turn: int, index: int) -> Confirmation:
         record = self.turns.get(turn)
         if record is None:
             raise LookupError(f"no turn {turn}")
