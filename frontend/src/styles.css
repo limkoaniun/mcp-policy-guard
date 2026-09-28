@@ -91,14 +91,17 @@ button, input, select { font: inherit; color: inherit; }
 .startover:disabled { opacity: .4; cursor: default; }
 
 /* ---------- chat ---------- */
-.chat, .sidecol { height: min(660px, calc(100vh - 260px)); min-height: 460px; }
-.chat { display: flex; flex-direction: column; }
-.sidecol { display: flex; flex-direction: column; gap: 1.5rem; }
-.sidecol .console { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-/* The decision log is what the demonstration reads from, so it keeps a floor
-   height even when the eRequests list below grows and .sidecol's own height
-   is fixed -- otherwise the log gets squeezed out of view. */
-.sidecol .console .log { flex: 1; min-height: 12rem; }
+.chat { height: min(660px, calc(100vh - 260px)); min-height: 460px; display: flex; flex-direction: column; }
+/* The side column grows with its content instead of sharing the chat's fixed
+   height -- pinning it the same as .chat let a long console (tools ticked,
+   enforcement-off note, a real decision log) get clipped, cut off mid-panel
+   with no way to reach the rest. The two panels inside it that can grow
+   without bound (the decision log, the eRequests list) scroll within a
+   capped height of their own instead, so the record card and the console's
+   own header stay in view above and below them. */
+.sidecol { height: auto; min-height: 460px; display: flex; flex-direction: column; gap: 1.5rem; }
+.sidecol .console { display: flex; flex-direction: column; }
+.sidecol .console .log { min-height: 12rem; max-height: 22rem; overflow-y: auto; }
 .thread { flex: 1; min-height: 0; padding: 1.35rem; overflow-y: auto; }
 .bubble { max-width: 48ch; padding: .75rem 1rem; margin-bottom: .9rem; }
 .bubble.assistant { background: #f2f2f2; border-left: 3px solid var(--uts-blue); }
