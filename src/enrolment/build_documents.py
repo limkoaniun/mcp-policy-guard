@@ -11,8 +11,12 @@ footer, because text extraction ignores colour and size. That is the attack
 the pivot note describes, in the file format a student would actually send.
 
 The text is the scenario's, via `demo.documents.documents_from` and
-`run_setup.plant_payload` -- this script restates neither rule. What comes
-back out of the PDF equals the scenario text up to whitespace (spec §2);
+`run_setup.plant_payload`. The placement -- body, then a blank line, then
+the footer -- is restated here in PDF-layout terms, because it has to be:
+`_write_pdf` needs the footer's colour and point size, which `plant_payload`
+has no notion of. What keeps the two in step is the round-trip test against
+`planted_text` (which does go through `plant_payload`): what comes back out
+of the PDF equals the scenario text up to whitespace (spec §2);
 `tests/test_build_documents.py` pins that, and pins that the committed files
 are current.
 """

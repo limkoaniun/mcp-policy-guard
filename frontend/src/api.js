@@ -66,8 +66,6 @@ export async function sendMessage(id, text, model, onEvent) {
   }
 }
 
-export const getDocuments = () => fetch('/api/documents').then(json)
-
 // A multipart upload: the browser sets the boundary, so no Content-Type here.
 export const uploadFile = (id, file) => {
   const body = new FormData()

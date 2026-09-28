@@ -236,6 +236,22 @@ def test_an_over_long_file_name_is_refused():
     assert accepted.status_code == 200
 
 
+def test_a_dot_or_empty_file_name_is_refused():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    # "/" stands in for a bare empty name: a literal "" is not something a
+    # multipart client sends as a file's name at all (the test client falls
+    # back to a plain form field, which FastAPI itself rejects with a 422
+    # before this route ever sees it), but "/" reaches the route and
+    # `Path("/").name` is "" the same way, so it exercises the same check.
+    for name in ("..", ".", "/"):
+        response = upload_bytes(client, session, name, b"hi")
+
+        assert response.status_code == 400, name
+        assert "file name" in response.json()["detail"], name
+
+
 def test_a_pdf_with_no_text_is_refused():
     from fpdf import FPDF
     pdf = FPDF()
@@ -249,7 +265,7 @@ def test_a_pdf_with_no_text_is_refused():
     assert "OCR" in response.json()["detail"]
 
 
-def test_the_uploaded_file_is_kept_as_evidence(tmp_path):
+def test_the_uploaded_file_is_kept_as_evidence():
     client = TestClient(app_with())
     session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
     upload_bytes(client, session, "notes.txt", b"kept\n")

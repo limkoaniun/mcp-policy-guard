@@ -143,6 +143,22 @@ export default function App() {
     if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' })
   }, [thread])
 
+  // A file dropped anywhere but the chat card must be a no-op, not the
+  // browser's own default of navigating to it -- which would destroy the
+  // session. The card's own handlers run first (they call `preventDefault`
+  // themselves, during the capture-to-target phase before this bubbling
+  // window listener sees the event) and are unaffected; this is only the
+  // backstop for everywhere else on the page, chat card included while busy.
+  useEffect(() => {
+    const prevent = (e) => e.preventDefault()
+    window.addEventListener('dragover', prevent)
+    window.addEventListener('drop', prevent)
+    return () => {
+      window.removeEventListener('dragover', prevent)
+      window.removeEventListener('drop', prevent)
+    }
+  }, [])
+
   const applyTools = async (next) => {
     setAllowed(next)
     if (session) await api.setTools(session, next).catch((e) => setError(e.message))
@@ -164,16 +180,26 @@ export default function App() {
   const uploadFiles = async (files) => {
     if (!session || busy) return
     setError(null)
-    for (const file of Array.from(files)) {
-      const s = await api.uploadFile(session, file)
-        .catch((e) => { setError(`${file.name}: ${e.message}`); return null })
-      if (s) applyState(s)
+    setBusy(true)
+    try {
+      for (const file of Array.from(files)) {
+        const s = await api.uploadFile(session, file)
+          .catch((e) => { setError(e.message); return null })
+        if (s) applyState(s)
+      }
+    } finally {
+      setBusy(false)
     }
   }
   const detach = async (id) => {
     if (!session || busy) return
-    const s = await api.deleteAttachment(session, id).catch((e) => { setError(e.message); return null })
-    if (s) applyState(s)
+    setBusy(true)
+    try {
+      const s = await api.deleteAttachment(session, id).catch((e) => { setError(e.message); return null })
+      if (s) applyState(s)
+    } finally {
+      setBusy(false)
+    }
   }
   const attachedPrompts = attached.map((a) => a.known?.prompt).filter(Boolean)
 
@@ -427,8 +453,8 @@ export default function App() {
           </div>
 
           <div className="chips">
-            {[...SUGGESTIONS, ...attachedPrompts].map((s) => (
-              <button key={s} className="chip" disabled={busy} onClick={() => send(s)}>{s}</button>
+            {[...SUGGESTIONS, ...attachedPrompts].map((s, i) => (
+              <button key={`${i}:${s}`} className="chip" disabled={busy} onClick={() => send(s)}>{s}</button>
             ))}
           </div>
 

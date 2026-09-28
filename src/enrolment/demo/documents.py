@@ -1,12 +1,14 @@
-"""The documents the demo's attach control offers.
+"""The demo's known documents: what the build script writes as PDFs, and what
+uploads are matched against.
 
 One per upload persona, taken from the scenario that plants a payload in a
 document (`payload.location: attachment`): A-01 Jane's RPL template, A-02
 Tom's transfer checklist, A-03 Omar's group agreement, A-04 Priya's medical
-letter. Both variants are offered -- the clean text, byte-identical to the
+letter. Each carries both variants -- the clean text, byte-identical to the
 benign twin's, and the planted text built by `run_setup.plant_payload` --
-so what the presenter attaches is what the campaign measured, not a document
-written for the demo.
+so a document `build_documents` writes, or an upload `match_known` matches,
+is the text the adversarial campaign measured, not a document written for
+the demo.
 """
 
 from __future__ import annotations

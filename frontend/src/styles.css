@@ -189,7 +189,7 @@ button, input, select { font: inherit; color: inherit; }
 .composer { display: flex; gap: .75rem; padding: 1.1rem 1.35rem; border-top: 1px solid var(--line-soft); }
 .composer input { flex: 1; padding: .7rem .9rem; border: 1px solid var(--line); background: #fff; }
 /* `>` so this reaches only the composer's own Send button, not the Attach
-   button or the attach menu's variant buttons nested inside `.attach`. */
+   button nested inside `.attach` -- there is no menu now. */
 .composer > button {
   background: var(--uts-blue); color: #fff; border: 0; padding: .7rem 1.7rem;
   font-weight: 700; cursor: pointer;

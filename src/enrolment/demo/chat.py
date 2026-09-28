@@ -99,7 +99,7 @@ class ChatSession:
         self.history: list[dict] = []
         self.turn = 0
 
-        #: The attach control's documents: id -> {"name", "text", "variant"}.
+        #: The dropped documents: id -> {"name", "text", "kind", "known"}.
         #: Written to each turn's `attachments.json` so the upstream serves
         #: exactly this text. Survives `reset` -- it is staging, like the
         #: allowlist.

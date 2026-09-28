@@ -13,6 +13,7 @@ from __future__ import annotations
 import io
 import re
 from collections.abc import Iterable
+from pathlib import Path
 
 from pypdf import PdfReader
 
@@ -33,6 +34,27 @@ MAX_NAME = 200
 
 class UploadError(ValueError):
     """The upload cannot become an attachment; the message says why."""
+
+
+def safe_name(filename: str | None) -> str:
+    """The upload's file name, made safe to write to disk.
+
+    `Path(...).name` strips any directory components an attacker-controlled
+    name might carry, but what is left can still be `""`, `"."` or `".."` --
+    `Path("..").name` is `".."` itself, and `Path(".").name` and `Path("").name`
+    are both `""`. Handed on as-is, the first writes into the uploads
+    directory itself and 500s, and the second slips past a truthiness check
+    and yields an attachment with no name. Both are refused here, before
+    either the route or the filesystem sees them.
+    """
+    name = Path(filename or "").name
+    if name in ("", ".", ".."):
+        raise UploadError("the upload has no usable file name")
+    if len(name) > MAX_NAME:
+        raise UploadError(
+            f"the file name is too long ({len(name)} characters; the limit is {MAX_NAME})"
+        )
+    return name
 
 
 def normalise(text: str) -> str:

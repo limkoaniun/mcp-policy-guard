@@ -36,7 +36,7 @@ from ..scenarios_spec import load_all
 from .chat import ChatSession
 from .documents import documents_from
 from .session import run_demo
-from .uploads import MAX_BYTES, MAX_NAME, UploadError, attachment_id_for, extract_text, match_known
+from .uploads import MAX_BYTES, UploadError, attachment_id_for, extract_text, match_known, safe_name
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 STATIC = Path(__file__).parent / "static"
@@ -199,10 +199,11 @@ def create_app(
 
     @app.get("/api/documents")
     def list_documents() -> list[dict]:
-        """The documents the attach control offers, both variants each.
+        """The known-document texts `match_known` compares an upload against,
+        so the upload route can tag it with its scenario's own prompt.
 
-        Built from the upload-borne scenarios, so the planted text the page
-        can attach is the text the adversarial campaign measured.
+        Nothing for the page: there is no attach control left to offer these
+        from, since a student now drags a file onto the chat instead.
         """
         return [document.model_dump() for document in documents]
 
@@ -276,18 +277,22 @@ def create_app(
         under the session's `uploads/` as evidence and never read back. If
         the text matches one of the shipped documents, the entry says which
         and in which variant, so the page can offer the scenario's own
-        request and mark the footer. A session mid-message refuses the
-        upload: the running proxy already has its `attachments.json`.
+        request and mark the footer. That match is checked against all four
+        shipped documents regardless of the session's persona, so Jane's
+        document dropped into Tom's session is attached and tagged with
+        Jane's prompt too -- any file is accepted now, and the tag only says
+        what the file is, not who it belongs to. A session mid-message
+        refuses the upload: the running proxy already has its
+        `attachments.json`.
         """
         live = get(session_id)
         if live.busy:
             raise HTTPException(409, "a message is running; attach the file when it finishes")
         data = await file.read(MAX_BYTES + 1)
-        name = Path(file.filename or "document").name
-        if len(name) > MAX_NAME:
-            raise HTTPException(
-                400, f"the file name is too long ({len(name)} characters; the limit is {MAX_NAME})"
-            )
+        try:
+            name = safe_name(file.filename)
+        except UploadError as error:
+            raise HTTPException(400, str(error)) from error
         if len(data) > MAX_BYTES:
             raise HTTPException(413, f"{name} is over the 2 MB limit")
         try:

@@ -10,11 +10,13 @@ from enrolment.demo.app import KNOWN_TOOLS
 from enrolment.demo.documents import documents_from
 from enrolment.demo.uploads import (
     MAX_BYTES,
+    MAX_NAME,
     UploadError,
     attachment_id_for,
     extract_text,
     match_known,
     normalise,
+    safe_name,
 )
 from enrolment.scenarios_spec import load_all
 
@@ -40,6 +42,27 @@ def pdf_bytes(*lines: str) -> bytes:
 
 def test_max_bytes_is_two_megabytes():
     assert MAX_BYTES == 2 * 1024 * 1024
+
+
+def test_safe_name_passes_through_a_normal_name():
+    assert safe_name("RPL_application_template.pdf") == "RPL_application_template.pdf"
+
+
+def test_safe_name_strips_directory_components():
+    assert safe_name("../../etc/passwd") == "passwd"
+    assert safe_name("a/b/notes.txt") == "notes.txt"
+
+
+@pytest.mark.parametrize("name", ["..", ".", "", None])
+def test_safe_name_refuses_a_dot_or_empty_name(name):
+    with pytest.raises(UploadError, match="no usable file name"):
+        safe_name(name)
+
+
+def test_safe_name_refuses_a_name_over_the_limit():
+    with pytest.raises(UploadError, match="too long"):
+        safe_name(("x" * 300) + ".txt")
+    assert safe_name(("y" * (MAX_NAME - 4)) + ".txt")
 
 
 def test_normalise_collapses_all_whitespace():
