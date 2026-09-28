@@ -95,7 +95,10 @@ button, input, select { font: inherit; color: inherit; }
 .chat { display: flex; flex-direction: column; }
 .sidecol { display: flex; flex-direction: column; gap: 1.5rem; }
 .sidecol .console { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-.sidecol .console .log { flex: 1; }
+/* The decision log is what the demonstration reads from, so it keeps a floor
+   height even when the eRequests list below grows and .sidecol's own height
+   is fixed -- otherwise the log gets squeezed out of view. */
+.sidecol .console .log { flex: 1; min-height: 12rem; }
 .thread { flex: 1; min-height: 0; padding: 1.35rem; overflow-y: auto; }
 .bubble { max-width: 48ch; padding: .75rem 1rem; margin-bottom: .9rem; }
 .bubble.assistant { background: #f2f2f2; border-left: 3px solid var(--uts-blue); }
@@ -185,11 +188,13 @@ button, input, select { font: inherit; color: inherit; }
 
 .composer { display: flex; gap: .75rem; padding: 1.1rem 1.35rem; border-top: 1px solid var(--line-soft); }
 .composer input { flex: 1; padding: .7rem .9rem; border: 1px solid var(--line); background: #fff; }
-.composer button {
+/* `>` so this reaches only the composer's own Send button, not the Attach
+   button or the attach menu's variant buttons nested inside `.attach`. */
+.composer > button {
   background: var(--uts-blue); color: #fff; border: 0; padding: .7rem 1.7rem;
   font-weight: 700; cursor: pointer;
 }
-.composer button:disabled { background: #9a9a9a; cursor: default; }
+.composer > button:disabled { background: #9a9a9a; cursor: default; }
 
 /* ---------- console ---------- */
 .switch { display: inline-flex; align-items: center; gap: .65rem; cursor: pointer; font-weight: 400; font-size: .9rem; }
@@ -275,6 +280,9 @@ button, input, select { font: inherit; color: inherit; }
   border-top: 1px dashed var(--line); padding-top: .7rem; margin-bottom: .5rem;
 }
 .erequests .muted { margin: 0; font-size: .88rem; }
+/* Capped and scrollable so a long eRequest list cannot itself grow the
+   record card enough to squeeze the console's decision log off-screen. */
+.erequests .entries { max-height: 11rem; overflow-y: auto; }
 .erequest { margin-bottom: .7rem; border-left: 3px solid var(--line); padding-left: .8rem; }
 .erequest .meta { font-family: var(--mono); font-size: .78rem; color: var(--ink-soft); }
 .erequest .text {

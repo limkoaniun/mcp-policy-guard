@@ -220,8 +220,17 @@ export default function App() {
     try {
       await api.sendMessage(session, text, model || null, (event) => {
         if (event.kind === 'call') {
+          // Snapshot the document now, from the `attached` this closure
+          // captured when `send` started -- controls are disabled while
+          // busy, so it cannot have changed since. Rendering from a snapshot
+          // (rather than re-querying live `attached` state later) keeps this
+          // row showing what the model actually read even if the student
+          // later attaches a different variant of the same document.
+          const doc = event.tool === 'get_attachment'
+            ? findAttached(attached, event.arguments?.attachment_id) : null
           setThread((t) => [...t, {
             role: 'call', token, tool: event.tool, args: event.arguments, refused: event.refused,
+            doc: doc ? { id: doc.id, name: doc.name, text: doc.text, variant: doc.variant } : null,
           }])
         }
         if (event.kind === 'said') {
@@ -344,8 +353,7 @@ export default function App() {
             {thread.map((m, i) => {
               if (m.role === 'call') {
                 const tag = tagFor(m)
-                const doc = m.tool === 'get_attachment'
-                  ? findAttached(attached, m.args?.attachment_id) : null
+                const doc = m.doc
                 return (
                   <div key={i} className={`toolcall${m.refused ? ' blocked' : ''}`}>
                     <span>{m.tool}</span>{' '}
@@ -538,17 +546,19 @@ export default function App() {
             <div className="erequests">
               <div className="caption">eRequests</div>
               {erequests.length === 0 && <p className="muted">No eRequests submitted.</p>}
-              {erequests.map((e, i) => (
-                <div key={i} className="erequest">
-                  <div className="meta">
-                    {e.type} · turn {e.turn}{e.confirmed ? ' · confirmed by the student' : ''}
+              <div className="entries">
+                {erequests.map((e, i) => (
+                  <div key={i} className="erequest">
+                    <div className="meta">
+                      {e.type} · turn {e.turn}{e.confirmed ? ' · confirmed by the student' : ''}
+                    </div>
+                    <pre className="text">{e.text}</pre>
+                    {e.attachment_ids?.length > 0 && (
+                      <div className="cites">cites {e.attachment_ids.join(', ')}</div>
+                    )}
                   </div>
-                  <pre className="text">{e.text}</pre>
-                  {e.attachment_ids?.length > 0 && (
-                    <div className="cites">cites {e.attachment_ids.join(', ')}</div>
-                  )}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </section>
         </div>
