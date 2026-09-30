@@ -315,3 +315,10 @@ footer .strong { color: #cfcfcf; font-weight: 700; font-size: 1.05rem; margin: 0
 .colophon.prototype {
   margin-top: .6rem; font-size: .82rem; color: #6f6f6f; font-family: var(--mono);
 }
+.mode-picker, .rag-panel { padding: 1rem 1.25rem; }
+.mode-picker label { display: block; font-weight: 700; margin-bottom: .5rem; }
+.mode-picker select { width: 100%; padding: .65rem; font: inherit; }
+.mode-picker p { font-size: .8rem; color: #555; margin-bottom: 0; }
+.rag-panel details, .rag-evidence { border-top: 1px solid #ddd; padding: .75rem 0; }
+.rag-evidence { margin: .5rem 1rem; }
+.rag-panel summary, .rag-evidence summary { cursor: pointer; overflow-wrap: anywhere; }

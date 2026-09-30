@@ -117,6 +117,7 @@ async def test_an_upstream_error_is_forwarded_and_logged_as_forwarded():
 
     log = DecisionLog(None)
     async with connect_in_process(server) as client:
+        original_error = await client.call_tool("explode", {"code": "X"})
         proxy = PolicyProxy(client, enforcement_for({"explode"}, log))
         result = await proxy.call("explode", {"code": "X"})
 
@@ -127,7 +128,9 @@ async def test_an_upstream_error_is_forwarded_and_logged_as_forwarded():
     # leaving the whole assertion resting on its first disjunct. Assert on the
     # real attribute, and on both halves rather than either.
     assert result.is_error is True
-    assert "broken" in str(result.content).lower()
+    # MCP 2.2 masks unexpected exceptions. Whatever the SDK returns must
+    # still cross the proxy unchanged, not become a policy denial.
+    assert result.content == original_error.content
 
 
 @pytest.mark.anyio

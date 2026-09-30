@@ -20,10 +20,13 @@ planted footer white and tiny.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import tempfile
+import threading
 import uuid
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
@@ -83,6 +86,11 @@ PRESETS = {
 class NewSession(BaseModel):
     persona: str = "S9000001"
     preset: str = "enrolment"
+    mode: Literal["rag", "agent-on", "agent-off"] = "agent-on"
+
+
+class ModeUpdate(BaseModel):
+    mode: Literal["rag", "agent-on", "agent-off"]
 
 
 class ToolsUpdate(BaseModel):
@@ -123,7 +131,7 @@ def create_app(
     # Injectable for the reason the campaign runners make them so: the app is
     # then testable with no daemon running, and the tests assert on what the
     # harness did rather than on what a model happened to say.
-    chat_factory = chat_factory or (lambda model: ollama_chat(model, temperature=0.0))
+    chat_factory = chat_factory or (lambda model: ollama_chat(model, temperature=0.0, num_ctx=16384))
     available_models = available_models or installed_models
     persona_records = json.loads(personas_path.read_text(encoding="utf-8"))
     personas = set(persona_records)
@@ -215,6 +223,7 @@ def create_app(
             "record": live.record(),
             "allowed_tools": live.allowed_tools,
             "enforcement": live.enforcement,
+            "mode": live.mode,
             "attachments": [
                 {"id": attachment_id, **entry} for attachment_id, entry in live.attachments.items()
             ],
@@ -246,11 +255,22 @@ def create_app(
             repo_root=repo_root,
             allowed_tools=PRESETS.get(request.preset, PRESETS["enrolment"]),
         )
+        sessions[session_id].set_mode(request.mode)
         return {"id": session_id, **state_of(sessions[session_id])}
+
+    @app.put("/api/chat/{session_id}/mode")
+    def set_mode(session_id: str, update: ModeUpdate) -> dict:
+        live = get(session_id)
+        if live.busy:
+            raise HTTPException(409, "a message is running; wait before switching modes")
+        live.set_mode(update.mode)
+        return state_of(live)
 
     @app.put("/api/chat/{session_id}/tools")
     def set_tools(session_id: str, update: ToolsUpdate) -> dict:
         live = get(session_id)
+        if live.busy:
+            raise HTTPException(409, "a message is running")
         known = {t["name"] for t in TOOLS}
         unknown = [t for t in update.allowed_tools if t not in known]
         if unknown:
@@ -263,6 +283,8 @@ def create_app(
         if update.enforcement not in ("on", "off"):
             raise HTTPException(400, "enforcement must be 'on' or 'off'")
         live = get(session_id)
+        if live.busy or live.rag_mode:
+            raise HTTPException(409, "use the mode selector when idle to change modes")
         live.enforcement = update.enforcement
         return state_of(live)
 
@@ -289,6 +311,8 @@ def create_app(
         if live.busy:
             raise HTTPException(409, "a message is running; attach the file when it finishes")
         data = await file.read(MAX_BYTES + 1)
+        if live.busy:
+            raise HTTPException(409, "a message is running; retry the upload afterwards")
         try:
             name = safe_name(file.filename)
         except UploadError as error:
@@ -301,6 +325,11 @@ def create_app(
             raise HTTPException(400, str(error)) from error
         attachment_id = attachment_id_for(name)
         kept = live.root / "uploads" / attachment_id / name
+        if len(str(kept)) > 240:
+            # Keep the displayed name in session metadata; avoid MAX_PATH on
+            # Windows for the retained evidence copy of a long upload name.
+            key = hashlib.sha256(name.encode("utf-8")).hexdigest()[:24]
+            kept = live.root / "uploads" / key / ("original" + Path(name).suffix)
         kept.parent.mkdir(parents=True, exist_ok=True)
         kept.write_bytes(data)
         live.attachments[attachment_id] = {
@@ -312,6 +341,8 @@ def create_app(
     def detach(session_id: str, attachment_id: str) -> dict:
         """The chip's ×. The kept file stays on disk, like turn directories."""
         live = get(session_id)
+        if live.busy:
+            raise HTTPException(409, "a message is running")
         if attachment_id not in live.attachments:
             raise HTTPException(404, f"no attachment {attachment_id!r}")
         del live.attachments[attachment_id]
@@ -322,6 +353,8 @@ def create_app(
         """Put the record back and forget the conversation, keeping the
         console as it was staged. See `ChatSession.reset`."""
         live = get(session_id)
+        if live.busy:
+            raise HTTPException(409, "a message is running")
         live.reset()
         return state_of(live)
 
@@ -330,6 +363,8 @@ def create_app(
         """The approval card's Allow. Refuse has no endpoint: nothing ran, so
         there is nothing to log, and the page says so on its own."""
         live = get(session_id)
+        if live.rag_mode:
+            raise HTTPException(409, "RAG has no actions to approve")
         try:
             confirmation = await live.approve(turn=body.turn, index=body.index)
         except (LookupError, ValueError) as error:
@@ -347,11 +382,19 @@ def create_app(
         nothing else.
         """
         live = get(session_id)
+        if live.busy:
+            raise HTTPException(409, "a message is already running")
+        if not body.text.strip():
+            raise HTTPException(400, "message text must not be empty")
         queue: asyncio.Queue = asyncio.Queue()
         loop = asyncio.get_running_loop()
+        loop_thread = threading.get_ident()
 
         def on_event(event):
-            loop.call_soon_threadsafe(queue.put_nowait, event)
+            if threading.get_ident() == loop_thread:
+                queue.put_nowait(event)
+            else:
+                loop.call_soon_threadsafe(queue.put_nowait, event)
 
         async def drive():
             try:
@@ -367,6 +410,10 @@ def create_app(
                     "calls": [c.model_dump() for c in reply.calls],
                     "truncated": reply.truncated,
                     "turn": reply.turn,
+                    "context": reply.context,
+                    "model": body.model or "scripted",
+                    "latency_ms": reply.latency_ms,
+                    "clarification": reply.clarification,
                     **state_of(live),
                 })
             except Exception as error:  # noqa: BLE001 - the page must be told

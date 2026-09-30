@@ -162,6 +162,7 @@ class RagReply(BaseModel):
     text: str
     context: list[str] = Field(default_factory=list)
     latency_ms: float = 0.0
+    messages: list[dict] = Field(default_factory=list)
 
 
 def answer(
@@ -177,6 +178,10 @@ def answer(
     system_prompt: str = RAG_SYSTEM_PROMPT,
     attachments: dict[str, dict] | None = None,
     session: str | None = None,
+    history: list[dict] | None = None,
+    retrieval_question: str | None = None,
+    max_context_chars: int | None = None,
+    strict_response: bool = False,
 ) -> RagReply:
     """Retrieve, stuff, answer. One completion; no tools are offered.
 
@@ -188,7 +193,7 @@ def answer(
     matches the agent arm's and a runner can treat the two alike.
     """
     blocks: list[str] = []
-    for code in find_subjects(question, catalogue):
+    for code in find_subjects(retrieval_question or question, catalogue):
         blocks.append(render_subject(catalogue[code], requisites.get(code)))
     blocks.append(render_record(student))
     if session:
@@ -199,7 +204,17 @@ def answer(
     user = "Documents:\n\n" + "\n\n".join(blocks) + "\n\n" + question
     messages = [
         {"role": "system", "content": system_prompt.replace("{principal}", student.student_id)},
+        *[dict(m) for m in (history or []) if m.get("role") in ("user", "assistant")],
         {"role": "user", "content": user},
     ]
+    if max_context_chars is not None and sum(len(m["content"]) for m in messages) > max_context_chars:
+        raise ValueError(
+            "The RAG context is too long. Remove large attachments, ask about a specific "
+            "subject, or start a new conversation. No documents were silently shortened."
+        )
     reply = chat(messages, [])
-    return RagReply(text=reply.content or "", context=blocks, latency_ms=reply.latency_ms)
+    if strict_response and reply.calls:
+        raise ValueError("The RAG model returned a tool call instead of an answer; no action ran.")
+    if strict_response and not (reply.content or "").strip():
+        raise ValueError("The RAG model returned an empty answer. Please retry.")
+    return RagReply(text=reply.content or "", context=blocks, latency_ms=reply.latency_ms, messages=messages)

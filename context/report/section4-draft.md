@@ -337,7 +337,7 @@ src/enrolment/               the domain
   metrics/                   scoring from final state, not from text
   agent/                     the tool-calling loop around a local model
   demo/                      the FastAPI app behind the UI (4.5)
-  rag.py                     the RAG arm (designed; not yet built)
+  rag.py                     the RAG retrieval and answer backend
 
 configs/enrolment.yaml       the policy pack: policies, trust labels,
                              principal argument, validator import path
@@ -421,14 +421,19 @@ reasons in the console — one a rule, one a provenance check — and the
 assistant offering a clean request. The selector changes the defence, never
 the request or the document.
 
-*Currently built:* the two-way Enforcement on/off switch, the picker with the
+*Currently built (2026-09-30):* the three-way RAG / Agent off / Agent on selector, the picker with the
 personas' names, the allowlist, the trace with taint markers, the drop zone
 and file picker, with the shipped PDFs clean or as received, the inline
 "what the model saw" panel on every attachment read, the approval card
 (Allow replays the held call through a proxy in approve mode after re-issuing
 the turn's untrusted reads; Refuse is page-only), the eRequest log, and the
-live record. *Designed, not built:* the RAG position of the mode selector, and
-taint that persists across messages within a session.
+live record. RAG chat includes the student's record, retrieved handbook blocks,
+and uploaded documents, with per-turn context inspection and saved prompts.
+It supports multi-turn dialogue and asks for an explicit academic session when
+the request is ambiguous. Switching mode clears dialogue and restores the
+baseline record while keeping attachments. Existing batch advice results
+predate this conversational integration and are not presented as a new run.
+*Designed, not built:* taint that persists across messages within an Agent session.
 
 ## 4.6 Personas
 
