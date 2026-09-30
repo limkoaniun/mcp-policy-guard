@@ -386,8 +386,13 @@ the policy console above the live student record.
   When the agent reads an attachment, the row shows the document's name and
   — in a collapsed "what the model saw" panel — its full text, hidden
   footer included, so the audience sees the planted line the moment the
-  model does. Suggested prompts sit as chips above the composer. The
-  composer has an **attach** control offering the scenario's documents. A
+  model does. Suggested prompts sit as chips above the composer. The chat
+  is a drop zone: the presenter drags a document onto it (or picks one
+  with **Attach**), the page uploads it, and the server pulls the text out with
+  pypdf. The four demo documents ship as PDFs under `data/documents/`, clean and
+  as received, the planted footer in white 1pt text that a reader never sees
+  and the model always does. Text pulled out of a PDF matches the scenario text
+  up to whitespace, not byte for byte; the round-trip test pins that. A
   **Start over** button clears the conversation and restores the record. A
   **model** selector lists only models that can call tools; every reply is
   labelled with the model that produced it.
@@ -417,8 +422,8 @@ assistant offering a clean request. The selector changes the defence, never
 the request or the document.
 
 *Currently built:* the two-way Enforcement on/off switch, the picker with the
-personas' names, the allowlist, the trace with taint markers, the attach
-control offering each persona's document clean or as received, the inline
+personas' names, the allowlist, the trace with taint markers, the drop zone
+and file picker, with the shipped PDFs clean or as received, the inline
 "what the model saw" panel on every attachment read, the approval card
 (Allow replays the held call through a proxy in approve mode after re-issuing
 the turn's untrusted reads; Refuse is page-only), the eRequest log, and the

@@ -66,14 +66,16 @@ export async function sendMessage(id, text, model, onEvent) {
   }
 }
 
-export const getDocuments = () => fetch('/api/documents').then(json)
+// A multipart upload: the browser sets the boundary, so no Content-Type here.
+export const uploadFile = (id, file) => {
+  const body = new FormData()
+  body.append('file', file, file.name)
+  return fetch(`/api/chat/${id}/upload`, { method: 'POST', body }).then(json)
+}
 
-export const setAttachments = (id, attached) =>
-  fetch(`/api/chat/${id}/attachments`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ attached }),
-  }).then(json)
+export const deleteAttachment = (id, attachmentId) =>
+  fetch(`/api/chat/${id}/attachments/${encodeURIComponent(attachmentId)}`, { method: 'DELETE' })
+    .then(json)
 
 export const approve = (id, turn, index) =>
   fetch(`/api/chat/${id}/approve`, {

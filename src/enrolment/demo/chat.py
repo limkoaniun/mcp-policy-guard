@@ -99,7 +99,7 @@ class ChatSession:
         self.history: list[dict] = []
         self.turn = 0
 
-        #: The attach control's documents: id -> {"name", "text", "variant"}.
+        #: The dropped documents: id -> {"name", "text", "kind", "known"}.
         #: Written to each turn's `attachments.json` so the upstream serves
         #: exactly this text. Survives `reset` -- it is staging, like the
         #: allowlist.
@@ -201,6 +201,9 @@ class ChatSession:
 
     # ------------------------------------------------------------ attachments
     def _write_attachments(self, run_dir: Path) -> Path | None:
+        """Only `name` and `text` reach the proxy. `kind` and `known` are the
+        page's, and the tool must not see a tag saying which scenario a
+        document is."""
         if not self.attachments:
             return None
         path = run_dir / "attachments.json"

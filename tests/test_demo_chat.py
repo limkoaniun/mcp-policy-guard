@@ -173,6 +173,20 @@ async def test_an_attached_document_is_what_get_attachment_returns(tmp_path):
 
 
 @pytest.mark.anyio
+async def test_attachments_json_carries_only_name_and_text(tmp_path):
+    """`kind` and `known` are the page's business. The tool and the replay
+    read `attachments.json`, and they see what they saw before uploads."""
+    live = session(tmp_path)
+    live.attachments = {"notes": {"name": "notes.txt", "text": "hi\n", "kind": "txt",
+                                  "known": {"scenario_id": "A-01", "variant": "clean"}}}
+
+    await live.send("hello", chat=scripted(ChatReply(content="hi")), model="fake")
+
+    written = json.loads((tmp_path / "session" / "turn-001" / "attachments.json").read_text())
+    assert written == {"notes": {"name": "notes.txt", "text": "hi\n"}}
+
+
+@pytest.mark.anyio
 async def test_a_message_without_attachments_writes_no_attachments_file(tmp_path):
     live = session(tmp_path)
     await live.send("hello", chat=scripted(ChatReply(content="hi")), model="fake")

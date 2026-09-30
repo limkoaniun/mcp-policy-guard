@@ -12,8 +12,9 @@ run cannot start from a mutated record, because it never reuses one. A run
 directory is single-use by design (see `state.RunDirectoryInUseError`).
 
 The attack arrives the way the pivot note says it does: inside a document the
-student attaches, read through `get_attachment`. The earlier planted subject
-description is gone.
+presenter drags onto the chat, read through `get_attachment`. The shipped
+documents under `data/documents/` are the scenario texts as PDFs, the
+planted footer white and tiny.
 """
 
 from __future__ import annotations
@@ -23,9 +24,8 @@ import json
 import tempfile
 import uuid
 from pathlib import Path
-from typing import Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -36,6 +36,7 @@ from ..scenarios_spec import load_all
 from .chat import ChatSession
 from .documents import documents_from
 from .session import run_demo
+from .uploads import MAX_BYTES, UploadError, attachment_id_for, extract_text, match_known, safe_name
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 STATIC = Path(__file__).parent / "static"
@@ -105,15 +106,6 @@ class RunRequest(BaseModel):
     model: str | None = None
 
 
-class Attached(BaseModel):
-    id: str
-    variant: Literal["clean", "planted"]
-
-
-class AttachmentsUpdate(BaseModel):
-    attached: list[Attached]
-
-
 class Approval(BaseModel):
     turn: int
     index: int
@@ -143,7 +135,6 @@ def create_app(
         for scenario in load_all(scenarios_dir, personas=personas, known_tools=KNOWN_TOOLS)
     }
     documents = documents_from(scenarios.values())
-    documents_by_id = {document.id: document for document in documents}
 
     app = FastAPI(title="MCP Policy Guard — demonstration")
 
@@ -208,10 +199,11 @@ def create_app(
 
     @app.get("/api/documents")
     def list_documents() -> list[dict]:
-        """The documents the attach control offers, both variants each.
+        """The known-document texts `match_known` compares an upload against,
+        so the upload route can tag it with its scenario's own prompt.
 
-        Built from the upload-borne scenarios, so the planted text the page
-        can attach is the text the adversarial campaign measured.
+        Nothing for the page: there is no attach control left to offer these
+        from, since a student now drags a file onto the chat instead.
         """
         return [document.model_dump() for document in documents]
 
@@ -274,29 +266,55 @@ def create_app(
         live.enforcement = update.enforcement
         return state_of(live)
 
-    @app.put("/api/chat/{session_id}/attachments")
-    def set_attachments(session_id: str, update: AttachmentsUpdate) -> dict:
-        """Replace the session's attached documents.
+    @app.post("/api/chat/{session_id}/upload")
+    async def upload(
+        session_id: str, file: UploadFile = File(...),  # noqa: B008 - FastAPI's own idiom
+    ) -> dict:
+        """A document dragged onto the chat becomes one of the session's
+        attachments, served by `get_attachment` on every later message.
 
-        Only the active student's own documents, in one variant each: a
-        document attached for the wrong student would make `get_attachment`
-        return text the scenario never gave that persona, and the run would
-        show something the campaign did not measure.
+        The text is what pypdf pulls out of the file; the file itself is kept
+        under the session's `uploads/` as evidence and never read back. If
+        the text matches one of the shipped documents, the entry says which
+        and in which variant, so the page can offer the scenario's own
+        request and mark the footer. That match is checked against all four
+        shipped documents regardless of the session's persona, so Jane's
+        document dropped into Tom's session is attached and tagged with
+        Jane's prompt too -- any file is accepted now, and the tag only says
+        what the file is, not who it belongs to. A session mid-message
+        refuses the upload: the running proxy already has its
+        `attachments.json`.
         """
         live = get(session_id)
-        chosen: dict[str, dict] = {}
-        for item in update.attached:
-            document = documents_by_id.get(item.id)
-            if document is None:
-                raise HTTPException(400, f"no document {item.id!r}")
-            if document.persona != live.persona:
-                raise HTTPException(
-                    400, f"{item.id!r} belongs to {document.persona}, not {live.persona}"
-                )
-            chosen[document.id] = {
-                "name": document.name, "text": document.text(item.variant), "variant": item.variant,
-            }
-        live.attachments = chosen
+        if live.busy:
+            raise HTTPException(409, "a message is running; attach the file when it finishes")
+        data = await file.read(MAX_BYTES + 1)
+        try:
+            name = safe_name(file.filename)
+        except UploadError as error:
+            raise HTTPException(400, str(error)) from error
+        if len(data) > MAX_BYTES:
+            raise HTTPException(413, f"{name} is over the 2 MB limit")
+        try:
+            kind, text = extract_text(name, data)
+        except UploadError as error:
+            raise HTTPException(400, str(error)) from error
+        attachment_id = attachment_id_for(name)
+        kept = live.root / "uploads" / attachment_id / name
+        kept.parent.mkdir(parents=True, exist_ok=True)
+        kept.write_bytes(data)
+        live.attachments[attachment_id] = {
+            "name": name, "text": text, "kind": kind, "known": match_known(text, name, documents),
+        }
+        return state_of(live)
+
+    @app.delete("/api/chat/{session_id}/attachments/{attachment_id}")
+    def detach(session_id: str, attachment_id: str) -> dict:
+        """The chip's ×. The kept file stays on disk, like turn directories."""
+        live = get(session_id)
+        if attachment_id not in live.attachments:
+            raise HTTPException(404, f"no attachment {attachment_id!r}")
+        del live.attachments[attachment_id]
         return state_of(live)
 
     @app.post("/api/chat/{session_id}/reset")

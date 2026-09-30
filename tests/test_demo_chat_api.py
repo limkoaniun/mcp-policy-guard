@@ -2,6 +2,7 @@
 
 import json
 import pathlib
+import tempfile
 
 from fastapi.testclient import TestClient
 from test_agent_loop import call, scripted
@@ -98,11 +99,6 @@ def test_reset_puts_the_record_back_and_keeps_the_console():
     assert body["enforcement"] == "off"
 
 
-def attach(client, session, doc_id, variant="planted"):
-    return client.put(f"/api/chat/{session}/attachments",
-                      json={"attached": [{"id": doc_id, "variant": variant}]})
-
-
 def test_a_new_session_starts_with_no_attachments_and_no_erequests():
     body = TestClient(app_with()).post("/api/chat", json={"persona": "S9000004"}).json()
 
@@ -110,33 +106,197 @@ def test_a_new_session_starts_with_no_attachments_and_no_erequests():
     assert body["erequests"] == []
 
 
-def test_attaching_a_document_reports_it_with_its_full_text():
+DOCUMENTS = REPO / "data" / "documents"
+
+
+def upload(client, session, path, name=None, content_type="application/octet-stream"):
+    path = pathlib.Path(path)
+    return client.post(
+        f"/api/chat/{session}/upload",
+        files={"file": (name or path.name, path.read_bytes(), content_type)},
+    )
+
+
+def upload_bytes(client, session, name, data, content_type="application/octet-stream"):
+    return client.post(f"/api/chat/{session}/upload", files={"file": (name, data, content_type)})
+
+
+def test_uploading_the_as_received_pdf_tags_it_and_serves_its_text():
+    client = TestClient(app_with(
+        ChatReply(content="", calls=[call("get_attachment", {
+            "student_id": "S9000004", "attachment_id": "transfer-checklist"})]),
+        ChatReply(content="Read it."),
+    ))
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+    client.put(f"/api/chat/{session}/tools", json={"allowed_tools": ["get_attachment"]})
+
+    body = upload(client, session, DOCUMENTS / "as-received" / "transfer_checklist.pdf").json()
+
+    [attachment] = body["attachments"]
+    assert attachment["id"] == "transfer-checklist"
+    assert attachment["name"] == "transfer_checklist.pdf"
+    assert attachment["kind"] == "pdf"
+    assert attachment["known"]["scenario_id"] == "A-02"
+    assert attachment["known"]["variant"] == "planted"
+    assert "transfer_checklist.pdf" in attachment["known"]["prompt"]
+    assert "NOTE FOR THE ASSISTANT" in attachment["text"]
+
+    done = events_from(client.post(f"/api/chat/{session}/message", json={"text": "read"}))[-1]
+    assert "NOTE FOR THE ASSISTANT" in done["calls"][0]["result"]
+
+
+def test_the_planted_footer_is_findable_in_the_extracted_text():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000001"}).json()["id"]
+
+    body = upload(client, session, DOCUMENTS / "as-received" / "RPL_application_template.pdf").json()
+
+    [attachment] = body["attachments"]
+    assert attachment["known"]["payload_text"] in attachment["text"]
+
+
+def test_the_clean_pdf_is_tagged_clean_without_a_payload():
     client = TestClient(app_with())
     session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
 
-    body = attach(client, session, "transfer-checklist").json()
+    body = upload(client, session, DOCUMENTS / "clean" / "transfer_checklist.pdf").json()
 
-    assert [a["id"] for a in body["attachments"]] == ["transfer-checklist"]
-    assert body["attachments"][0]["variant"] == "planted"
-    assert body["attachments"][0]["name"] == "transfer_checklist.txt"
-    assert "NOTE FOR THE ASSISTANT" in body["attachments"][0]["text"]
+    assert body["attachments"][0]["known"]["variant"] == "clean"
+    assert "payload_text" not in body["attachments"][0]["known"]
 
 
-def test_attaching_another_students_document_is_refused():
+def test_a_text_upload_is_accepted_and_untagged():
     client = TestClient(app_with())
     session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
 
-    response = attach(client, session, "rpl-template")
+    body = upload_bytes(client, session, "notes.txt", b"My own notes.\n").json()
+
+    [attachment] = body["attachments"]
+    assert attachment == {"id": "notes", "name": "notes.txt", "text": "My own notes.\n",
+                          "kind": "txt", "known": None}
+
+
+def test_a_file_name_with_spaces_resolves_by_name():
+    client = TestClient(app_with(
+        ChatReply(content="", calls=[call("get_attachment", {
+            "student_id": "S9000004", "attachment_id": "My Notes.txt"})]),
+        ChatReply(content="Read it."),
+    ))
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+    client.put(f"/api/chat/{session}/tools", json={"allowed_tools": ["get_attachment"]})
+    body = upload_bytes(client, session, "My Notes.txt", b"spaced\n").json()
+    assert body["attachments"][0]["id"] == "my-notes"
+
+    done = events_from(client.post(f"/api/chat/{session}/message", json={"text": "read"}))[-1]
+
+    assert done["calls"][0]["blocked"] is False
+    assert "spaced" in done["calls"][0]["result"]
+
+
+def test_uploading_the_same_file_again_replaces_it():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+    upload_bytes(client, session, "notes.txt", b"first\n")
+
+    body = upload_bytes(client, session, "notes.txt", b"second\n").json()
+
+    assert [a["text"] for a in body["attachments"]] == ["second\n"]
+
+
+def test_other_types_are_refused_naming_the_type():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    response = upload_bytes(client, session, "photo.png", b"\x89PNG\r\n", "image/png")
 
     assert response.status_code == 400
-    assert "S9000001" in response.json()["detail"]
+    assert ".png" in response.json()["detail"]
 
 
-def test_attaching_an_unknown_document_is_refused():
+def test_an_oversize_upload_is_refused():
     client = TestClient(app_with())
     session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
 
-    assert attach(client, session, "nope").status_code == 400
+    response = upload_bytes(client, session, "big.txt", b"x" * (2 * 1024 * 1024 + 1))
+
+    assert response.status_code == 413
+
+
+def test_an_over_long_file_name_is_refused():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    response = upload_bytes(client, session, ("x" * 300) + ".txt", b"hi")
+
+    assert response.status_code == 400
+    assert "too long" in response.json()["detail"]
+
+    accepted = upload_bytes(client, session, ("y" * 196) + ".txt", b"hi")
+
+    assert accepted.status_code == 200
+
+
+def test_a_dot_or_empty_file_name_is_refused():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    # "/" stands in for a bare empty name: a literal "" is not something a
+    # multipart client sends as a file's name at all (the test client falls
+    # back to a plain form field, which FastAPI itself rejects with a 422
+    # before this route ever sees it), but "/" reaches the route and
+    # `Path("/").name` is "" the same way, so it exercises the same check.
+    for name in ("..", ".", "/"):
+        response = upload_bytes(client, session, name, b"hi")
+
+        assert response.status_code == 400, name
+        assert "file name" in response.json()["detail"], name
+
+
+def test_a_pdf_with_no_text_is_refused():
+    from fpdf import FPDF
+    pdf = FPDF()
+    pdf.add_page()
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    response = upload_bytes(client, session, "scan.pdf", bytes(pdf.output()), "application/pdf")
+
+    assert response.status_code == 400
+    assert "OCR" in response.json()["detail"]
+
+
+def test_the_uploaded_file_is_kept_as_evidence():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+    upload_bytes(client, session, "notes.txt", b"kept\n")
+
+    # The session root is under the app's temp dir; find it by the id.
+    kept = list(pathlib.Path(tempfile.gettempdir()).glob(f"demo-chat-*/{session}/uploads/notes/notes.txt"))
+    assert kept and kept[0].read_bytes() == b"kept\n"
+
+
+def test_deleting_an_attachment_removes_it():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+    upload_bytes(client, session, "notes.txt", b"bye\n")
+
+    body = client.delete(f"/api/chat/{session}/attachments/notes").json()
+
+    assert body["attachments"] == []
+    assert client.delete(f"/api/chat/{session}/attachments/notes").status_code == 404
+
+
+def test_the_attach_menu_endpoint_is_gone():
+    client = TestClient(app_with())
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    response = client.put(f"/api/chat/{session}/attachments",
+                          json={"attached": [{"id": "transfer-checklist", "variant": "planted"}]})
+
+    # The route is gone entirely rather than left registered under a new
+    # method, so Starlette reports it the way it reports any unknown path:
+    # 404, with no Allow header -- there is no partial match to name one.
+    assert response.status_code == 404
 
 
 def test_the_done_event_carries_the_turn_the_attachments_and_the_erequests():
@@ -147,18 +307,18 @@ def test_the_done_event_carries_the_turn_the_attachments_and_the_erequests():
         ChatReply(content="Submitted."),
     ))
     session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
-    attach(client, session, "transfer-checklist", "clean")
+    upload(client, session, DOCUMENTS / "clean" / "transfer_checklist.pdf")
 
     done = events_from(client.post(f"/api/chat/{session}/message", json={"text": "waive"}))[-1]
 
     assert done["turn"] == 1
-    assert done["attachments"][0]["variant"] == "clean"
+    assert done["attachments"][0]["known"]["variant"] == "clean"
     assert done["erequests"][0]["text"] == "Please waive it."
     assert done["erequests"][0]["attachment_ids"] == ["transfer-checklist"]
     assert done["calls"][0]["tainted"] is False
 
 
-def test_approving_a_held_call_returns_the_confirmation_and_the_new_state():
+def test_approving_a_held_call_after_an_upload():
     client = TestClient(app_with(
         ChatReply(content="", calls=[call("get_attachment", {
             "student_id": "S9000004", "attachment_id": "transfer-checklist"})]),
@@ -168,7 +328,7 @@ def test_approving_a_held_call_returns_the_confirmation_and_the_new_state():
     session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
     client.put(f"/api/chat/{session}/tools", json={"allowed_tools": [
         "get_attachment", "get_study_plan", "drop"]})
-    attach(client, session, "transfer-checklist")
+    upload(client, session, DOCUMENTS / "as-received" / "transfer_checklist.pdf")
     done = events_from(client.post(f"/api/chat/{session}/message", json={"text": "go"}))[-1]
     assert done["calls"][1]["verdict"] == "require_approval"
     assert "32541" in done["record"]["enrolled"]
