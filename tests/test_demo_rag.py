@@ -178,3 +178,28 @@ def test_invalid_mode_and_empty_question_are_refused():
     client, state, _ = setup()
     assert client.put(f"/api/chat/{state['id']}/mode", json={"mode": "other"}).status_code == 422
     assert client.post(f"/api/chat/{state['id']}/message", json={"text": " "}).status_code == 400
+
+
+def test_mentioning_a_session_is_not_a_request_to_choose_one():
+    """'per session' is a unit, not a plan; the credit cap is answerable from
+    the record alone, so the model is called instead of being gated."""
+    client, state, seen = setup()
+    done = send(client, state, "What is my credit cap per session?")[-1]
+    assert not done["clarification"] and len(seen) == 1
+
+
+def test_asking_which_of_two_seasons_a_subject_runs_in_is_answered_not_gated():
+    client, state, seen = setup()
+    done = send(client, state, "Is 32513 offered in Autumn or Spring?")[-1]
+    assert not done["clarification"] and len(seen) == 1
+    assert any(b.startswith("Subject 32513") for b in done["context"])
+
+
+def test_a_reply_that_names_no_season_keeps_the_pending_question():
+    client, state, seen = setup()
+    assert send(client, state, "What can I take next session?")[-1]["clarification"]
+    again = send(client, state, "the first one")[-1]
+    assert again["clarification"] and not seen
+    done = send(client, state, "Spring")[-1]
+    assert not done["clarification"] and len(seen) == 1
+    assert "What can I take next session?" in seen[0][0][1]["content"]
