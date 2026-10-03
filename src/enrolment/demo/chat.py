@@ -28,6 +28,7 @@ import shutil
 import sys
 from pathlib import Path
 
+import anyio
 import yaml
 from pydantic import BaseModel
 
@@ -46,6 +47,10 @@ class ChatReplyOut(BaseModel):
     calls: list[DemoCall] = []
     truncated: bool = False
     turn: int = 0
+    context: list[str] = []
+    model: str = ""
+    latency_ms: float = 0.0
+    clarification: bool = False
 
 
 class Confirmation(BaseModel):
@@ -95,6 +100,9 @@ class ChatSession:
         self.repo_root = Path(repo_root)
         self.allowed_tools = list(allowed_tools)
         self.enforcement = enforcement
+        self.rag_mode = False
+        self.rag_session: str | None = None
+        self.pending_question: str | None = None
         self.overlay = overlay
         self.history: list[dict] = []
         self.turn = 0
@@ -175,6 +183,23 @@ class ChatSession:
         self.history = []
         self.erequests = []
         self.turns = {}
+        self.rag_session = None
+        self.pending_question = None
+
+    @property
+    def mode(self) -> str:
+        return "rag" if self.rag_mode else f"agent-{self.enforcement}"
+
+    def set_mode(self, mode: str) -> None:
+        if mode not in ("rag", "agent-on", "agent-off"):
+            raise ValueError("mode must be rag, agent-on, or agent-off")
+        if self.busy:
+            raise ValueError("a message is running; wait before switching modes")
+        if mode != self.mode:
+            self.reset()
+            self.rag_mode = mode == "rag"
+            if not self.rag_mode:
+                self.enforcement = mode.removeprefix("agent-")
 
     # ------------------------------------------------------------------ state
     def record(self) -> dict:
@@ -233,9 +258,58 @@ class ChatSession:
             raise RuntimeError("the session is busy with another message or an approval")
         self.busy = True
         try:
+            if self.rag_mode:
+                return await self._send_rag(message, chat=chat, model=model, on_event=on_event)
             return await self._send(message, chat=chat, model=model, on_event=on_event)
         finally:
             self.busy = False
+
+    async def _send_rag(self, message: str, *, chat, model: str, on_event=None) -> ChatReplyOut:
+        from ..agent.advice import load_world
+        from ..rag import answer
+        from .rag_chat import resolve_question
+
+        world = load_world(self.repo_root, self.students_path)
+        query, session, clarification = resolve_question(
+            message, history=self.history, catalogue=world.catalogue,
+            previous_session=self.rag_session, pending=self.pending_question,
+        )
+        self.turn += 1
+        run_dir = self.root / f"turn-{self.turn:03d}"
+        run_dir.mkdir(parents=True, exist_ok=False)
+        self._write_attachments(run_dir)
+        context, messages, latency = [], [], 0.0
+        try:
+            if clarification:
+                text = clarification
+            else:
+                reply = await anyio.to_thread.run_sync(lambda: answer(
+                    message, student=world.students[self.persona], catalogue=world.catalogue,
+                    requisites=world.requisites, course=world.course, aos=world.aos,
+                    chat=chat, model=model, attachments=self.attachments, session=session,
+                    history=self.history, retrieval_question=query, max_context_chars=24000,
+                    strict_response=True,
+                ))
+                text, context, latency, messages = reply.text, reply.context, reply.latency_ms, reply.messages
+        except Exception as error:
+            (run_dir / "rag.json").write_text(json.dumps({
+                "mode": "rag", "model": model, "question": message, "error": str(error),
+            }, ensure_ascii=False, indent=2), encoding="utf-8")
+            raise
+        artifact = {"mode": "rag", "model": model, "question": message,
+                    "retrieval_question": query, "session": session, "text": text,
+                    "context": context, "messages": messages, "latency_ms": latency,
+                    "clarification": bool(clarification)}
+        (run_dir / "rag.json").write_text(json.dumps(artifact, ensure_ascii=False, indent=2), encoding="utf-8")
+        self.pending_question = (self.pending_question or message) if clarification else None
+        if session:
+            self.rag_session = session
+        self.history.extend([{"role": "user", "content": message}, {"role": "assistant", "content": text}])
+        if on_event:
+            on_event({"kind": "said", "text": text, "mode": "rag", "model": model,
+                      "clarification": bool(clarification)})
+        return ChatReplyOut(said=[text], turn=self.turn, context=context, model=model,
+                            latency_ms=latency, clarification=bool(clarification))
 
     async def _send(self, message: str, *, chat, model: str, on_event=None) -> ChatReplyOut:
         self.turn += 1

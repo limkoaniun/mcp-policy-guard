@@ -47,6 +47,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 
+import anyio
 from pydantic import BaseModel, Field
 
 from .transcript import (
@@ -204,7 +205,10 @@ async def run_agent(
 
         for model_turn in range(max_model_turns):
             try:
-                reply = chat(messages, payload)
+                # The chat callable is synchronous and a real one blocks for
+                # ten to thirty seconds. Off the event loop, so a caller that
+                # serves other requests meanwhile (the demo's web app) can.
+                reply = await anyio.to_thread.run_sync(chat, messages, payload)
             except Exception as exc:  # noqa: BLE001 - any provider failure ends the run, recorded
                 # `_post` (or whatever the chat callable does under the hood)
                 # can still raise -- timeout, connection error, a body that

@@ -21,6 +21,11 @@ const SUGGESTIONS = [
   'Enrol me in 32513',
 ]
 
+const MODES = { rag: 'RAG chatbot', 'agent-off': 'Agent (no guard)', 'agent-on': 'Agent + guard' }
+const greeting = (mode) => mode === 'rag'
+  ? 'Ask me about courses or your uploaded documents. I can give advice, but cannot change enrolments or submit requests.'
+  : GREETING
+
 // The server resolves `attachment_id` by id or by file name, case-insensitively.
 // The page matches the same way so the row finds the document the tool did.
 const findAttached = (attached, wanted) => {
@@ -86,6 +91,8 @@ export default function App() {
   const [session, setSession] = useState(null)
   const [allowed, setAllowed] = useState([])
   const [enforcement, setEnforcement] = useState('on')
+  const [mode, setMode] = useState('agent-on')
+  const [retrieval, setRetrieval] = useState(null)
   const [record, setRecord] = useState(null)
   const [personas, setPersonas] = useState([])
   const [baseline, setBaseline] = useState(null)
@@ -110,6 +117,8 @@ export default function App() {
   const setSessionId = (id) => { sessionRef.current = id; setSession(id) }
 
   const applyState = (s) => {
+    setMode(s.mode || 'agent-on')
+    setEnforcement(s.enforcement)
     setRecord(s.record)
     setAttached(s.attachments || [])
     setErequests(s.erequests || [])
@@ -169,10 +178,23 @@ export default function App() {
 
   const applyPreset = (key) => applyTools(presets[key] || [])
 
-  const toggleEnforcement = async () => {
-    const next = enforcement === 'on' ? 'off' : 'on'
-    setEnforcement(next)
-    if (session) await api.setEnforcement(session, next).catch((e) => setError(e.message))
+  const switchMode = async (next) => {
+    if (!session || busy || next === mode) return
+    setBusy(true)
+    try {
+      const state = await api.setMode(session, next)
+      applyState(state)
+      setBaseline(state.record)
+      setDecisions([])
+      setApprovals({})
+      setRetrieval(null)
+      setError(null)
+      setDraft('')
+      setThread([
+        { role: 'system', text: `${MODES[next]}. New conversation and restored student record; attachments retained.` },
+        { role: 'assistant', text: greeting(next) },
+      ])
+    } catch (e) { setError(e.message) } finally { setBusy(false) }
   }
 
   // Each dropped file is one upload; the chip appears when the server
@@ -213,40 +235,40 @@ export default function App() {
     applyState(state)
     setBaseline(state.record)
     setDecisions([])
+    setRetrieval(null)
     setApprovals({})
     setError(null)
     setThread([
       { role: 'system', text: `Conversation cleared and the record restored for ${state.record.student_id}.` },
-      { role: 'assistant', text: GREETING },
+      { role: 'assistant', text: greeting(mode) },
     ])
   }
 
   const switchPersona = async (persona) => {
     if (busy || !persona || persona === record?.student_id) return
-    const s = await api.newSession(persona, 'enrolment').catch((e) => { setError(e.message); return null })
+    const s = await api.newSession(persona, 'enrolment', mode).catch((e) => { setError(e.message); return null })
     if (!s) return
     // The console's settings are the presenter's, not the student's: carry
     // the allowlist and the enforcement switch into the new session. The
     // attachments are the student's, and are not carried.
     if (JSON.stringify(s.allowed_tools) !== JSON.stringify(allowed))
       await api.setTools(s.id, allowed).catch(() => {})
-    if (s.enforcement !== enforcement)
-      await api.setEnforcement(s.id, enforcement).catch(() => {})
     setSessionId(s.id)
     applyState(s)
     setBaseline(s.record)
     setDecisions([])
+    setRetrieval(null)
     setApprovals({})
     setError(null)
     const who = personas.find((p) => p.id === persona)
     setThread([
       { role: 'system', text: `Now assisting ${who?.name ? `${who.name} (${persona})` : persona}. New conversation, fresh record.` },
-      { role: 'assistant', text: GREETING },
+      { role: 'assistant', text: greeting(mode) },
     ])
   }
 
   const send = async (text) => {
-    if (!session || !text.trim() || busy) return
+    if (!session || !text.trim() || busy || !model) return
     setBusy(true)
     setError(null)
     setDraft('')
@@ -274,12 +296,19 @@ export default function App() {
           }])
         }
         if (event.kind === 'said') {
-          setThread((t) => [...t, { role: 'assistant', text: event.text }])
+          setThread((t) => [...t, { role: 'assistant', text: event.text,
+            label: event.clarification ? 'Session clarification' : `${MODES[mode]} · ${model}` }])
         }
         if (event.kind === 'done') {
           setDecisions(event.calls)
           setDecisionTurn(event.turn)
           applyState(event)
+          if (event.mode === 'rag') {
+            const evidence = { context: event.context, model: event.model,
+              latency: event.latency_ms, clarification: event.clarification }
+            setRetrieval(evidence)
+            setThread((t) => [...t, { role: 'retrieval', ...evidence }])
+          }
           setThread((t) => {
             let k = 0
             return t.map((m) => {
@@ -382,9 +411,8 @@ export default function App() {
       <div className="intro" id="main">
         <h1>Enrolment assistant</h1>
         <p>
-          An LLM agent with {tools.length || 'its'} enrolment tools. Every tool call is intercepted by the
-          policy layer before it executes. Documents the student attaches are read
-          through <code>get_attachment</code>, which the policy pack labels untrusted.
+          Compare advice from retrieved course documents with an agent that can act,
+          with or without Policy Guard. Upload the same document and use the same model in each mode.
         </p>
       </div>
 
@@ -415,6 +443,12 @@ export default function App() {
 
           <div className="thread" ref={threadBox}>
             {thread.map((m, i) => {
+              if (m.role === 'retrieval') return (
+                <details key={i} className="rag-evidence">
+                  <summary>{m.clarification ? 'Clarification — no model call' : `Retrieved context · ${m.context.length} blocks · ${(m.latency / 1000).toFixed(2)} s`}</summary>
+                  {m.context.map((block, j) => <Saw key={j} text={block} />)}
+                </details>
+              )
               if (m.role === 'call') {
                 const tag = tagFor(m)
                 const doc = m.doc
@@ -442,6 +476,7 @@ export default function App() {
               if (m.role === 'assistant') {
                 return (
                   <div key={i} className="bubble assistant">
+                    {m.label && <div className="caption">{m.label}</div>}
                     <Markdown>{m.text}</Markdown>
                   </div>
                 )
@@ -450,11 +485,12 @@ export default function App() {
             })}
             {busy && <div className="bubble system">Running the model…</div>}
             {error && <div className="bubble system">{error}</div>}
+            {!model && <div className="bubble system">No model is available. Start Ollama with a tool-capable model, then refresh this page.</div>}
           </div>
 
           <div className="chips">
             {[...SUGGESTIONS, ...attachedPrompts].map((s, i) => (
-              <button key={`${i}:${s}`} className="chip" disabled={busy} onClick={() => send(s)}>{s}</button>
+              <button key={`${i}:${s}`} className="chip" disabled={busy || !model} onClick={() => send(s)}>{s}</button>
             ))}
           </div>
 
@@ -481,21 +517,36 @@ export default function App() {
             </div>
             <input value={draft} onChange={(e) => setDraft(e.target.value)}
                    placeholder="Message the assistant" disabled={busy} />
-            <button type="submit" disabled={busy || !draft.trim()}>Send</button>
+            <button type="submit" disabled={busy || !model || !draft.trim()}>Send</button>
           </form>
         </section>
 
         <div className="sidecol">
           <section className="card console">
             <h2>
-              <span>Policy console</span>
-              <label className="switch">
-                <span>Enforcement {enforcement}</span>
-                <input type="checkbox" checked={enforcement === 'on'}
-                       onChange={toggleEnforcement} disabled={busy} />
-                <span className="track" />
-              </label>
+              <span>{mode === 'rag' ? 'RAG context' : 'Policy console'}</span>
             </h2>
+
+            <div className="mode-picker">
+              <label htmlFor="mode">Assistant mode</label>
+              <select id="mode" value={mode} onChange={(e) => switchMode(e.target.value)} disabled={busy || !session}>
+                {Object.entries(MODES).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+              <p>Switching starts a new conversation and restores the record. Attachments stay.</p>
+            </div>
+
+            {mode === 'rag' ? <div className="rag-panel">
+              <p>Advice only. No tools are called and no enrolments or requests are changed.</p>
+              <p>Retrieval uses course codes and English name keywords, plus your record and attachments.</p>
+              {!retrieval ? <p className="muted">Send a question to inspect the retrieved material.</p>
+                : retrieval.clarification ? <p>Reply with Autumn, Spring, or Summer. No model was called.</p>
+                : <>
+                  <div className="caption">{retrieval.model} · {(retrieval.latency / 1000).toFixed(2)} s</div>
+                  {retrieval.context.map((block, i) => <details key={i}>
+                    <summary>{block.split('\n')[0]}</summary><Saw text={block} />
+                  </details>)}
+                </>}
+            </div> : <>
 
             {enforcement === 'off' && (
               <p className="unenforced-note">
@@ -570,6 +621,7 @@ export default function App() {
                 )
               })}
             </div>
+            </>}
           </section>
 
           <section className="card">

@@ -11,11 +11,17 @@ export const getTools = () => fetch('/api/tools').then(json)
 export const getPersonas = () => fetch('/api/personas').then(json)
 export const getModels = () => fetch('/api/models').then(json)
 
-export const newSession = (persona, preset) =>
+export const setMode = (id, mode) =>
+  fetch(`/api/chat/${id}/mode`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode }),
+  }).then(json)
+
+export const newSession = (persona, preset, mode = 'agent-on') =>
   fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ persona, preset }),
+    body: JSON.stringify({ persona, preset, mode }),
   }).then(json)
 
 export const setTools = (id, allowed_tools) =>
@@ -33,7 +39,7 @@ export const setEnforcement = (id, enforcement) =>
   }).then(json)
 
 export const resetSession = (id) =>
-  fetch(`/api/chat/${id}/reset`, { method: 'POST' }).then(json)
+    fetch(`/api/chat/${id}/reset`, { method: 'POST' }).then(json)
 
 // The message endpoint streams `text/event-stream`. `EventSource` cannot POST,
 // so the body is read from the fetch stream directly and split on the blank

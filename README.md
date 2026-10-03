@@ -164,6 +164,17 @@ python -m enrolment.metrics.report --campaign experiments/runs/adversarial/first
 
 ## Status
 
+**2026-09-30 — RAG chat integration.** The web demo now exposes RAG chatbot,
+Agent without guard, and Agent with guard. RAG reuses the existing retrieval
+backend, includes uploaded PDF/TXT text, supports conversational follow-ups
+and explicit academic-session clarification, and displays its retrieved
+context. Mode changes restore the baseline record and clear history while
+retaining attachments. See [the RAG demo guide](docs/rag-demo.md) for local
+Windows startup, evidence files, validation, and remaining limits. Historical
+status entries below describe earlier milestones; taint is implemented as a
+per-run approval gate, while session-long Agent taint and rate limits remain
+unfinished. Existing campaign results have not been replaced.
+
 **Done.** The full C04296 dataset is built and committed — 93 subjects, 201
 cached pages, 50 synthetic students and 4,650 compliance scenarios, with zero
 unparsed requisites and zero unreadable rules. Rebuilds from cache in 0.24s. And

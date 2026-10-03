@@ -425,14 +425,19 @@ reasons in the console — one a rule, one a provenance check — and the
 assistant offering a clean request. The selector changes the defence, never
 the request or the document.
 
-*Currently built:* the two-way Enforcement on/off switch, the picker with the
+*Currently built (2026-09-30):* the three-way RAG / Agent off / Agent on selector, the picker with the
 personas' names, the allowlist, the trace with taint markers, the drop zone
 and file picker, with the shipped PDFs clean or as received, the inline
 "what the model saw" panel on every attachment read, the approval card
 (Allow replays the held call through a proxy in approve mode after re-issuing
 the turn's untrusted reads; Refuse is page-only), the eRequest log, and the
-live record. *Designed, not built:* the RAG position of the mode selector, and
-taint that persists across messages within a session.
+live record. RAG chat includes the student's record, retrieved handbook blocks,
+and uploaded documents, with per-turn context inspection and saved prompts.
+It supports multi-turn dialogue and asks for an explicit academic session when
+the request is ambiguous. Switching mode clears dialogue and restores the
+baseline record while keeping attachments. Existing batch advice results
+predate this conversational integration and are not presented as a new run.
+*Designed, not built:* taint that persists across messages within an Agent session.
 
 ## 4.6 Personas
 
@@ -487,7 +492,7 @@ under test.
   attribution in 4.3 is about the *verdict* (a DENY short-circuits before
   taint); ablating `arg_validation` or `allowlist` alone will not change
   attack success on A-01..A-04. Say which of the two the results measure.
-- **The RAG arm is built and measured** (`src/enrolment/rag.py`, `experiments/scored/advice-first`): on advice tasks only, since on action tasks its numbers are zero by construction. Eligibility 72%/75% (majority floor 68.5%) against the guarded agent's 90%/69%; session Jaccard 0.27/0.20 against 0.90/0.95. The demo's RAG mode position is still not built.
+- **The RAG arm is built and measured** (`src/enrolment/rag.py`, `experiments/scored/advice-first`): on advice tasks only, since on action tasks its numbers are zero by construction. Eligibility 72%/75% (majority floor 68.5%) against the guarded agent's 90%/69%; session Jaccard 0.27/0.20 against 0.90/0.95. The demo's RAG mode position landed 2026-09-30 (`src/enrolment/demo/rag_chat.py`); those numbers predate it and were measured by the batch runner, not through the page.
 - **Rate/scope limits are a stub** and outside the shipped pack. Census-date
   checking is not implemented. Do not draw either as active.
 - **Numbers to cite from the compliance campaign** (`experiments/scored/

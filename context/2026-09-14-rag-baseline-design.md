@@ -1,5 +1,10 @@
 # Design: the RAG baseline mode (parked, not yet built)
 
+**Status update, 2026-09-30:** the retrieval backend, batch advice comparison,
+and three-mode demo integration are now built. See `docs/rag-demo.md` for the
+current behavior. The original handoff below is historical; the old catalogue
+overlay has been replaced by uploaded documents.
+
 **32933 Research Project (Type I) · UTS · Spring 2026**
 **Related:** `context/2026-09-07-demo-chatbot-brief.md` (the demo this extends)
 **Date:** 2026-09-14
