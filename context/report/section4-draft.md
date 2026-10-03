@@ -330,19 +330,23 @@ src/enrolment/               the domain
   requisites.py, rules.py    the exact requisite evaluator and rule grammar
   policy_pack.py             build_validators(): the enrol validator
   state.py, students.py      student records and their mutation
-  attachments.py             per-session uploaded documents (designed)
   progression.py             study plans, session options, major comparison
   scenarios*.py, scenario_runner.py
                              suite loading and execution
   metrics/                   scoring from final state, not from text
   agent/                     the tool-calling loop around a local model
-  demo/                      the FastAPI app behind the UI (4.5)
-  rag.py                     the RAG retrieval and answer backend
+  demo/                      the FastAPI app behind the UI (4.5): sessions, uploads, the shipped documents
+  rag.py                     the RAG arm: deterministic retrieval, one completion, no tools
+  advice.py, agent/advice.py, metrics/advice.py
+                             the advice tasks, their runner and their scorer
+  ablation.py                derives a pack with one policy removed
+  build_documents.py         writes the eight demo PDFs from the scenario files
 
 configs/enrolment.yaml       the policy pack: policies, trust labels,
                              principal argument, validator import path
 data/                        catalogue, requisites, course, students, personas,
                              the generated compliance suite
+data/documents/              the shipped PDFs, clean and as received
 attacks/scenarios/           the attack suite: payloads, twins, expected state
 frontend/                    the React UI; built output is committed
 experiments/                 run directories and scored metrics
@@ -468,13 +472,12 @@ under test.
   `feat/upload-channel`, 2026-09-23): `get_attachment`, per-run
   `attachments.json`, `submit_erequest(type, attachment_ids)`, the `taint`
   policy in both packs, and four upload-borne scenario pairs (A-01..A-04
-  with twins) replaying through the real proxy. Two things are still design:
-  the demo's attach control and approval card (the UI job), and the
-  model-driven re-run of the adversarial campaign on the new channel
-  (job 7). The existing adversarial campaign
-  (`experiments/scored/adversarial-*`) measured the old
-  subject-description channel; cite it only as evidence that the *gates*
-  work, and say which channel it used.
+  with twins) replaying through the real proxy. The demo's attach control, approval
+  card and dragged-PDF upload landed 2026-09-28/29; the model-driven
+  campaign on the new channel is scored (`experiments/scored/
+  adversarial-upload-second*`). The older adversarial campaign
+  (`experiments/scored/adversarial-*`) measured the subject-description
+  channel; say which channel each number used.
 - **Two scoring narrowings to state.** The confirmation column of the
   utility metric counts held *eRequests* only (a held legitimate `enrol` or
   `drop` has nowhere to be scored, because a scenario's declared final state
@@ -489,7 +492,7 @@ under test.
   attribution in 4.3 is about the *verdict* (a DENY short-circuits before
   taint); ablating `arg_validation` or `allowlist` alone will not change
   attack success on A-01..A-04. Say which of the two the results measure.
-- **The RAG arm is built and measured** (`src/enrolment/rag.py`, `experiments/scored/advice-first`): on advice tasks only, since on action tasks its numbers are zero by construction. Eligibility 72%/75% (majority floor 68.5%) against the guarded agent's 90%/69%; session Jaccard 0.27/0.20 against 0.90/0.95. The demo's RAG mode selector is still the UI job.
+- **The RAG arm is built and measured** (`src/enrolment/rag.py`, `experiments/scored/advice-first`): on advice tasks only, since on action tasks its numbers are zero by construction. Eligibility 72%/75% (majority floor 68.5%) against the guarded agent's 90%/69%; session Jaccard 0.27/0.20 against 0.90/0.95. The demo's RAG mode position landed 2026-09-30 (`src/enrolment/demo/rag_chat.py`); those numbers predate it and were measured by the batch runner, not through the page.
 - **Rate/scope limits are a stub** and outside the shipped pack. Census-date
   checking is not implemented. Do not draw either as active.
 - **Numbers to cite from the compliance campaign** (`experiments/scored/
@@ -498,9 +501,7 @@ under test.
   both arms; proxy overhead p50 1.7 ms on both arms. Depth breakdown is in
   the same file. The `unmet_admission` figure is still subject to the
   descriptor-variance caveat in the spec §9.
-- **The demo page still plants the injection in 32513's description.** That
-  overlay, the intro copy and the `poison` message type in `App.jsx` should
-  be replaced by the attachment mechanism when the pivot reaches the code.
-- **Persona documents and names are invented** for the report; nothing in
-  the code or data carries them yet. Persona records and the rules they hit
-  were verified against the real requisite data on 2026-09-23.
+- **Persona documents and names are invented** for the report; the names are
+  in `data/personas.json` and the documents ship as PDFs under
+  `data/documents/`. Persona records and the rules they hit were verified
+  against the real requisite data on 2026-09-23.
