@@ -113,7 +113,8 @@ def planned_runs(campaign_dir, *, repo_root=REPO_ROOT) -> int:
         )
     )
     scenarios = list(_load_scenarios(repo_root, set(baseline)).values())
-    return len(adversarial.enumerate_matrix(scenarios, models, repeats))
+    arms = manifest.get("arms") or ["on", "off"]
+    return len(adversarial.enumerate_matrix(scenarios, models, repeats, arms))
 
 
 def score_campaign(campaign_dir, *, repo_root=REPO_ROOT) -> list[RunVerdict]:

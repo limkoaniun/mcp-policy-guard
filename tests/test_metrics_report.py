@@ -127,6 +127,16 @@ def test_the_planned_total_is_written_to_metrics(tmp_path):
     assert metrics["not_present"] == 42
 
 
+def test_the_planned_total_honours_the_manifest_arms(tmp_path):
+    """A three-arm campaign over the full suite plans 44 agent runs plus 24
+    rag runs per model per repeat. A manifest without `arms` plans 44."""
+    campaign = adversarial_campaign(tmp_path)
+    manifest = json.loads((campaign / "campaign.json").read_text())
+    manifest["arms"] = ["on", "off", "rag"]
+    (campaign / "campaign.json").write_text(json.dumps(manifest), encoding="utf-8")
+    assert report.planned_runs(campaign) == 68
+
+
 def test_a_run_directory_missing_from_disk_is_reported_not_crashed(tmp_path):
     campaign = adversarial_campaign(tmp_path)
     write_index(campaign, [

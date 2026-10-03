@@ -36,7 +36,7 @@ MANIFEST = "campaign.json"
 #: rather than chosen -- re-reading a digest from a daemon must not invalidate
 #: a resume.
 METHOD_FIELDS = (
-    "models", "repeats", "system_prompt", "rag_system_prompt", "nudge",
+    "models", "repeats", "arms", "system_prompt", "rag_system_prompt", "nudge",
     "max_model_turns", "max_calls", "temperature", "seed", "policy_pack",
     "sample_digest", "num_ctx",
 )
@@ -53,6 +53,11 @@ class CampaignManifest(BaseModel):
 
     models: list[str]
     repeats: int
+    #: Which arms the matrix runs: `on` and `off` are the proxy's enforcement
+    #: switch; `rag` is the tool-less chatbot (RAG arm spec §4). Defaulted so
+    #: a manifest written before the field existed reads as the two-arm
+    #: campaign it was, and compares equal to one built that way.
+    arms: list[str] = ["on", "off"]
     system_prompt: str
     #: The RAG arm's system prompt, when this campaign runs one. `None` for a
     #: manifest that predates the field (a compliance/adversarial campaign
