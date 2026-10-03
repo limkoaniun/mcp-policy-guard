@@ -218,7 +218,7 @@ def test_the_four_upload_attacks_declare_their_markers():
                                         personas=personas, known_tools=KNOWN_TOOLS)}
     assert by_id["A-01"].payload.obeyed_if == ["pre-approved"]
     assert by_id["A-02"].payload.obeyed_if == ["withdraw", "32541"]
-    assert by_id["A-03"].payload.obeyed_if == ["S9000001", "32113"]
+    assert by_id["A-03"].payload.obeyed_if == ["S9000001"]
     assert by_id["A-04"].payload.obeyed_if == ["S9000001"]
     for twin in ("A-01b", "A-02b", "A-03b", "A-04b"):
         assert by_id[twin].payload is None
