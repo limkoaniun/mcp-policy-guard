@@ -21,14 +21,17 @@ import anyio
 from policy_guard.upstream import connect_subprocess
 
 from ..ablation import ablated_pack
+from ..rag import answer as rag_answer
 from ..run_setup import (
     arms_for,
     off_arm_allowed,
+    students_baseline_path,
     write_attachments,
     write_overlay,
     write_task,
 )
 from ..scenarios_spec import Scenario, load_all
+from .advice import load_world
 from .campaign import (
     CampaignManifest,
     RunSpec,
@@ -41,7 +44,7 @@ from .cli_common import preflight, warn_on_digest_drift
 from .loop import AgentTask, run_agent
 from .ollama import ollama_chat
 from .prompts import NUDGE, PROMPTS, RAG_SYSTEM_PROMPT, SYSTEM_PROMPT
-from .transcript import Transcript
+from .transcript import ResponseOutcome, Transcript, TurnRecord
 
 
 def turns_for(scenario: Scenario) -> list[str]:
@@ -179,6 +182,71 @@ async def run_one(
         json.dumps(manifest.fingerprints.get(spec.model, {"model": spec.model}), indent=2),
         encoding="utf-8",
     )
+    return transcript, duration
+
+
+async def run_rag_one(
+    scenario: Scenario,
+    spec: RunSpec,
+    *,
+    campaign_dir,
+    chat_factory,
+    manifest: CampaignManifest,
+    world,
+) -> tuple[Transcript, float]:
+    """One cell of the RAG arm: the planted document in the prompt, one answer.
+
+    The document is written by the same `write_attachments` the agent arms
+    use, then read back, so the bytes the chatbot saw are the bytes the proxy
+    would have served. One user turn and no `NUDGE`: the nudge exists to make
+    an agent proceed to a call, and this arm has no call to proceed to. No
+    proxy, so no `state.json`, `decisions.jsonl` or `complete` marker; the
+    judge knows not to look for them (RAG arm spec §5).
+
+    A provider failure is recorded the way `agent.advice.run_rag_one` records
+    it, so `campaign.run_campaign`'s replacement rule applies unchanged.
+    """
+    run_dir = Path(campaign_dir) / spec.run_id
+    clear_run_dir(run_dir)
+    run_dir.mkdir(parents=True, exist_ok=False)
+    attachments_path = write_attachments(scenario, run_dir)
+    attachments = (
+        json.loads(attachments_path.read_text(encoding="utf-8")) if attachments_path else {}
+    )
+    question = scenario.task.description
+    started = time.perf_counter()
+    try:
+        reply = rag_answer(
+            question, student=world.students[scenario.persona], catalogue=world.catalogue,
+            requisites=world.requisites, course=world.course, aos=world.aos,
+            chat=chat_factory(spec.model), model=spec.model,
+            system_prompt=manifest.rag_system_prompt or RAG_SYSTEM_PROMPT,
+            attachments=attachments,
+        )
+    except Exception as exc:  # noqa: BLE001 - mirrors loop.py: any provider failure ends this run, recorded, replaceable
+        duration = time.perf_counter() - started
+        failure = f"{type(exc).__name__}: {exc}"
+        transcript = Transcript(
+            task_id=scenario.id, model=spec.model, truncated=True,
+            truncation_reason=f"provider error: {failure}",
+            turns=[TurnRecord(user_turn=0, model_turn=0,
+                              outcome=ResponseOutcome.PROVIDER_ERROR, text=failure)],
+        )
+        transcript.write_jsonl(run_dir / "transcript.jsonl")
+        return transcript, duration
+    duration = time.perf_counter() - started
+    (run_dir / "rag.json").write_text(json.dumps({
+        "question": question, "context": reply.context, "text": reply.text,
+        "latency_ms": reply.latency_ms, "messages": reply.messages,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    transcript = Transcript(task_id=scenario.id, model=spec.model, turns=[TurnRecord(
+        user_turn=0, model_turn=0, outcome=ResponseOutcome.TEXT, text=reply.text,
+        latency_ms=reply.latency_ms,
+    )])
+    transcript.write_jsonl(run_dir / "transcript.jsonl")
+    (run_dir / "agent.json").write_text(json.dumps(
+        manifest.fingerprints.get(spec.model, {"model": spec.model}), indent=2,
+    ), encoding="utf-8")
     return transcript, duration
 
 
@@ -356,14 +424,26 @@ def main(argv=None) -> int:
     pack_path = resolve_pack(args)
 
     def chat_factory(model):
-        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed)
+        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed,
+                           num_ctx=manifest.num_ctx)
+
+    world = (
+        load_world(REPO_ROOT, students_baseline_path(pack_path, REPO_ROOT))
+        if "rag" in manifest.arms else None
+    )
 
     async def runner(spec):
-        transcript, duration = await run_one(
-            by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
-            pack_path=pack_path, repo_root=REPO_ROOT,
-            chat_factory=chat_factory, manifest=manifest,
-        )
+        if spec.arm == "rag":
+            transcript, duration = await run_rag_one(
+                by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
+                chat_factory=chat_factory, manifest=manifest, world=world,
+            )
+        else:
+            transcript, duration = await run_one(
+                by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
+                pack_path=pack_path, repo_root=REPO_ROOT,
+                chat_factory=chat_factory, manifest=manifest,
+            )
         return run_status(transcript), duration
 
     def describe(spec):
