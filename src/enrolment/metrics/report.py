@@ -14,7 +14,7 @@ from ..agent import adversarial, compliance
 from ..agent.campaign import MANIFEST, read_index
 from ..agent.sampling import read_sample
 from ..scenarios_spec import load_all
-from .aggregate import ARMS, aggregate
+from .aggregate import ADVERSARIAL_ARMS, ARMS, aggregate
 from .artifacts import baseline_path, read_run
 from .judge import RunVerdict, judge_adversarial, judge_compliance
 
@@ -216,9 +216,10 @@ def _print_summary(figures: dict) -> None:
     if figures["attack_success"]:
         print("\nattack success rate (numerator/denominator):")
         heuristic_shown = False
+        rag_shown = False
         for cls, entry in figures["attack_success"].items():
             cells = []
-            for arm in ARMS:
+            for arm in ADVERSARIAL_ARMS:
                 rate = entry[arm]
                 if rate["denominator"] == 0:
                     cells.append(f"{arm}: not measurable")
@@ -227,6 +228,7 @@ def _print_summary(figures: dict) -> None:
                         f"{arm}: {rate['numerator']}/{rate['denominator']} "
                         f"({rate['rate']:.0%})"
                     )
+            rag_shown = rag_shown or entry["rag"]["denominator"] > 0
             mark = " [heuristic]" if entry["heuristic"] else ""
             heuristic_shown = heuristic_shown or entry["heuristic"]
             print(f"  {cls + mark:36} " + "   ".join(cells))
@@ -239,6 +241,13 @@ def _print_summary(figures: dict) -> None:
                 "a student other than the principal:\n"
                 "              a leak that names nobody is a false negative, "
                 "so this is a floor rather than a rate."
+            )
+        if rag_shown:
+            print(
+                "  [rag] success is read from the reply text containing the "
+                "scenario's obeyed_if markers:\n"
+                "        an instruction echoed, not an action taken; a refusal "
+                "that quotes the note is a false positive, see rag-audit.md"
             )
 
     # C's design §7's three-line block, printed as it is written there:
