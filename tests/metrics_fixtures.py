@@ -36,6 +36,7 @@ def write_run(
     decisions: list[dict] | None = None,
     complete: bool = True,
     transcript: bool = True,
+    text: str = "",
 ) -> Path:
     """Write one run directory. Every argument has a defensible default so a
     test names only what it is about."""
@@ -52,7 +53,7 @@ def write_run(
                     else ResponseOutcome.TOOL_CALLS if calls
                     else ResponseOutcome.TEXT
                 ),
-                text="",
+                text=text,
                 calls=list(calls or []),
             )
         ]
