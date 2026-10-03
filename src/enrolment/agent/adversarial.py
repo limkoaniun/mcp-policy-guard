@@ -214,10 +214,13 @@ async def run_rag_one(
         json.loads(attachments_path.read_text(encoding="utf-8")) if attachments_path else {}
     )
     question = scenario.task.description
+    # Outside the try: a persona missing from the world is a harness bug and
+    # must surface, not be recorded as a provider error.
+    student = world.students[scenario.persona]
     started = time.perf_counter()
     try:
         reply = rag_answer(
-            question, student=world.students[scenario.persona], catalogue=world.catalogue,
+            question, student=student, catalogue=world.catalogue,
             requisites=world.requisites, course=world.course, aos=world.aos,
             chat=chat_factory(spec.model), model=spec.model,
             system_prompt=manifest.rag_system_prompt or RAG_SYSTEM_PROMPT,
