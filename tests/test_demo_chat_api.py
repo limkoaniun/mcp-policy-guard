@@ -350,3 +350,40 @@ def test_approving_something_that_was_not_held_is_a_400_with_the_reason():
 
     assert response.status_code == 400
     assert "turn 1" in response.json()["detail"]
+
+
+def test_a_running_agent_message_leaves_the_server_responsive():
+    """A model call takes ten to thirty seconds. The agent arm must not hold
+    the event loop for that long: other requests, and the 409 the busy guards
+    exist to send, have to get through while it runs."""
+    from threading import Event, Thread
+
+    entered, release = Event(), Event()
+    gave_up = []
+
+    def chat(*_):
+        entered.set()
+        # A blocked loop cannot serve the requests below until this returns,
+        # so a timeout here is the failure this test exists to catch: the
+        # requests only got through because the model stopped waiting.
+        if not release.wait(10):
+            gave_up.append(True)
+        return ChatReply(content="Done.")
+
+    client = TestClient(create_app(chat_factory=lambda model: chat))
+    with client:
+        session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+        base = f"/api/chat/{session}"
+        worker = Thread(target=client.post, args=(base + "/message",),
+                        kwargs={"json": {"text": "my plan?"}})
+        worker.start()
+        try:
+            assert entered.wait(5)
+            assert client.get("/api/personas").status_code == 200
+            assert client.put(base + "/mode", json={"mode": "rag"}).status_code == 409
+            assert client.post(base + "/reset").status_code == 409
+        finally:
+            release.set()
+            worker.join(10)
+        assert not worker.is_alive()
+        assert not gave_up, "the server only answered once the model call timed out"
