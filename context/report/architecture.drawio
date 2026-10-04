@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2026-09-14T00:00:00.000Z" agent="mcp-policy-guard" version="24.0.0">
+<mxfile host="app.diagrams.net" modified="2026-10-04T00:00:00.000Z" agent="mcp-policy-guard" version="24.0.0">
   <diagram id="sys-arch" name="1 — System architecture">
-    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="700" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="750" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -13,20 +13,28 @@
           <mxGeometry x="210" y="210" width="170" height="100" as="geometry" />
         </mxCell>
 
-        <mxCell id="proxy" value="&lt;b&gt;Policy Guard proxy&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;deterministic: no model inside&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="450" y="150" width="260" height="220" as="geometry" />
+        <mxCell id="proxy" value="&lt;b&gt;Policy Guard proxy&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;deterministic, no model inside · allow / deny / hold&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="450" y="130" width="260" height="320" as="geometry" />
         </mxCell>
 
-        <mxCell id="allowlist" value="1 · Tool allowlist&#10;&quot;is this tool allowed for this task?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="475" y="205" width="210" height="55" as="geometry" />
+        <mxCell id="allowlist" value="1 · Tool allowlist&#10;&quot;is this tool declared for this task?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="475" y="185" width="210" height="48" as="geometry" />
         </mxCell>
 
-        <mxCell id="argval" value="2 · Argument validation&#10;&quot;right student? prerequisites met? credit cap OK?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="475" y="285" width="210" height="65" as="geometry" />
+        <mxCell id="principal" value="2 · Principal binding&#10;&quot;does the call name the task&#39;s own student?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="475" y="243" width="210" height="48" as="geometry" />
         </mxCell>
 
-        <mxCell id="server" value="&lt;b&gt;Enrolment MCP server&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;the ten tools: search, enrol,&lt;br&gt;drop, eRequests, …&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="800" y="210" width="180" height="100" as="geometry" />
+        <mxCell id="argval" value="3 · Argument validation&#10;&quot;prerequisites met? no anti-requisite? credit cap OK?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="475" y="301" width="210" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="taint" value="4 · Taint tracking&#10;&quot;side-effecting call after an untrusted read?&quot; → held for the user&#39;s confirmation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="475" y="369" width="210" height="68" as="geometry" />
+        </mxCell>
+
+        <mxCell id="server" value="&lt;b&gt;Enrolment MCP server&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;eleven tools: search · check · enrol&lt;br&gt;· drop · eRequest ·&lt;br&gt;get_attachment · …&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="795" y="205" width="190" height="110" as="geometry" />
         </mxCell>
 
         <mxCell id="data" value="students.json&#10;+ UTS catalogue&#10;&amp; requisite rules" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
@@ -34,15 +42,23 @@
         </mxCell>
 
         <mxCell id="task" value="&lt;b&gt;Task&lt;/b&gt; (YAML)&lt;br&gt;&lt;font size=&quot;1&quot;&gt;who the student is +&lt;br&gt;which tools are allowed&lt;/font&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="440" y="450" width="150" height="70" as="geometry" />
+          <mxGeometry x="440" y="500" width="150" height="70" as="geometry" />
         </mxCell>
 
         <mxCell id="pack" value="&lt;b&gt;Policy pack&lt;/b&gt; (YAML)&lt;br&gt;&lt;font size=&quot;1&quot;&gt;the rules: which policies run,&lt;br&gt;which tools are untrusted&lt;/font&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="615" y="450" width="160" height="70" as="geometry" />
+          <mxGeometry x="615" y="500" width="160" height="70" as="geometry" />
         </mxCell>
 
         <mxCell id="log" value="&lt;b&gt;decisions.jsonl&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;every verdict logged&lt;br&gt;for audit&lt;/font&gt;" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="810" y="450" width="150" height="70" as="geometry" />
+          <mxGeometry x="810" y="500" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="upload" value="&lt;b&gt;Uploaded document&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;an RPL form, a letter, a forum template:&lt;br&gt;written by anyone, so untrusted&lt;/font&gt;" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#fde9e7;strokeColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="800" y="30" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e9" value="read via get_attachment" style="endArrow=classic;html=1;rounded=0;dashed=1;strokeColor=#CC0000;fontColor=#CC0000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="upload" target="server">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
         <mxCell id="e1" value="chat" style="endArrow=classic;startArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="user" target="agent">
@@ -73,79 +89,111 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="e8" value="tool results: may carry injected instructions" style="endArrow=classic;html=1;rounded=0;dashed=1;strokeColor=#CC0000;fontColor=#CC0000;curved=1;exitX=0.5;exitY=0;entryX=0.5;entryY=0;" edge="1" parent="1" source="server" target="agent">
+        <mxCell id="e8" value="tool results: the document&#39;s text, planted instructions included" style="endArrow=classic;html=1;rounded=0;dashed=1;strokeColor=#CC0000;fontColor=#CC0000;curved=1;exitX=0.25;exitY=0;entryX=0.5;entryY=0;" edge="1" parent="1" source="server" target="agent">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="580" y="80" />
+              <mxPoint x="580" y="60" />
             </Array>
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="note1" value="Designed extensions, not active in the evaluated prototype: taint tracking of untrusted content; rate &amp;amp; scope limits." style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="450" y="560" width="420" height="30" as="geometry" />
+        <mxCell id="note1" value="Gates 1–4 are active and evaluated (§6). Designed but not active in the evaluated prototype: rate &amp;amp; scope limits." style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="450" y="600" width="460" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="call-flow" name="2 — Life of one tool call">
-    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="750" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="950" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
         <mxCell id="start" value="Agent proposes a tool call&#10;e.g. enrol(student_id=S9000001, code=32513)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="380" y="40" width="260" height="60" as="geometry" />
+          <mxGeometry x="380" y="30" width="260" height="60" as="geometry" />
         </mxCell>
 
-        <mxCell id="d1" value="On the task&#39;s&#10;tool allowlist?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="410" y="140" width="200" height="90" as="geometry" />
+        <mxCell id="d1" value="1 · On the task&#39;s&#10;tool allowlist?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="410" y="120" width="200" height="80" as="geometry" />
         </mxCell>
 
-        <mxCell id="d2" value="Arguments pass the rules?&#10;right student · prerequisites&#10;· anti-requisites · credit cap" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="395" y="280" width="230" height="110" as="geometry" />
+        <mxCell id="d1b" value="2 · Names the task&#39;s&#10;own student?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="410" y="230" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d2" value="3 · Arguments pass the rules?&#10;prerequisites · anti-requisites&#10;· credit cap, against the live record" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="385" y="340" width="250" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d3" value="4 · Side-effecting call, and the run&#10;has read an untrusted document?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="385" y="480" width="250" height="100" as="geometry" />
         </mxCell>
 
         <mxCell id="allow" value="ALLOW: forward to the enrolment server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="400" y="450" width="220" height="50" as="geometry" />
+          <mxGeometry x="400" y="630" width="220" height="50" as="geometry" />
         </mxCell>
 
         <mxCell id="exec" value="Server runs it;&#10;student record updated" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="400" y="550" width="220" height="60" as="geometry" />
+          <mxGeometry x="400" y="720" width="220" height="60" as="geometry" />
         </mxCell>
 
         <mxCell id="deny" value="DENY: the call never&#10;reaches the server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="760" y="300" width="200" height="60" as="geometry" />
+          <mxGeometry x="780" y="300" width="200" height="60" as="geometry" />
         </mxCell>
 
         <mxCell id="denymsg" value="A plain-English reason&#10;is returned to the agent&#10;(&quot;32513 requires 32130 …&quot;)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="760" y="420" width="200" height="70" as="geometry" />
+          <mxGeometry x="780" y="390" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="hold" value="REQUIRE APPROVAL: the call is held;&#10;the reason names the untrusted tool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="780" y="500" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="holdmsg" value="User confirms → replayed and&#10;logged as confirmed.&#10;User refuses → nothing runs." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="780" y="590" width="200" height="70" as="geometry" />
         </mxCell>
 
         <mxCell id="flog" value="decisions.jsonl&#10;(audit log:&#10;every verdict)" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="110" y="330" width="150" height="80" as="geometry" />
+          <mxGeometry x="100" y="440" width="150" height="80" as="geometry" />
         </mxCell>
 
         <mxCell id="f1" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="start" target="d1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="f2" value="yes" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d1" target="d2">
+        <mxCell id="f2" value="yes" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d1" target="d1b">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
         <mxCell id="f3" value="no" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;fontColor=#b85450;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="d1" target="deny">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="860" y="185" />
+              <mxPoint x="880" y="160" />
             </Array>
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="f4" value="yes" style="endArrow=classic;html=1;rounded=0;strokeColor=#82b366;fontColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d2" target="allow">
+        <mxCell id="f2b" value="yes" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d1b" target="d2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="f5" value="no" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;fontColor=#b85450;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d2" target="deny">
+        <mxCell id="f3b" value="no" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;fontColor=#b85450;exitX=1;exitY=0.5;entryX=0;entryY=0.25;" edge="1" parent="1" source="d1b" target="deny">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f4" value="yes" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d2" target="d3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f5" value="no" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;fontColor=#b85450;exitX=1;exitY=0.5;entryX=0;entryY=0.75;" edge="1" parent="1" source="d2" target="deny">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f4b" value="no" style="endArrow=classic;html=1;rounded=0;strokeColor=#82b366;fontColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="d3" target="allow">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f5b" value="yes" style="endArrow=classic;html=1;rounded=0;strokeColor=#d79b00;fontColor=#d79b00;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d3" target="hold">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
@@ -157,16 +205,20 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="f8" value="logged" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.35;" edge="1" parent="1" source="d2" target="flog">
+        <mxCell id="f7b" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="hold" target="holdmsg">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="f9" value="logged" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.75;" edge="1" parent="1" source="allow" target="flog">
+        <mxCell id="f8" value="every verdict logged" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.35;" edge="1" parent="1" source="d2" target="flog">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <mxCell id="note2" value="Both outcomes are computed even with enforcement OFF; the toggle only forces the forwarding decision, which is what makes the on/off comparison fair." style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="110" y="560" width="260" height="60" as="geometry" />
+        <mxCell id="f9" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.75;" edge="1" parent="1" source="allow" target="flog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" value="A deny from gates 1–3 short-circuits, so a rule-breaking call is refused as a rule violation even when the run is tainted. Every verdict is computed and logged even with enforcement OFF; the toggle only forces the forwarding decision, which is what makes the on/off comparison fair." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="60" y="600" width="250" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
