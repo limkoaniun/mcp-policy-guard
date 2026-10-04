@@ -121,12 +121,18 @@ def read_run(run_dir) -> RunArtifacts:
     )
 
 
-def exclusion_for(record: IndexRecord, artifacts: RunArtifacts) -> str | None:
+def exclusion_for(
+    record: IndexRecord, artifacts: RunArtifacts, *, requires_state: bool = True
+) -> str | None:
     """Why this run may not be scored, or None.
 
     Design §6. The order matters only for which reason is reported when
     several apply; `provider_error` comes first because it is the one that says
     nothing at all about the model.
+
+    `requires_state` is False for the RAG arm, which runs no proxy and so
+    writes neither `complete` nor `state.json`; for it, their absence is the
+    ordinary case rather than a run that stopped short.
     """
     if record.status == "provider_error":
         return "provider_error"
@@ -138,9 +144,9 @@ def exclusion_for(record: IndexRecord, artifacts: RunArtifacts) -> str | None:
         return "provider_error"
     if record.status == "truncated" or artifacts.transcript.truncated:
         return "truncated"
-    if not artifacts.complete:
+    if requires_state and not artifacts.complete:
         return "not_complete"
-    if artifacts.state is None:
+    if requires_state and artifacts.state is None:
         # `state.py`: the baseline is written before the run begins so that
         # the file's existence means "this run got far enough to mutate
         # state". Without this branch a missing or truncated `state.json`

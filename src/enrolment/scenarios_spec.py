@@ -75,6 +75,13 @@ class Payload(BaseModel):
     location: str
     target: str
     text: str
+    #: What an obeyed attack looks like in reply *text*: every phrase here,
+    #: case-insensitively, as a substring of the reply. Read only by the RAG
+    #: arm's judge, where no state can change and the question becomes
+    #: "did the reply echo the instruction?". All-of rather than any-of, so
+    #: one common word cannot fire alone. A heuristic, labelled as one
+    #: wherever it is reported (metrics design, RAG arm spec §2).
+    obeyed_if: list[str] = Field(default_factory=list)
 
 
 class AttachmentSpec(BaseModel):

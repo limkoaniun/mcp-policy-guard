@@ -297,3 +297,73 @@ def test_the_prompt_flag_selects_the_named_prompt_for_the_manifest():
     )
     assert default.system_prompt == SYSTEM_PROMPT
     assert told.system_prompt == TOLD_THE_RULES_PROMPT
+
+
+def test_arms_default_to_the_two_agent_arms():
+    args = parse_args(["--campaign", "x"])
+    assert args.arms == ["on", "off"]
+    assert args.num_ctx is None
+
+
+def test_arms_parse_in_any_order_with_spaces():
+    args = parse_args(["--campaign", "x", "--arms", " rag, on "])
+    assert args.arms == ["rag", "on"]
+
+
+def test_an_unknown_arm_is_refused():
+    with pytest.raises(SystemExit):
+        parse_args(["--campaign", "x", "--arms", "on,sideways"])
+
+
+def test_the_rag_arm_runs_every_scenario_once_more():
+    """24 scenarios: 20 with both agent arms, 4 with on only (44), plus 24
+    rag runs = 68 per model per repeat."""
+    args = parse_args(["--campaign", "x", "--arms", "on,off,rag", "--repeats", "1",
+                       "--models", "fake"])
+    scenarios = adversarial.load_suite(args)
+    specs = adversarial.enumerate_matrix(scenarios, args.models, args.repeats, args.arms)
+    assert len(specs) == 68
+    assert sum(1 for s in specs if s.arm == "rag") == 24
+    assert [s.arm for s in specs if s.scenario_id == "SC-01"] == ["on", "rag"]
+
+
+def test_asking_for_only_the_rag_arm_runs_no_agent_arm():
+    args = parse_args(["--campaign", "x", "--arms", "rag", "--repeats", "1", "--models", "fake"])
+    specs = adversarial.enumerate_matrix(adversarial.load_suite(args), args.models, 1, args.arms)
+    assert {s.arm for s in specs} == {"rag"}
+
+
+def test_a_dry_run_with_the_rag_arm_counts_it(capsys):
+    adversarial.main(["--campaign", "x", "--dry-run", "--arms", "on,off,rag",
+                      "--scenarios", "attacks/scenarios-upload", "--repeats", "1",
+                      "--models", "fake"])
+    printed = capsys.readouterr().out
+    assert "24 runs" in printed
+    assert "8 rag" in printed
+
+
+def test_the_rag_arm_is_refused_on_a_suite_whose_payloads_it_cannot_score(capsys):
+    """The SC-* suite plants payloads in subject descriptions, which the RAG
+    arm has no delivery for, and declares no obeyed_if. Refused before any
+    run, naming the scenarios."""
+    with pytest.raises(SystemExit) as stop:
+        adversarial.main(["--campaign", "x", "--dry-run", "--arms", "rag",
+                          "--repeats", "1", "--models", "fake"])
+    message = str(stop.value)
+    assert "SC-02" in message and "obeyed_if" in message
+
+
+def test_the_manifest_records_arms_num_ctx_and_the_rag_prompt():
+    from enrolment.agent.prompts import RAG_SYSTEM_PROMPT
+    args = parse_args(["--campaign", "x", "--arms", "on,rag", "--num-ctx", "8192"])
+    manifest = adversarial.build_manifest(args, fingerprints={})
+    assert manifest.arms == ["on", "rag"]
+    assert manifest.num_ctx == 8192
+    assert manifest.rag_system_prompt == RAG_SYSTEM_PROMPT
+
+
+def test_a_two_arm_manifest_carries_no_rag_prompt():
+    args = parse_args(["--campaign", "x"])
+    manifest = adversarial.build_manifest(args, fingerprints={})
+    assert manifest.arms == ["on", "off"]
+    assert manifest.rag_system_prompt is None

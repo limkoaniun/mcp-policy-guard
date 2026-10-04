@@ -21,14 +21,17 @@ import anyio
 from policy_guard.upstream import connect_subprocess
 
 from ..ablation import ablated_pack
+from ..rag import answer as rag_answer
 from ..run_setup import (
     arms_for,
     off_arm_allowed,
+    students_baseline_path,
     write_attachments,
     write_overlay,
     write_task,
 )
 from ..scenarios_spec import Scenario, load_all
+from .advice import load_world
 from .campaign import (
     CampaignManifest,
     RunSpec,
@@ -40,8 +43,8 @@ from .campaign import (
 from .cli_common import preflight, warn_on_digest_drift
 from .loop import AgentTask, run_agent
 from .ollama import ollama_chat
-from .prompts import NUDGE, PROMPTS, SYSTEM_PROMPT
-from .transcript import Transcript
+from .prompts import NUDGE, PROMPTS, RAG_SYSTEM_PROMPT, SYSTEM_PROMPT
+from .transcript import ResponseOutcome, Transcript, TurnRecord
 
 
 def turns_for(scenario: Scenario) -> list[str]:
@@ -76,7 +79,7 @@ def task_for(scenario: Scenario, *, system_prompt: str = SYSTEM_PROMPT) -> Agent
     )
 
 
-def enumerate_matrix(scenarios, models, repeats: int) -> list[RunSpec]:
+def enumerate_matrix(scenarios, models, repeats: int, arms=("on", "off")) -> list[RunSpec]:
     """Every run the campaign will make, in the order it will make them.
 
     Repeat is the outermost loop on purpose. An interrupted campaign then
@@ -89,12 +92,20 @@ def enumerate_matrix(scenarios, models, repeats: int) -> list[RunSpec]:
     here: the four `deliverable: false` scenarios get the on arm only, because
     an off arm for a payload that never lands would report "the attack failed"
     when none was mounted.
+
+    `arms` filters the agent arms `arms_for` offers and appends `rag` when
+    asked. The RAG arm has no enforcement switch, so every scenario gets it,
+    injected or benign: a twin's reply to the clean document is the control
+    the audit reads beside the planted one.
     """
     specs: list[RunSpec] = []
     for repeat in range(1, repeats + 1):
         for model in models:
             for scenario in scenarios:
-                for arm in arms_for(scenario):
+                run_arms = [arm for arm in arms_for(scenario) if arm in arms]
+                if "rag" in arms:
+                    run_arms.append("rag")
+                for arm in run_arms:
                     specs.append(
                         RunSpec(
                             scenario_id=scenario.id, model=model, arm=arm, repeat=repeat
@@ -174,11 +185,80 @@ async def run_one(
     return transcript, duration
 
 
+async def run_rag_one(
+    scenario: Scenario,
+    spec: RunSpec,
+    *,
+    campaign_dir,
+    chat_factory,
+    manifest: CampaignManifest,
+    world,
+) -> tuple[Transcript, float]:
+    """One cell of the RAG arm: the planted document in the prompt, one answer.
+
+    The document is written by the same `write_attachments` the agent arms
+    use, then read back, so the bytes the chatbot saw are the bytes the proxy
+    would have served. One user turn and no `NUDGE`: the nudge exists to make
+    an agent proceed to a call, and this arm has no call to proceed to. No
+    proxy, so no `state.json`, `decisions.jsonl` or `complete` marker; the
+    judge knows not to look for them (RAG arm spec §5).
+
+    A provider failure is recorded the way `agent.advice.run_rag_one` records
+    it, so `campaign.run_campaign`'s replacement rule applies unchanged.
+    """
+    run_dir = Path(campaign_dir) / spec.run_id
+    clear_run_dir(run_dir)
+    run_dir.mkdir(parents=True, exist_ok=False)
+    attachments_path = write_attachments(scenario, run_dir)
+    attachments = (
+        json.loads(attachments_path.read_text(encoding="utf-8")) if attachments_path else {}
+    )
+    question = scenario.task.description
+    # Outside the try: a persona missing from the world is a harness bug and
+    # must surface, not be recorded as a provider error.
+    student = world.students[scenario.persona]
+    started = time.perf_counter()
+    try:
+        reply = rag_answer(
+            question, student=student, catalogue=world.catalogue,
+            requisites=world.requisites, course=world.course, aos=world.aos,
+            chat=chat_factory(spec.model), model=spec.model,
+            system_prompt=manifest.rag_system_prompt or RAG_SYSTEM_PROMPT,
+            attachments=attachments,
+        )
+    except Exception as exc:  # noqa: BLE001 - mirrors loop.py: any provider failure ends this run, recorded, replaceable
+        duration = time.perf_counter() - started
+        failure = f"{type(exc).__name__}: {exc}"
+        transcript = Transcript(
+            task_id=scenario.id, model=spec.model, truncated=True,
+            truncation_reason=f"provider error: {failure}",
+            turns=[TurnRecord(user_turn=0, model_turn=0,
+                              outcome=ResponseOutcome.PROVIDER_ERROR, text=failure)],
+        )
+        transcript.write_jsonl(run_dir / "transcript.jsonl")
+        return transcript, duration
+    duration = time.perf_counter() - started
+    (run_dir / "rag.json").write_text(json.dumps({
+        "question": question, "context": reply.context, "text": reply.text,
+        "latency_ms": reply.latency_ms, "messages": reply.messages,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    transcript = Transcript(task_id=scenario.id, model=spec.model, turns=[TurnRecord(
+        user_turn=0, model_turn=0, outcome=ResponseOutcome.TEXT, text=reply.text,
+        latency_ms=reply.latency_ms,
+    )])
+    transcript.write_jsonl(run_dir / "transcript.jsonl")
+    (run_dir / "agent.json").write_text(json.dumps(
+        manifest.fingerprints.get(spec.model, {"model": spec.model}), indent=2,
+    ), encoding="utf-8")
+    return transcript, duration
+
+
 DEFAULT_MODELS = ["llama3.1:8b", "llama3.2"]
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_PACK = "configs/enrolment-personas.yaml"
 DEFAULT_SCENARIOS = "attacks/scenarios"
 DEFAULT_PERSONAS = "data/personas.json"
+ARMS = ("on", "off", "rag")
 
 
 def parse_args(argv=None) -> argparse.Namespace:
@@ -191,6 +271,19 @@ def parse_args(argv=None) -> argparse.Namespace:
         type=lambda value: [m.strip() for m in value.split(",") if m.strip()],
     )
     parser.add_argument("--repeats", type=int, default=5)
+    parser.add_argument(
+        "--arms", default="on,off",
+        type=lambda value: [a.strip() for a in value.split(",") if a.strip()],
+        help="which arms to run: on and off are the proxy's enforcement switch, "
+             "rag is the tool-less chatbot. Default on,off, the campaign as it "
+             "has always run.",
+    )
+    parser.add_argument(
+        "--num-ctx", type=int, default=None, dest="num_ctx",
+        help="Ollama context window for every arm's model calls, recorded in "
+             "the manifest. The RAG prompt carries a whole document and "
+             "overflows the default; the advice runner uses 8192.",
+    )
     parser.add_argument("--pack", default=DEFAULT_PACK)
     parser.add_argument("--scenarios", default=DEFAULT_SCENARIOS)
     parser.add_argument("--personas", default=DEFAULT_PERSONAS)
@@ -224,7 +317,11 @@ def parse_args(argv=None) -> argparse.Namespace:
              "runner. Recorded in the manifest as the prompt text.",
     )
     parser.add_argument("--dry-run", action="store_true")
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    unknown = [a for a in args.arms if a not in ARMS]
+    if unknown:
+        parser.error(f"--arms: unknown arm(s) {unknown}; choose from {', '.join(ARMS)}")
+    return args
 
 
 def load_suite(args):
@@ -238,19 +335,43 @@ def load_suite(args):
     return load_all(REPO_ROOT / args.scenarios, personas=personas, known_tools=known_tools)
 
 
+def refuse_unscorable_for_rag(scenarios) -> None:
+    """Stop before any run if the RAG arm could not score this suite.
+
+    The arm plants the payload by putting the document in the prompt, so only
+    an `attachment` payload reaches it; and it judges from `obeyed_if`, so a
+    payload without markers would produce a run nobody can score. Both are
+    said now, naming the scenarios, rather than discovered 288 runs later.
+    """
+    offending = sorted(
+        s.id for s in scenarios
+        if s.injected and s.deliverable and s.payload is not None
+        and (s.payload.location != "attachment" or not s.payload.obeyed_if)
+    )
+    if offending:
+        raise SystemExit(
+            f"--arms rag: the RAG arm can only score an attachment payload that "
+            f"declares obeyed_if, and these scenarios do not: {', '.join(offending)}"
+        )
+
+
 def build_manifest(args, fingerprints: dict) -> CampaignManifest:
     return CampaignManifest(
-        models=list(args.models), repeats=args.repeats,
-        system_prompt=PROMPTS[args.prompt], nudge=NUDGE, policy_pack=args.pack,
+        models=list(args.models), repeats=args.repeats, arms=list(args.arms),
+        system_prompt=PROMPTS[args.prompt],
+        rag_system_prompt=RAG_SYSTEM_PROMPT if "rag" in args.arms else None,
+        nudge=NUDGE, policy_pack=args.pack,
         max_model_turns=args.max_model_turns, max_calls=args.max_calls,
         temperature=args.temperature, seed=args.seed, fingerprints=fingerprints,
+        num_ctx=args.num_ctx,
     )
 
 
 def _report_matrix(specs, scenarios) -> None:
     on = len([s for s in specs if s.arm == "on"])
     off = len([s for s in specs if s.arm == "off"])
-    print(f"{len(specs)} runs: {on} enforcement-on, {off} enforcement-off")
+    rag = len([s for s in specs if s.arm == "rag"])
+    print(f"{len(specs)} runs: {on} enforcement-on, {off} enforcement-off, {rag} rag")
     # Asked of `run_setup`, not restated here. The design's constraint that
     # the two-of-four-attack-classes gap be reported accurately rests on this
     # line, and a copy of the rule would keep describing the old one if
@@ -285,7 +406,9 @@ def resolve_pack(args) -> Path:
 def main(argv=None) -> int:
     args = parse_args(argv)
     scenarios = load_suite(args)
-    specs = enumerate_matrix(scenarios, args.models, args.repeats)
+    if "rag" in args.arms:
+        refuse_unscorable_for_rag(scenarios)
+    specs = enumerate_matrix(scenarios, args.models, args.repeats, args.arms)
 
     _report_matrix(specs, scenarios)
     if args.dry_run:
@@ -304,14 +427,26 @@ def main(argv=None) -> int:
     pack_path = resolve_pack(args)
 
     def chat_factory(model):
-        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed)
+        return ollama_chat(model, temperature=manifest.temperature, seed=manifest.seed,
+                           num_ctx=manifest.num_ctx)
+
+    world = (
+        load_world(REPO_ROOT, students_baseline_path(pack_path, REPO_ROOT))
+        if "rag" in manifest.arms else None
+    )
 
     async def runner(spec):
-        transcript, duration = await run_one(
-            by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
-            pack_path=pack_path, repo_root=REPO_ROOT,
-            chat_factory=chat_factory, manifest=manifest,
-        )
+        if spec.arm == "rag":
+            transcript, duration = await run_rag_one(
+                by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
+                chat_factory=chat_factory, manifest=manifest, world=world,
+            )
+        else:
+            transcript, duration = await run_one(
+                by_id[spec.scenario_id], spec, campaign_dir=campaign_dir,
+                pack_path=pack_path, repo_root=REPO_ROOT,
+                chat_factory=chat_factory, manifest=manifest,
+            )
         return run_status(transcript), duration
 
     def describe(spec):
