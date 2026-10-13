@@ -98,6 +98,10 @@ function BreachNotice({ principal, hits, onClose }) {
       <div className="modal" role="dialog" aria-modal="true" aria-labelledby="breach-title"
            onClick={(e) => e.stopPropagation()}>
         <h2 id="breach-title">Unauthorised access attempt detected</h2>
+        <p className="small">
+          Research prototype (mcp-policy-guard). Not a UTS system; the policy is cited for
+          illustration.
+        </p>
         <p>{breachLine(principal, first)}</p>
         <p>
           Accessing, or attempting to access, another student's information without
@@ -109,10 +113,6 @@ function BreachNotice({ principal, hits, onClose }) {
         <p>
           If you did not intend this, the instruction may have come from a document you
           uploaded. Open &lsquo;what the model saw&rsquo; on the tool call above to check.
-        </p>
-        <p className="small">
-          Research prototype (mcp-policy-guard). Not a UTS system; the policy is cited for
-          illustration.
         </p>
         <button ref={button} onClick={onClose}>I understand</button>
       </div>
@@ -365,7 +365,8 @@ export default function App() {
             setThread((t) => [...t, { role: 'warning',
               text: `${breachLine(record?.student_id || 'this student', hits[0])} ` +
                     `Accessing another student's information without authorisation breaches the ${POLICY_NAME}; ` +
-                    `attempts are logged and may lead to disciplinary action.` }])
+                    `attempts are logged and may lead to disciplinary action. ` +
+                    `If a document you uploaded asked for this, the instruction came from the document, not from you.` }])
           }
           if (event.mode === 'rag') {
             const evidence = { context: event.context, model: event.model,
@@ -552,7 +553,7 @@ export default function App() {
               if (m.role === 'warning') {
                 return (
                   <div key={i} className="bubble warning" role="alert">
-                    <div className="caption">Warning</div>
+                    <div className="caption">Warning · research prototype</div>
                     {m.text}
                   </div>
                 )

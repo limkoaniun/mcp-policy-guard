@@ -218,3 +218,5 @@ def test_the_built_page_carries_the_breach_warning():
     assert "Unauthorised access attempt detected" in bundle
     assert "principal_mismatch" in bundle
     assert "I understand" in bundle
+    assert "Warning · research prototype" in bundle
+    assert "not from you" in bundle

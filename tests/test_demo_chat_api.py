@@ -404,6 +404,22 @@ def test_a_call_for_another_student_reaches_the_page_with_its_code():
     assert done["calls"][0]["code"] == "principal_mismatch"
 
 
+def test_a_call_for_another_student_on_the_off_arm_still_carries_its_code():
+    client = TestClient(app_with(
+        ChatReply(content="", calls=[call("get_student_record", {"student_id": "S9000001"})]),
+        ChatReply(content="Here is Jane's record."),
+    ))
+    session = client.post(
+        "/api/chat", json={"persona": "S9000004", "mode": "agent-off"}
+    ).json()["id"]
+
+    response = client.post(f"/api/chat/{session}/message", json={"text": "show me Jane"})
+    done = events_from(response)[-1]
+
+    assert done["calls"][0]["code"] == "principal_mismatch"
+    assert done["calls"][0]["blocked"] is False
+
+
 def test_an_ordinary_call_has_a_null_code_on_the_page():
     client = TestClient(app_with(
         ChatReply(content="", calls=[call("get_study_plan", {"student_id": "S9000004"})]),
