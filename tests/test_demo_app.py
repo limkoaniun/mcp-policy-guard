@@ -202,3 +202,19 @@ def test_an_uploaded_as_received_mentor_form_matches_a13_planted():
     assert attachment["known"]["scenario_id"] == "A-13"
     assert attachment["known"]["variant"] == "planted"
     assert "S9000001" in attachment["known"]["payload_text"]
+
+
+POLICY_URL = ("https://www.uts.edu.au/about/leadership-governance/policies/a-z/"
+              "acceptable-use-information-technology-resources-policy")
+
+
+def test_the_built_page_carries_the_breach_warning():
+    """The React source is not under test; the committed bundle is what the
+    demo serves, so the strings the warning must show are checked there."""
+    assets = REPO / "src" / "enrolment" / "demo" / "static" / "assets"
+    [script] = sorted(assets.glob("index-*.js"))
+    bundle = script.read_text(encoding="utf-8")
+    assert POLICY_URL in bundle
+    assert "Unauthorised access attempt detected" in bundle
+    assert "principal_mismatch" in bundle
+    assert "I understand" in bundle
