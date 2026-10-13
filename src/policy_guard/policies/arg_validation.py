@@ -75,6 +75,7 @@ class ArgumentValidationPolicy:
             return Decision(
                 verdict=Verdict.DENY,
                 policy=self.name,
+                code="principal_missing",
                 reason=(
                     f"'{call.tool}' was called without '{self.principal_argument}', "
                     f"so it could not be confirmed to act on {context.principal_id}. "
@@ -84,6 +85,7 @@ class ArgumentValidationPolicy:
         return Decision(
             verdict=Verdict.DENY,
             policy=self.name,
+            code="principal_mismatch",
             reason=(
                 f"this task may only act on {context.principal_id}, but "
                 f"'{call.tool}' was called for {named}."

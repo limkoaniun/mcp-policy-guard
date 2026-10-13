@@ -51,6 +51,11 @@ class Decision(BaseModel):
     verdict: Verdict
     policy: str
     reason: str
+    #: A machine-readable tag for rulings a consumer must recognise without
+    #: parsing `reason`. Set by a policy when it has one; `None` otherwise.
+    #: Today: `principal_mismatch` and `principal_missing` from argument
+    #: validation's principal binding.
+    code: str | None = None
 
     def __str__(self) -> str:
         return f"[{self.verdict.value.upper():>16}] {self.policy}: {self.reason}"

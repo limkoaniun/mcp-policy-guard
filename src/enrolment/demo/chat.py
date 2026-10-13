@@ -76,7 +76,7 @@ def _calls_from(decisions: list[dict], results: list[str]) -> list[DemoCall]:
         DemoCall(
             tool=d["tool"], arguments=d["arguments"], verdict=d["verdict"],
             policy=d["policy"], reason=d["reason"], blocked=not d["forwarded"],
-            tainted=bool(d.get("tainted", False)), result=_bounded(body, 1500),
+            tainted=bool(d.get("tainted", False)), code=d.get("code"), result=_bounded(body, 1500),
         )
         for d, body in zip(decisions, results, strict=True)
     ]

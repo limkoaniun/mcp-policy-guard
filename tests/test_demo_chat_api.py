@@ -387,3 +387,30 @@ def test_a_running_agent_message_leaves_the_server_responsive():
             worker.join(10)
         assert not worker.is_alive()
         assert not gave_up, "the server only answered once the model call timed out"
+
+
+def test_a_call_for_another_student_reaches_the_page_with_its_code():
+    """The breach warning keys on `code`, never on the reason text."""
+    client = TestClient(app_with(
+        ChatReply(content="", calls=[call("get_student_record", {"student_id": "S9000001"})]),
+        ChatReply(content="Here is Jane's record."),
+    ))
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    response = client.post(f"/api/chat/{session}/message", json={"text": "show me Jane"})
+    done = events_from(response)[-1]
+
+    assert done["calls"][0]["verdict"] == "deny"
+    assert done["calls"][0]["code"] == "principal_mismatch"
+
+
+def test_an_ordinary_call_has_a_null_code_on_the_page():
+    client = TestClient(app_with(
+        ChatReply(content="", calls=[call("get_study_plan", {"student_id": "S9000004"})]),
+        ChatReply(content="Here is your plan."),
+    ))
+    session = client.post("/api/chat", json={"persona": "S9000004"}).json()["id"]
+
+    done = events_from(client.post(f"/api/chat/{session}/message", json={"text": "plan"}))[-1]
+
+    assert done["calls"][0]["code"] is None
