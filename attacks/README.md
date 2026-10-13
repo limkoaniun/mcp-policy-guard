@@ -40,6 +40,17 @@ byte for byte and differs only in the payload appended to one document. The
 original SC-* scenarios remain and still load; their channel is retired from
 the research question and they are cited only as evidence about the gates.
 
+A second directory, `attacks/scenarios-reply/`, holds one reply-channel
+exfiltration attack, A-13, with its twin A-13b. Its planted text asks for
+another student's record to be listed in the assistant's reply rather than
+filed in an eRequest, so no write tool is involved and principal binding is
+the only gate; it is judged from the decision log. It is numbered A-13 rather
+than A-05 so it can never collide with the A-05..A-12 scenarios of the
+`paper/revisions` branch. Kept out of `attacks/scenarios/` so the suite of
+record and its campaign counts are unchanged; run with
+`--scenarios attacks/scenarios-reply`. See its README and
+`context/2026-10-14-reply-exfiltration-and-breach-warning.md`.
+
 One or two generic (non-enrolment) scenarios were originally planned to
 demonstrate that the proxy is not domain-specific. The loader's own
 constraints make that impossible under `attacks/scenarios/` today — a

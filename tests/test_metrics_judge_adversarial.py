@@ -78,7 +78,7 @@ def judge(tmp_path, scenario_id, *, deliver=True, **run_kwargs):
 
 def test_the_measurable_classes_are_every_class_with_a_delivery_mechanism():
     assert set(MEASURABLE_CLASSES) == {
-        "output-injection", "exfiltration",
+        "output-injection", "exfiltration", "exfiltration-reply",
         "rule-breaking-action", "out-of-task-action", "cross-principal-action",
     }
 
