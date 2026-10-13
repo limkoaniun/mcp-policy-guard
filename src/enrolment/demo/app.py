@@ -25,6 +25,7 @@ import json
 import tempfile
 import threading
 import uuid
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Literal
 
@@ -44,7 +45,13 @@ from .uploads import MAX_BYTES, UploadError, attachment_id_for, extract_text, ma
 REPO_ROOT = Path(__file__).resolve().parents[3]
 STATIC = Path(__file__).parent / "static"
 DEFAULT_PACK = REPO_ROOT / "configs" / "enrolment-personas.yaml"
-DEFAULT_SCENARIOS = REPO_ROOT / "attacks" / "scenarios"
+#: The suite of record and the reply-channel subset. Both load into the demo
+#: so every shipped document, A-01..A-13, can be dropped on the chat; the
+#: campaigns keep their own `--scenarios` and are not affected.
+DEFAULT_SCENARIO_DIRS = (
+    REPO_ROOT / "attacks" / "scenarios",
+    REPO_ROOT / "attacks" / "scenarios-reply",
+)
 DEFAULT_PERSONAS = REPO_ROOT / "data" / "personas.json"
 
 KNOWN_TOOLS = {
@@ -123,7 +130,7 @@ def create_app(
     *,
     repo_root: Path = REPO_ROOT,
     pack_path: Path = DEFAULT_PACK,
-    scenarios_dir: Path = DEFAULT_SCENARIOS,
+    scenarios_dirs: Sequence[Path] = DEFAULT_SCENARIO_DIRS,
     personas_path: Path = DEFAULT_PERSONAS,
     chat_factory=None,
     available_models=None,
@@ -140,7 +147,8 @@ def create_app(
     aos = json.loads((repo_root / "data" / "aos.json").read_text(encoding="utf-8"))
     scenarios = {
         scenario.id: scenario
-        for scenario in load_all(scenarios_dir, personas=personas, known_tools=KNOWN_TOOLS)
+        for root in scenarios_dirs
+        for scenario in load_all(root, personas=personas, known_tools=KNOWN_TOOLS)
     }
     documents = documents_from(scenarios.values())
 
