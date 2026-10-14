@@ -150,6 +150,9 @@ class DecisionRecord(BaseModel):
     verdict: str
     policy: str
     reason: str
+    #: `Decision.code`, verbatim. `None` for every ruling that carries none,
+    #: and for every line written before the field existed.
+    code: str | None = None
     tainted: bool = False
     approval_mode: str | None = None
     latency_ms: float = 0.0
@@ -194,6 +197,7 @@ class DecisionLog:
             verdict=decision.verdict.value,
             policy=decision.policy,
             reason=decision.reason,
+            code=decision.code,
             tainted=tainted,
             approval_mode=approval_mode,
             latency_ms=latency_ms,

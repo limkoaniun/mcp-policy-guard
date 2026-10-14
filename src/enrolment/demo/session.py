@@ -52,6 +52,9 @@ class DemoCall(BaseModel):
     #: True when the engine saw the call after an untrusted read. Separate
     #: from `verdict`: a tainted read-only call is allowed and still tainted.
     tainted: bool = False
+    #: `DecisionRecord.code`: a machine-readable tag on rulings the page must
+    #: recognise. `principal_mismatch` drives the breach warning.
+    code: str | None = None
     result: str
 
 
@@ -264,6 +267,7 @@ async def run_demo(
             policy=decision["policy"],
             reason=decision["reason"],
             blocked=not decision["forwarded"],
+            code=decision.get("code"),
             result=body,
         )
         for decision, body in zip(decisions, results, strict=True)

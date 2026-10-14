@@ -322,3 +322,30 @@ footer .strong { color: #cfcfcf; font-weight: 700; font-size: 1.05rem; margin: 0
 .rag-panel details, .rag-evidence { border-top: 1px solid #ddd; padding: .75rem 0; }
 .rag-evidence { margin: .5rem 1rem; }
 .rag-panel summary, .rag-evidence summary { cursor: pointer; overflow-wrap: anywhere; }
+
+/* Breach warning: the one place the page raises its voice. Same palette,
+   red accent from --deny, no new colours. */
+.bubble.warning {
+  background: #fff5f5; border: 1px solid var(--deny); border-left-width: 4px;
+  color: var(--ink); max-width: 58ch; font-size: .92rem;
+}
+.bubble.warning .caption { color: var(--deny); font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .25rem; }
+.badge.breach { background: var(--deny); color: #fff; border-color: var(--deny); margin-left: .4rem; }
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .55);
+  display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem;
+}
+.modal {
+  background: var(--card); color: var(--ink); max-width: 36rem; width: 100%;
+  border-top: 6px solid var(--deny); padding: 1.5rem 1.6rem 1.3rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
+}
+.modal h2 { margin: 0 0 .75rem; font-size: 1.25rem; color: var(--deny); }
+.modal p { margin: 0 0 .8rem; font-size: .95rem; max-width: 60ch; }
+.modal p.small { color: var(--ink-soft); font-size: .78rem; }
+.modal a { color: var(--uts-blue); }
+.modal button {
+  margin-top: .35rem; background: var(--black); color: #fff; border: 0;
+  padding: .55rem 1.1rem; cursor: pointer; font-weight: 700;
+}
+.modal button:hover { background: var(--uts-blue); }

@@ -70,6 +70,56 @@ const outcomeFor = (d) => {
   return 'Forwarded.'
 }
 
+const POLICY_URL = 'https://www.uts.edu.au/about/leadership-governance/policies/a-z/acceptable-use-information-technology-resources-policy'
+const POLICY_NAME = 'UTS Acceptable Use of Information Technology Resources Policy'
+
+// Every call in a turn the engine tagged as naming another student.
+const breachesIn = (calls) => (calls || []).filter((c) => c.code === 'principal_mismatch')
+
+const breachLine = (principal, hit) => {
+  const other = hit.arguments?.student_id || 'another student'
+  const outcome = hit.blocked
+    ? 'Policy Guard stopped the request before it reached the record.'
+    : 'Policy Guard objected, but enforcement is off, so the request went through.'
+  return `While signed in as ${principal}, this conversation asked the enrolment system for ${other}'s record. ${outcome}`
+}
+
+function BreachNotice({ principal, hits, onClose }) {
+  const button = useRef(null)
+  useEffect(() => {
+    button.current?.focus()
+    const onKey = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+  const first = hits[0]
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="breach-title"
+           onClick={(e) => e.stopPropagation()}>
+        <h2 id="breach-title">Unauthorised access attempt detected</h2>
+        <p className="small">
+          Research prototype (mcp-policy-guard). Not a UTS system; the policy is cited for
+          illustration.
+        </p>
+        <p>{breachLine(principal, first)}</p>
+        <p>
+          Accessing, or attempting to access, another student's information without
+          authorisation breaches the{' '}
+          <a href={POLICY_URL} target="_blank" rel="noreferrer">{POLICY_NAME}</a>.
+          Attempts are logged. A breach may lead to disciplinary action under the UTS
+          Student Rules and may have legal consequences under privacy law.
+        </p>
+        <p>
+          If you did not intend this, the instruction may have come from a document you
+          uploaded. Open &lsquo;what the model saw&rsquo; on the tool call above to check.
+        </p>
+        <button ref={button} onClick={onClose}>I understand</button>
+      </div>
+    </div>
+  )
+}
+
 // The document text with the planted footer marked. `react-markdown` is not
 // used here on purpose: the text is an attacker's, and it is shown as text.
 function Saw({ text, payload }) {
@@ -108,6 +158,9 @@ export default function App() {
   const [dropping, setDropping] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
+  // The open breach notice: { turn, hits } or null. Replaced per `done`
+  // event, so one turn opens it once and a later breach opens it again.
+  const [breach, setBreach] = useState(null)
   const threadBox = useRef(null)
   const fileInput = useRef(null)
   // Mirrors `session` so `allow`'s in-flight replay can tell, when the
@@ -190,6 +243,7 @@ export default function App() {
       setRetrieval(null)
       setError(null)
       setDraft('')
+      setBreach(null)
       setThread([
         { role: 'system', text: `${MODES[next]}. New conversation and restored student record; attachments retained.` },
         { role: 'assistant', text: greeting(next) },
@@ -238,6 +292,7 @@ export default function App() {
     setRetrieval(null)
     setApprovals({})
     setError(null)
+    setBreach(null)
     setThread([
       { role: 'system', text: `Conversation cleared and the record restored for ${state.record.student_id}.` },
       { role: 'assistant', text: greeting(mode) },
@@ -261,6 +316,7 @@ export default function App() {
     setApprovals({})
     setError(null)
     const who = personas.find((p) => p.id === persona)
+    setBreach(null)
     setThread([
       { role: 'system', text: `Now assisting ${who?.name ? `${who.name} (${persona})` : persona}. New conversation, fresh record.` },
       { role: 'assistant', text: greeting(mode) },
@@ -303,6 +359,15 @@ export default function App() {
           setDecisions(event.calls)
           setDecisionTurn(event.turn)
           applyState(event)
+          const hits = breachesIn(event.calls)
+          if (hits.length > 0) {
+            setBreach({ turn: event.turn, hits })
+            setThread((t) => [...t, { role: 'warning',
+              text: `${breachLine(record?.student_id || 'this student', hits[0])} ` +
+                    `Accessing another student's information without authorisation breaches the ${POLICY_NAME}; ` +
+                    `attempts are logged and may lead to disciplinary action. ` +
+                    `If a document you uploaded asked for this, the instruction came from the document, not from you.` }])
+          }
           if (event.mode === 'rag') {
             const evidence = { context: event.context, model: event.model,
               latency: event.latency_ms, clarification: event.clarification }
@@ -377,6 +442,10 @@ export default function App() {
 
   return (
     <>
+      {breach && (
+        <BreachNotice principal={record?.student_id || 'this student'} hits={breach.hits}
+                      onClose={() => setBreach(null)} />
+      )}
       <div className="topbar">
         <span className="wordmark">
           <UtsLogo />
@@ -478,6 +547,14 @@ export default function App() {
                   <div key={i} className="bubble assistant">
                     {m.label && <div className="caption">{m.label}</div>}
                     <Markdown>{m.text}</Markdown>
+                  </div>
+                )
+              }
+              if (m.role === 'warning') {
+                return (
+                  <div key={i} className="bubble warning" role="alert">
+                    <div className="caption">Warning · research prototype</div>
+                    {m.text}
                   </div>
                 )
               }
@@ -588,6 +665,7 @@ export default function App() {
                     <div className="tool">
                       {d.tool}
                       {d.tainted && <span className="taint">after untrusted read</span>}
+                      {d.code === 'principal_mismatch' && <span className="badge breach">other student</span>}
                     </div>
                     <div className="args">{args(d.arguments)}</div>
                     <div className="ruling">

@@ -424,3 +424,28 @@ def test_the_tainted_flag_is_logged_on_calls_after_the_read():
     extension.observe_forwarded(ToolCall(tool="read_doc"))
     extension.decide(ToolCall(tool="act"))
     assert [r.tainted for r in extension.log.records] == [False, True]
+
+
+def test_a_call_naming_another_principal_carries_the_mismatch_code():
+    """The page and the judge key on this code; neither may parse the reason."""
+    policy = ArgumentValidationPolicy(principal_argument="student_id")
+    call = ToolCall(tool="get_student_record", arguments={"student_id": "S9000002"})
+
+    decision = policy.check(call, ctx(principal_id="S9000001"))
+
+    assert decision.code == "principal_mismatch"
+
+
+def test_a_call_omitting_the_principal_carries_the_missing_code():
+    policy = ArgumentValidationPolicy(principal_argument="student_id")
+
+    decision = policy.check(ToolCall(tool="enrol", arguments={"code": "42027"}),
+                            ctx(principal_id="S9000001"))
+
+    assert decision.code == "principal_missing"
+
+
+def test_a_decision_has_no_code_by_default():
+    from policy_guard.models import Decision, Verdict
+
+    assert Decision(verdict=Verdict.ALLOW, policy="allowlist", reason="ok").code is None

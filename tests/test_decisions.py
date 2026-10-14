@@ -236,3 +236,23 @@ def test_the_manifest_rejects_a_misspelled_field(tmp_path):
     typo = {**MANIFEST_FIELDS, "overlay_path": "/attacks/oi-001.yaml"}
     with pytest.raises(ValidationError, match="overlay_path"):
         write_run_manifest(tmp_path / "run", **typo)
+
+
+def test_the_record_carries_the_decisions_code(tmp_path):
+    from policy_guard.models import Decision, Verdict
+
+    log = DecisionLog(tmp_path / "decisions.jsonl")
+    tagged = Decision(verdict=Verdict.DENY, policy="arg_validation",
+                      reason="wrong student", code="principal_mismatch")
+
+    record = log.record(CALL, tagged, task_id="T", forwarded=False, latency_ms=0.1)
+
+    assert record.code == "principal_mismatch"
+    line = json.loads((tmp_path / "decisions.jsonl").read_text().splitlines()[0])
+    assert line["code"] == "principal_mismatch"
+
+
+def test_an_untagged_decision_records_a_null_code(tmp_path):
+    log = DecisionLog(tmp_path / "decisions.jsonl")
+    record = log.record(CALL, DENY, task_id="T", forwarded=False, latency_ms=0.1)
+    assert record.code is None
