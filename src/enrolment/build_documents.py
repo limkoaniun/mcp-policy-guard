@@ -60,8 +60,14 @@ def pdf_name(document: DemoDocument) -> str:
 def _is_heading(line: str) -> bool:
     """A short line in capitals is a section heading: 'SECTION A - APPLICANT',
     'MEDICAL CERTIFICATE', 'OFFICE USE ONLY'. Letters only are judged, so
-    'Phone (02) 9000 0000' is body text."""
+    'Phone (02) 9000 0000' is body text. A line containing a comma is never a
+    heading, so a credential line such as 'MBBS, FRACGP' stays body text.
+    Likewise, if the first non-blank line ends with a comma it is a
+    salutation ('To whom it may concern,'), not a title: it is set as an
+    ordinary body line with no rule, and no later line is promoted to title."""
     stripped = line.strip()
+    if "," in stripped:
+        return False
     letters = [c for c in stripped if c.isalpha()]
     return 3 <= len(letters) and len(stripped) <= 60 and all(c.isupper() for c in letters)
 
@@ -86,6 +92,10 @@ def _write_pdf(path: Path, body: str, footer: str | None) -> None:
     # cursor back to the left margin after every cell instead.
     lines = body.splitlines()
     first = next((i for i, line in enumerate(lines) if line.strip()), None)
+    if first is not None and lines[first].rstrip().endswith(","):
+        # A first line ending in a comma is a salutation, not a title: no
+        # title treatment, and no later line is promoted in its place.
+        first = None
     for i, line in enumerate(lines):
         if not line.strip():
             pdf.ln(6)

@@ -6,7 +6,7 @@ import pathlib
 
 from pypdf import PdfReader
 
-from enrolment.build_documents import BODY_POINTS, FOOTER_POINTS, pdf_name, write_documents
+from enrolment.build_documents import BODY_POINTS, FOOTER_POINTS, _is_heading, pdf_name, write_documents
 from enrolment.demo.app import KNOWN_TOOLS
 from enrolment.demo.documents import documents_from
 from enrolment.demo.uploads import normalise
@@ -109,3 +109,9 @@ def test_the_title_line_is_set_larger_and_bold(tmp_path):
     bold_sizes = {size for base, size in fonts - {None} if base and "Bold" in str(base)}
     assert bold_sizes, fonts
     assert max(bold_sizes) > BODY_POINTS
+
+
+def test_is_heading_rules():
+    assert _is_heading("SECTION A - APPLICANT") is True
+    assert _is_heading("MBBS, FRACGP") is False, "a comma means body text"
+    assert _is_heading("____________") is False, "no letters"
