@@ -220,3 +220,16 @@ def test_the_built_page_carries_the_breach_warning():
     assert "I understand" in bundle
     assert "Warning · research prototype" in bundle
     assert "not from you" in bundle
+
+
+def test_a_scripted_run_carries_the_taint_flag_on_each_call():
+    """The chat page shows "after untrusted read" from `DemoCall.tainted`; the
+    scripted runner must fill the same field, or the two views of one attack
+    disagree. A-04 reads the letter first, so its later calls are tainted."""
+    body = client().post(
+        "/api/run", json={"scenario_id": "A-04", "enforcement": "on"}
+    ).json()
+    by_tool = {c["tool"]: c for c in body["calls"]}
+    assert by_tool["get_attachment"]["tainted"] is False
+    assert by_tool["get_student_record"]["tainted"] is True
+    assert by_tool["submit_erequest"]["tainted"] is True

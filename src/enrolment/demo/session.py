@@ -267,6 +267,7 @@ async def run_demo(
             policy=decision["policy"],
             reason=decision["reason"],
             blocked=not decision["forwarded"],
+            tainted=bool(decision.get("tainted", False)),
             code=decision.get("code"),
             result=body,
         )
