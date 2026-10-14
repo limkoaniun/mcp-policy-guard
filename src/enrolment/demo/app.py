@@ -47,10 +47,13 @@ STATIC = Path(__file__).parent / "static"
 DEFAULT_PACK = REPO_ROOT / "configs" / "enrolment-personas.yaml"
 #: The suite of record and the reply-channel subset. Both load into the demo
 #: so every shipped document, A-01..A-13, can be dropped on the chat; the
-#: campaigns keep their own `--scenarios` and are not affected.
+#: demo set is loaded too, so its three PDFs under `data/documents/demo/` are
+#: recognised on upload. The campaigns keep their own `--scenarios` and are
+#: not affected.
 DEFAULT_SCENARIO_DIRS = (
     REPO_ROOT / "attacks" / "scenarios",
     REPO_ROOT / "attacks" / "scenarios-reply",
+    REPO_ROOT / "attacks" / "scenarios-demo",
 )
 DEFAULT_PERSONAS = REPO_ROOT / "data" / "personas.json"
 

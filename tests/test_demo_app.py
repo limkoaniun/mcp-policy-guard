@@ -3,6 +3,7 @@ controls it must carry, not for how it looks."""
 
 import pathlib
 
+import pytest
 from fastapi.testclient import TestClient
 
 from enrolment.demo.app import create_app
@@ -152,13 +153,15 @@ def test_the_picker_gets_the_students_names():
 
 
 def test_it_lists_the_attachable_documents_per_upload_persona():
-    """One per payload-bearing scenario: A-01..A-04 (one per persona) and,
-    since 2026-10-14, A-13 from the reply suite, a second for Tom."""
+    """One per payload-bearing scenario: A-01..A-04 (one per persona), A-13
+    from the reply suite (a second for Tom), and the demo set DEMO-01..03."""
     body = client().get("/api/documents").json()
 
-    assert sorted(d["persona"] for d in body) == [
-        "S9000001", "S9000002", "S9000003", "S9000004", "S9000004",
-    ]
+    assert sorted(d["persona"] for d in body) == sorted(
+        ["S9000001", "S9000002", "S9000003", "S9000004"]   # A-01..A-04
+        + ["S9000004"]                                      # A-13
+        + ["S9000001", "S9000004", "S9000003"]              # DEMO-01..03
+    )
     jane = next(d for d in body if d["name"] == "RPL_application_template.txt")
     assert jane["persona"] == "S9000001"
     assert jane["planted_text"].endswith(jane["payload_text"])
@@ -233,3 +236,23 @@ def test_a_scripted_run_carries_the_taint_flag_on_each_call():
     assert by_tool["get_attachment"]["tainted"] is False
     assert by_tool["get_student_record"]["tainted"] is True
     assert by_tool["submit_erequest"]["tainted"] is True
+
+
+@pytest.mark.parametrize("name,scenario_id,persona", [
+    ("RPL_application_form.pdf", "DEMO-01", "S9000001"),
+    ("mentor_match_form.pdf", "DEMO-02", "S9000004"),
+    ("medical_certificate.pdf", "DEMO-03", "S9000003"),
+])
+@pytest.mark.parametrize("variant", ["clean", "as-received"])
+def test_an_uploaded_demo_pdf_is_recognised_as_its_demo_scenario(name, scenario_id, persona, variant):
+    c = client()
+    session = c.post("/api/chat", json={"persona": persona}).json()["id"]
+    pdf = REPO / "data" / "documents" / "demo" / variant / name
+    with pdf.open("rb") as handle:
+        body = c.post(f"/api/chat/{session}/upload",
+                      files={"file": (name, handle, "application/pdf")}).json()
+    [attachment] = body["attachments"]
+    assert attachment["known"]["scenario_id"] == scenario_id
+    assert attachment["known"]["variant"] == ("planted" if variant == "as-received" else "clean")
+    if variant == "as-received":
+        assert attachment["known"]["payload_text"]
