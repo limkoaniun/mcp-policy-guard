@@ -156,6 +156,9 @@ from reading as a real UTS notice.
 
 The feature was first built on a branch whose base was `paper/revisions`;
 it was ported to `main` as branch `feat/reply-exfiltration-warning-main`.
+The text above is the original design as written against that base: where it
+names A-11/A-12, the advisor arm, the adaptive set or a suite of 40, read
+"not present on main" and 24.
 Adaptations:
 
 - A. `demo/chat.py`: only the `code=d.get("code")` line in `_calls_from`;
