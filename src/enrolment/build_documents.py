@@ -1,9 +1,12 @@
-"""Write the demo's shipped documents as PDFs.
+"""Write the demo's shipped documents as PDFs, lightly typeset: the first
+line is set as a bold title with a rule under it, and all-caps lines as bold
+headings. Neither changes the extracted text, which the round-trip test pins.
 
     python -m enrolment.build_documents            # into data/documents
     python -m enrolment.build_documents --out DIR
 
-One clean and one as-received PDF per upload-borne scenario (A-01..A-04).
+One clean and one as-received PDF per scenario in the directory given by
+`--scenarios`.
 The as-received copy carries the planted footer in white at `FOOTER_POINTS`
 points, after a blank line: a person opening it sees the template the
 student was sent; the model, reading through `get_attachment`, gets the
@@ -43,6 +46,8 @@ DEFAULT_OUT = REPO_ROOT / "data" / "documents"
 #: say so here.
 FOOTER_POINTS = 1
 BODY_POINTS = 11
+TITLE_POINTS = 15
+HEADING_POINTS = 11
 #: Fixed so re-running the script does not churn the committed bytes.
 CREATED = datetime(2026, 9, 29, tzinfo=UTC)
 
@@ -50,6 +55,21 @@ CREATED = datetime(2026, 9, 29, tzinfo=UTC)
 def pdf_name(document: DemoDocument) -> str:
     stem = document.name.rsplit(".", 1)[0] if "." in document.name else document.name
     return f"{stem}.pdf"
+
+
+def _is_heading(line: str) -> bool:
+    """A short line in capitals is a section heading: 'SECTION A - APPLICANT',
+    'MEDICAL CERTIFICATE', 'OFFICE USE ONLY'. Letters only are judged, so
+    'Phone (02) 9000 0000' is body text. A line containing a comma is never a
+    heading, so a credential line such as 'MBBS, FRACGP' stays body text.
+    Likewise, if the first non-blank line ends with a comma it is a
+    salutation ('To whom it may concern,'), not a title: it is set as an
+    ordinary body line with no rule, and no later line is promoted to title."""
+    stripped = line.strip()
+    if "," in stripped:
+        return False
+    letters = [c for c in stripped if c.isalpha()]
+    return 3 <= len(letters) and len(stripped) <= 60 and all(c.isupper() for c in letters)
 
 
 def _write_pdf(path: Path, body: str, footer: str | None) -> None:
@@ -70,11 +90,34 @@ def _write_pdf(path: Path, body: str, footer: str | None) -> None:
     # margin -- so the next cell would open with zero width and raise
     # "Not enough horizontal space to render a single character". Send the
     # cursor back to the left margin after every cell instead.
-    for line in body.splitlines():
-        if line.strip():
-            pdf.multi_cell(0, 6, line, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        else:
+    lines = body.splitlines()
+    first = next((i for i, line in enumerate(lines) if line.strip()), None)
+    if first is not None and lines[first].rstrip().endswith(","):
+        # A first line ending in a comma is a salutation, not a title: no
+        # title treatment, and no later line is promoted in its place.
+        first = None
+    for i, line in enumerate(lines):
+        if not line.strip():
             pdf.ln(6)
+            continue
+        if i == first:
+            # The title: bold and larger, with a rule under it. Text only
+            # changes face and size, so extraction returns the same words.
+            pdf.set_font("Helvetica", style="B", size=TITLE_POINTS)
+            pdf.multi_cell(0, 8, line, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            y = pdf.get_y() + 1
+            pdf.set_draw_color(0, 0, 0)
+            pdf.set_line_width(0.4)
+            pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y)
+            pdf.ln(4)
+            pdf.set_font("Helvetica", size=BODY_POINTS)
+            continue
+        if _is_heading(line):
+            pdf.set_font("Helvetica", style="B", size=HEADING_POINTS)
+            pdf.multi_cell(0, 6, line, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            pdf.set_font("Helvetica", size=BODY_POINTS)
+            continue
+        pdf.multi_cell(0, 6, line, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     if footer is not None:
         pdf.ln(6)
         pdf.set_text_color(255, 255, 255)

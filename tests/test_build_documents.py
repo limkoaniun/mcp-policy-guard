@@ -6,7 +6,7 @@ import pathlib
 
 from pypdf import PdfReader
 
-from enrolment.build_documents import FOOTER_POINTS, pdf_name, write_documents
+from enrolment.build_documents import BODY_POINTS, FOOTER_POINTS, _is_heading, pdf_name, write_documents
 from enrolment.demo.app import KNOWN_TOOLS
 from enrolment.demo.documents import documents_from
 from enrolment.demo.uploads import normalise
@@ -68,3 +68,50 @@ def test_the_committed_pdfs_are_current():
         assert clean.exists() and planted.exists(), doc.id
         assert normalise(extracted(clean)) == normalise(doc.clean_text), doc.id
         assert normalise(extracted(planted)) == normalise(doc.planted_text), doc.id
+
+
+DEMO = REPO / "attacks" / "scenarios-demo"
+DEMO_OUT = REPO / "data" / "documents" / "demo"
+
+
+def demo_documents():
+    return documents_from(load_all(DEMO, personas=PERSONAS, known_tools=KNOWN_TOOLS))
+
+
+def test_the_demo_pdfs_round_trip_to_their_scenario_text(tmp_path):
+    written = write_documents(demo_documents(), tmp_path)
+    assert len(written) == 6
+    for document in demo_documents():
+        clean = extracted(tmp_path / "clean" / pdf_name(document))
+        planted = extracted(tmp_path / "as-received" / pdf_name(document))
+        assert normalise(clean) == normalise(document.clean_text)
+        assert normalise(planted) == normalise(document.planted_text)
+
+
+def test_the_committed_demo_pdfs_are_current(tmp_path):
+    write_documents(demo_documents(), tmp_path)
+    for document in demo_documents():
+        for variant in ("clean", "as-received"):
+            name = pdf_name(document)
+            assert (DEMO_OUT / variant / name).read_bytes() == (tmp_path / variant / name).read_bytes(), name
+
+
+def test_the_title_line_is_set_larger_and_bold(tmp_path):
+    """Realism without changing the text: the first line is the title. pypdf
+    reports the font name per text run, so the title's run is the bold face."""
+    [document] = [d for d in demo_documents() if d.id == "medical-certificate"]
+    write_documents([document], tmp_path)
+    page = PdfReader(str(tmp_path / "clean" / pdf_name(document))).pages[0]
+    fonts = set()
+    page.extract_text(visitor_text=lambda text, cm, tm, font, size: fonts.add(
+        (font["/BaseFont"] if font and "/BaseFont" in font else None, round(size, 1))
+        if text.strip() else None))
+    bold_sizes = {size for base, size in fonts - {None} if base and "Bold" in str(base)}
+    assert bold_sizes, fonts
+    assert max(bold_sizes) > BODY_POINTS
+
+
+def test_is_heading_rules():
+    assert _is_heading("SECTION A - APPLICANT") is True
+    assert _is_heading("MBBS, FRACGP") is False, "a comma means body text"
+    assert _is_heading("____________") is False, "no letters"
