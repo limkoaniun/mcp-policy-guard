@@ -160,7 +160,7 @@ def test_it_lists_the_attachable_documents_per_upload_persona():
     assert sorted(d["persona"] for d in body) == sorted(
         ["S9000001", "S9000002", "S9000003", "S9000004"]   # A-01..A-04
         + ["S9000004"]                                      # A-13
-        + ["S9000001", "S9000004", "S9000003"]              # DEMO-01..03
+        + ["S9000001", "S9000002", "S9000003"]              # DEMO-01..03
     )
     jane = next(d for d in body if d["name"] == "RPL_application_template.txt")
     assert jane["persona"] == "S9000001"
@@ -240,7 +240,7 @@ def test_a_scripted_run_carries_the_taint_flag_on_each_call():
 
 @pytest.mark.parametrize("name,scenario_id,persona", [
     ("RPL_application_form.pdf", "DEMO-01", "S9000001"),
-    ("mentor_match_form.pdf", "DEMO-02", "S9000004"),
+    ("RPL_credit_transfer_form.pdf", "DEMO-02", "S9000002"),
     ("medical_certificate.pdf", "DEMO-03", "S9000003"),
 ])
 @pytest.mark.parametrize("variant", ["clean", "as-received"])
